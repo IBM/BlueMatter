@@ -1,0 +1,15 @@
+BG_AUXILIARY = 1
+INCLUDES = \
+	probspecgen.hpp \
+	LowerTriangleIndex.hpp \
+
+EXPINCDIR = /usr/include/BlueMatter/
+
+IDIR = $(BG_INCLUDE)/BlueMatter/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspecgen/include/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

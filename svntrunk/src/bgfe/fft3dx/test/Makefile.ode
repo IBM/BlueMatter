@@ -1,0 +1,14 @@
+
+ILIST = \
+ fftmain_pk.cpp \
+ fen_makefile \
+ 
+IDIR = $(BG_SRC)/fft3d/test/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC}/BlueMatter/hoodcomms/libblade/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+ 

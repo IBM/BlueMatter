@@ -1,0 +1,16 @@
+
+
+INCLUDES = \
+TorusXYZ.hpp \
+
+#HwReduce.hpp \
+
+EXPINCDIR = /usr/include/spi/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_INCLUDE)/spi/
+
+
+.include <$(RULES_MK)>
+

@@ -1,0 +1,12 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  libfftw.a \
+  libp3me.a \
+  librfftw.a \
+  Makefile.ode
+libfftw.a_IDIR = $(BG_SRC)/BlueMatter/p3me/lib/
+libp3me.a_IDIR = $(BG_SRC)/BlueMatter/p3me/lib/
+librfftw.a_IDIR = $(BG_SRC)/BlueMatter/p3me/lib/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/p3me/lib/source_ship/
+.include <$(RULES_MK)>

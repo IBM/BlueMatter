@@ -1,0 +1,29 @@
+ILIST = \
+	platform.cpp \
+	coprocessor_on_coprocessor.cpp \
+
+IDIR = $(BG_SRC)/pk/
+
+OBJECTS_SUBDIRS = 
+
+#.if $(CAN_BUILD_SMP)
+#OBJECTS_SUBDIRS += smp
+#.endif
+#
+#.if $(CAN_BUILD_MPI) != 0
+#OBJECTS_SUBDIRS += mpi
+#.endif
+#
+#.if $(CAN_BUILD_SPI) != 0
+#OBJECTS_SUBDIRS += spi
+#.endif
+
+EXPLIB_SUBDIRS = $(OBJECTS_SUBDIRS)
+SUBDIRS = $(OBJECTS_SUBDIRS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/platform/src/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

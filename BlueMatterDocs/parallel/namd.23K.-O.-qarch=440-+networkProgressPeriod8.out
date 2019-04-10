@@ -1,0 +1,19 @@
+# author: maria eleftheriou 
+# 23K  (jac) system
+# Here are the namd performance numbers on bgw using the coprocessor
+# the code was compiled by Walkup using -O -qarch=440
+# at execusion time I set the eager limit to 1000 as suggested by Walkup
+# +networkProcgressPeriod 8 // to force NAMD to check MPI messages  every 8 iteration in long computation loops 
+
+R001-1133.stdout:stdout[0]: Info: Initial time: 1 CPUs 2.1135 s/step 24.4618 days/ns 65953 kB memory
+R001-1134.stdout:stdout[0]: Info: Benchmark time: 2 CPUs 1.14043 s/step 13.1995 days/ns 41221 kB memory
+R000-1142.stdout:stdout[0]: Info: Benchmark time: 8 CPUs 0.326044 s/step 3.77365 days/ns 19166 kB memory
+R000-1138.stdout:stdout[0]: Info: Benchmark time: 32 CPUs 0.0996989 s/step 1.15392 days/ns 14138 kB memory
+R000-1139.stdout:stdout[0]: Info: Benchmark time: 64 CPUs 0.0589384 s/step 0.682157 days/ns 12984 kB memory
+R000-1140.stdout:stdout[0]: Info: Benchmark time: 128 CPUs 0.0383871 s/step 0.444295 days/ns 12568 kB memory
+R000-1141.stdout:stdout[0]: Info: Benchmark time: 256 CPUs 0.0235968 s/step 0.273111 days/ns 12107 kB memor
+R000-1124.stdout:stdout[0]: Info: Benchmark time: 512 CPUs 0.0159076 s/step 0.184115 days/ns 11967 kB memory
+R001-1123.stdout:stdout[0]: Info: Benchmark time: 1024 CPUs 0.0159553 s/step 0.184668 days/ns 13001 kB memory
+R01R11-1122.stdout:stdout[0]: Info: Benchmark time: 2048 CPUs 0.0180254 s/step 0.208627 days/ns 14057 kB memory
+
+

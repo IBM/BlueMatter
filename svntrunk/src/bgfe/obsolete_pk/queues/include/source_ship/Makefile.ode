@@ -1,0 +1,14 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  datagram_queue.hpp \
+  makefile.aix \
+  queue_set.hpp \
+  shmem_queue.hpp \
+  Makefile.ode
+datagram_queue.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/include/
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/queues/include/
+queue_set.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/include/
+shmem_queue.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/queues/include/source_ship/
+.include <$(RULES_MK)>

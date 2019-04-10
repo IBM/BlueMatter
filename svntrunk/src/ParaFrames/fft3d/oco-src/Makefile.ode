@@ -1,0 +1,12 @@
+
+OBJECTS_SUBDIRS = spi spi-essl mpi mpi-essl 
+
+.if defined(PKACTORS)
+OBJECTS_SUBDIRS += Pk Pk-essl
+.endif
+
+EXPLIB_SUBDIRS = $(OBJECTS_SUBDIRS)
+SUBDIRS = $(OBJECTS_SUBDIRS)
+
+
+.include <$(RULES_MK)>

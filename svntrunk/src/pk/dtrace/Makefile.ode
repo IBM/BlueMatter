@@ -1,0 +1,10 @@
+EXPINC_SUBDIRS = inc
+
+# To build 'tracer', you need 'motif' which ships with AIX, or 'openmotif' and 'openmotif-devel' with Linux
+
+.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || !empty(CONTEXT:Mx86_linux*) || defined(TRY_LINUX_BUILD_ANYWAY)
+OBJECTS_SUBDIRS = src
+SUBDIRS = src
+.endif
+
+.include <$(RULES_MK)>

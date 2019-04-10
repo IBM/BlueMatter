@@ -1,0 +1,1 @@
+xlC_r -I ../inc -I ../../foxpk ../../foxpk/pktrace_pk.cpp ./pktracefile_api.C ./pktracefile_api_test.C -o pkapi_test.exe

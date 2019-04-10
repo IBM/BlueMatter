@@ -1,0 +1,14 @@
+# Data taken from Alex Rayshubskiy's team room posting on April 18, 2005
+# these tests used a single core implementation of all2allv on the packet layer
+# column 1: Px
+# column 2: Py
+# column 3: Pz
+# column 4: 64^3 time (seconds)
+# column 5: 128^3 time (seconds)
+#8 	32 	16 	297e-6 	1.24e-3
+8 	8 	8 	390e-6 	2.96e-3
+8 	8 	16 	326e-6 	2.05e-3
+16 	8 	16 	226e-6 	1.17e-3
+16 	16 	16 	271e-6 	1.13e-3
+16 	32 	16 	-1 	785e-6
+16 	32 	32 	-1 	587e-6

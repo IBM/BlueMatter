@@ -1,0 +1,6 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/platform/src/smp/source_ship/
+.include <$(RULES_MK)>

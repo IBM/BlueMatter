@@ -1,0 +1,15 @@
+
+INCLUDES += \
+  transform_sysparams.hpp \
+  probspectrans.hpp \
+  probspectrans_to_MSD.hpp \
+  udf_registryif.hpp \
+  runtimeparams.hpp 
+
+
+EXPINCDIR = /usr/include/BlueMatter/probspectrans/
+
+# IDIR = $(BG_INCLUDE)/BlueMatter/probspectrans/
+# ILIST = $(INCLUDES)
+
+.include <$(RULES_MK)>

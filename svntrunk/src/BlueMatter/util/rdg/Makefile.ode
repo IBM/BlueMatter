@@ -1,0 +1,30 @@
+
+.if empty(CONTEXT:Mbluelight_sk*)
+PROGRAMS        = \
+	dvsconv$(PROG_SUFF) \
+#       McEnergy$(PROG_SUFF) \
+
+.endif
+
+dvsconv_OFILES = dvsconv$(OBJ_SUFF)
+#McEnergy_OFILES = McEnergy$(OBJ_SUFF)
+# ../../analysis/src/MolSysDefSingletonPtr$(OBJ_SUFF)
+
+OBJECTS = dvsconv$(OBJ_SUFF) \
+#         McEnergy$(OBJ_SUFF)
+
+# Enable the fxlogger to work without the platform class
+CFLAGS += -DNO_PK_PLATFORM
+
+IDIR            = $(BG_BIN)/setup/
+
+ILIST           = $(PROGRAMS)
+
+# McEnergy_LIBS = $(LIB_PREF)molsysdef$(LIB_SUFF)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/util/rdg/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

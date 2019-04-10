@@ -1,0 +1,32 @@
+This directory tree can be build with the GNU build tools, as described in the
+GNU Coding Standards http://www.gnu.org/prep/standards/
+
+'autoconf' takes the 'configure.ac' (which lists all the directories), and 
+  construcuts a 'configure' script
+'automake' constructs 'Makefile.in' files out of the 'Makefile.ac' files in
+ each directory.
+'configure' tailors the build process to the architecture; i.e. in principle you
+ should be able to run 'configure' on an AIX box to get a version of 'pk' to 
+ run on an SP2 instead of a BlueGene. In practice we only use
+ 'configure --prefix=/tmp/tjcw/pk' to tell the build process to target installation
+ into directory '/tmp/tjcw/pk/'.
+'make' issues any compiles that need issuing ... none at the moment
+'make install' installs the result into the configured directory
+
+You can run these on AIX or on one of the front-end nodes; you need to be sure that
+the GNU tools are in PATH, specifically that you are picking up GNU 'make' rather 
+than AIX 'make'.
+
+After that, the 'hpp' files will be installed under include/pk , and source files
+that you need (such as 'platform.cpp') will be installed under share/pk . 
+Source files for building the 'libblade_spi.rts.a' library will be installed under
+share/pk/spi , with 2 makefiles; 'fen_makefile' will build it with gcc, and 
+'fen_makefile.xlc' will build it with xlc. To do the build, sign on to the 'fen',
+go to the directory, and 'make -f fen_makefile' or 'make -f fen_makefile.xlc' as
+desired. It would be possible to construct an 'end-to-end' build process, whereby 
+you would sign on to the 'fen', run 'configure' and 'make' there to build the 
+lot; at the moment we're choosing not to do that.
+
+'autoconf' and 'automake' seem a bit rocky on our AIX and 'fen' systenms. I have
+been running them on a SuSE 10 system, and checking in the resulting 'configure'
+and 'Makefile.in' files as well as the things they are derived from.

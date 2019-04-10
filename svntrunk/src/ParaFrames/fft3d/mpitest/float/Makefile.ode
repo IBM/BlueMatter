@@ -1,0 +1,46 @@
+
+
+ILIST = \
+ fftmain_mpi_float$(PROG_SUFF)
+ 
+IDIR = $(BG_BIN)/fft3d/mpitest/
+ 
+OBJECTS = fftmain_mpi_float$(OBJ_SUFF) \
+          fxlogger$(OBJ_SUFF) \
+          platform$(OBJ_SUFF) \
+          pktrace$(OBJ_SUFF) \
+          coprocessor_on_coprocessor$(OBJ_SUFF)
+
+VPATH = ../../../../pk/fxlogger/src:../../../../pk/platform/src:../../../../pk/trace/src:../../../../../pk/a2a/src
+          
+PROGRAMS = fftmain_mpi_float$(PROG_SUFF)
+
+OFILES = $(OBJECTS)
+
+LIBS += $(LIB_PREF)fft3d$(LIB_SUFF) $(LIB_PREF)ocofft3dmpi$(LIB_SUFF)  
+
+EXTRA_LIBS +=  $(LIB_PREF)mpich$(LIB_SUFF)  $(LIB_PREF)msglayer$(LIB_SUFF) -L /bgl/local/fftw-2.1.5/lib -lsfftw -ldevices.rts -lrts.rts -ldevices.rts -lrts.rts
+
+TRACE_MACROS=\
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG -DxFXLOG_VERBOSE \
+-DPKTRACE_ALLTOALLV_DETAIL \
+
+COMPILE_MACROS= \
+-qsuppress=1540-1089 \
+-DUSE_UNIX_MALLOC \
+-DNDEBUG \
+-DPK_PARALLEL \
+-DPK_BGL \
+-DPK_MPI \
+-DxREPORT_FIFO_HISTOGRAM \
+-DPKFXLOG \
+-DPKFXLOG_MAIN=1-1 \
+-DPKFXLOG_FFTBENCHMARK \
+-DxFFT_FIX_DATA \
+-DxPRINT_OUTPUT \
+$(TRACE_MACROS)
+
+CFLAGS += $(COMPILE_MACROS)
+
+.include <$(RULES_MK)>

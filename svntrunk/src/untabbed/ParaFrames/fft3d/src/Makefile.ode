@@ -1,0 +1,9 @@
+INCLUDES = \
+  fft3D_MPI.cpp
+
+EXPINCDIR = /usr/src/fft3d/
+
+ILIST = $(INCLUDES)
+IDIR = $(BG_SRC)/fft3d/
+
+.include <$(RULES_MK)>

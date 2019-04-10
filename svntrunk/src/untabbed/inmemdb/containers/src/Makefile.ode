@@ -1,0 +1,24 @@
+BG_AUXILIARY = DB2
+
+OBJECTS += \
+
+OFILES += \
+
+LIBRARIES = $(LIB_PREF)inmemdb$(LIB_SUFF)
+
+LIBS += \
+  $(LIB_PREF)db2cli$(LIB_SUFF) \
+  $(LIB_PREF)inmemdb$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+IDIR = $(BG_LIB)/
+ILIST = $(LIBRARIES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./inmemdb/containers/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,14 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  PPL_ProtocolDriver.hpp \
+  PPL_SystemIF.hpp \
+  PPL_UserIF.hpp \
+  makefile.aix \
+  Makefile.ode
+PPL_ProtocolDriver.hpp_IDIR = $(BG_SRC)/bgfe/PhasedPipeline/include/
+PPL_SystemIF.hpp_IDIR = $(BG_SRC)/bgfe/PhasedPipeline/include/
+PPL_UserIF.hpp_IDIR = $(BG_SRC)/bgfe/PhasedPipeline/include/
+makefile.aix_IDIR = $(BG_SRC)/bgfe/PhasedPipeline/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/PhasedPipeline/include/source_ship/
+.include <$(RULES_MK)>

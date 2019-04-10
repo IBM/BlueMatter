@@ -1,0 +1,13 @@
+
+if [ "$BLUEMATTERROOT" = "" ]; then echo "Not so fast... Define BLUEMATTERROOT first!" ; exit -1; fi;
+
+
+echo " "
+echo "Building target \$BLUEMATTERROOT/probspec/bin/spec: "
+echo " "
+
+cp $BLUEMATTERROOT/probspec/src/pushparams.hpp $BLUEMATTERROOT/probspec/include
+
+xlC -o $BLUEMATTERROOT/probspec/bin/probspec -I $BLUEMATTERROOT/probspec/include $BLUEMATTERROOT/probspec/src/probspec.cpp -g
+
+cp $BLUEMATTERROOT/probspec/src/spec $BLUEMATTERROOT/probspec/bin

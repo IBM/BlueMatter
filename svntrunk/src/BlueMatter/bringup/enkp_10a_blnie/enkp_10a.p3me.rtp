@@ -1,0 +1,16 @@
+SnapshotPeriodInOTS                      1000
+ShakeTolerance                           1.0E-10
+RattleTolerance                          1.0E-10
+Fragmentation  nmnf
+OuterTimeStepInPicoSeconds  0.001
+NumberOfOuterTimeSteps  50
+LRFMethod P3ME
+RigidProtein  on
+Integrator  Verlet
+Ensemble  NVT
+WaterModel  TIP3P
+FFTSize 64 64 64
+P3MEchargeAssignment 4
+EwaldAlpha 0.35
+EwaldKmax  10
+P3MEdiffOrder  GRADIENT

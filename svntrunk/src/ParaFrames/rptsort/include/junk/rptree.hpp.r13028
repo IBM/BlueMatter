@@ -1,0 +1,17 @@
+#ifndef RPTREE_HPP_
+#define RPTREE_HPP_
+
+class rptIndexElement {
+public: 	
+  unsigned int mKeyByte ;
+  unsigned int mKeyShift ;
+  unsigned int mNextKey[2] ;
+} ;
+
+class rptIndex {
+public:
+	
+};
+
+
+#endif /*RPTREE_HPP_*/

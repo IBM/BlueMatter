@@ -1,0 +1,32 @@
+
+
+
+#-D PKFXLOG_FORCE_TERMS \
+#-D PKFXLOG \
+#-D PKFXLOG_ALL \
+
+rm -f $1.exe
+../../../pk/build
+#../build.ksh
+g++ \
+-O3 \
+-D BLUEGENE  \
+-D DATAGRAM_SIZE=1024 \
+-lpthread -DA98_TYPENAME=typename -DLINUX -D _THREAD_SAFE \
+-D SMP \
+-I $GFEBUILDROOT/include \
+-I ./ \
+-I $HOME/mpich-1.2.0/include/       \
+$GFESOURCEROOT/pk/pkmain/src/main.cpp \
+$GFESOURCEROOT/pk/pthread/src/pthread.cpp \
+$GFESOURCEROOT/pk/fxlogger/src/fxlogger.cpp \
+$GFESOURCEROOT/pk/exception/src/exception.cpp \
+$GFESOURCEROOT/pk/reactor/src/reactor.cpp \
+$GFESOURCEROOT/pk/trace/src/pktrace_pk.cpp \
+$GFESOURCEROOT/pk/util_comm/src/mpi.cpp \
+$GFESOURCEROOT/pk/random/src/random.cpp              \
+$1.cpp  \
+-o $1.exe 2>$1.out
+cp $1.cpp $1.cpp.lastcompile
+cp $1.exe $1.exe.lastcompile
+vs $1.out &

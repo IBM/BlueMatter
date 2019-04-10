@@ -1,0 +1,6 @@
+IDIR    = $(BG_BIN)/setup/
+
+ILIST   =  top2xml_amber6.pl \
+           top2xml_amber8.pl \
+           ambercrd2dvs.pl
+.include <$(RULES_MK)>

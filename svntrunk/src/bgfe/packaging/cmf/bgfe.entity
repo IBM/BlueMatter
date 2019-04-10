@@ -1,0 +1,64 @@
+InstallEntity
+{
+
+  EntityInfo
+  {
+    entityName     =   "bluegene.bgfe.adt";
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    fullEntityName =   [ "IBM Blue Gene Functional Emulator Application Development Toolkit" ];
+    description    =   "IBM Blue Gene Functional Emulator App Dev Toolkit";
+#endif
+    imageName      =   "bluegene.bgfe.adt";
+    version        =   VERSION;
+    release        =   RELEASE;
+    maintLevel     =   MAINTLEVEL;
+    fixLevel       =   FIXLEVEL;
+    copyright      =   COPYRIGHT;
+    category       =   'application';
+    language       =   'en_us';
+    content        =   'USR';
+  }
+
+
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    osName         = [ "rios_aix"];
+#if defined(rios_aix_4)
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#else
+    osRelease      = [ "5"    ];
+    osVersion      = [ "1"   ];
+#endif
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+  LinkInfo
+  {
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    immChildEntities = [ "bluegene.bgfe.adt.adt"
+                       ];
+#endif
+    immChildFiles = ;
+    parent = NULL;
+
+  }
+
+}

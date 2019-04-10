@@ -1,0 +1,44 @@
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0000*Start*
+D::PostRegExp ::*0000*Finis*
+E::Colour     ::white
+F::Style      ::0
+G::Offset     ::10
+H::Separation ::6
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*AlltoallvExecBarrierStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*AlltoallvExecBarrierFinis*
+E::Colour     ::blue
+F::Style      ::0
+G::Offset     ::100
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*TR_FFT_1D_Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*TR_FFT_1D_Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::350
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*TR_FFT_1D_R_Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*TR_FFT_1D_R_Finis*
+E::Colour     ::green
+F::Style      ::0
+G::Offset     ::600
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::

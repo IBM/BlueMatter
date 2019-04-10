@@ -1,0 +1,45 @@
+
+VPATH = ..
+
+OBJECTS = \
+   arrayBounds$(OBJ_SUFF) \
+   distributionOps$(OBJ_SUFF) \
+   PrivateFFT_double$(OBJ_SUFF) \
+   PrivateFFT_float$(OBJ_SUFF)
+
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)ocofft3dmpi$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+ILIST = \
+ $(LIBRARIES) \
+ 
+IDIR = $(BG_SRC)/fft3d/
+
+# 1540-1089 is a warning about a 'throw' being ignored; we build with '-qnoeh' so this is not surprising
+BUILD_PARAM_MACROS = \
+-qsuppress=1540-1089 \
+-DPK_BGL \
+-DPK_XLC \
+-DPK_PHASE4 \
+-DPK_PARALLEL \
+-DPK_MPI \
+-DPKFXLOG \
+-DISM_PACKET_ORDINAL \
+
+TRACE_MACROS=\
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG \
+-DPKTRACE_ALLTOALLV_DETAIL \
+
+
+CFLAGS += $(BUILD_PARAM_MACROS) -DOCO_SRC
+
+## Select tracing to help Maria
+#CFLAGS += $(TRACE_MACROS)
+
+.include <$(RULES_MK)>

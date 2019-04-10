@@ -1,0 +1,21 @@
+OBJECTS = \
+	pksin$(OBJ_SUFF) \
+	pkcos$(OBJ_SUFF) \
+	pksincos$(OBJ_SUFF) \
+
+OFILES  = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)pkmath$(LIB_SUFF)
+
+EXPLIBDIR = /usr/lib/
+EXPLIBS = $(LIBRARIES)
+
+ILIST = $(LIBRARIES)
+IDIR = $(BG_LIB)/
+
+ILIST += pksin.cpp pkcos.cpp pksincos.cpp
+pksin.cpp_IDIR = $(BG_SRC)/pk/
+pkcos.cpp_IDIR = $(BG_SRC)/pk/
+pksincos.cpp_IDIR = $(BG_SRC)/pk/
+
+.include <$(RULES_MK)>

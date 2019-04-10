@@ -1,0 +1,3 @@
+To setup your environment properly for LaTex with access to the appropriate
+class files issue the following command:
+ksh> . /u/germain/bin/texlive7.ksh

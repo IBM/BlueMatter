@@ -1,0 +1,23 @@
+# data taken on 512 node prototype using system sw stack 10/8/2003
+# the Vienna 1d-FFT was used--regression FAILED
+# column 1: FFT size (N of NxNxN)
+# column 2: px
+# column 3: py
+# column 4: pz
+# column 5: time/FFT (averaged over 10)
+64 1 1 1 0.458856
+64 1 1 2 0.208191
+64 2 2 2 0.0524288
+64 4 4 2 0.012919
+64 4 4 4 0.0082827
+64 4 4 8 0.0042356
+64 4 8 8 0.0026575
+64 8 8 8 0.0022502
+
+
+128 2 2 2 0.540756
+128 2 4 4 0.113339
+128 4 4 4 0.0665295
+128 4 4 8 0.0304229
+128 4 8 8 0.016088
+128 8 8 8 0.0098634

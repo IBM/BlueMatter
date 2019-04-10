@@ -1,0 +1,14 @@
+#!/bin/ksh
+../../build
+
+#  -D PKFXLOG_ALL -D PKDEBUG_PATH \
+xlC_r -g -D SMP -D PKFXLOG -D PKFXLOG_GLOBJECT \
+-I $HOME/GFEBUILDROOT/include $1.cpp  \
+../../pkmain/src/main.cpp \
+../../util_comm/src/mpi.cpp \
+../../globject/src/globject.cpp \
+../../pthread/src/pthread.cpp \
+../../fxlogger/src/fxlogger.cpp \
+../../exception/src/exception.cpp \
+../../reactor/src/reactor.cpp \
+-o $1_mpi.exe

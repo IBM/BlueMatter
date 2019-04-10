@@ -1,0 +1,16 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  enkp_respa.ksh \
+  rmsd.f \
+  rmsde_vs_ts.pl \
+  stripEnergy.pl \
+  temp.f \
+  Makefile.ode
+enkp_respa.ksh_IDIR = $(BG_SRC)/BlueMatter/util/analysis/
+rmsd.f_IDIR = $(BG_SRC)/BlueMatter/util/analysis/
+rmsde_vs_ts.pl_IDIR = $(BG_SRC)/BlueMatter/util/analysis/
+stripEnergy.pl_IDIR = $(BG_SRC)/BlueMatter/util/analysis/
+temp.f_IDIR = $(BG_SRC)/BlueMatter/util/analysis/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/util/analysis/source_ship/
+.include <$(RULES_MK)>

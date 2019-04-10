@@ -1,0 +1,12 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  DVSFile.hpp \
+  ExternalDatagram.hpp \
+  RTPFile.hpp \
+  Makefile.ode
+DVSFile.hpp_IDIR = $(BG_SRC)/BlueMatter/io/include/
+ExternalDatagram.hpp_IDIR = $(BG_SRC)/BlueMatter/io/include/
+ExternalDatagramEmitters.hpp_IDIR = $(BG_SRC)/BlueMatter/io/include/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/io/include/source_ship/
+.include <$(RULES_MK)>

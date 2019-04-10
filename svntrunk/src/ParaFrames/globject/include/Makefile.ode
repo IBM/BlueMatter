@@ -1,0 +1,9 @@
+INCLUDES = \
+        globject.hpp \
+
+EXPINCDIR = /usr/include/Pk/
+
+IDIR = $(BG_INCLUDE)/Pk/
+ILIST = $(INCLUDES)
+
+.include <$(RULES_MK)>

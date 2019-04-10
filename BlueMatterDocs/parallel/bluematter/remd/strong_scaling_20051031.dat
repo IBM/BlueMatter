@@ -1,0 +1,11 @@
+# strong scaling data for REMD using 67Katom lambda repressor
+# column 1: number of replicas
+# column 2: time/ts (seconds)
+# column 3: total node count
+1	0.00821301 	4096
+4	0.013150	4096
+8	0.020047	4096
+16	0.034007	4096
+32	0.061501	4096
+64	0.105566	4096
+128	0.214011	4096

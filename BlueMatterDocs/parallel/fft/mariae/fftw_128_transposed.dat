@@ -1,0 +1,16 @@
+# Performance numbers of 128^3 fftw on 512W 
+# Driver used /bgl/BlueLight/DRV320_2004-040726/x86
+# compiler lipid. (version 6.0)
+# This the average cpu time for the 10 time steps.
+
+1   111   0.649635
+2   112   0.421688
+3   122   0.258562
+8   222   0.143566
+16  422   0.0736845
+32  442   0.0370641
+64  444   0.0218506
+128 844   0.0107866
+256 884   0.0107074
+512 888   0.0107563
+

@@ -1,0 +1,60 @@
+InstallEntity
+{
+
+  EntityInfo
+  {
+    entityName  	= RTE_ENTITY_NAME;
+	fullEntityName 	= [ RTE_FULL_ENTITY_NAME ] ;
+	description 	= "db2 run-time executables" ;
+	category 		= 'application_rte' ;
+    version     	= VERSION;
+    release     	= RELEASE;
+    maintLevel  	= MAINTLEVEL;
+    fixLevel    	= FIXLEVEL;
+    language    	= 'en_us';
+    content     	= 'USR';
+    insList     	= [ < bluegene.db2.rte.il > ];
+  }
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#ifdef rios_aix_4
+    osName         = [ "rios_aix"];
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+  LinkInfo
+  {
+    immChildFiles = [
+    #define PACKAGE_DIRECTORY(directory) < MKPATH(INSTALLSRC, directory) >
+	#define PACKAGE_FILE(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+	#define PACKAGE_FILE_EXEC(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+	#define PACKAGE_FILE_SETUID(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+  	#include <cmf/db2_rte.files>
+  	#undef PACKAGE_DIRECTORY
+	#undef PACKAGE_FILE
+	#undef PACKAGE_FILE_EXEC
+	#undef PACKAGE_FILE_SETUID
+  	                ];
+     parent = PACKAGE_ENTITY_NAME ;
+  }
+
+
+}

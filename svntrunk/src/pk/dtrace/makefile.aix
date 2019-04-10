@@ -1,0 +1,11 @@
+# Makefile for GFE trace analysis tool
+#
+
+CMSCMPDIRVALUE=foxfm/dtrace
+
+include $(BASE)/makedef.aix
+
+all: bins objs
+
+.DEFAULT::
+	+cd src; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@

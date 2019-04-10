@@ -1,0 +1,18 @@
+BG_AUXILIARY = 1
+INCLUDES = \
+  types.hpp \
+  DB2Gateway.hpp \
+  utils.hpp \
+  hashfunc.hpp \
+
+EXPINCDIR = /usr/include/inmemdb/
+
+ILIST =       $(INCLUDES)
+IDIR    = $(BG_INCLUDE)/inmemdb/
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./inmemdb/utils/include/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,6 @@
+
+INCLUDES = bgl_perfctr_define.h
+
+EXPINCDIR = /usr/include/
+
+.include <$(RULES_MK)>

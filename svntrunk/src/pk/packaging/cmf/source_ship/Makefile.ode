@@ -1,0 +1,18 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  pk.entity \
+  pk_adt.entity \
+  pk_adt.files \
+  pk_cmf.c \
+  compids.table \
+  pcd.conf \
+  Makefile.ode
+pk.entity_IDIR = $(BG_SRC)/pk/packaging/cmf/
+pk_adt.entity_IDIR = $(BG_SRC)/pk/packaging/cmf/
+pk_adt.files_IDIR = $(BG_SRC)/pk/packaging/cmf/
+pk_cmf.c_IDIR = $(BG_SRC)/pk/packaging/cmf/
+compids.table_IDIR = $(BG_SRC)/pk/packaging/cmf/
+pcd.conf_IDIR = $(BG_SRC)/pk/packaging/cmf/
+Makefile.ode_IDIR = $(BG_SRC)/pk/packaging/cmf/source_ship/
+.include <$(RULES_MK)>

@@ -1,0 +1,13 @@
+INCLUDES = apc.c apc_scan.c upc.c Makefile
+
+EXPINCDIR = /usr/src/apc/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_SRC)
+
+.if $(CONTEXT) == "bgl_cnk_1"
+OBJECTS = apc$(OBJ_SUFF) upc$(OBJ_SUFF) bgl_perfctr$(OBJ_SUFF) bgl_perfctr_counters$(OBJ_SUFF)
+.endif
+
+.include <$(RULES_MK)>

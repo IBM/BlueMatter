@@ -1,0 +1,414 @@
+BG_AUXILIARY = DB2
+
+OFILES = \
+  bootstrap${OBJ_SUFF} \
+  rmsd${OBJ_SUFF} \
+  bmtread${OBJ_SUFF} \
+  bmtdmatrix${OBJ_SUFF} \
+  bmtcorrelation${OBJ_SUFF} \
+  bmtcovariance${OBJ_SUFF} \
+  bmtpos2float${OBJ_SUFF} \
+  bootstrap${OBJ_SUFF} \
+  MolecularSystem${OBJ_SUFF} \
+  ConnectivityString${OBJ_SUFF} \
+  BMT${OBJ_SUFF} \
+  SimulationState${OBJ_SUFF} \
+  SimulationParser${OBJ_SUFF} \
+  bmtrowmajormatrix${OBJ_SUFF} \
+  bmtcolumnmajormatrix${OBJ_SUFF} \
+  bmtlowerpackedsymmetricmatrix${OBJ_SUFF} \
+  bmteigensystem${OBJ_SUFF} \
+  #DataReceiverDB2${OBJ_SUFF} \
+  #DataReceiverMomentumMonitor${OBJ_SUFF} \
+  Frame${OBJ_SUFF} \
+  TableFile${OBJ_SUFF} \
+  Column${OBJ_SUFF} \
+  LSQ${OBJ_SUFF} \
+  levmarq${OBJ_SUFF} \
+#	WriteAtomList${OBJ_SUFF} \
+#	EndtoEndDist${OBJ_SUFF} \
+#	ResPairDists${OBJ_SUFF} \
+#	ResWithWater${OBJ_SUFF} \
+#	CHCorrelation${OBJ_SUFF} \
+#	ListWithWater${OBJ_SUFF} \
+
+# the object files (as targets)
+OBJECTS = \
+  MDLogger${OBJ_SUFF} \
+  MDSender${OBJ_SUFF} \
+  MDMomentumLogger${OBJ_SUFF} \
+  MDEquipartitionLogger${OBJ_SUFF} \
+  MDQuadraticCons${OBJ_SUFF} \
+  #MDLipidLogger${OBJ_SUFF} \
+  #MDSOPELogger${OBJ_SUFF} \
+  #MDSDPCCHOLLogger${OBJ_SUFF} \
+  MDSnapshotDumper${OBJ_SUFF} \
+  DataReceiverDB2${OBJ_SUFF} \
+  DataReceiverMomentumMonitor${OBJ_SUFF} \
+  DataReceiverEquipartitionMonitor${OBJ_SUFF} \
+  SiteGroupParser${OBJ_SUFF} \
+  dvs2txt${OBJ_SUFF} \
+  dvs2const${OBJ_SUFF} \
+  dvs2mesh${OBJ_SUFF} \
+  dvsdiff${OBJ_SUFF} \
+  rdgdiff${OBJ_SUFF} \
+  PacketDumper${OBJ_SUFF} \
+  #dvs2newdvs${OBJ_SUFF} \
+  rmsd${OBJ_SUFF} \
+  bmt2txt${OBJ_SUFF} \
+  bmtmerge${OBJ_SUFF} \
+  bmt2timeseries${OBJ_SUFF} \
+  bmt2COM${OBJ_SUFF} \
+  bmtmapintobox${OBJ_SUFF} \
+  bmtmodify${OBJ_SUFF} \
+  #bmt2txt_hairpin_HB${OBJ_SUFF} \
+  bmtdmatrix${OBJ_SUFF} \
+  bmtcorrelation${OBJ_SUFF} \
+  bmtcovariance${OBJ_SUFF} \
+  #testbmtread${OBJ_SUFF} \
+  #testbmtdmatrixcorrelation${OBJ_SUFF} \
+  #testbmtposcorrelation${OBJ_SUFF} \
+  pdb2bmt${OBJ_SUFF} \
+  TimeStamper${OBJ_SUFF} \
+  SimpleTimeStamper${OBJ_SUFF} \
+  TimeStampAnalysis${OBJ_SUFF} \
+  TraceFileReader${OBJ_SUFF} \
+  TraceAnalyser${OBJ_SUFF} \
+  bmt2pdb${OBJ_SUFF} \
+  rdg2bmtCOM${OBJ_SUFF} \
+  rdg2bmt${OBJ_SUFF} \
+  rdg2dx${OBJ_SUFF} \
+  rdg2water${OBJ_SUFF} \
+  KillTimeStamps${OBJ_SUFF} \
+  #testmatrix${OBJ_SUFF} \
+  binutilstest${OBJ_SUFF} \
+  bmtpos2float${OBJ_SUFF} \
+  dvs2restart$(OBJ_SUFF) \
+  dvs2cpp$(OBJ_SUFF) \
+  rdgdeviation${OBJ_SUFF} \
+  OrbTest${OBJ_SUFF} \
+  WriteAtomList${OBJ_SUFF} \
+#	EndtoEndDist${OBJ_SUFF} \
+#	ResPairDists${OBJ_SUFF} \
+#	ResWithWater${OBJ_SUFF} \
+#	CHCorrelation${OBJ_SUFF} \
+#	ListWithWater${OBJ_SUFF} \
+
+# the unrecognized files in this directory (not used)
+UNKNOWN_FILES += baixsmp
+
+CFLAGS += -D NO_PK_PLATFORM
+
+.if !empty(CONTEXT:Mppc_linux_*)
+LDFLAGS += -Wl,-zmuldefs
+.endif
+
+LIBRARIES = $(LIB_PREF)analysis$(LIB_SUFF)
+
+LIBS += \
+  $(LIB_PREF)analysis$(LIB_SUFF) \
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+dvs2restart$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDMomentumLogger$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+dvs2mesh$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDLipidLogger$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDEquipartitionLogger$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#AK Added:
+rdg2bmt$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDSnapshotDumper$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDLogger$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDSender$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+dvs2txt$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+rdgdiff$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+dvs2const$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+binutilstest$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+rdg2water$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+PacketDumper$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+KillTimeStamps$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+rdg2bmtCOM$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+dvsdiff$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+TimeStamper$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+rdg2dx$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+pdb2bmt$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+SimpleTimeStamper$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+TimeStampAnalysis$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+TraceFileReader$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmtmodify$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+TraceAnalyser$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmt2txt$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmtmerge$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmt2timeseries$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmt2COM$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmtmapintobox$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+rdgdeviation$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+bmt2pdb$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+dvs2cpp$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+OrbTest$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+MDQuadraticCons$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+WriteAtomList$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#EndtoEndDist$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#ResPairDists$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#ResWithWater$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#CHCorrelation$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+#ListWithWater$(PROG_SUFF)_LIBS = $(LIB_PREF)analysis$(LIB_SUFF) $(LIB_PREF)db2chem$(LIB_SUFF) $(LIB_PREF)db2cli$(LIB_SUFF)
+
+
+dvs2restart$(PROG_SUFF)_OFILES = \
+  dvs2restart$(OBJ_SUFF) \
+  DataReceiverDB2$(OBJ_SUFF)
+
+MDMomentumLogger$(PROG_SUFF)_OFILES = \
+  MDMomentumLogger$(OBJ_SUFF) \
+  DataReceiverMomentumMonitor$(OBJ_SUFF) \
+  DataReceiverDB2$(OBJ_SUFF)
+
+MDEquipartitionLogger$(PROG_SUFF)_OFILES = \
+  MDEquipartitionLogger$(OBJ_SUFF) \
+  DataReceiverEquipartitionMonitor$(OBJ_SUFF) \
+  SiteGroupParser${OBJ_SUFF} \
+  DataReceiverDB2$(OBJ_SUFF)
+
+MDLipidLogger$(PROG_SUFF)_OFILES = \
+  MDLipidLogger$(OBJ_SUFF) \
+  DataReceiverDB2$(OBJ_SUFF)
+
+
+dvs2mesh$(PROG_SUFF)_OFILES = \
+  dvs2mesh$(OBJ_SUFF) \
+  DataReceiverDB2$(OBJ_SUFF)
+
+
+MDLogger$(PROG_SUFF)_OFILES = MDLogger$(OBJ_SUFF)
+MDSender$(PROG_SUFF)_OFILES = MDSender$(OBJ_SUFF)
+MDSOPELogger$(PROG_SUFF)_OFILES = MDSOPELogger$(OBJ_SUFF)
+MDSDPCCHOLLogger$(PROG_SUFF)_OFILES = MDSDPCCHOLLogger$(OBJ_SUFF)
+MDSnapshotDumper$(PROG_SUFF)_OFILES = MDSnapshotDumper$(OBJ_SUFF)
+MDQuadraticCons$(PROG_SUFF)_OFILES = MDQuadraticCons$(OBJ_SUFF)
+binutilstest$(PROG_SUFF)_OFILES = binutilstest$(OBJ_SUFF)
+dvs2txt$(PROG_SUFF)_OFILES = dvs2txt$(OBJ_SUFF)
+dvs2const$(PROG_SUFF)_OFILES = dvs2const$(OBJ_SUFF)
+rdgdiff$(PROG_SUFF)_OFILES = rdgdiff$(OBJ_SUFF)
+rdg2water$(PROG_SUFF)_OFILES = rdg2water$(OBJ_SUFF)
+KillTimeStamps$(PROG_SUFF)_OFILES = KillTimeStamps$(OBJ_SUFF)
+PacketDumper$(PROG_SUFF)_OFILES = PacketDumper$(OBJ_SUFF)
+dvs2newdvs$(PROG_SUFF)_OFILES = dvs2newdvs$(OBJ_SUFF)
+dvsdiff$(PROG_SUFF)_OFILES = dvsdiff$(OBJ_SUFF)
+rdg2bmt$(PROG_SUFF)_OFILES = rdg2bmt$(OBJ_SUFF)
+rdg2bmtCOM$(PROG_SUFF)_OFILES = rdg2bmtCOM$(OBJ_SUFF)
+rdg2dx$(PROG_SUFF)_OFILES = rdg2dx$(OBJ_SUFF)
+pdb2bmt$(PROG_SUFF)_OFILES = pdb2bmt$(OBJ_SUFF)
+TimeStamper$(PROG_SUFF)_OFILES = TimeStamper$(OBJ_SUFF)
+SimpleTimeStamper$(PROG_SUFF)_OFILES = SimpleTimeStamper$(OBJ_SUFF)
+TimeStampAnalysis$(PROG_SUFF)_OFILES = TimeStampAnalysis$(OBJ_SUFF)
+TraceFileReader$(PROG_SUFF)_OFILES = TraceFileReader$(OBJ_SUFF)
+TraceAnalyser$(PROG_SUFF)_OFILES = TraceAnalyser$(OBJ_SUFF)
+testbmtread$(PROG_SUFF)_OFILES = testbmtread$(OBJ_SUFF)
+bmt2txt$(PROG_SUFF)_OFILES = bmt2txt$(OBJ_SUFF)
+bmtmodify$(PROG_SUFF)_OFILES = bmtmodify$(OBJ_SUFF)
+bmtmerge$(PROG_SUFF)_OFILES = bmtmerge$(OBJ_SUFF)
+bmt2timeseries$(PROG_SUFF)_OFILES = bmt2timeseries$(OBJ_SUFF)
+bmt2COM$(PROG_SUFF)_OFILES = bmt2COM$(OBJ_SUFF)
+bmtmapintobox$(PROG_SUFF)_OFILES = bmtmapintobox$(OBJ_SUFF)
+bmt2txt_hairpin_HB$(PROG_SUFF)_OFILES = bmt2txt_hairpin_HB$(OBJ_SUFF)
+bmt2pdb$(PROG_SUFF)_OFILES = bmt2pdb$(OBJ_SUFF)
+testbmtdmatrixcorrelation$(PROG_SUFF)_OFILES = testbmtdmatrixcorrelation$(OBJ_SUFF)
+testbmtposcorrelation$(PROG_SUFF)_OFILES = testbmtposcorrelation$(OBJ_SUFF)
+testmatrix$(PROG_SUFF)_OFILES = testmatrix$(OBJ_SUFF)
+rdgdeviation$(PROG_SUFF)_OFILES = rdgdeviation$(OBJ_SUFF)
+dvs2cpp$(PROG_SUFF)_OFILES = dvs2cpp$(OBJ_SUFF)
+OrbTest$(PROG_SUFF)_OFILES = OrbTest$(OBJ_SUFF)
+WriteAtomList$(PROG_SUFF)_OFILES = WriteAtomList$(OBJ_SUFF)
+#EndtoEndDist$(PROG_SUFF)_OFILES = EndtoEndDist$(OBJ_SUFF)
+#ResPairDists$(PROG_SUFF)_OFILES = ResPairDists$(OBJ_SUFF)
+#ResWithWater$(PROG_SUFF)_OFILES = ResWithWater$(OBJ_SUFF)
+#CHCorrelation$(PROG_SUFF)_OFILES = CHCorrelation$(OBJ_SUFF)
+#ListWithWater$(PROG_SUFF)_OFILES = ListWithWater$(OBJ_SUFF)
+
+testmatrix_LDFLAGS += -lessl
+testbmtdmatrixcorrelation_LDFLAGS += -lessl
+testbmtposcorrelation_LDFLAGS += -lessl
+
+PROGRAMS = \
+  MDLogger$(PROG_SUFF) \
+  MDSender$(PROG_SUFF) \
+  #MDLipidLogger$(PROG_SUFF) \
+  #MDSOPELogger$(PROG_SUFF) \
+  #MDSDPCCHOLLogger$(PROG_SUFF) \
+  MDSnapshotDumper$(PROG_SUFF) \
+  MDMomentumLogger$(PROG_SUFF) \
+  MDEquipartitionLogger$(PROG_SUFF) \
+  MDQuadraticCons$(PROG_SUFF) \
+  binutilstest$(PROG_SUFF) \
+  dvs2restart$(PROG_SUFF) \
+  dvs2txt$(PROG_SUFF) \
+  dvs2const$(PROG_SUFF) \
+  dvs2mesh$(PROG_SUFF) \
+  rdgdiff$(PROG_SUFF) \
+  rdg2water$(PROG_SUFF) \
+  KillTimeStamps$(PROG_SUFF) \
+  PacketDumper$(PROG_SUFF) \
+  #dvs2newdvs$(PROG_SUFF) \
+  dvsdiff$(PROG_SUFF) \
+  rdg2bmtCOM$(PROG_SUFF) \
+  rdg2bmt$(PROG_SUFF) \
+  rdg2dx$(PROG_SUFF) \
+  pdb2bmt$(PROG_SUFF) \
+  TimeStamper$(PROG_SUFF) \
+  SimpleTimeStamper$(PROG_SUFF) \
+  TimeStampAnalysis$(PROG_SUFF) \
+  TraceFileReader$(PROG_SUFF) \
+  TraceAnalyser$(PROG_SUFF) \
+  #testbmtread$(PROG_SUFF) \
+  bmt2txt$(PROG_SUFF) \
+  bmtmodify$(PROG_SUFF) \
+  bmtmerge$(PROG_SUFF) \
+  bmt2timeseries$(PROG_SUFF) \
+  bmt2COM$(PROG_SUFF) \
+  bmtmapintobox$(PROG_SUFF) \
+  #bmt2txt_hairpin_HB$(PROG_SUFF) \
+  bmt2pdb$(PROG_SUFF) \
+  #testbmtdmatrixcorrelation$(PROG_SUFF) \
+  #testbmtposcorrelation$(PROG_SUFF) \
+  #testmatrix$(PROG_SUFF) \
+  rdgdeviation${PROG_SUFF} \
+  dvs2cpp${PROG_SUFF} \
+  OrbTest${PROG_SUFF} \
+  WriteAtomList${PROG_SUFF} \
+#	EndtoEndDist${PROG_SUFF} \
+#	ResPairDists${PROG_SUFF} \
+#	ResWithWater${PROG_SUFF} \
+#	CHCorrelation${PROG_SUFF} \
+#	ListWithWater${PROG_SUFF} \
+
+ILIST = $(PROGRAMS) README
+
+ILIST += \
+  arrayread.py \
+  energytest.py \
+  MultiRun.py \
+  MultiRunBase.py \
+  MDPlot.py \
+  MDPlot2.py \
+  plot.py \
+  polyfit.py \
+  runlist.py \
+  utils.py \
+  var3.py \
+  MultiMonitor.py \
+  ProgressBar.py \
+  analyzeconservation.py \
+  testanalyze.py \
+  runresults.py \
+  P3MEEwald.py \
+  SimpleRunResults.py \
+  multianalyze.py \
+  CleanResults.py \
+  LaunchRun \
+  LaunchRun.bgl \
+  DoBuild \
+  DoTestingBuild.py \
+  DoPassFailSummary \
+  DualTiming.py \
+  MDGraf.py \
+  MultiWeb.py \
+  killpidtree.ksh \
+  QuadraticAnalysis.py \
+  QuadraticPlot.py \
+  quadraticanalyze.py \
+
+arrayread.py_IDIR = $(BG_BIN)/analysis/
+energytest.py_IDIR = $(BG_BIN)/analysis/
+polyfit.py_IDIR = $(BG_BIN)/analysis/
+runlist.py_IDIR = $(BG_BIN)/analysis/
+var3.py_IDIR = $(BG_BIN)/analysis/
+MDLogger_IDIR = $(BG_BIN)/analysis/
+MDSender_IDIR = $(BG_BIN)/analysis/
+MDSnapshotDumper_IDIR = $(BG_BIN)/analysis/
+MDSOPELogger_IDIR = $(BG_BIN)/analysis/
+MDSDPCCHOLLogger_IDIR = $(BG_BIN)/analysis/
+MDLipidLogger_IDIR = $(BG_BIN)/analysis/
+MDMomentumLogger_IDIR = $(BG_BIN)/analysis/
+MDEquipartitionLogger_IDIR = $(BG_BIN)/analysis/
+MDQuadraticCons_IDIR = $(BG_BIN)/analysis/
+binutilstest_IDIR = $(BG_BIN)/analysis/
+dvs2restart_IDIR = $(BG_BIN)/utils/
+dvs2txt_IDIR = $(BG_BIN)/utils/
+dvs2cpp_IDIR = $(BG_BIN)/utils/
+dvs2const_IDIR = $(BG_BIN)/utils/
+dvs2mesh_IDIR = $(BG_BIN)/utils/
+rdgdiff_IDIR = $(BG_BIN)/utils/
+TimeStamper_IDIR = $(BG_BIN)/utils/
+SimpleTimeStamper_IDIR = $(BG_BIN)/utils/
+TimeStampAnalysis_IDIR = $(BG_BIN)/utils/
+TraceFileReader_IDIR = $(BG_BIN)/utils/
+TraceAnalyser_IDIR = $(BG_BIN)/utils/
+rdg2water_IDIR = $(BG_BIN)/utils/
+KillTimeStamps_IDIR = $(BG_BIN)/utils/
+PacketDumper_IDIR = $(BG_BIN)/analysis/
+#dvs2newdvs_IDIR = $(BG_BIN)/utils/
+dvsdiff_IDIR = $(BG_BIN)/utils/
+MultiRun.py_IDIR = $(BG_BIN)/utils/
+MultiRunBase.py_IDIR = $(BG_BIN)/utils/
+MultiMonitor.py_IDIR = $(BG_BIN)/utils/
+CleanResults.py_IDIR = $(BG_BIN)/utils/
+ProgressBar.py_IDIR = $(BG_BIN)/utils/
+LaunchRun_IDIR = $(BG_BIN)/utils/
+LaunchRun.bgl_IDIR = $(BG_BIN)/utils/
+DoBuild_IDIR = $(BG_BIN)/utils/
+DoTestingBuild.py_IDIR = $(BG_BIN)/utils/
+DoPassFailSummary_IDIR = $(BG_BIN)/analysis/
+rdg2bmtCOM_IDIR = $(BG_BIN)/utils/
+rdg2bmt_IDIR = $(BG_BIN)/utils/
+rdg2dx_IDIR = $(BG_BIN)/utils/
+pdb2bmt_IDIR = $(BG_BIN)/utils/
+bmt2txt_IDIR = $(BG_BIN)/utils/
+bmtmodify_IDIR = $(BG_BIN)/utils/
+bmtmerge_IDIR = $(BG_BIN)/utils/
+bmt2timeseries_IDIR = $(BG_BIN)/utils/
+bmt2COM_IDIR = $(BG_BIN)/utils/
+bmtmapintobox_IDIR = $(BG_BIN)/utils/
+bmt2txt_hairpin_HB_IDIR = $(BG_BIN)/utils/
+bmt2pdb_IDIR = $(BG_BIN)/utils/
+MDPlot.py_IDIR = $(BG_BIN)/analysis/
+MDPlot2.py_IDIR = $(BG_BIN)/analysis/
+plot.py_IDIR = $(BG_BIN)/analysis/
+utils.py_IDIR = $(BG_BIN)/analysis/
+analyzeconservation.py_IDIR = $(BG_BIN)/analysis/
+polyfit.py_IDIR = $(BG_BIN)/analysis/
+testanalyze.py_IDIR = $(BG_BIN)/analysis/
+runresults.py_IDIR = $(BG_BIN)/analysis/
+P3MEEwald.py_IDIR = $(BG_BIN)/analysis/
+SimpleRunResults.py_IDIR = $(BG_BIN)/analysis/
+multianalyze.py_IDIR = $(BG_BIN)/analysis/
+DualTiming.py_IDIR = $(BG_BIN)/analysis/
+MDGraf.py_IDIR = $(BG_BIN)/analysis/
+MultiWeb.py_IDIR = $(BG_BIN)/analysis/
+killpidtree.ksh_IDIR = $(BG_BIN)/utils/
+QuadraticAnalysis.py_IDIR = $(BG_BIN)/analysis/
+QuadraticPlot.py_IDIR = $(BG_BIN)/analysis/
+quadraticanalyze.py_IDIR = $(BG_BIN)/analysis/
+README_IDIR = $(BG_BIN)/analysis/
+testbmtread_IDIR = $(BG_BIN)/utils/
+testbmtdmatrixcorrelation_IDIR = $(BG_BIN)/utils/
+testbmtposcorrelation_IDIR = $(BG_BIN)/utils/
+testmatrix_IDIR = $(BG_BIN)/utils/
+rdgdeviation_IDIR = $(BG_BIN)/utils/
+OrbTest_IDIR = $(BG_BIN)/utils/
+WriteAtomList_IDIR = $(BG_BIN)/utils/
+#EndtoEndDist_IDIR = $(BG_BIN)/utils/
+#ResPairDists_IDIR = $(BG_BIN)/utils/
+#ResWithWater_IDIR = $(BG_BIN)/utils/
+#CHCorrelation_IDIR = $(BG_BIN)/utils/
+#ListWithWater_IDIR = $(BG_BIN)/utils/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/analysis/src/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+CMF_PARENT = bluegene.bluematter.rte
+.include <$(RULES_MK)>

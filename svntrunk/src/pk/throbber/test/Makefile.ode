@@ -1,0 +1,7 @@
+ILIST = \
+  PktThrobberTest.cpp \
+  comp_PktThrobberTest.ksh  
+  
+IDIR = $(BG_SRC)/pk/throbber/test/
+
+.include <$(RULES_MK)>

@@ -1,0 +1,21 @@
+EXPINC_SUBDIRS = \
+ include src test 
+
+# Cross-compiling on a 'fen', we prebuild the FFT3D library
+# In other contexts (native on FEN or native on AIX) we pick up the prebuilt library
+.if !empty(CONTEXT:Mbgl_cnk_*)
+EXPINC_SUBDIRS += \
+libspi \
+ libspitest mpitest \
+oco-include oco-src
+
+.else
+EXPINC_SUBDIRS += oco-lib
+.endif
+
+
+OBJECTS_SUBDIRS = $(EXPINC_SUBDIRS)
+EXPLIB_SUBDIRS = $(EXPINC_SUBDIRS) 
+SUBDIRS = $(EXPINC_SUBDIRS)
+
+.include <$(RULES_MK)>

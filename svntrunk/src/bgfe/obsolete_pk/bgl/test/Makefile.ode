@@ -1,0 +1,4 @@
+OBJECTS = \
+	torusdevloop$(OBJ_SUFF) \
+
+.include <$(RULES_MK)>

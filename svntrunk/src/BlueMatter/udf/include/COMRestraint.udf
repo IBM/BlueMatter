@@ -1,0 +1,110 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void COMRestraint(
+       MDVM &aMDVM,
+       double k,
+       double z0
+       )
+{
+  XYZ SumPositionTimesMass;
+
+  XYZ CenterOfMassPosition[ 2 ];
+  double TotalMass[2];
+      
+  for( int MolOrd = 0; MolOrd < 2; MolOrd++ )
+    {
+    SumPositionTimesMass.Zero();
+    TotalMass[ MolOrd ] = 0.0;
+    for( int SiteIndex = 0; SiteIndex < aMDVM.GetMoleculeSiteCount( MolOrd ); SiteIndex++ )
+      {
+      double SiteMass = aMDVM.GetMass( MolOrd, SiteIndex );
+      
+      XYZ Pos = aMDVM.GetPosition( MolOrd, SiteIndex );
+      
+      SumPositionTimesMass  +=  Pos * SiteMass;
+      TotalMass[ MolOrd ] += SiteMass;
+      }
+    
+    CenterOfMassPosition[ MolOrd ] = SumPositionTimesMass / TotalMass[ MolOrd ];
+    }
+
+  XYZ DimensionVector = aMDVM.GetDimensionVector();
+
+  XYZ DiffCenterOfMassPosition = CenterOfMassPosition[ 0 ] - CenterOfMassPosition[ 1 ];
+
+  // Image X
+  while( DiffCenterOfMassPosition.mX > 0.5 * DimensionVector.mX )
+    {
+    DiffCenterOfMassPosition.mX -= DimensionVector.mX;
+    }
+
+  while( DiffCenterOfMassPosition.mX < -0.5 * DimensionVector.mX )
+    {
+    DiffCenterOfMassPosition.mX += DimensionVector.mX;
+    }
+
+  // Image Y
+  while( DiffCenterOfMassPosition.mY > 0.5 * DimensionVector.mY )
+    {
+    DiffCenterOfMassPosition.mY -= DimensionVector.mY;
+    }
+
+  while( DiffCenterOfMassPosition.mY < -0.5 * DimensionVector.mY )
+    {
+    DiffCenterOfMassPosition.mY += DimensionVector.mY;
+    }
+
+  // Image Z
+  while( DiffCenterOfMassPosition.mZ > 0.5 * DimensionVector.mZ )
+    {
+    DiffCenterOfMassPosition.mZ -= DimensionVector.mZ;
+    }
+
+  while( DiffCenterOfMassPosition.mZ < -0.5 * DimensionVector.mZ )
+    {
+    DiffCenterOfMassPosition.mZ += DimensionVector.mZ;
+    }
+  
+  XYZ fz = -Params.k * DiffCenterOfMassPosition;
+
+  XYZ force;
+  force.Zero();
+
+  for( int SiteIndex = 0; SiteIndex < aMDVM.GetMoleculeSiteCount( 0 ); SiteIndex++ )
+    {
+    force = fz * aMDVM.GetMass( 0, SiteIndex ) / TotalMass[ 0 ];
+    aMDVM.ReportForce( 0, SiteIndex, force );  // This should add to the net force on the site
+    }
+
+  for( int SiteIndex = 0; SiteIndex < aMDVM.GetMoleculeSiteCount( 1 ); SiteIndex++ )
+    {
+    force = -1.0 * fz * aMDVM.GetMass( 1, SiteIndex ) / TotalMass[ 1 ];
+    aMDVM.ReportForce( 1, SiteIndex, force );  // This should add to the net force on the site
+    }
+  
+  double DistanceSqr = DiffCenterOfMassPosition.LengthSquared();
+
+  double E = 0.5 * Params.k * DistanceSqr;
+  
+  aMDVM.ReportEnergy( E );
+
+  return;
+}
+

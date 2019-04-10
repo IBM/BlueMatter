@@ -1,0 +1,23 @@
+# This places the prebuilt lib from the source tree into the build output
+
+INCLUDES = libocofft3d.rts.a \
+   libocofft3dmpi.rts.a \
+   libocofft3dessl.rts.a \
+   libocofft3dmpiessl.rts.a
+   
+.if defined(PKACTORS)
+   INCLUDES += \
+   libocofft3dPk.rts.a \
+   libocofft3dPkessl.rts.a
+   
+.endif   
+   
+   
+
+EXPINCDIR = /usr/lib/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_TGTLIB)/
+
+.include <$(RULES_MK)>

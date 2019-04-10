@@ -1,0 +1,21 @@
+# FFT data taken on DD2.0 700MHz BG/L prototype
+# using the collective-based implementation
+# and compared with port of FFTW to BG/L
+# FFT size: 128 x 128 x 128
+# All measurements were made using the machine as a mesh
+# Column 1: Node count
+# Column 2: volumetric fft time (seconds)
+# Column 3: FFTW time (seconds)
+1	1.12374e+00 	 0.710351
+2	6.12707e-01 	 0.539587
+4	3.4593e-01 	 0.36584
+8	1.88114e-01	 0.218037
+16	8.5758e-02	 0.1133
+32	4.386e-02	 0.0575101
+64	2.3125e-02	 0.0352162
+128	1.2721e-02 	 0.0176044
+256	6.543e-03	 0.0181547
+512 	4.4511e-03 	 0.017468
+1024 	3.853e-03	 0.0253282
+2048	4.471e-03	0.0249197
+		

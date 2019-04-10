@@ -1,0 +1,11 @@
+echo $0
+echo $1
+echo $2
+echo $3
+echo $4
+echo $5
+# NOTE: XLDB won't find files in DFS.  Set GFEBUILDROOT to a local files system if you want source debuggine.
+echo $GFEBUILDROOT
+#if (( $2 == 0 )) then
+# xldb -bw  -a $1 -title $2 $5  -i14 -i15 -i23 -I$../fft/pk
+#fi

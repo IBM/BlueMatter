@@ -1,0 +1,25 @@
+
+#-DPKFXLOG \
+#-DPKFXLOG_ALL \
+
+$GFESOURCEROOT/bgfe/build.ksh
+mpCC_r \
+-DPKFXLOG \
+-DPKFXLOG_ALL \
+-g \
+-DNDEBUG \
+-qarch=ppcgr -qtune=pwr3 \
+-qnolm \
+-qsource \
+-qlist \
+-DDATAGRAM_SIZE=1024 \
+-lpthread \
+-DPK_XLC -DPK_AIX -DPK_SMP -DPK_MPI \
+-I$GFEBUILDROOT/include \
+$1.cpp  \
+$GFESOURCEROOT/bgfe/pk/platform/src/platform.cpp \
+$GFESOURCEROOT/bgfe/pk/fxlogger/src/fxlogger.cpp \
+$GFESOURCEROOT/bgfe/pk/reactor/src/mpi_reactor.cpp \
+$GFESOURCEROOT/bgfe/pk/globject/src/globject.cpp \
+-o $1.exe  2>mpi.out
+e mpi.out

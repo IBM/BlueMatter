@@ -1,0 +1,155 @@
+#ifndef RPTREE_HPP_
+#define RPTREE_HPP_
+
+class rptIndexElement {
+public: 	
+	  unsigned int key_byte ;
+	  unsigned int key_shift ;
+	  unsigned int next_key[2] ;  // Set the high bit if it indicates a leaf
+} ;
+
+class rptIndex {
+public:
+	  const unsigned int rid_size ;
+	  const unsigned int record_size ;
+//	  unsigned int data_offset ;
+	  unsigned int root_node ;
+	  unsigned int index_start ;
+	  unsigned int max_tree_depth ;	
+	  const unsigned int mCapacity ;
+	  unsigned int mCount ;
+	  const char * mRecordArray ;
+	  const rptIndexElement * mIndexArray ;
+	  rptIndex(unsigned int aRidSize,
+			  unsigned int aRecordSize,
+			  unsigned int aCapacity,
+			  void * aRecordArray,
+			  void * aIndexArray) : rid_size(aRidSize), 
+			                        record_size(aRecordSize), 
+			                        mCapacity(aCapacity),
+			                        mRecordArray((char *)aRecordArray),
+			                        mIndexArray((char *)aIndexArray),
+			                        root_node(0x80000000),
+			                        index_start(0),
+			                        max_tree_depth(0),
+			                        mCount(0)
+			                        { } ;
+      void * getNextFreeSlot(void) const { return (void *) (mRecordArray+mCount*record_size); }
+      void add(void) ;
+};
+
+void * rptIndex::add(void) 
+{
+	BegLogLine(PKFXLOG_RPT_ADD)
+	  << "rptIndex::add mCount=" << mCount
+	  << " root_node=" << root_node
+	  << EndLogLine ;
+	   unsigned int cand_offset = root_node ;
+
+	   if (0 == mCount)
+	   {
+	      /*
+	       * First node in the tree
+	       */
+		   root_node = 0x80000000 ;
+	   }
+	   else
+	   {
+	     /*
+	      * Scan the tree to find the appropriate data node
+	      */
+		 char * new_rid = mIndexArray+record_size*mCount ;
+		 
+
+	     while (0 == (cand_offset & 0x80000000))
+	     {
+	    	unsigned int cand_index = cand_offset ;
+	        unsigned int candKeyByte = mIndexArray[cand_index].key_byte ;
+	        unsigned int candKeyShift = mIndexArray[cand_index].key_shift ;
+	    	BegLogLine(PKFXLOG_RPT_ADD)
+	    	  << "examining byte " << candKeyByte
+	    	  << " (0x" << new_rid [ candKeyByte ]
+	    	  << ") bit " << candKeyShift
+	    	  << " (" << (new_rid [ candKeyByte ] >> candKeyShift ) & 1)
+	    	  << ")"
+	    	  << " next cand_offset is " << (cand_offset >> 31) << " " (cand_offset & 0x7fffffff)
+	    	  << EndLogLine ;
+	        
+	        DIAG(diag_scan,("examining byte %i bit %i\n",
+	             cand_index -> key_byte ,
+	             cand_index -> key_shift)) ;
+	        cand_offset = mIndexArray[cand_index].next_key [
+	          ( new_rid [ candKeyByte ] >> candKeyShift )
+	            & 1
+	          ] ;
+	     } /* endwhile */
+	     /*
+	      * We have now descended to a data node. Find which is the
+	      * most significant difference bit.
+	      */
+	     cand_rid = PTR(table_shmat_rid_t *,shmat_address,cand_offset) -> rid_field ;
+	     for (rid_x = 0; rid_x < rid_size; rid_x += 1)
+	     {
+	        cand_byte = cand_rid [ rid_x ] ;
+	        new_byte = new_rid [ rid_x ] ;
+	        if (cand_byte != new_byte) break ;
+	     } /* endfor */
+
+	     if (rid_x < rid_size) /* A new key ... */
+	     {
+	       rid_xor = cand_byte ^ new_byte ;
+	       rid_y = hibit[rid_xor] ;
+	       DIAG(diag_scan,("Split at byte %i bit %i from %i\n",rid_x, rid_y, cand_byte)) ;
+	       /*
+	        * Scan from the root again to find the split point
+	        */
+	       split_ofs_ptr = & VAL(table_shmat_head_t,shmat_address,root_node) ;
+	       split_ofs = VAL(table_shmat_head_t,shmat_address,root_node) ;
+
+	       while (split_ofs >= index_start)
+	       {
+	         split_ptr = PTR(table_shmat_index_t *,shmat_address, split_ofs) ;
+	         split_key_byte = split_ptr -> key_byte ;
+	         split_key_shift = split_ptr -> key_shift ;
+	         if (split_key_byte > rid_x
+	             ||
+	            (split_key_byte == rid_x && split_key_shift < rid_y)
+	         ) break ;
+
+	         split_ofs_ptr = & (
+	                      split_ptr -> next_key [
+	          ( new_rid [ split_key_byte ] >> split_key_shift )
+	            & 1
+	          ] ) ;
+	         split_ofs = * split_ofs_ptr ;
+	       } /* endwhile */
+	       /*
+	        * All being well, we should now be pointing at the index to split !
+	        */
+	       free_node_ofs = * free_node_ofs_p ;
+	       free_node_p = PTR(table_shmat_index_t *,shmat_address,free_node_ofs) ;
+	       free_node_p -> key_byte = rid_x ;
+	       free_node_p -> key_shift = rid_y ;
+	       if ((new_byte >> rid_y) & 1)
+	       {
+	          free_node_p -> next_key[0] = split_ofs ;
+	          free_node_p -> next_key[1] = current_record_offset ;
+	       }
+	       else
+	       {
+	          free_node_p -> next_key[1] = split_ofs ;
+	          free_node_p -> next_key[0] = current_record_offset ;
+	       } /* endif */
+	       * split_ofs_ptr = free_node_ofs ;
+	       * free_node_ofs_p = free_node_ofs + sizeof(table_shmat_index_t) ;
+	     }
+	     else
+	     { /* A duplicate key. Ignore for the moment. */
+
+	     } /* endif */
+	   } /* endif */
+	    mCount += 1 ;
+	}
+}
+
+#endif /*RPTREE_HPP_*/

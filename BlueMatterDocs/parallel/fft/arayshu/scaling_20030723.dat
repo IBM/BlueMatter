@@ -1,0 +1,8 @@
+# data collected on 444MHz BG/L hardware on July 23, 2003
+# column 1: node count
+# column 2: elapsed time for 64x64x64 FFT
+# column 3: elapsed time for 128x128x128 FFT
+1	.277456	2.87
+2	.128375	1.46
+8	.032182	.28685
+32	.01074	.06689

@@ -1,0 +1,14 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  README \
+  opls2xml.pl \
+  opls2xml_100501.old.pl \
+  opls2xml_old.pl \
+  Makefile.ode
+README_IDIR = $(BG_SRC)/BlueMatter/xmlgen/oplsaa/
+opls2xml.pl_IDIR = $(BG_SRC)/BlueMatter/xmlgen/oplsaa/
+opls2xml_100501.old.pl_IDIR = $(BG_SRC)/BlueMatter/xmlgen/oplsaa/
+opls2xml_old.pl_IDIR = $(BG_SRC)/BlueMatter/xmlgen/oplsaa/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/xmlgen/oplsaa/source_ship/
+.include <$(RULES_MK)>

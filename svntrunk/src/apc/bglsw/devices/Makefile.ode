@@ -1,0 +1,5 @@
+INCLUDES = bglupcdcr.h bglfpudcr.h BGLGi.h bgldcr.h
+
+EXPINCDIR = /usr/include/ 
+
+.include <$(RULES_MK)>

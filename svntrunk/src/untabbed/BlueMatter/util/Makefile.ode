@@ -1,0 +1,21 @@
+EXPINC_SUBDIRS = \
+ include \
+
+.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || defined(TRY_LINUX_BUILD_ANYWAY)
+
+OBJECTS_SUBDIRS = rdg \
+  analysis \
+  tools \
+  src \
+  
+.endif
+
+SUBDIRS = $(EXPINC_SUBDIRS) \
+    $(OBJECTS_SUBDIRS) \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/util/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,123 @@
+#!/bin/ksh
+
+#-I../../../../export/bluelight_blade_1/usr/include/ \
+#-I/opt/ibmcpp/vacpp/include \
+#-I/usr/include/ \
+
+rm -rf *.a *.o
+
+#rsh lipid -l bgf "cd $PWD && /opt/ibmcmp/vacpp/6.0/bin/xlC  \
+#-c \
+#-I../../../../blade/include/ \
+#-I../include/ \
+#-I/gsa/watgsa/home/b/g/bgf/sb/g/src/../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/include \
+#-I../../../../sysbringup/tree/include/ \
+#-qarch=440 \
+#-DPK_XLC   \
+#-DPK_SMP   \
+#-DPK_BGL   \
+#-DPK_BLADE \
+#-qsuppress=1540-1090:1540-1087:1540-1089:1540-1088 \
+#-qnoeh -qnounwind \
+#-qalign=natural \
+#$*.cpp \
+#"</dev/null
+
+# -I../../../../sysbringup/tree/include/ \
+#-D__cplusplus \
+#-D_BLADE_TYPES_H \
+#-D__cplusplus \
+
+#-+ \
+
+
+rsh lipid -l bgf "cd $PWD && /opt/ibmcmp/vacpp/6.0/bin/blrts_xlC \
+-DPK_SHMEM \
+-DUSE_2_CORES_FOR_FFT \
+-D__BLADE_WORKAROUNDS_H \
+-D__KERNEL__ \
+-DHAVE_SIMLIB \
+-I../../../../blade/include_SimLib \
+-I../../../../blade/include_SimLib/linux \
+-qnostdinc \
+-c \
+-I../../../../blade/include/ \
+-I../../../../blade/include/gcc \
+-I../include/ \
+-I/gsa/watgsa/home/b/g/bgf/sb/g/src/../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/include \
+-I../../../../sysbringup/generic/include/ \
+-I../../../../sysbringup/tree/include/ \
+-DEXCEPTIONS_UNAVAILABLE \
+-DPK_BLADE \
+-DPK_BGL \
+-DPKFXLOG \
+-DPKFXLOG_ALL \
+-DNDEBUG \
+-DPK_PARALLEL \
+-DPKTRACE_ON \
+-DPK_XLC \
+-DARCH_HAS_FSEL \
+-DPKTRACE_TUNE=1 \
+-DFFT3D_SPINWAIT \
+-DRDG_TO_FXLOGGER \
+-qarch=440 \
+-qnoeh \
+-qnostrict \
+-qsource \
+-qdebug=except \
+-qpriority=0 \
+-qlist \
+-qstaticinline \
+-qalign=natural \
+-qmaxmem=-1 \
+-qnolm \
+-qnounwind \
+-qsuppress=1540-1087:1540-1089:1540-1088:1540-1090 \
+-qalign=natural \
+-I. \
+/gsa/watgsa/home/b/g/bgf/sb/g/src/../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/src/pk/fxlogger.cpp \
+/gsa/watgsa/home/b/g/bgf/sb/g/src/../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/src/pk/platform.cpp \
+/gsa/watgsa/home/b/g/bgf/sb/g/src/../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/src/pk/pktrace.cpp \
+$*.cpp \
+"</dev/null;
+
+#$SHIPDATA_SRC/pk/globject.cpp \
+#$SHIPDATA_SRC/pk/exception.cpp \
+#$SHIPDATA_SRC/pk/pksincos.cpp \
+#$SHIPDATA_SRC/pk/mpi_reactor.cpp \
+
+rsh lipid -l bgf "cd $PWD && rm -f $1.a && ar q $1.a *.o" </dev/null
+
+#
+# # First compiler pass ( compile the DATA ONLY )
+# rsh cysteine -l bgf "cd $PWD && /opt/ibmcmp/vacpp/6.0/bin/xlC  -qarch=440 \
+# -I./ \
+# -I$SHIPDATA_INCLUDE \
+# -qpriority=1 \
+# -qalign=natural \
+# -DMSD_COMPILE_DATA_ONLY \
+# $1.cpp \
+#  -DPK_BLADE -DPK_BGL \
+#  -qsuppress=1540-1090:1540-1087:1540-1089:1540-1088 \
+#  -qnoeh -qnounwind \
+#  -c -o $1.data.o"</dev/null
+#
+#
+#
+# # Second compiler pass ( compile the CODE ONLY )
+# echo ''
+# rsh cysteine -l bgf "cd $PWD && /opt/ibmcmp/vacpp/6.0/bin/xlC  -c  -DARCH_HAS_FSEL  -DBLAKE  -DDVS_B
+# UILT_IN  -DEXCEPTIONS_UNAVAILABLE  -DNDEBUG  -DNSQ_SINGLE_COMPUTE  -DPERFORMANCE_PERIODIC_IMAGE  -DP
+# ERFORMANCE_SWITCH  -DPK_BGL  -DPK_BLADE  -DPK_PARALLEL  -DPK_PHASE1  -DPK_SMP  -DPK_XLC  -DRDG_TO_FX
+# LOGGER  -DSITE_SITE_CUTOFF  -DSUPPRESS_MONITOR  -DUSE_BGL_TREE  -DWATER_WATER_CUTOFF   -B/tmp/tjcw/
+#  -O3  -qarch=440  -qmaxmem=-1  -qnoeh  -qnolm  -qnostrict  -qnounwind  -qpriority=0  -qsuppress=1540
+#  -1087:1540-1089:1540-1088:1540-1090  -tb  -qalign=natural   -I. -I$SHIPDATA_INCLUDE  -I$BLADE_INC  -
+#  DMSD_COMPILE_CODE_ONLY $1.data.o  $1.cpp  $SHIPDATA_SRC/pk/exception.cpp  $SHIPDATA_SRC/pk/fxlogger.
+#  cpp  $SHIPDATA_SRC/pk/globject.cpp  $SHIPDATA_SRC/pk/platform.cpp  $SHIPDATA_SRC/pk/pktrace.cpp  $SH
+#  IPDATA_SRC/pk/pksincos.cpp  $SHIPDATA_SRC/pk/treebroadcast.cpp  $SHIPDATA_SRC/pk/treereduce.cpp  $SH
+#  IPDATA_SRC/pk/smp_reactor.cpp  $1.dvs.cpp  -L$SHIPDATA_LIB  "</dev/null;
+
+#  rsh cysteine -l bgf "cd $PWD && rm -f $1.a && ar q $1.a *.o" </dev/null
+#
+#
+#

@@ -1,0 +1,206 @@
+Tracer application architecture:
+================================
+
+The tracer application has the following architecture
+
+                             TracerApplication - The main container for the 
+                                     |           components of the tracer
+                                     |
+                                     |
+                    -----------------------------------------
+                    |                                       |
+                    |                                       |
+                 Twindow                              ExportDialog
+          (The container for trace               (Dialog box to export the 
+           groups and the Widget in which to      trace stream data currently
+           draw the associated trace lines)       is the Twindow object)
+                    |                                       |
+                    |                                       |
+         ---------------------                     ---------------------
+         |                   |                     |                   |
+         |                   |                     |                   |
+ CreateSetDialog    TraceGroupListType        GNUPlotDialog   ExportedFileDialog
+                   (List of trace groups)
+                             |
+                             |
+                          TraceGroup
+                             |
+                             |
+                 ---------------------
+                 |                   |
+                 |                   |
+             TraceListType     GroupPropDialog
+           (List of traces 
+            within a group)
+                 |
+                 |
+              TraceItem
+                 |
+                 |
+           ----------------------------
+           |                          |
+           |                          |
+      -----------------------      PropDialog
+      |                     |
+      |                     |
+ Trace_Relative          Trace_Plot
+      |                     |
+      |                     |
+   ---------------       TraceFile
+   |             |       (PlotFile)
+   |             |
+TraceFile    TraceFile
+(PrevFile)   (PostFile)
+
+Special Information:
+====================
+
+Adding a new trace drawing method
+---------------------------------
+1. In inc/Ttypes.hpp add a new name to the entGraphStyle type.
+   In inc/Tdefs.hpp update the value of NUM_GRAPH_STYLES.
+   In src/tracer_lib.C and the name of the new draw method to GraphStyleStrings
+   array.
+
+2. In src/Titem_class.C a new drawing method switch must be added on the 
+   enumeration element added above.
+
+3. A new drawing method must be added to the TraceItem class. As an example:
+
+void TraceItem::RelativePlotPointsOnly(int flag)
+{
+
+  int BaseY;
+  int      CurrentY_AxisOffset;
+  register int nloop;
+
+  // Check the type of draw, buckets only need to be filled when the 
+  // whole sreen needs redrawing
+  if (flag == FULL_REDRAW)
+  {
+    // Fill the time buckets for a full redraw
+    relative->PrevFile->FillBucket(GetWindow()->MidTime,
+                                     daWidth,
+                                     GetWindow()->Scale);
+  }
+
+  // DataUpToDate flag indicates whether the trace lines only require 
+  // refreshing, after an expose event. TRUE if just refresh.
+  // FULL_REDRAW need the trace lines to be redrawn with the new data
+  if (DataUpToDate == FALSE || flag == FULL_REDRAW)
+  {
+    // Set the vertical position of the trace points in the drawing area.
+    CurrentY_AxisOffset = (daHeight - (Parent->GroupYOffset
+                     - Parent->ParentWindow->VirtualHeight)) - Y_AxisOffset - 2;
+
+    BaseY = daHeight - (CurrentY_AxisOffset );
+
+
+    // Reset the item count in the array
+    saPos = 0;
+
+    // Loop through the bucket array, each bucket represents a pixel
+    // in the drawing area, this loop fills the X drawing structure.
+    for (nloop= FIRST_BUCKET; nloop < daWidth; nloop++)
+    {
+      // Check the current bucket has a value, i.e some trace data to plot
+      if (relative->PrevFile->GetTimeBucketValue(nloop) != 0)
+      {
+        // Check the point is inside the bounds of the trace
+        if (IsPointValid(nloop))
+        {
+          // Draw Vertical cross
+          SegmentArray[saPos].x1 = (short)nloop;
+          SegmentArray[saPos].y1 = (short)BaseY - 2 ;
+          SegmentArray[saPos].x2 = (short)nloop;
+          SegmentArray[saPos].y2 = (short)BaseY + 2 ;
+          saPos++;
+
+          // Draw Horizontal cross
+          SegmentArray[saPos].x1 = (short)nloop - 2;
+          SegmentArray[saPos].y1 = (short)BaseY ;
+          SegmentArray[saPos].x2 = (short)nloop + 2;
+          SegmentArray[saPos].y2 = (short)BaseY ;
+          saPos++;
+        }
+      }
+    }
+    // The X drawing structure has been filled, reset the DataUpToDate to TRUE
+    DataUpToDate = TRUE;
+  }
+
+  // Send the X structure to the X server to display the new drawing on screen
+  XDrawSegments(XtDisplay(GetWindow()->da),
+                XtWindow(GetWindow()->da),
+                traceGC,SegmentArray,saPos);
+}
+
+
+Adding new colours method.
+--------------------------
+In Tlib.hpp increase the NUM_COLOUR_STRINGS by the number of colours to be
+added.
+
+In src/tracer_lib.C add the name of the colour to be added to the 
+ColourStrings[NUM_COLOUR_STRINGS] array.
+
+Note: The colour to be added must be available under the Xserver.
+
+Adding new characteristics to a group
+-------------------------------------
+If new characteristics are added to the trace group class
+
+Areas for future improvement:
+=============================
+The code could probably be improved by making the access to class members 
+tighter. There is fairly minimal use of private and protected in the header
+files.
+
+Inheritance between classes could be probably be improved.
+
+There are also C++ libraries available to encapsulate Motif so Widgets can
+be used like C++ objects.
+
+Other future requirements and how to do them:
+=============================================
+Requirement 1:
+In using the step function form of plotting, I'd like to be able to
+put handle groups of streams as a single input stream.
+
+A new class will be required, which could inherit from TraceFile, that will
+store multiple open files. These multiple files can be processed simultaneously 
+when filling the bucket structure.
+
+Requirement 2:
+Also, and very important, the ability to invert a set of lines with very
+small gaps and have them show up as at least on pixel wide.  If this
+has a performance impact, then make it a "property".  For example, I have
+a plot of the transactions in progress in a given pipeline slot.  Of course the
+gap in the slots is almost nothing because they are reused immediately.
+But, I need some way to see this.  It may be that being able to plot
+points again will solve this - obviously if the gap is so small, I would
+only need to plot a single line (or perhaps OR the two together)... or
+something.  Right now, I can't tell when transactions begin and end even
+though I know the data is there.
+
+Most of this functionallity is already present, it needs to be modified to meet
+the above requiremnts. The points only drawing method seems to be an adequate
+substitute for the meantime. The function that will need modifying to get the
+invert to work is src/Titem_class.C Function: DrawVertGraphics and 
+RelativePlotNoVert.
+
+Dividing GUI from Data:
+=======================
+If the GUI drawing process were to be split from the data (pktrace_pk) where
+would this split be best done? This is a fairly clean split occuring at the 
+Trace_file/TraceItem level. The new API may be useful for this purpose found 
+in pktracefile_api.hpp.
+
+Making the application run on smaller screens:
+==============================================
+A problem that occurs when the tracer is run on a system with a smaller screen
+is that the dialog boxes are too large and buttons are inaccessable. 
+Currently the screens are given a set size, this could be changed to be 
+dependent  on the size of the Xserver, obtainable using Xlib function calls. 
+The use of the daWidth #define would have to be removed and made proportional
+to the size of the Xserver.

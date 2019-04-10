@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!--Many features of the data model used here are adapted from the data model used by the mmCIF standard found at: "http://ndbserver.rutgers.edu/mmcif/index.html"-->
+<!-- For a tutorial, see: "http://ndbserver.rutgers.edu/mmcif/workshop/mmCIF-tutorials/" -->
+<!DOCTYPE ffparams [
+
+<!ELEMENT ffparams (header, entity_class_list, comp_list,
+(poly_seq_list)?, type_symbol_list, atom_id_list, ljtype_list,
+entity_instance_list, site_list, bond_list, angle_list, torsion_list,
+torsion_list, ljpair_param_list, ljpair_param_list, (user_group)*)>
+
+<!ELEMENT header ( ff_family | ff_spec | charge14 | charge14scale |
+improper | torsioninput | ureybradley | grouping | water | units )*>
+<!ELEMENT ff_family (#PCDATA)>
+<!ELEMENT ff_spec (#PCDATA)> <!ELEMENT charge14 (#PCDATA)>
+<!ELEMENT charge14scale (#PCDATA)>
+<!ELEMENT improper (#PCDATA)>
+<!ELEMENT torsioninput (#PCDATA)>
+<!ELEMENT ureybradley (#PCDATA)>
+<!ELEMENT grouping (#PCDATA)>
+<!ELEMENT water (#PCDATA)>
+<!ELEMENT units (#PCDATA)>
+
+<!-- List of distinct types of chemical entities in the system. For
+example, each type of protein strand is a distinct entity. Water is a
+distinct entity.  The entity_id attribute serves as a primary key -->
+
+<!ELEMENT entity_class_list (entity)+>
+<!ELEMENT entity (entity_details, entity_formula_weight?)>
+<!ATTLIST entity entity_id ID #REQUIRED>
+<!ATTLIST entity entity_type (polymer | non-polymer | water) #REQUIRED>
+<!ELEMENT entity_details (#PCDATA)>
+<!ELEMENT entity_formula_weight (#PCDATA)>
+
+<!--List of distinct chemical components in the system. For protein
+polymer entities this is the three-letter code for amino acids-->
+<!NOTATION MMCIF_CHEM_COMP_ID SYSTEM
+"http://ndbserver.rutgers.edu/mmcif/dictionary/html-dic/Items/_chem_comp.id.html">
+<!ELEMENT comp_list (chem_comp)+>
+<!ELEMENT chem_comp EMPTY>
+<!ATTLIST chem_comp comp_id ID #REQUIRED>
+
+<!--List of monomers for each polymer sequence in the system -->
+<!ELEMENT poly_seq_list (poly_seq)+>
+<!ELEMENT poly_seq (monomer)+>
+<!--Foreign key referring to the identity of the chemical entity of which the current monomer is a part.  It must refer to a valid entity_id attribute in the entity_class_list -->
+<!ATTLIST poly_seq entity_id IDREF #REQUIRED>
+<!ELEMENT monomer EMPTY>
+<!--Sequence number of current monomer in sequence.  This identifier
+sequences monomers within a type of polymer identified as a distinct
+entity, but the numbering is global across all polymeric entities in
+the system -->
+<!ATTLIST monomer num ID #REQUIRED>
+<!--Foreign key referring to the identity of the monomer.  It must
+refer to a valid comp_id attribute in the comp_list -->
+<!ATTLIST monomer mon_id IDREF #REQUIRED>
+
+<!-- List of atom symbols.  These may be just standard element symbols like
+C, H, O, N, CA, HE, etc. or may include mass numbers when isotopes must be
+specified -->
+<!ELEMENT type_symbol_list (type_symbol)+>
+<!ELEMENT type_symbol (mass)>
+<!ATTLIST type_symbol element_symbol ID #REQUIRED>
+<!ELEMENT mass (#PCDATA)>
+
+<!-- List of atom ids (a.k.a atom types) that identify the "position"
+that atoms have within a particular chemical structure -->
+<!ELEMENT atom_id_list (atom_id_elt)+>
+<!ELEMENT atom_id_elt EMPTY>
+<!ATTLIST atom_id_elt atom_id ID #REQUIRED>
+
+<!ELEMENT ljtype_list (ljtype)+>
+<!ELEMENT ljtype EMPTY>
+<!ATTLIST ljtype lj_type_id ID #REQUIRED>
+
+<!--Listing of all instances of chemical entities in this system.  As
+far as I can tell, there is no counterpart for this in the mmCIF data
+model. This does correspond roughly to a listing of the strands in a
+PDB file. -->
+<!ELEMENT entity_instance_list (entity_instance)+>
+<!ELEMENT entity_instance EMPTY>
+<!--Primary key identifying each entity instance as distinct-->
+<!ATTLIST entity_instance instance_id ID #REQUIRED>
+<!--Foreign key referring to the entity_id in the entity_class_list-->
+<!ATTLIST entity_instance label_entity_id IDREF #REQUIRED>
+
+<!--Listing of all "sites", usually atoms, in this system.  The 
+site_id attribute acts as a primary key and site_id values should
+have the form site_(d)+ (site_ followed by a numerical index). -->
+<!ELEMENT site_list (site)+>
+<!ELEMENT site (charge)>
+<!ATTLIST site site_id ID #REQUIRED>
+<!ATTLIST site label_entity_instance_id IDREF #REQUIRED>
+<!-- If entity_type is polymer, then label_seq_id gives sequence id of
+monomer of which atom is a part -->
+<!ATTLIST site label_seq_id IDREF #IMPLIED>
+<!-- label_type_symbol is the element which implies a mass (isotopes
+will be handled by appending a mass number to the symbol, e.g. C13) -->
+<!ATTLIST site label_type_symbol IDREF #REQUIRED>
+<!-- label_atom_id is normally known as atom type in most packages -->
+<!ATTLIST site label_atom_id IDREF #REQUIRED>
+<!ATTLIST site label_comp_id IDREF #REQUIRED>
+<!ATTLIST site label_lj_id IDREF #REQUIRED>
+<!ELEMENT charge (#PCDATA)>
+
+
+<!ELEMENT bond_list (bond)+>
+<!ELEMENT bond (k, r0)>
+<!ATTLIST bond site_id1 IDREF #REQUIRED>
+<!ATTLIST bond site_id2 IDREF #REQUIRED>
+<!ELEMENT k (#PCDATA)>
+<!ELEMENT r0 (#PCDATA)>
+
+<!ELEMENT angle_list (angle)+>
+<!ELEMENT angle (k, th0, ku, ru)>
+<!ATTLIST angle site_id1 IDREF #REQUIRED>
+<!ATTLIST angle site_id2 IDREF #REQUIRED>
+<!ATTLIST angle site_id3 IDREF #REQUIRED>
+<!ELEMENT th0 (#PCDATA)>
+<!ELEMENT ku (#PCDATA)>
+<!ELEMENT ru (#PCDATA)>
+
+<!ELEMENT torsion_list (torsion)+>
+<!ATTLIST torsion_list torsion_type (oplsaa | charmm) #REQUIRED>
+<!ATTLIST torsion_list torsion_class (proper | improper) #REQUIRED>
+<!ELEMENT torsion (k, mult, th0)>
+<!ATTLIST torsion site_id1 IDREF #REQUIRED>
+<!ATTLIST torsion site_id2 IDREF #REQUIRED>
+<!ATTLIST torsion site_id3 IDREF #REQUIRED>
+<!ATTLIST torsion site_id4 IDREF #REQUIRED>
+<!ELEMENT mult (#PCDATA)>
+
+<!ELEMENT ljpair_param_list (ljpair_param)+>
+<!ATTLIST ljpair_param_list lj_class (normal | lj14) #REQUIRED>
+<!ELEMENT ljpair_param (sigma, epsilon)>
+<!ATTLIST ljpair_param id_1 IDREF #REQUIRED>
+<!ATTLIST ljpair_param id_2 IDREF #REQUIRED>
+<!ELEMENT sigma (#PCDATA)>
+<!ELEMENT epsilon (#PCDATA)>
+
+<!ELEMENT user_group (groupname, (groupinfo)?, groupmember+)>
+<!ELEMENT groupname (#PCDATA)>
+<!ELEMENT groupinfo (#PCDATA)>
+<!ELEMENT groupmember EMPTY>
+<!ATTLIST groupmember member_id IDREF #REQUIRED>
+]>
+<ffparams>
+<header>
+<ff_family>CHARMM</ff_family>
+<ff_spec>CHARMM22</ff_spec>
+<charge14>1</charge14>
+<charge14scale>0.500000</charge14scale>
+<improper>1</improper>
+<torsioninput>1</torsioninput>
+<ureybradley>1</ureybradley>
+<grouping>0</grouping>
+<water>0</water>
+<units>1</units>
+</header>
+
+<entity_class_list>
+<entity entity_id="entity_1" entity_type="polymer">
+<entity_details>Met-Enkephelin</entity_details>
+<entity_formula_weight>234</entity_formula_weight>
+</entity>
+<entity entity_id="entity_2" entity_type="water">
+<entity_details>TIP3P</entity_details>
+<entity_formula_weight>18</entity_formula_weight>
+</entity>
+</entity_class_list>
+
+<comp_list>
+<chem_comp comp_id="ALA"/>
+<chem_comp comp_id="ASN"/>
+<chem_comp comp_id="ARG"/>
+<chem_comp comp_id="ASP"/>
+<chem_comp comp_id="CYS"/>
+<chem_comp comp_id="GLN"/>
+<chem_comp comp_id="GLU"/>
+<chem_comp comp_id="GLY"/>
+<chem_comp comp_id="HIS"/>
+<chem_comp comp_id="ILE"/>
+<chem_comp comp_id="LEU"/>
+<chem_comp comp_id="LYS"/>
+<chem_comp comp_id="MET"/>
+<chem_comp comp_id="PHE"/>
+<chem_comp comp_id="PRO"/>
+<chem_comp comp_id="SER"/>
+<chem_comp comp_id="THR"/>
+<chem_comp comp_id="TRP"/>
+<chem_comp comp_id="TYR"/>
+<chem_comp comp_id="VAL"/>
+<chem_comp comp_id="HOH"/>
+</comp_list>
+
+<poly_seq_list>
+<poly_seq entity_id="entity_1">
+<monomer num="m_1" mon_id="ALA"/>
+<monomer num="m_2" mon_id="GLY"/>
+<monomer num="m_3" mon_id="THR"/>
+<monomer num="m_4" mon_id="PRO"/>
+<monomer num="m_5" mon_id="ALA"/>
+</poly_seq>
+</poly_seq_list>
+
+<type_symbol_list>
+<type_symbol element_symbol="N"><mass>14.0</mass></type_symbol>
+<type_symbol element_symbol="H"><mass>1.0</mass></type_symbol>
+<type_symbol element_symbol="C"><mass>12.0</mass></type_symbol>
+<type_symbol element_symbol="O"><mass>16.0</mass></type_symbol>
+</type_symbol_list>
+
+<atom_id_list>
+<atom_id_elt atom_id="ai_HC"/>
+<atom_id_elt atom_id="ai_NH3"/>
+<atom_id_elt atom_id="ai_CA"/>
+<atom_id_elt atom_id="ai_H"/>
+</atom_id_list>
+
+<ljtype_list>
+<ljtype lj_type_id="lj_1"/>
+<ljtype lj_type_id="lj_2"/>
+<ljtype lj_type_id="lj_3"/>
+<ljtype lj_type_id="lj_4"/>
+<ljtype lj_type_id="lj_5"/>
+</ljtype_list>
+
+<entity_instance_list>
+<entity_instance instance_id="ei_1" label_entity_id="entity_1"/>
+<entity_instance instance_id="ei_2" label_entity_id="entity_2"/>
+<entity_instance instance_id="ei_3" label_entity_id="entity_2"/>
+<entity_instance instance_id="ei_4" label_entity_id="entity_2"/>
+<entity_instance instance_id="ei_5" label_entity_id="entity_2"/>
+<entity_instance instance_id="ei_6" label_entity_id="entity_2"/>
+</entity_instance_list>
+
+<site_list>
+<site site_id="site_1" label_entity_instance_id="ei_1" label_seq_id="m_1"
+label_type_symbol="N" label_atom_id="ai_NH3" label_comp_id="ALA"
+label_lj_id="lj_1">
+<charge>-0.300000</charge>
+</site>
+<site site_id="site_2" label_entity_instance_id="ei_1" label_seq_id="m_1"
+label_type_symbol="H" label_atom_id="ai_HC" label_comp_id="ALA"
+label_lj_id="lj_3">
+<charge>0.210000</charge>
+</site>
+<site site_id="site_3" label_entity_instance_id="ei_1" label_seq_id="m_1"
+label_type_symbol="H" label_atom_id="ai_HC" label_comp_id="ALA"
+label_lj_id="lj_3">
+<charge>0.210000</charge>
+</site>
+<site site_id="site_4" label_entity_instance_id="ei_1" label_seq_id="m_1"
+label_type_symbol="C" label_atom_id="ai_CA" label_comp_id="ALA"
+label_lj_id="lj_4">
+<charge>0.110000</charge>
+</site>
+</site_list>
+
+<bond_list>
+<bond site_id1="site_1" site_id2="site_2">
+<k>403.000000</k><r0>1.040000</r0>
+</bond>
+<bond site_id1="site_1" site_id2="site_3">
+<k>403.000000</k><r0>1.040000</r0>
+</bond>
+<bond site_id1="site_1" site_id2="site_4">
+<k>403.000000</k><r0>1.040000</r0>
+</bond>
+</bond_list>
+
+<angle_list>
+<angle site_id1="site_1" site_id2="site_2" site_id3="site_3">
+<k>44.000000</k><th0>109.500000</th0><ku>0</ku><ru>0</ru>
+</angle>
+</angle_list>
+
+<torsion_list torsion_type="charmm" torsion_class="proper">
+<torsion site_id1="site_1" site_id2="site_2" site_id3="site_3"
+site_id4="site_4"><k>0.200000</k><mult>3</mult><th0>0.000000</th0></torsion>
+</torsion_list>
+
+<torsion_list torsion_type="charmm" torsion_class="improper">
+<torsion  site_id1="site_1" site_id2="site_2" site_id3="site_3"
+site_id4="site_4"><k>120.000000</k><mult>0</mult><th0>0.000000</th0></torsion>
+</torsion_list>
+
+<ljpair_param_list lj_class="normal">
+<ljpair_param id_1="lj_1" id_2="lj_1"><sigma>.4</sigma><epsilon>1.1</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_2"><sigma>.4</sigma><epsilon>1.2</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_3"><sigma>.4</sigma><epsilon>1.3</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_4"><sigma>.4</sigma><epsilon>1.4</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_5"><sigma>.4</sigma><epsilon>1.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_2"><sigma>.4</sigma><epsilon>2.2</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_3"><sigma>.4</sigma><epsilon>2.3</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_4"><sigma>.4</sigma><epsilon>2.4</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_5"><sigma>.4</sigma><epsilon>2.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_3"><sigma>.4</sigma><epsilon>3.3</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_4"><sigma>.4</sigma><epsilon>3.4</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_5"><sigma>.4</sigma><epsilon>3.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_4" id_2="lj_4"><sigma>.4</sigma><epsilon>4.4</epsilon></ljpair_param>
+<ljpair_param id_1="lj_4" id_2="lj_5"><sigma>.4</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_5" id_2="lj_5"><sigma>.4</sigma><epsilon>5.5</epsilon></ljpair_param>
+</ljpair_param_list>
+
+<ljpair_param_list lj_class="lj14">
+<ljpair_param id_1="lj_1" id_2="lj_1"><sigma>1.1</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_2"><sigma>1.2</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_3"><sigma>1.3</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_4"><sigma>1.4</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_1" id_2="lj_5"><sigma>1.5</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_2"><sigma>2.2</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_3"><sigma>2.3</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_4"><sigma>2.4</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_2" id_2="lj_5"><sigma>2.5</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_3"><sigma>3.3</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_4"><sigma>3.4</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_3" id_2="lj_5"><sigma>3.5</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_4" id_2="lj_4"><sigma>4.4</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_4" id_2="lj_5"><sigma>4.5</sigma><epsilon>4.5</epsilon></ljpair_param>
+<ljpair_param id_1="lj_5" id_2="lj_5"><sigma>5.5</sigma><epsilon>4.5</epsilon></ljpair_param>
+</ljpair_param_list>
+
+<user_group>
+<groupname>my_group</groupname>
+<groupinfo>This is a user defined group</groupinfo>
+<groupmember member_id="site_1"/>
+<groupmember member_id="site_2"/>
+</user_group>
+
+</ffparams>

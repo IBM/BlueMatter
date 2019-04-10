@@ -1,0 +1,22 @@
+LIBS    =       $(PKSMPLIBS)
+
+CFLAGS += $(SMPCFLAGS)
+
+VPATH   = ..
+
+OFILES         = \
+  hello$(OBJ_SUFF)
+
+PROGRAMS        = \
+  hello$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/kernels/512way/
+
+ILIST   =       $(PROGRAMS)
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/ivt/hello/512way/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

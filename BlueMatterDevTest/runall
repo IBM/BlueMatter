@@ -1,0 +1,14 @@
+cd ala_tjcw
+devtest ala_31a.p5.i1001.p1000 2>&1 | mail -s"ala_31a.p5.i1001.p1000" "$USER@us.ibm.com"  &
+
+cd ../rhod_alex
+devtest rhod.p5.i1001.p1000 2>&1 | mail -s"rhod.p5.i1001.p1000" "$USER@us.ibm.com"
+
+cd ../rhod_nvt60
+devtest rhod.nvt.p5.i1001.p1000 2>&1 | mail -s"rhod.nvt.p5.i1001.p1000" "$USER@us.ibm.com"  &
+
+cd ../p5apoa
+devtest apoa1.p5.i1001.p1000 2>&1 | mail -s"apoa1.p5.i1001.p1000" "$USER@us.ibm.com"
+
+cd ../sope
+devtest sope.i1001.p1000 2>&1 | mail -s"sope.i1001.p1000" "$USER@us.ibm.com" &

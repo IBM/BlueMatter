@@ -1,0 +1,275 @@
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0000*Start*
+D::PostRegExp ::*0000*Finis*
+E::Colour     ::white
+F::Style      ::0
+G::Offset     ::10
+H::Separation ::6
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*KSpaceEvaluationStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*KSpaceEvaluationFinis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*ForwardFFTStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*ForwardFFTFinis*
+E::Colour     ::yellow
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*P3ME_ReverseFFT_Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*P3ME_ReverseFFT_Finis*
+E::Colour     ::yellow
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Bond*Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Bond*Finis*
+E::Colour     ::blue
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*RealSpaceStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*RealSpaceFinis*
+E::Colour     ::yellow
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*NSQ_RealSpace_Meat_Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*NSQ_RealSpace_Meat_Finis*
+E::Colour     ::green
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*ReduceForcesStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*ReduceForcesFinis*
+E::Colour     ::grey
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*FloatingPoint*Reduce*Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*FloatingPoint*Reduce*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GlobalizePositionsStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GlobalizePositionsFinis*
+E::Colour     ::white
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Integer*Reduce*Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Integer*Reduce*Finis*
+E::Colour     ::blue
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Transport*Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Transport*Finis*
+E::Colour     ::tomato
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GuardZoneViolationReductionStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GuardZoneViolationReductionFinis*
+E::Colour     ::coral
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GuardZoneViolationSignalReduceStart*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*GuardZoneViolationSignalReduceFinis*
+E::Colour     ::yellow
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Migration*Start*
+D::PostRegExp ::*[0,1,2,3,4,5,6,7,8,9][0,5]:0:*Migration*Finis*
+E::Colour     ::blue
+F::Style      ::0
+G::Offset     ::200
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0000:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0000:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::500
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0001:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0001:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::510
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0002:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0002:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::520
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0003:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0003:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::530
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0004:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0004:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::540
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0005:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0005:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::550
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0006:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0006:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::560
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0007:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0007:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::570
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0008:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0008:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::580
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::
+A::Directory  :: No_file_name
+B::GroupName  ::
+C::PrevRegExp ::*0009:1:*P3ME_Convolve*Start*
+D::PostRegExp ::*0009:1:*P3ME_Convolve*Finis*
+E::Colour     ::red
+F::Style      ::0
+G::Offset     ::590
+H::Separation ::2
+I::Inverted   ::0
+J::Contour    ::0
+Z::End Of Data::

@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>Search the MDSETUP Database for Molecular Systems</title>
+</head>
+<body>
+Search Parameters:<br>
+<P>
+<form action="molsys" method=POST>
+System ID:
+<input type=text size=20 name=sys_id>
+<br>
+System Description:
+<input type=text size=20 name=sys_desc>
+<br>
+System Class:<br>
+<input type=radio size=20 name=sys_class value=scratch>scratch<br>
+<input type=radio size=20 name=sys_class value=testing>testing<br>
+<input type=radio size=20 name=sys_class value=production>production<br>
+
+Userid of Creator:
+<input type=text size=20 name=creator>
+<br>
+Created after (YYYY-MM-DD):
+<input type=text size=20 name=created_after>
+<br>
+Created before (YYYY-MM-DD):
+<input type=text size=20 name=created_before>
+<br>
+Force Field Family:
+<input type=text size = 20 name=ff_family>
+<br>
+Force Field Version:
+<input type=text size = 20 name=ff_spec>
+<br>
+<input type=hidden name=mode value=select_system>
+<input type=submit>
+<br>
+<br>
+<br>
+<input type=reset><br>
+</form>
+</body>
+</html>

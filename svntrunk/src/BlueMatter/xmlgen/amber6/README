@@ -1,0 +1,34 @@
+Jed Pitera
+IBM Almaden, November 2001
+
+Scripts for converting AMBER input files to Blue Matter.
+
+top2xml_amber[6|8].pl: 
+
+        Topology converters, convert an AMBER prmtop file to XML which
+	can then be fed to probspecgen, etc. to produce a .hpp file.
+
+	usage:	top2xml_amber6.pl <prmtop> <xmlout> [water_name]
+	usage:	top2xml_amber8.pl <prmtop> <xmlout> [water_name]
+
+	[water_name] is optional and will be used to identify special residues
+	for water-water interactions or constraint dynamics
+
+        There are two versions of the converter, one for AMBER6-style ("old")
+        prmtop format and the other for the newer AMBER8-style format.
+
+ambercrd2dvs.pl: 
+
+        coordinate file converter, converts a formatted AMBER prmcrd or mdrst file
+	to a DVS file.  If there is no velocity information in the topology
+	file, zero velocites are assumed. 
+
+	usage:	ambercrd2dvs.pl <prmcrd> <dvsout>
+
+        The <dvsout> file is a flat file of position & velocity triples & needs to be
+        converted to binary format using dvsconv before use by BlueMatter.
+
+	Keep in mind that since box information is not stored in the DVS file
+	it will have to be added to the RTP file by hand.
+
+Examples can be found in the example subdirectory.

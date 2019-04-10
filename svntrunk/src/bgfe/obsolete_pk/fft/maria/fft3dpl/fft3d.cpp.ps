@@ -1,0 +1,2872 @@
+%!PS-Adobe-3.0
+%%Title: fft3d.cpp
+%%For: Maria Eleftheriou
+%%Creator: a2ps version 4.10.3
+%%CreationDate: Sun Mar  2 18:00:15 2003
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 8
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontMatrix get 3 get 1000 mul
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Define these in case they're not in the FontInfo (also, here
+    % they're easier to get to.
+    /UnderlinePosition 1 def
+    /UnderlineThickness 1 def
+    
+    % Get the underline position and thickness if they're defined.
+    currentdict /FontInfo known {
+      FontInfo
+      
+      dup /UnderlinePosition known {
+	dup /UnderlinePosition get
+	0 exch FontMatrix transform exch pop
+	/UnderlinePosition exch def
+      } if
+      
+      dup /UnderlineThickness known {
+	/UnderlineThickness get
+	0 exch FontMatrix transform exch pop
+	/UnderlineThickness exch def
+      } if
+      
+    } if
+    currentdict 
+  end 
+} bind def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(// A prototype pass at an active packet based 3D FFT.  Aug 23 2002.  BGF) c n
+(#include) K
+( <stdio.h>) p n
+(#include) K
+( <assert.h>) p n
+(#include) K
+( <iostream>) p n
+(#include) K
+( <stdlib.h>) p n
+(#include) K
+( <unistd.h>) p n
+() N
+(#include) K
+( ") p
+(BladeMpi.hpp) str
+(") p n
+() N
+(#include) K
+( ") p
+(fxlogger.hpp) str
+(") p n
+() N
+(#include) K
+( ") p
+(complex.hpp) str
+(") p n
+(#include) K
+( <math.h>) p n
+(//#include "fft128.hpp") c n
+(#include) K
+( ") p
+(fftw.h) str
+(") p n
+() N
+(// This is included to create regression FFT data) c n
+(//#include "t3da.hpp") N
+() p n
+() N
+(template) K
+( < ) p
+(int) k
+( iVLen, ) p
+(typename) k
+( tElementType >) p n
+(class) K
+( FFT1D) p n
+({) N
+(public) K
+(:) p n
+(  ) S
+(typedef) K
+( tElementType ElementType;) p n
+(  ) N
+(  ) S
+(static) K n
+(  ) p
+(void) k n
+(  Op\( tElementType aV[ iVLen ] \)) p n
+(    {) N
+(    }) N
+(};) N
+() N
+() N
+(fftw_plan fftw_1d_plan;) N
+() N
+() N
+(static) K
+( fftwnd_plan forward_3d_Plan;) p n
+(static) K
+( fftwnd_plan inverse_3d_Plan;) p n
+() N
+(template) K
+(<) p
+(int) k
+( tPX, ) p
+(int) k
+( tPY, ) p
+(int) k
+( tPZ,  ) p
+(// Processor Dim) c n
+(int) k
+( tGX, ) p
+(int) k
+( tGY, ) p
+(int) k
+( tGZ,  ) p
+(// mesh dim) c n
+(class) K
+( InnerOp,) p n
+(class) K
+( FFT1D >) p n
+(class) K
+( FFT) p n
+(  {) N
+(public) K
+(:) p n
+(  ) S
+(// Make the parameters visable outside the class) c n
+(  ) p
+(enum) k
+( { PX = tPX, PY = tPY, PZ = tPZ, GX = tGX, GY = tGY, GZ = tGZ };) p n
+() N
+(  ) S
+(typedef) K
+( complex Value;) p n
+() N
+(  ) S
+(struct) k
+( FFT_Hdr) p n
+(    {) N
+(    ) S
+(// could just gen the address on th sender side, but for now send the indexs) c n
+(    FFT   *This;) p n
+(    ) S
+(int) k
+(    Bar;) p n
+(    ) S
+(int) k
+(    Pencil;) p n
+(    ) S
+(int) k
+(    PencilIndex;) p n
+(    };) N
+() N
+(  ) S
+(// Fiture out how many values fit into a single packet) c n
+(  ) p
+(enum) k
+( { GridValuesPerPacket =) p n
+(    \( \( ) S
+(sizeof) K
+(\( _BGL_TorusPktPayload \) - ) p
+(sizeof) K
+(\( FFT_Hdr \) \) / ) p
+(sizeof) K
+(\( Value \) \)) p n
+( };) N
+() N
+(  ) S
+(typedef) K
+( Value  FFT_Payload  [ GridValuesPerPacket ];) p n
+() N
+(  ) S
+(struct) k
+( ActorPacket) p n
+(fft3d.cpp) (Page 1/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    {) p n
+(    FFT_Hdr  mHdr;) N
+(    FFT_Payload mData;) N
+(    };) N
+() N
+(  ) S
+(// Definitions) c n
+(  ) p
+(// Pencil - a 1x1xN vector in the mesh) c n
+(  ) p
+(// Bar - a 1xM group of pencils where M is the number of contingious pencils i) c n
+(n a particular plain) N
+() p n
+(  ) S
+(typedef) K
+( Value XPencil[ GX ];) p n
+(  ) S
+(typedef) K
+( Value YPencil[ GY ];) p n
+(  ) S
+(typedef) K
+( Value ZPencil[ GZ ];) p n
+() N
+(  ) S
+(// Figure out max mesh values pre processor in each dimension) c n
+(  ) p
+(// Max is because GX may not be an even factor of PX) c n
+(  ) p
+(enum) k
+( { XGridPointsPerProc = GX / PX };) p n
+(  ) S
+(enum) k
+( { YGridPointsPerProc = GY / PY };) p n
+(  ) S
+(enum) k
+( { ZGridPointsPerProc = GZ / PZ };) p n
+() N
+() N
+(#define) K
+( mMIN\(expa,expb\) \( \(\(expa\) < \(expb\)\) ? \(expa\) : \(expb\) \)) p n
+() N
+(  ) S
+(// Since we chose round numbers, the packets in each dim will have the same nu) c n
+(mber of values) N
+(  ) p
+(// but they may not be full.) c n
+(  ) p
+(// Each FFT is formed by parts coming from 1 node in each orthogonal row in a ) c n
+(plain.) N
+(  ) p
+(// NOTE: When there are enough nodes - this number will go to 0, but should be) c n
+( forced to 1 as the FFTs will be done) N
+(  ) p
+(// somewhere.) c n
+(  ) p
+(enum) k
+( { ZGridPointsPerPacket   = mMIN\( \(GZ / PZ \), GridValuesPerPacket \) };) p n
+(  ) S
+(enum) k
+( { YGridPointsPerPacket   = mMIN\( \(GY / PY \), GridValuesPerPacket \) };) p n
+(  ) S
+(enum) k
+( { XGridPointsPerPacket   = mMIN\( \(GX / PX \), GridValuesPerPacket \) };) p n
+(  ) S
+(enum) k
+( { ZHGridPointsPerPacket  = mMIN\( \(GZ / PZ \), GridValuesPerPacket \) };) p n
+() N
+(////  enum { ZGridPointsPerPacket  = \( GZ /  PZ     < GridValuesPerPacket \) ?  P) c n
+(Z     : GridValuesPerPacket };) N
+(////  enum { YGridPointsPerPacket  = \( GY / \(PX*PZ\) < GridValuesPerPacket \) ? \(P) N
+(X*PZ\) : GridValuesPerPacket };) N
+(////  enum { XGridPointsPerPacket  = \( GX / \(PZ*PY\) < GridValuesPerPacket \) ? \(P) N
+(Z*PY\) : GridValuesPerPacket };) N
+(////  enum { ZHGridPointsPerPacket = \( GZ / \(PY*PX\) < GridValuesPerPacket \) ? \(P) N
+(Y*PX\) : GridValuesPerPacket };) N
+() p n
+(  ) S
+(// Figure out how many packets will be recieved per pencil.) c n
+(  ) p
+(// NOTE, AGAIN THIS MUST NOT ROUND) c n
+(  ) p
+(enum) k
+( { ZPacketsPerPencil  = GZ / ZGridPointsPerPacket  };) p n
+(  ) S
+(enum) k
+( { YPacketsPerPencil  = GY / YGridPointsPerPacket  };) p n
+(  ) S
+(enum) k
+( { XPacketsPerPencil  = GX / XGridPointsPerPacket  };) p n
+(  ) S
+(enum) k
+( { ZHPacketsPerPencil = \(GZ/PZ\) / ZHGridPointsPerPacket };) p n
+() N
+(  ) S
+(enum) k
+( { ZintoYPencilsPerBar = YGridPointsPerProc };) p n
+(  ) S
+(enum) k
+( { YintoXPencilsPerBar = XGridPointsPerProc };) p n
+(  ) S
+(enum) k
+( { XintoZPencilsPerBar = ZGridPointsPerProc };) p n
+() N
+() N
+(/////  // Figure out how many packets will be recieved per pencil.) c n
+(/////  // NOTE: THIS WILL BE A PROBLEM IF THERE IS ANY REMAINDER TO THE DIVISION) N
+( - AND WE DON'T CHECK.) N
+(/////  enum { ZPacketsPerPencilPerProc = ZPacketsPerPencil / PZ };) N
+(/////  enum { YPacketsPerPencilPerProc = YPacketsPerPencil / PY };) N
+(/////  enum { XPacketsPerPencilPerProc = XPacketsPerPencil / PX };) N
+() p n
+(  ) S
+(// This typedef defines a local processors share of the total grid.) c n
+(  ) p
+(typedef) K
+( Value ProcGridSection[ XGridPointsPerProc ][ YGridPointsPerProc ][ ZGr) p n
+(idPointsPerProc ];) N
+() N
+(  ) S
+(// Keep a pointer to the callers data area so we can put results back in place) c n
+(fft3d.cpp) (Page 2/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (1/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(.) c n
+(  ProcGridSection *mPMS;) p n
+() N
+(  ) S
+(// Figure out how many bars are shared by a row of processors) c n
+(  ) p
+(enum) k
+( { ZBarsSharedPerProc = XGridPointsPerProc };) p n
+(  ) S
+(enum) k
+( { YBarsSharedPerProc = ZGridPointsPerProc };) p n
+(  ) S
+(enum) k
+( { XBarsSharedPerProc = YGridPointsPerProc };) p n
+() N
+(  ) S
+(// Figure out how many bars each processor in a row is responsible for.) c n
+(  ) p
+(enum) k
+( { ZBarsOwnedPerProc = ZBarsSharedPerProc / PZ };) p n
+(  ) S
+(enum) k
+( { YBarsOwnedPerProc = YBarsSharedPerProc / PY };) p n
+(  ) S
+(enum) k
+( { XBarsOwnedPerProc = XBarsSharedPerProc / PX };) p n
+() N
+() N
+(  ) S
+(// Allocate the local memory for bars owned) c n
+(  ) p
+(// This is the memory footprint that allows all sent messages to) c n
+(  ) p
+(// deposit data on arival.) c n
+(  ZPencil ZBarSet[ ZBarsOwnedPerProc ][ ZintoYPencilsPerBar ];) p n
+(  YPencil YBarSet[ YBarsOwnedPerProc ][ YintoXPencilsPerBar ];) N
+(  XPencil XBarSet[ XBarsOwnedPerProc ][ XintoZPencilsPerBar ];) N
+() N
+(  ) S
+(// An int counter for each pencil to figure when it's done.) c n
+(  ) p
+(int) k
+( ZCompletePacketsInPencilCount[ ZBarsOwnedPerProc ][ ZintoYPencilsPerBar ];) p n
+(  ) S
+(int) k
+( YCompletePacketsInPencilCount[ YBarsOwnedPerProc ][ YintoXPencilsPerBar ];) p n
+(  ) S
+(int) k
+( XCompletePacketsInPencilCount[ XBarsOwnedPerProc ][ XintoZPencilsPerBar ];) p n
+() N
+(  ) S
+(int) k
+( ZHCompletePacketsInPencilCount[ ZBarsOwnedPerProc ][ZintoYPencilsPerBar ];) p n
+() N
+(  ) S
+(// An int counter for each bar set - when complete, packets can be sent into n) c n
+(ext dim) N
+(  ) p
+(int) k
+(  ZCompletePencilsInBarCount[ ZBarsOwnedPerProc ];) p n
+(  ) S
+(int) k
+(  YCompletePencilsInBarCount[ YBarsOwnedPerProc ];) p n
+(  ) S
+(int) k
+(  XCompletePencilsInBarCount[ XBarsOwnedPerProc ];) p n
+() N
+(  ) S
+(int) k
+(  ZHCompletePencilsInBarCount[ ZBarsSharedPerProc ];) p n
+() N
+(#if) K
+( 0) p n
+(  ) S
+(// Using these seems to indicate an extra bounce of memory.) c n
+(  ) p
+(// Allocate the headers for all the communication) c n
+(  _BGL_TorusPktHdr ZintoYPacket[ ZBarsSharedPerProc ][ ZintoYPencilsPerBar ][ ZP) p n
+(acketsPerPencilPerProc ];) N
+(  _BGL_TorusPktHdr YPacket[ YBarsSharedPerProc ][ YintoXPencilsPerBar ][ YPacket) N
+(sPerPencilPerProc ];) N
+(  _BGL_TorusPktHdr XPacket[ XBarsSharedPerProc ][ XintoZPencilsPerBar ][ XPacket) N
+(sPerPencilPerProc ];) N
+(#endif) K n
+() p n
+() N
+(  ) S
+(// Local processor coordinates) c n
+(int) k
+( mXPCoord, mYPCoord, mZPCoord;) p n
+() N
+(void) k
+( Check\(\) { }) p n
+() N
+(  ) S
+(static) K
+( ) p
+(int) k n
+(  ZPacketActorFx\( ) p
+(void) k
+( *pkt \) {) p n
+(    ActorPacket *ap = \(ActorPacket *\) pkt;) N
+(    ) N
+(    FFT *This              = ap->mHdr.This;) N
+(    ) S
+(int) k
+( AbsBar             = ap->mHdr.Bar;) p n
+(    ) S
+(int) k
+( MyBarIndex         = AbsBar;) p n
+(    ) S
+(int) k
+( Pencil             = ap->mHdr.Pencil;) p n
+(    ) S
+(int) k
+( BaseOffsetInPencil = ap->mHdr.PencilIndex;) p n
+(    ) N
+(    ) S
+(int) k
+( x = 0, y = 0, z = 0;) p n
+(    ) N
+(    BGLPartitionGetCoords\( &x, &y, &z \);) N
+() N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( v = 0; v < ZGridPointsPerPacket; v++ \) {) p n
+(      ) S
+(// Look out for partial last packet.) c n
+(fft3d.cpp) (Page 3/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      ) p
+(if) K
+(\( BaseOffsetInPencil + v == GZ \)) p n
+(        ) S
+(break) K
+(;) p n
+(      ) S
+(if) K
+(\(This->ZBarSet[ MyBarIndex][Pencil][BaseOffsetInPencil + v].re!=0 \) {) p n
+(        BegLogLine\(1\) << ") S
+( Fatal Error in Z on [) str
+(" <<x<<") p
+(,) str
+("<<y<<") p
+(,) str
+("<<z<<") p
+(] ) str
+(") p n
+() S 8 T () S 16 T (      <<  ") S
+(Bar ) str
+(" << MyBarIndex << ") p
+( Pencil ) str
+(" << Pencil ) p n
+() S 8 T () S 16 T (      << ") S
+( BaseIndex ) str
+(" <<  BaseOffsetInPencil << ") p
+( v ) str
+(" << v) p n
+() S 8 T () S 16 T (      << ") S
+( Value ) str
+(" << This->ZBarSet[ MyBarIndex ][ Pencil ]) p n
+() S 8 T (  [ BaseOffsetInPencil + v ].re << EndLogLine;) N
+(      }) N
+() N
+(      assert\(This->ZBarSet[MyBarIndex][Pencil][BaseOffsetInPencil+v].re == 0 \);) N
+(      This->ZBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ] = ) N
+() S 8 T (ap->mData[ v ];) N
+(    }) N
+(    ) N
+(    This->ZCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ]++;) N
+(    ) N
+(    assert\(    This->ZCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] >= 0) N
+(            && This->ZCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] <=) N
+() S 8 T (       ZPacketsPerPencil \);) N
+() N
+(    ) S
+(if) K
+(\( This->ZCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] == ) p n
+() S 8 T (ZPacketsPerPencil \) {) N
+(      ) S
+(// Make counter ready for next phase.) c n
+(      This->ZCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] = 0;) p n
+(      ) N
+(      ) S
+(// Do the 1D FFT) c n
+(      fftw_complex input[ GZ ];) p n
+(      ) N
+(      ) S
+(for) K
+(\() p
+(int) k
+( i = 0; i < GZ ; i++ \) {) p n
+(        input[i].re = This->ZBarSet[ MyBarIndex ][ Pencil ][ i ].re;) N
+(        input[i].im = This->ZBarSet[ MyBarIndex ][ Pencil ][ i ].im;) N
+(      }) N
+(      ) N
+(      fftw_one\( fftw_1d_plan,) N
+() S 8 T () S 16 T (input ,) N
+() S 8 T () S 16 T (\(fftw_complex *\) This->ZBarSet[ MyBarIndex ][ Pencil ]   \);) N
+() N
+(      ) S
+(// When done, mark count ... could put down in outbound packets as well.) c n
+(      This->ZCompletePencilsInBarCount[ MyBarIndex ] ++ ;) p n
+() N
+(      BegLogLine\(1\)) N
+(        << ") S
+( ZActor : Pencil Complete ) str
+(") p n
+(        << ") S
+( AbsBar ) str
+(") p n
+(        << ap->mHdr.Bar) N
+(        << ") S
+( MyBarIndex ) str
+(") p n
+(        << MyBarIndex) N
+(        << ") S
+( Count ) str
+(") p n
+(        << This->ZCompletePencilsInBarCount[ MyBarIndex ]) N
+(        << EndLogLine;) N
+(      ) N
+(      ) S
+(// Increment completed pencils in bar count.) c n
+(      ) p
+(// Since this bar is done, packets could be sent.) c n
+(      ) p
+(// BUT, can't send them from an active message context without ) c n
+(      ) p
+(// risking deadlock.) c n
+(      ) p
+(// SO, should post this state somewhere.) c n
+(    }) p n
+(    ) N
+(    BegLogLine\(1\) << ") S
+( Done Actor in Z collect on [) str
+(" <<x<<") p
+(,) str
+("<<y<<") p
+(,) str
+("<<z<<") p
+(] ) str
+(") p n
+() S 8 T () S 16 T (  <<  ") S
+(Bar ) str
+(" << MyBarIndex << ") p
+( Pencil ) str
+(" << Pencil ) p n
+() S 8 T () S 16 T (  << ") S
+( PencilOffset ) str
+(" <<  BaseOffsetInPencil) p n
+() S 8 T () S 16 T (  << ") S
+( PacketsInPencilCount ) str
+(") p n
+() S 8 T () S 16 T (  << This->ZCompletePacketsInPencilCount[MyBarIndex][Pencil]) N
+() S 8 T () S 16 T (  << ") S
+( PencilsInBarCompleteCount ) str
+(") p n
+() S 8 T () S 16 T (  << This->ZCompletePencilsInBarCount[ ap->mHdr.Bar ]) N
+() S 8 T () S 16 T (  << EndLogLine;) N
+() N
+(    ) S
+(return) K
+(\(0\);) p n
+(  }) N
+(fft3d.cpp) (Page 4/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (2/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+() N
+(  ) S
+(static) K
+( ) p
+(int) k n
+(  YPacketActorFx\( ) p
+(void) k
+( *pkt \) {) p n
+(    ActorPacket *ap = \(ActorPacket *\) pkt;) N
+(    ) N
+(    FFT *This              = ap->mHdr.This;) N
+(    ) S
+(int) k
+( AbsBar             = ap->mHdr.Bar;) p n
+(    ) S
+(int) k
+( MyBarIndex         = AbsBar;) p n
+(    ) S
+(int) k
+( Pencil             = ap->mHdr.Pencil;) p n
+(    ) S
+(int) k
+( BaseOffsetInPencil = ap->mHdr.PencilIndex;) p n
+(    ) N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( v = 0; v < YGridPointsPerPacket; v++ \)) p n
+(      {) N
+() S 8 T () S
+(// Look out for partial last packet.) c n
+(      ) p
+(if) K
+(\( BaseOffsetInPencil + v == GY \)) p n
+(        ) S
+(break) K
+(;) p n
+(      ) S
+(if) K
+(\( This->YBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ].re != ) p n
+(0 \)) N
+(      BegLogLine\(1\) << ") S
+( Fatal Error in Y ) str
+(" <<  ") p
+(Bar ) str
+(" << MyBarIndex << ") p
+( Pencil ) str
+(" << Penc) p n
+(il << ") S
+( BaseIndex ) str
+(" <<  BaseOffsetInPencil << ") p
+( v ) str
+(" << v) p n
+(           << ") S
+( Value ) str
+(" << This->YBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPenc) p n
+(il + v ].re << EndLogLine;) N
+(      assert\( This->YBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ].re) N
+( == 0 \);) N
+(      This->YBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ] = ap->mDat) N
+(a[ v ];) N
+(      }) N
+() N
+(    This->YCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ]++;) N
+() N
+(    ) S
+(if) K
+(\( This->YCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] == YPacketsP) p n
+(erPencil \)) N
+(      {) N
+(      ) S
+(// Do the 1D FFT) c n
+(      fftw_complex input[ GY ];) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( i = 0; i < GY ; i++ \)) p n
+(        {) N
+(        input[i].re = This->YBarSet[ MyBarIndex ][ Pencil ][ i ].re;) N
+(        input[i].im = This->YBarSet[ MyBarIndex ][ Pencil ][ i ].im;) N
+(        }) N
+() N
+(      fftw_one\(  fftw_1d_plan,) N
+(                 input ,) N
+(                \(fftw_complex *\) This->YBarSet[ MyBarIndex ][ Pencil ]   \);) N
+() N
+(      ) S
+(// When done, mark count ... could put down in outbound packets as well.) c n
+(      This->YCompletePencilsInBarCount[ MyBarIndex ] ++ ;) p n
+() N
+(      BegLogLine\(1\)) N
+(        << ") S
+(YActor : Pencil Complete ) str
+(") p n
+(        << ") S
+( AbsBar ) str
+(") p n
+(        << ap->mHdr.Bar) N
+(        << ") S
+( MyBarIndex ) str
+(") p n
+(        << MyBarIndex) N
+(        << ") S
+( Count ) str
+(") p n
+(        << This->YCompletePencilsInBarCount[ MyBarIndex ]) N
+(        << EndLogLine;) N
+() N
+(      ) S
+(// Increment completed pencils in bar count.) c n
+(      ) p
+(// Since this bar is done, packets could be sent.) c n
+(      ) p
+(// BUT, can't send them from an active message context without risking dea) c n
+(dlock.) N
+(      ) p
+(// SO, should post this state somewhere.) c n
+(      }) p n
+() N
+(    ) S
+(return) K
+(\(0\);) p n
+(    }) N
+() N
+(fft3d.cpp) (Page 5/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(  ) S
+(static) K
+( ) p
+(int) k n
+(  XPacketActorFx\( ) p
+(void) k
+( *pkt \)) p n
+(    {) N
+(    ActorPacket *ap = \(ActorPacket *\) pkt;) N
+() N
+(    FFT *This              = ap->mHdr.This;) N
+(    ) S
+(int) k
+( AbsBar             = ap->mHdr.Bar;) p n
+(    ) S
+(int) k
+( MyBarIndex         = AbsBar;) p n
+(    ) S
+(int) k
+( Pencil             = ap->mHdr.Pencil;) p n
+(    ) S
+(int) k
+( BaseOffsetInPencil = ap->mHdr.PencilIndex;) p n
+() N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( v = 0; v < XGridPointsPerPacket; v++ \)) p n
+(      {) N
+(      ) S
+(// Look out for partial last packet.) c n
+(      ) p
+(if) K
+(\( BaseOffsetInPencil + v == GX \)) p n
+(        ) S
+(break) K
+(;) p n
+(      ) S
+(if) K
+(\( This->XBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ].re != ) p n
+(0 \)) N
+(      BegLogLine\(1\) << ") S
+( Fatal Error in X ) str
+(" <<  ") p
+(Bar ) str
+(" << MyBarIndex << ") p
+( Pencil ) str
+(" << Penc) p n
+(il << ") S
+( BaseIndex ) str
+(" <<  BaseOffsetInPencil << ") p
+( v ) str
+(" << v) p n
+(           << ") S
+( Value ) str
+(" << This->XBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPenc) p n
+(il + v ].re << EndLogLine;) N
+(      assert\( This->XBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ].re) N
+( == 0 \);) N
+(      This->XBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ] = ap->mDat) N
+(a[ v ];) N
+(      }) N
+() N
+(    This->XCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ]++;) N
+() N
+(    ) S
+(if) K
+(\( This->XCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] == XPacketsP) p n
+(erPencil \)) N
+(      {) N
+(      ) S
+(// Do the 1D FFT) c n
+(      fftw_complex input[ GX ];) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( i = 0; i < GX ; i++ \)) p n
+(        {) N
+(        input[i].re = This->XBarSet[ MyBarIndex ][ Pencil ][ i ].re;) N
+(        input[i].im = This->XBarSet[ MyBarIndex ][ Pencil ][ i ].im;) N
+(        }) N
+() N
+(      fftw_one\(  fftw_1d_plan,) N
+(                 input ,) N
+(                 \(fftw_complex *\) This->XBarSet[ MyBarIndex ][ Pencil ]   \);) N
+() N
+(      ) S
+(// When done, mark count ... could put down in outbound packets as well.) c n
+(      This->XCompletePencilsInBarCount[ ap->mHdr.Bar ] ++ ;) p n
+() N
+(      BegLogLine\(1\)) N
+(        << ") S
+(XActor : Pencil Complete ) str
+(") p n
+(        << ") S
+( AbsBar ) str
+(") p n
+(        << ap->mHdr.Bar) N
+(        << ") S
+( MyBarIndex ) str
+(") p n
+(        << MyBarIndex) N
+(        << ") S
+( Count ) str
+(") p n
+(        << This->XCompletePencilsInBarCount[ MyBarIndex ]) N
+(        << EndLogLine;) N
+() N
+(      ) S
+(// Increment completed pencils in bar count.) c n
+(      ) p
+(// Since this bar is done, packets could be sent.) c n
+(      ) p
+(// BUT, can't send them from an active message context without risking dea) c n
+(dlock.) N
+(      ) p
+(// SO, should post this state somewhere.) c n
+(      }) p n
+() N
+(    ) S
+(return) K
+(\(0\);) p n
+(    }) N
+() N
+(fft3d.cpp) (Page 6/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (3/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  ) p
+(static) K
+( ) p
+(int) k n
+(  ZHomePacketActorFx\( ) p
+(void) k
+( *pkt \)) p n
+(    {) N
+(    ActorPacket *ap = \(ActorPacket *\) pkt;) N
+() N
+(    FFT *This              = ap->mHdr.This;) N
+(    ) S
+(int) k
+( AbsBar             = ap->mHdr.Bar;) p n
+(    ) S
+(int) k
+( MyBarIndex         = AbsBar;) p n
+(    ) S
+(int) k
+( Pencil             = ap->mHdr.Pencil;) p n
+(    ) S
+(int) k
+( BaseOffsetInPencil = ap->mHdr.PencilIndex;) p n
+() N
+(    BegLogLine\(1\)) N
+(      << ") S
+(XHActor : Got Packet ) str
+(") p n
+(      << ") S
+( AbsBar ) str
+(") p n
+(      << ap->mHdr.Bar) N
+(      << ") S
+( Pencil ) str
+(") p n
+(      << Pencil) N
+(      << ") S
+( PenciIndex ) str
+(") p n
+(      << BaseOffsetInPencil) N
+(      << EndLogLine;) N
+() N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( v = 0; v < ZHGridPointsPerPacket; v++ \)) p n
+(      {) N
+(      ) S
+(// Look out for partial last packet.) c n
+(      ) p
+(if) K
+(\( BaseOffsetInPencil + v == GZ \)) p n
+(        ) S
+(break) K
+(;) p n
+() N
+(      ) S
+(//This->ZBarSet[ MyBarIndex ][ Pencil ][ BaseOffsetInPencil + v ] = ap->mD) c n
+(ata[ v ];) N
+() p n
+(      \(*\(This->mPMS\)\)[ MyBarIndex ][ Pencil ][ v ] = ap->mData[ v ];) N
+() N
+(      }) N
+() N
+(    This->ZHCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ]++;) N
+() N
+(    ) S
+(if) K
+(\( This->ZHCompletePacketsInPencilCount[ MyBarIndex ][ Pencil ] == ZHPacket) p n
+(sPerPencil \)) N
+(      {) N
+(      ) S
+(// When done, mark count ... could put down in outbound packets as well.) c n
+(      This->ZHCompletePencilsInBarCount[ MyBarIndex ] ++ ;) p n
+() N
+(      BegLogLine\(1\)) N
+(        << ") S
+(XHActor : Pencil Complete ) str
+(") p n
+(        << ") S
+( AbsBar ) str
+(") p n
+(        << ap->mHdr.Bar) N
+(        << ") S
+( MyBarIndex ) str
+(") p n
+(        << MyBarIndex) N
+(        << ") S
+( Count ) str
+(") p n
+(        << This->ZHCompletePencilsInBarCount[ MyBarIndex ]) N
+(        << EndLogLine;) N
+() N
+(      }) N
+() N
+(    ) S
+(return) K
+(\(0\);) p n
+(    }) N
+(  ) S
+(int) k
+( Configured;) p n
+() N
+(  ) S
+(void) k n
+(  Configure\( ) p
+(int) k
+( aXPCoord, ) p
+(int) k
+( aYPCoord, ) p
+(int) k
+( aZPCoord \)) p n
+(    {) N
+(///    assert\( Configured == 0 \);) c n
+(    mXPCoord = aXPCoord;) p n
+(    mYPCoord = aYPCoord;) N
+(    mZPCoord = aZPCoord;) N
+() N
+(    ) S
+(// Need to do a plan for each dim.) c n
+(    fftw_1d_plan = fftw_create_plan\( GX , FFTW_FORWARD, FFTW_MEASURE \);) p n
+() N
+(fft3d.cpp) (Page 7/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    Configured = 1;) p n
+(MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+(    };) p n
+() N
+(  ) S
+(void) k n
+(  DoFFT\( ProcGridSection &aPMS \)) p n
+(    {) N
+(    mPMS = &aPMS;) N
+() N
+(    BegLogLine\(1\) << ") S
+(*** Collect on Z axis ***) str
+(" << EndLogLine;) p n
+() N
+(    ActorPacket zap;) N
+() N
+(    ) S
+(// Probably best to start in Z dim since that will be contigious in C++ data) c n
+( representation) N
+(    ) p
+(// For now, just suffer the striding.) c n
+() p n
+(    ) S
+(for) K
+(\() p
+(int) k
+( xm = 0; xm < XGridPointsPerProc; xm++ \) {) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( ym = 0; ym < YGridPointsPerProc; ym++ \) {) p n
+(        ) S
+(int) k
+( LoadCount = 0;) p n
+(        ) S
+(int) k
+( PencilElementIndex = mZPCoord * ZGridPointsPerProc;) p n
+() N
+(        ) S
+(for) K
+(\() p
+(int) k
+( zm = 0; zm < ZGridPointsPerProc; zm++ \) {) p n
+(          zap.mData[ LoadCount ] = aPMS[ xm ][ ym ][ zm ];) N
+(          LoadCount++;) N
+() S 8 T (  ) N
+(          BegLogLine\(1\)) N
+(            << ") S
+( DoFFT ) str
+(") p n
+(            << ") S
+( LoadCount ) str
+(" << LoadCount) p n
+(            << ") S
+( PencilElementIndex ) str
+(" << PencilElementIndex) p n
+(            << EndLogLine;) N
+() S 8 T (  ) N
+(          ) S
+(if) K
+(\( LoadCount == ZGridPointsPerPacket \) {) p n
+() S 8 T (    ) S
+(// should not need this:   || \(zm + 1 ==  ZGridPointsPerProc\) \)) c n
+(            ) p n
+(            ) S
+(int) k
+( XPTarget            = mXPCoord;) p n
+(            ) S
+(int) k
+( YPTarget            = mYPCoord;) p n
+(            ) S
+(int) k
+( ZPTarget            = xm / ZBarsOwnedPerProc; ) p n
+() S 8 T (    ) S
+(// Distribute shared bars over procs in row.) c n
+() p n
+(            ) S
+(int) k
+( ZBarIndex           = xm % ZBarsOwnedPerProc;) p n
+(            ) S
+(int) k
+( ZPencilIndex        = ym;) p n
+(            ) S
+(int) k
+( ZPencilElementIndex = PencilElementIndex ;) p n
+() N
+(            BegLogLine\(1\)) N
+(              << ") S
+(DoFFT ) str
+(") p n
+(              << ") S
+(H->Z Send To: ) str
+(") p n
+(              << ") S
+([) str
+(" << XPTarget << ") p
+(,) str
+(" << YPTarget << ") p
+(,) str
+(" << ZPTarget << ") p
+(]) str
+(") p n
+(              << ") S
+( AbsBar ) str
+("             << ZBarIndex) p n
+(              << ") S
+( PencilIndex ) str
+("        << ZPencilIndex) p n
+(              << ") S
+( PencilElementIndex ) str
+(" << ZPencilElementIndex) p n
+(              << EndLogLine;) N
+() N
+(            zap.mHdr.This                = ) S
+(this) K
+(;) p n
+(            zap.mHdr.Bar                 = ZBarIndex;) N
+(            zap.mHdr.Pencil              = ZPencilIndex;) N
+(            zap.mHdr.PencilIndex         = ZPencilElementIndex;) N
+() N
+(            BGLTorusSimpleActivePacketSend\( ZPacketActorFx,) N
+(                                            XPTarget,) N
+(                                            YPTarget,) N
+(                                            ZPTarget,) N
+(                                            ) S
+(sizeof) K
+(\( zap \),) p n
+(                                            \() S
+(void) k
+( *\) &zap \);) p n
+() N
+(            PencilElementIndex += LoadCount;) N
+(            LoadCount = 0;) N
+() S 8 T (  }) N
+() S 8 T (} ) N
+(fft3d.cpp) (Page 8/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (4/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (9-10) 5
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      }) p n
+(    }) N
+() N
+(    ) S
+(// Spin-wait for complete \(including fft'd\) Z vectors) c n
+(    BegLogLine\(1\) << ") p
+( Done with Z send, START BARRIER ) str
+(" << EndLogLine;) p n
+() N
+(    ) S
+(// This explicit barrier would not be used ) c n
+(    ) p
+(//- the wait on data would be used below.) c n
+(    MPI_Barrier\( MPI_COMM_WORLD \);  ) p
+(//Wait for all processes to get here.) c n
+(   ) p n
+(    ) N
+(    BegLogLine\(1\) << ") S
+( Done with Z send, FINISH BARRIER ) str
+(" << EndLogLine;) p n
+(    ) N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( bar = 0; bar < ZBarsOwnedPerProc ; bar++ \) {) p n
+(      ActorPacket yap;) N
+(      ) S
+(// Wait for the bar to complete) c n
+(      ) p
+(// If bars complete in order,we might have some chance to catch this high) c n
+(      ) p
+(// in the memory hierarchy) c n
+(      ) p
+(int) k
+( ZBarMon = -1;) p n
+(      ) S
+(while) K
+(\( ZCompletePencilsInBarCount[ bar ] != ZintoYPencilsPerBar \)) p n
+(        {) N
+() S 8 T (  ) S
+(if) K
+(\( ZBarMon != ZCompletePencilsInBarCount[ bar ] \)) p n
+() S 8 T (    {) N
+() S 8 T (      BegLogLine\(1\)) N
+() S 8 T () S 16 T (<< ") S
+(DoFFT ) str
+(") p n
+() S 8 T () S 16 T (<< ") S
+(Waiting on Local Bar ) str
+(") p n
+() S 8 T () S 16 T (<< bar) N
+() S 8 T () S 16 T (<< ") S
+( Current Count ) str
+(") p n
+() S 8 T () S 16 T (<<  ZCompletePencilsInBarCount[ bar ]) N
+() S 8 T () S 16 T (<< ") S
+( expecting ) str
+(") p n
+() S 8 T () S 16 T (<< ZintoYPencilsPerBar) N
+() S 8 T () S 16 T (<< EndLogLine;) N
+() S 8 T (      ZBarMon = ZCompletePencilsInBarCount[ bar ];) N
+() S 8 T (    }) N
+() S 8 T (  sleep\(1\);) N
+() S 8 T (  ) S
+(///        sched_yield\(\);) c n
+(        }) p n
+(      ) S
+(// Make counter ready for next phase) c n
+(      ZCompletePencilsInBarCount[ bar ] = 0;) p n
+(      ) N
+(      BegLogLine\(1\)) N
+(        << ") S
+(DoFFT ) str
+(") p n
+(        << ") S
+(Finished Wait on Local Bar ) str
+(") p n
+(        << bar) N
+(        << EndLogLine;) N
+(      ) N
+(      ) S
+(for) K
+(\() p
+(int) k
+( zm = 0; zm < GZ; zm++ \)   ) p n
+() S 8 T () S
+(// Actually indexes the Y pencil parts in the Z bar) c n
+(        {  ) p n
+() S 8 T (  ) S
+(int) k
+( LoadCount = 0;) p n
+() S 8 T (  ) S
+(int) k
+( PencilElementIndex = mYPCoord * YGridPointsPerProc;) p n
+() N
+() S 8 T (  ) S
+(for) K
+(\() p
+(int) k
+( ym = 0; ym < YGridPointsPerProc; ym++ \) {) p n
+() S 8 T (    ) S
+(//NOTE: middle index varying fastest as we stide to accum packets) c n
+() p 8 T (    yap.mData[ LoadCount ] = ZBarSet[ bar ][ ym ][ zm ];) N
+() S 8 T (    LoadCount++;) N
+() S 8 T (      ) N
+() S 8 T (    BegLogLine\(1\) << ") S
+(DoFFT Z->Y Load: LoadCount ) str
+(" << LoadCount ) p n
+() S 8 T () S 16 T () S 24 T (  << ") S
+( bar ) str
+(" << bar << ") p
+( ym ) str
+(" << ym << ") p
+( zm ) str
+(" ) p n
+() S 8 T () S 16 T () S 24 T (  << zm << EndLogLine;) N
+() S 8 T (    ) N
+() S 8 T (    ) S
+(if) K
+(\( LoadCount == YGridPointsPerPacket \) { ) p n
+() S 8 T (      ) S
+(// should not need this:   || \(zm + 1 ==  YGridPointsPerProc\) \)) c n
+() p 8 T (      ) N
+() S 8 T (      ) S
+(int) k
+( XPTarget = mXPCoord;) p n
+() S 8 T (      ) S
+(int) k
+( YPTarget = \(zm % ZGridPointsPerProc\) / YBarsOwnedPerProc ; ) p n
+() S 8 T (      ) S
+(// \(Abs Y Bar Index\) / No Procs in Y) c n
+() p 8 T (      ) S
+(int) k
+( ZPTarget = zm / ZGridPointsPerProc ; ) p
+(// Put back z proc) c n
+() p 8 T (      ) N
+(fft3d.cpp) (Page 9/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T (      ) S
+(int) k
+( YBarIndex           = zm % YBarsOwnedPerProc ;) p n
+() S 8 T (      ) S
+(int) k
+( YPencilIndex        = bar + mZPCoord * YBarsOwnedPerProc ;) p n
+() S 8 T (      ) S
+(int) k
+( YPencilElementIndex = PencilElementIndex;) p n
+() N
+() S 8 T (      BegLogLine\(1\)) N
+() S 8 T () S 16 T (<< ") S
+(DoFFT ) str
+(") p n
+() S 8 T () S 16 T (<< ") S
+(Z->Y Send To: ) str
+(") p n
+() S 8 T () S 16 T (<< ") S
+([) str
+(" << XPTarget << ") p
+(,) str
+(" << YPTarget << ") p
+(,) str
+(" << ZPTarget << ") p
+(]) str
+(") p n
+() S 8 T () S 16 T (<< ") S
+( AbsBar ) str
+("             << YBarIndex) p n
+() S 8 T () S 16 T (<< ") S
+( PencilIndex ) str
+("        << YPencilIndex) p n
+() S 8 T () S 16 T (<< ") S
+( PencilElementIndex ) str
+(" << YPencilElementIndex) p n
+() S 8 T () S 16 T (<< EndLogLine;) N
+() S 8 T (      ) N
+() S 8 T (      yap.mHdr.This                = ) S
+(this) K
+(;) p n
+() S 8 T (      yap.mHdr.Bar                 = YBarIndex;) N
+() S 8 T (      yap.mHdr.Pencil              = YPencilIndex;) N
+() S 8 T (      yap.mHdr.PencilIndex         = YPencilElementIndex;) N
+() N
+() S 8 T (      BGLTorusSimpleActivePacketSend\( YPacketActorFx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (      XPTarget,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (      YPTarget,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (      ZPTarget,) N
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (      ) S
+(sizeof) K
+(\( yap \),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (      \() S
+(void) k
+( *\) &yap \);) p n
+() S 8 T (      ) N
+() S 8 T (      ) N
+() S 8 T (      PencilElementIndex += LoadCount;) N
+() S 8 T (      LoadCount = 0;) N
+(            }) N
+(          }) N
+(        }) N
+(     }) N
+(    ) N
+(    ) N
+(    ) S
+(// Spin-wait for complete \(including fft'd\) Z vectors) c n
+(    BegLogLine\(1\) << ") p
+( Done with END of Y send barrier on [) str
+(" <<) p n
+(      mXPCoord << ") S
+(,) str
+(" << mYPCoord << ") p
+(,) str
+(" << mZPCoord << ") p
+(]) str
+(" << EndLogLine;) p n
+(    MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+(   ) p n
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( bar = 0; bar < YBarsOwnedPerProc ; bar++ \) {) p n
+(      ActorPacket xap;) N
+(      ) S
+(// Wait for the bar to comlete) c n
+(      ) p
+(//If bars complete in order, we might have some chance to catch this high) c n
+(      ) p
+(// in the memory hierarchy) c n
+(      ) p
+(int) k
+( YBarMon = -1;) p n
+(      ) S
+(while) K
+(\( YCompletePencilsInBarCount[ bar ] != YintoXPencilsPerBar \) {) p n
+() S 8 T () S
+(if) K
+(\( YBarMon != YCompletePencilsInBarCount[ bar ] \) {) p n
+() S 8 T (  printf\(") S
+(Waiting on [%d,%d,%d] to complete YCompBenInBarC[%d]=%d/%d\\n) str
+(") p n
+() S 8 T () S 16 T ( ,mXPCoord, mYPCoord, mZPCoord,) N
+() S 8 T () S 16 T ( bar, YCompletePencilsInBarCount[ bar ], YintoXPencilsPerBar \);) N
+(          YBarMon = YCompletePencilsInBarCount[ bar ];) N
+() S 8 T (}) N
+() S 8 T () N
+(        fflush\( stdout \);) N
+(        sleep\(1\);) N
+() S 8 T () S
+(///        sched_yield\(\);) c n
+(      }) p n
+(      ) N
+(      ) S
+(for) K
+(\() p
+(int) k
+( ym = 0; ym < GY; ym++ \) {) p n
+(        ) S
+(int) k
+( LoadCount = 0;) p n
+(        ) S
+(int) k
+( PencilElementIndex = mXPCoord * XGridPointsPerProc;) p n
+() S 8 T () N
+(        ) S
+(for) K
+(\() p
+(int) k
+( xm = 0; xm < XGridPointsPerProc; xm++ \) {) p n
+(          ) S
+(//NOTE: middle index varying fastest as we stide to accum packets) c n
+(          xap.mData[ LoadCount ] = YBarSet[ bar ][ xm ][ ym ];) p n
+(          LoadCount++;) N
+() S 8 T (  ) N
+(          BegLogLine\(1\) << ") S
+(DoFFT Y->X Load: LoadCount ) str
+(" << LoadCount << ") p
+( bar ) str
+(" << ba) p n
+(r << ") S
+( xm ) str
+(" << xm << ") p
+( ym ) str
+(" << ym << EndLogLine;) p n
+(fft3d.cpp) (Page 10/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (5/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (11-12) 6
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(          ) S
+(if) K
+(\( LoadCount == XGridPointsPerPacket \) {) p n
+() S 8 T (    ) S
+(// should not need this:   || \(zm + 1 ==  XGridPointsPerProc\) \)) c n
+(            ) p
+(int) k
+( XPTarget         = \(ym % YGridPointsPerProc\) / XBarsOwnedPerProc) p n
+( ;) N
+(            ) S
+(int) k
+( YPTarget         = ym / YGridPointsPerProc ;) p n
+(            ) S
+(int) k
+( ZPTarget         = mZPCoord;) p n
+() N
+(            ) S
+(int) k
+( XBarIndex           = ym % XBarsOwnedPerProc ;) p n
+(            ) S
+(int) k
+( XPencilIndex        = bar + mYPCoord * ZBarsOwnedPerProc ;) p n
+(            ) S
+(int) k
+( XPencilElementIndex = PencilElementIndex;) p n
+() N
+(            BegLogLine\(1\)) N
+(              << ") S
+(DoFFT ) str
+(") p n
+(              << ") S
+(Y->X Send To: ) str
+(") p n
+(              << ") S
+([) str
+(" << XPTarget << ") p
+(,) str
+(" << YPTarget << ") p
+(,) str
+(" << ZPTarget << ") p
+(]) str
+(") p n
+(              << ") S
+( AbsBar ) str
+("             << XBarIndex) p n
+(              << ") S
+( PencilIndex ) str
+("        << XPencilIndex) p n
+(              << ") S
+( PencilElementIndex ) str
+(" << XPencilElementIndex) p n
+(              << EndLogLine;) N
+() S 8 T (    ) N
+(            assert\( XBarIndex   <  GY \);) N
+(            assert\( XPencilIndex <  YintoXPencilsPerBar \);) N
+(            assert\( XPencilElementIndex <  GX \);) N
+() S 8 T (    ) N
+(            xap.mHdr.This                = ) S
+(this) K
+(;) p n
+(            xap.mHdr.Bar                 = XBarIndex;) N
+(            xap.mHdr.Pencil              = XPencilIndex;) N
+(            xap.mHdr.PencilIndex         = XPencilElementIndex;) N
+() S 8 T (    ) N
+(            ) S
+(//XPacketActorFx\( \(void *\) &xap \);) c n
+(            BGLTorusSimpleActivePacketSend\( XPacketActorFx,) p n
+(                                            XPTarget,) N
+(                                            YPTarget,) N
+(                                            ZPTarget,) N
+(                                            ) S
+(sizeof) K
+(\( xap \),) p n
+(                                            \() S
+(void) k
+( *\) &xap \);) p n
+() S 8 T (    ) N
+() N
+(            PencilElementIndex += LoadCount;) N
+(            LoadCount = 0;) N
+() S 8 T (  }) N
+() S 8 T (}) N
+(      }) N
+(      }) N
+(    ) N
+(    ) S
+(// Spin-wait for complete \(including fft'd\) Z vectors) c n
+(    BegLogLine\(1\) << ") p
+( Done with END of X send barrier on [) str
+(" <<) p n
+(      mXPCoord << ") S
+(,) str
+(" << mYPCoord << ") p
+(,) str
+(" << mZPCoord << ") p
+(]) str
+(" << EndLogLine;) p n
+() N
+(#if) K
+( 1) p n
+(    MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+() p n
+(    ) S
+(// Wait for X bars to complete, load 'em up and send 'em home.) c n
+(    ) p
+(for) K
+(\( ) p
+(int) k
+( bar = 0; bar < XBarsOwnedPerProc ; bar++ \) {) p n
+(      ActorPacket zhap;) N
+(      ) N
+(      ) S
+(// Wait for the bar to comlete) c n
+(      ) p
+(// If bars complete in order,we might have some chance to catch this high) c n
+(      ) p
+(// in the memory hierarchy) c n
+(      ) p
+(int) k
+( XBarMon = -1;) p n
+(      ) S
+(while) K
+(\( XCompletePencilsInBarCount[ bar ] != XintoZPencilsPerBar \) {) p n
+(        ) S
+(if) K
+(\( XBarMon != XCompletePencilsInBarCount[ bar ] \) {) p n
+() S 8 T (  printf\(") S
+(Waiting on [%d,%d,%d] to complete XCompBenInBarC[%d]=%d/%d\\n) str
+(") p n
+() S 8 T () S 16 T ( ,mXPCoord, mYPCoord, mZPCoord,) N
+() S 8 T () S 16 T ( bar, XCompletePencilsInBarCount[ bar ], XintoZPencilsPerBar \);) N
+(          XBarMon = XCompletePencilsInBarCount[ bar ];) N
+() S 8 T (}) N
+(        sleep\(1\);) N
+(fft3d.cpp) (Page 11/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S
+(//        sched_yield\(\);) c n
+(      }) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( xm = 0; xm < GX; xm++ \) {) p n
+() N
+(        ) S
+(int) k
+( LoadCount = 0;) p n
+(        ) S
+(int) k
+( PencilElementIndex = mZPCoord * ZGridPointsPerProc;) p n
+() S 8 T () N
+(        ) S
+(for) K
+(\() p
+(int) k
+( zm = 0; zm <  XintoZPencilsPerBar; zm++ \) {) p n
+(          ) S
+(//NOTE: middle index varying fastest as we stide to accum packets) c n
+(          zhap.mData[ LoadCount ] = XBarSet[ bar ][ zm ][ xm ];) p n
+(          LoadCount++;) N
+() S 8 T (  ) N
+(          ) S
+(if) K
+(\( LoadCount == ZHGridPointsPerPacket \) ) p
+(// should not need this:   ||) c n
+( \(zm + 1 ==  ZGridPointsPerProc\) \)) N
+(            {) p n
+() S 8 T (    ) S
+(int) k
+( XPTarget         = xm / ZGridPointsPerProc ;) p n
+(            ) S
+(int) k
+( YPTarget         = mYPCoord;) p n
+(            ) S
+(int) k
+( ZPTarget         = mZPCoord;) p n
+() S 8 T (    ) N
+(            ) S
+(int) k
+( ZBarIndex           = xm % ZBarsSharedPerProc ; ) p
+(// Note: Uses SH) c n
+(ARED number since we send into orig data structure) N
+(            ) p
+(int) k
+( ZPencilIndex        = bar + mXPCoord * YBarsOwnedPerProc ;) p n
+(            ) S
+(int) k
+( ZPencilElementIndex = 0; ) p
+(/// PencilElementIndex;) c n
+() p 8 T (    ) N
+(            BegLogLine\(1\)) N
+(              << ") S
+(DoFFT ) str
+(") p n
+(              << ") S
+(X->Home Send To: ) str
+(") p n
+(              << ") S
+([) str
+(" << XPTarget << ") p
+(,) str
+(" << YPTarget << ") p
+(,) str
+(" << ZPTarget << ") p
+(]) str
+(") p n
+(              << ") S
+( AbsBar ) str
+("             << ZBarIndex) p n
+(              << ") S
+( PencilIndex ) str
+("        << ZPencilIndex) p n
+(              << ") S
+( PencilElementIndex ) str
+(" << ZPencilElementIndex) p n
+(              << EndLogLine;) N
+() N
+(            zhap.mHdr.This                = ) S
+(this) K
+(;) p n
+(            zhap.mHdr.Bar                 = ZBarIndex;) N
+(            zhap.mHdr.Pencil              = ZPencilIndex;) N
+(            zhap.mHdr.PencilIndex         = ZPencilElementIndex;) N
+() N
+(            BGLTorusSimpleActivePacketSend\( ZHomePacketActorFx,) N
+(                                            XPTarget,) N
+(                                            YPTarget,) N
+(                                            ZPTarget,) N
+(                                            ) S
+(sizeof) K
+(\( zhap \),) p n
+(                                            \() S
+(void) k
+( *\) &zhap \);) p n
+() N
+() N
+(            PencilElementIndex += LoadCount;) N
+(            LoadCount = 0;) N
+(            }) N
+(          }) N
+(        }) N
+(      }) N
+() N
+() N
+(MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+() p n
+(    BegLogLine\(1\)) N
+(      << ") S
+(DoFFT ) str
+(") p n
+(      << ") S
+(X->Home Done Send : Start Barrier ) str
+(") p n
+(      << EndLogLine;) N
+() N
+(    ) S
+(for) K
+(\( ) p
+(int) k
+( bar = 0; bar < ZBarsSharedPerProc ; bar++ \)) p n
+(      {) N
+(      ) S
+(// Wait for the bar to comlete) c n
+(      ) p
+(// If bars complete in order, we might have some chance to catch this high) c n
+(      ) p
+(// in the memory hierarchy) c n
+(      ) p
+(int) k
+( ZHBarMon = -1;) p n
+(      ) S
+(while) K
+(\( ZHCompletePencilsInBarCount[ bar ] != ZintoYPencilsPerBar \)) p n
+(        {) N
+(fft3d.cpp) (Page 12/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (6/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (13-14) 7
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(        ) p
+(if) K
+(\( ZHBarMon != ZHCompletePencilsInBarCount[ bar ] \)) p n
+(          {) N
+(              printf\(") S
+(Waiting on [%d,%d,%d] to complete ZHCompBenInBarC[ %d ] = %d / %d \\n) str
+(",) p n
+(              mXPCoord, mYPCoord, mZPCoord,) N
+(              bar, ZHCompletePencilsInBarCount[ bar ], XintoZPencilsPerBar \);) N
+(          ZHBarMon = ZHCompletePencilsInBarCount[ bar ];) N
+(          }) N
+(        sleep\(1\);) N
+(///        sched_yield\(\);) c n
+(        }) p n
+(      ) S
+(// Make counter ready for next phase) c n
+(      ZHCompletePencilsInBarCount[ bar ] = 0;) p n
+(      }) N
+() N
+(#endif) K n
+() p n
+(MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+(    printf\(") p
+(All Z Home bars completed.\\n) str
+("\);) p n
+(    fflush\( stdout \);) N
+() N
+(MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+() p n
+() N
+(    ) S
+(return) K
+(;) p n
+(    }) N
+() N
+(  };) N
+() N
+(class) K
+( Op {};) p n
+(class) K
+( OneDimFFT {};) p n
+() N
+(#define) K
+( MESH 4) p n
+(#define) K
+( PROC 2  ) p
+(// cube root - so 8 nodes.) c n
+(#define) K
+( XG MESH) p n
+(#define) K
+( YG MESH) p n
+(#define) K
+( ZG MESH) p n
+(#define) K
+( XP PROC) p n
+(#define) K
+( YP PROC) p n
+(#define) K
+( ZP PROC) p n
+() N
+(typedef) K
+( FFT<XP,YP,ZP,XG,YG,ZG,Op,FFT1D<MESH,complex> > FFT512;) p n
+() N
+(FFT512 fft;) N
+() N
+(FFT512::ProcGridSection pms;) N
+() N
+(complex a1[XG][YG][ZG];) N
+(fftw_complex *in = \(fftw_complex*\)a1;) N
+(complex a2[XG][YG][ZG];) N
+(fftw_complex *out = \(fftw_complex*\)a2;) N
+() N
+(int) k n
+(FFTDriver\(\)) p n
+(  {) N
+(  ) S
+(int) k
+( NodesX = XP, NodesY = YP, NodesZ = ZP ;) p n
+(  BGLPartitionGetDimensions\( &NodesX, &NodesY, &NodesZ \);) N
+() N
+(  ) S
+(if) K
+(\(    XP != NodesX) p n
+(      || YP != NodesY) N
+(      || ZP != NodesZ \)) N
+(    {) N
+(    cerr << ") S
+(Partition does not match compile time defintion.) str
+(" << endl;) p n
+(    exit\(-1\);) N
+(    }) N
+() N
+(  ) S
+(if) K
+(\(    XG % XP != 0) p n
+(      || YG % YP != 0) N
+(      || ZG % ZP != 0 \)) N
+(    {) N
+(fft3d.cpp) (Page 13/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(    cerr << ") p
+(FFT grid not even multiple of Processor grid.) str
+(" << endl;) p n
+(    exit\(-1\);) N
+(    }) N
+() N
+(  cerr << ") S
+(sizeof\( FFT512::ProcGridSection \) ) str
+(" << ) p
+(sizeof) K
+(\( FFT512::ProcGridSection \) << end) p n
+(l;) N
+() N
+(  ) S
+(// Load up some recognizable coords as values of PMS) c n
+(  ) p
+(for) K
+(\() p
+(int) k
+( xm = 0; xm < FFT512::XGridPointsPerProc; xm++ \)) p n
+(    {) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( ym = 0; ym < FFT512::YGridPointsPerProc; ym++ \)) p n
+(      {) N
+(      ) S
+(for) K
+(\() p
+(int) k
+( zm = 0; zm < FFT512::ZGridPointsPerProc; zm++ \)) p n
+(        {) N
+(        ) S
+(// pms[ xm ][ ym ][ zm ] = static_cast<complex>\(1\);) c n
+(        pms[xm][ym][zm] = complex\( xm * 100000 + ym * 1000 + zm ,0\);) p n
+(        }) N
+(      }) N
+(    }) N
+() N
+(  BegLogLine\(1\) << ") S
+(sizeof\( ProcGridSection \) ) str
+(" << ) p
+(sizeof) K
+(\( pms \) << EndLogLine;) p n
+() N
+(  ) S
+(int) k
+( MyX = 0, MyY = 0, MyZ = 0;) p n
+(  BGLPartitionGetCoords\( &MyX, &MyY, &MyZ \);) N
+() N
+(  printf\(") S
+(\\n\\n* * * * Node %2d %2d %2d * * * *\\n) str
+(", MyX, MyY, MyZ  \);) p n
+() N
+(  fft.Configure\( MyX, MyY, MyZ   \);) N
+() N
+(  fft.DoFFT\( pms \);) N
+() N
+(  forward_3d_Plan = fftw3d_create_plan\( XG,YG,ZG,FFTW_FORWARD,FFTW_MEASURE \);) N
+() N
+(  ) S
+(for) K
+(\() p
+(int) k
+( x=0; x<XG; x++\)) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( y=0; y<YG; y++\)) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( z=0; z<ZG; z++\)) p n
+(    a1[x][y][z] = complex\( x * 100000 + y * 1000 + z , MyX * 100000 +  MyY * 100) N
+(0 + MyZ  \);) N
+() N
+(  fftwnd_one\(forward_3d_Plan,in,out\);) N
+() N
+(  ) S
+(int) k
+( BadValueCount = 0;) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( x=0; x<XG; x++\)) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( y=0; y<YG; y++\)) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( z=0; z<ZG; z++\)) p n
+(    {) N
+(    complex fftw_value = a2[x][y][z];) N
+(    complex fft3d_value = pms[x][y][z];) N
+(    ) S
+(if) K
+(\(   fabs\( a2[x][y][z].re - pms[x][y][z].re \) > 0.0000000001) p n
+(       || fabs\( a2[x][y][z].im - pms[x][y][z].im \) > 0.0000000001 \)) N
+(      BadValueCount++;) N
+(    }) N
+(  printf\(") S
+(Interative Value 3D FFT ) str
+("\);) p n
+(  ) S
+(if) K
+(\( BadValueCount \)) p n
+(     printf\(") S
+(Failed\\n) str
+("\);) p n
+(  ) S
+(else) K n
+(     printf\(") p
+(Succeeded\\n) str
+("\);) p n
+(  fflush\( stdout \);) N
+() N
+(MPI_Barrier\( MPI_COMM_WORLD \);         ) S
+(//Wait for all processes to get here.) c n
+() p n
+(  ) S
+(return) K
+(\(0\);) p n
+(  }) N
+() N
+(int) k
+( AttachDebugger\( ) p
+(char) k
+( * \);) p n
+() N
+() N
+(void) k
+( Print_FFT_Info\(\)) p n
+(  {) N
+(fft3d.cpp) (Page 14/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (7/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (15-16) 8
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(  BegLogLine\(1\) << ") p
+(GX ) str
+(" << FFT512::GX << ") p
+( GY ) str
+(" << FFT512::GY << ") p
+( GZ ) str
+(" << FFT51) p n
+(2::GZ << EndLogLine;) N
+(  BegLogLine\(1\) << ") S
+(PX ) str
+(" << FFT512::PX << ") p
+( PY ) str
+(" << FFT512::PY << ") p
+( PZ ) str
+(" << FFT512) p n
+(::PZ << EndLogLine;) N
+() N
+(  BegLogLine\(1\) << ") S
+(Number of mesh values total ) str
+(" <<                          FFT512::GX) p n
+( * FFT512::GY * FFT512::GZ << EndLogLine;) N
+(  BegLogLine\(1\) << ") S
+(Memory of mesh values total ) str
+(" <<  ) p
+(sizeof) K
+(\(FFT512::Value\) * FFT512::GX) p n
+( * FFT512::GY * FFT512::GZ << EndLogLine;) N
+() N
+(  BegLogLine\(1\) << ") S
+(XGridPointsPerProc ) str
+(" << FFT512::XGridPointsPerProc << EndLogLine) p n
+(;) N
+(  BegLogLine\(1\) << ") S
+(YGridPointsPerProc ) str
+(" << FFT512::YGridPointsPerProc << EndLogLine) p n
+(;) N
+(  BegLogLine\(1\) << ") S
+(ZGridPointsPerProc ) str
+(" << FFT512::ZGridPointsPerProc << EndLogLine;) p n
+() N
+(  BegLogLine\(1\) << ") S
+(ZintoYPencilsPerBar ) str
+(" << FFT512::ZintoYPencilsPerBar << EndLogLin) p n
+(e;) N
+(  BegLogLine\(1\) << ") S
+(YintoXPencilsPerBar ) str
+(" << FFT512::YintoXPencilsPerBar << EndLogLin) p n
+(e;) N
+(  BegLogLine\(1\) << ") S
+(XintoZPencilsPerBar ) str
+(" << FFT512::XintoZPencilsPerBar << EndLogLin) p n
+(e;) N
+() N
+(  BegLogLine\(1\) << ") S
+(ZPacketsPerPencil ) str
+(" << FFT512::ZPacketsPerPencil << EndLogLine;) p n
+(  BegLogLine\(1\) << ") S
+(YPacketsPerPencil ) str
+(" << FFT512::YPacketsPerPencil << EndLogLine;) p n
+(  BegLogLine\(1\) << ") S
+(XPacketsPerPencil ) str
+(" << FFT512::XPacketsPerPencil << EndLogLine;) p n
+(  BegLogLine\(1\) << ") S
+(ZHPacketsPerPencil ) str
+(" << FFT512::ZHPacketsPerPencil << EndLogLine) p n
+(;) N
+() N
+(/////  BegLogLine\(1\) << "ZPacketsPerPencilPerProc " << FFT512::ZPacketsPerPencil) c n
+(PerProc  << EndLogLine;) N
+(/////  BegLogLine\(1\) << "YPacketsPerPencilPerProc " << FFT512::YPacketsPerPencil) N
+(PerProc  << EndLogLine;) N
+(/////  BegLogLine\(1\) << "XPacketsPerPencilPerProc " << FFT512::XPacketsPerPencil) N
+(PerProc  << EndLogLine;) N
+() p n
+(  BegLogLine\(1\) << ") S
+(Grid Values Per Packet ) str
+(" << FFT512::GridValuesPerPacket << EndLogL) p n
+(ine;) N
+() N
+(  BegLogLine\(1\) << ") S
+(ZGridPointsPerPacket ) str
+(" << FFT512::ZGridPointsPerPacket << EndLogL) p n
+(ine;) N
+(  BegLogLine\(1\) << ") S
+(YGridPointsPerPacket ) str
+(" << FFT512::YGridPointsPerPacket << EndLogL) p n
+(ine;) N
+(  BegLogLine\(1\) << ") S
+(XGridPointsPerPacket ) str
+(" << FFT512::XGridPointsPerPacket << EndLogL) p n
+(ine;) N
+(  BegLogLine\(1\) << ") S
+(ZHGridPointsPerPacket ) str
+(" << FFT512::ZHGridPointsPerPacket << EndLo) p n
+(gLine;) N
+() N
+(  BegLogLine\(1\) << ") S
+(Number of mesh values per node ) str
+(") p n
+(       <<                         FFT512::XGridPointsPerProc * FFT512::YGridPoin) N
+(tsPerProc * FFT512::ZGridPointsPerProc << EndLogLine;) N
+(  BegLogLine\(1\) << ") S
+(Memory of mesh values per node \(bytes\) ) str
+(") p n
+(       << ) S
+(sizeof) K
+(\(FFT512::Value\) * FFT512::XGridPointsPerProc * FFT512::YGridPoin) p n
+(tsPerProc * FFT512::ZGridPointsPerProc << EndLogLine;) N
+() N
+(  BegLogLine\(1\) << ") S
+(ZBarsSharedPerProc ) str
+(" << FFT512::ZBarsSharedPerProc << EndLogLine) p n
+(;) N
+(  BegLogLine\(1\) << ") S
+(YBarsSharedPerProc ) str
+(" << FFT512::YBarsSharedPerProc << EndLogLine) p n
+(;) N
+(  BegLogLine\(1\) << ") S
+(XBarsSharedPerProc ) str
+(" << FFT512::XBarsSharedPerProc << EndLogLine) p n
+(;) N
+() N
+(  BegLogLine\(1\) << ") S
+(ZBarsOwnedPerProc ) str
+(" << FFT512::ZBarsOwnedPerProc << EndLogLine;) p n
+(  BegLogLine\(1\) << ") S
+(YBarsOwnedPerProc ) str
+(" << FFT512::YBarsOwnedPerProc << EndLogLine;) p n
+(  BegLogLine\(1\) << ") S
+(XBarsOwnedPerProc ) str
+(" << FFT512::XBarsOwnedPerProc << EndLogLine;) p n
+() N
+(  BegLogLine\(1\) << ") S
+(sizeof\( ZBarSet \) \(bytes\) ) str
+(" << ) p
+(sizeof) K
+(\( FFT512::ZBarSet \) << EndLogLin) p n
+(e;) N
+(  BegLogLine\(1\) << ") S
+(sizeof\( YBarSet \) \(bytes\) ) str
+(" << ) p
+(sizeof) K
+(\( FFT512::YBarSet \) << EndLogLi) p n
+(fft3d.cpp) (Page 15/16) (Mar 02, 03 16:00) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(ne;) p n
+(  BegLogLine\(1\) << ") S
+(sizeof\( XBarSet \) \(bytes\) ) str
+(" << ) p
+(sizeof) K
+(\( FFT512::XBarSet \) << EndLogLi) p n
+(ne;) N
+() N
+(  }) N
+() N
+(main\() S
+(int) k
+( argc, ) p
+(char) k
+(** argv, ) p
+(char) k
+(** argp\)) p n
+(  {) N
+(  MPI_Init\( &argc, &argv \);  ) S
+(/* initialize MPI environment */) c n
+(  AttachDebugger\( argv[0] \);) p n
+() N
+(  BladeInit\( &argc, &argv \);) N
+() N
+(  ) S
+(int) k
+( MpiRank;) p n
+(  MPI_Comm_rank\(MPI_COMM_WORLD, &MpiRank \);) N
+() N
+(  BegLogLine\(1\)) N
+(    << ") S
+(Main\(\): ) str
+(") p n
+(    << ") S
+(Rank ) str
+(") p n
+(    << MpiRank) N
+(    << EndLogLine;) N
+() N
+(  ) S
+(if) K
+(\( MpiRank == 0 \)) p n
+(    Print_FFT_Info\(\);) N
+() N
+(  FFTDriver\(\);) N
+() N
+(  ) S
+(return) K
+(\(0\);) p n
+(  }) N
+(fft3d.cpp) (Page 16/16) (Mar 02, 03 16:00) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3d.cpp) (8/8) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

@@ -1,0 +1,4 @@
+echo $0
+echo $1
+echo $2
+xldb -q -bw -a $1 iv00.mpi.aix.exe -i14 -i15 -i23 -I $HOME/GFEBUILDROOT/include

@@ -1,0 +1,42 @@
+# All the usual suspects have access to the bluematter respository
+# but access is restricted for certain subdirectories based on export
+# control considerations
+
+[groups]
+bluematter-writers = rgermain germain2 bgf arayshu mariae tjcw pitman mnewton gdozsa rtoghra
+cardiac-writers = mr198 rgermain bgf
+
+export-restricted = rtoghra
+
+[/]
+* = r
+
+[bluematter:/]
+@bluematter-writers = rw
+
+[bluematter:/branches]
+@export-restricted  =
+
+[bluematter:/tags]
+@export-restricted  =
+
+[bluematter:/trunk/tmpFlash]
+@export-restricted  =
+
+[bluematter:/trunk/ClothEngine]
+@export-restricted  =
+
+[bluematter:/trunk/InMemDbDocs]
+@export-restricted  =
+
+[bluematter:/trunk/dev/ais]
+@export-restricted  =
+
+[bluematter:/trunk/dev/obsolete_fft3d]
+@export-restricted  =
+
+[cardiac:/]
+@cardiac-writers = rw
+
+[customer:/]
+@bluematter-writers =

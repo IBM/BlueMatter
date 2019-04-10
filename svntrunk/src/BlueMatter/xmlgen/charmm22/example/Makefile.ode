@@ -1,0 +1,4 @@
+IDIR    = $(BG_FIELDS)/charmm22/
+
+ILIST   =  par_all22_prot.inp  top_all22_prot.inp 
+.include <$(RULES_MK)>

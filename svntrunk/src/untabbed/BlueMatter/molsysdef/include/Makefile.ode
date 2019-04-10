@@ -1,0 +1,18 @@
+BG_AUXILIARY = 1
+INCLUDES = \
+  MSD_Prefix.hpp \
+  MSD.hpp \
+  MSD_IF.hpp \
+  CTP_IF.hpp \
+
+EXPINCDIR = /usr/include/BlueMatter/
+
+IDIR = $(BG_INCLUDE)/BlueMatter/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/molsysdef/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

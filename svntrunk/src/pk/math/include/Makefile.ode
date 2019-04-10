@@ -1,0 +1,8 @@
+INCLUDES = sincos.hpp pkmath.h
+
+EXPINCDIR = /usr/include/pk/
+
+ILIST = sincos.hpp pkmath.h
+IDIR = $(BG_INCLUDE)/pk/
+
+.include <$(RULES_MK)>

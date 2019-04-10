@@ -1,0 +1,59 @@
+PSF 
+
+       4 !NTITLE
+* MET-ENKEPHALIN COORDINATES                                                    
+*   HEAVY ATOM POSITIONS TAKEN FROM PDB FILE enkp                               
+*   HYDROGEN POSITIONS GENERATED                                                
+*  DATE:     5/03/01     10:16:46      CREATED BY USER: pitman                  
+
+       9 !NATOM 
+       1 ENKP 1    TYR  N      56   -.300000       14.0070           0
+       2 ENKP 1    TYR  HT1     2    .330000       1.00800           0
+       3 ENKP 1    TYR  HT2     2    .330000       1.00800           0
+       4 ENKP 1    TYR  HT3     2    .330000       1.00800           0
+       5 ENKP 1    TYR  CA     22    .210000       12.0110           0
+       6 ENKP 1    TYR  HA      6    .100000       1.00800           0
+       7 ENKP 1    TYR  CB     23   -.180000       12.0110           0
+       8 ENKP 1    TYR  HB1     3    .900000E-01   1.00800           0
+       9 ENKP 1    TYR  HB2     3    .900000E-01   1.00800           0
+
+       8 !NBOND: bonds
+       2       1       3       1       4       1       1       5
+       5       6       7       5       7       8       7       9
+
+      12 !NTHETA: angles
+       2       1       3       2       1       4       2       1       5
+       3       1       4       3       1       5       4       1       5
+       1       5       7       5       7       8       5       7       9
+       1       5       6       6       5       7       8       7       9      
+
+      10 !NPHI: dihedrals
+       1       5       7       8       1       5       7       9
+       2       1       5       7       2       1       5       6
+       3       1       5       6       3       1       5       7                                       
+       4       1       5       7       4       1       5       6
+       6       5       7       8       6       5       7       9
+
+       0 !NIMPHI: impropers
+
+       3 !NDON: donors
+       1       2       1       3       1       4      
+
+       0 !NACC: acceptors
+
+       0 !NNB
+
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0       0       0       0       0       0
+       0       0       0
+
+       3       0 !NGRP NST2
+       0       2       0       6       1       0       9       0       0
+ 

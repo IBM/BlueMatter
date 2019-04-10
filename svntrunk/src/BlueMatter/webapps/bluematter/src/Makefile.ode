@@ -1,0 +1,16 @@
+
+# the subdirs to traverse for the EXPINC pass
+EXPINC_SUBDIRS += com
+
+# the subdirs to traverse for the OBJECTS pass
+OBJECTS_SUBDIRS += com
+
+# the subdirs to traverse for the EXPLIB pass
+EXPLIB_SUBDIRS += com
+
+# the subdirs to traverse for the STANDARD pass
+SUBDIRS += com
+
+# include the ODE rules
+.include <${RULES_MK}>
+

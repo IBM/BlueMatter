@@ -1,0 +1,20 @@
+LIBS    =       $(PKSPILIBS)
+
+CFLAGS += $(SPICFLAGS) $(SMPCFLAGS)
+
+OFILES         = \
+	reduction$(OBJ_SUFF)
+
+PROGRAMS        = \
+	reduction$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/kernels/spi/tree/
+
+ILIST   =       $(PROGRAMS)
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/ivt/tree/reduction/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

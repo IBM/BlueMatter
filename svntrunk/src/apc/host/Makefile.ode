@@ -1,0 +1,14 @@
+# CCFAMILY = gnu
+# CCTYPE = cc
+CFLAGS += -g -O3 
+
+OBJECTS = apc_scan$(OBJ_SUFF)
+
+OFILES = $(OBJECTS)
+
+PROGRAMS = apc_scan$(PROG_SUFF)
+
+ILIST = $(PROGRAMS)
+IDIR = $(BG_BIN)
+
+.include <$(RULES_MK)>

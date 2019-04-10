@@ -1,0 +1,60 @@
+
+EXPINC_SUBDIRS = \
+ atomic_op    \
+# fft \
+ bgl          \
+ barrier      \
+ blimpi       \
+ collective   \
+ debug        \
+ exception    \
+ fxlogger     \
+ globject     \
+ geometry     \
+ heap         \
+ ltopology    \
+ math         \
+ multicast    \
+ platform     \
+ pthread      \
+ ptopology    \
+ queues       \
+ reactor      \
+ rnew         \
+ rpc          \
+ statistic    \
+ trace        \
+ $(MACHINE_SUBDIR)     \
+ util_comm    \
+ util_cpp     \
+
+.if !empty(CONTEXT:Mrios_aix*)
+  MACHINE_SUBDIR = util_aix util_test
+.elif !empty(CONTEXT:Mbluelight_*)
+  MACHINE_SUBDIR = util_bgl
+.else
+  MACHINE_SUBDIR =
+.endif
+# random       \
+OBJECTS_SUBDIRS = \
+ bgl \
+ exception \
+ fxlogger \
+ globject \
+ math \
+ platform \
+ reactor \
+ trace \
+ $(MACHINE_SUBDIR) \
+
+#random \
+EXPLIB_SUBDIRS = $(OBJECTS_SUBDIRS)
+
+SUBDIRS = $(EXPINC_SUBDIRS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

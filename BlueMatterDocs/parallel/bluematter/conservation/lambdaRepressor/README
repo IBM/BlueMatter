@@ -1,0 +1,7 @@
+1 fs    001880_1_9A_total.log.gz
+1.5 fs  001880_1_15fs_9A_total.log.gz
+2 fs    001880_1_2fs_9A_total.log.gz
+
+Columns are:
+
+   Step         TotalE         IntraE         InterE             KE           Temp      ConsQuant      CQRMSDEst    StdHarmBond   StdHarmAngle    OPLSTorsion      EwaldK       EwaldSum      EwaldSelf          NSQLJ   NSQEwaldCorr      NSQEwaldR      Coulomb14           LJ14

@@ -1,0 +1,40 @@
+ILIST = \
+BGLGi.c \
+BGLTreeBcast.c \
+BGLTreeConfigureClass.c \
+BGLTreeGetStatus.c \
+BGLTreeInjCsum.c \
+BGLTreeMakeHdr.c \
+BGLTreeRawReceive.c \
+BGLTreeRawSend.c \
+BGLTreeReceive.c \
+BGLTreeSend.c \
+BGLTreeSetPtpAddress.c \
+bl_cache.S \
+bl_lockbox.S \
+bl_torus_pkt.S \
+blade_on_blrts.c \
+spi_partition.c \
+spi_ts_buffers.c \
+spi_ts_debug.c \
+spi_ts_hints.c \
+spi_ts_mk_hdr.c \
+spi_ts_mk_hdr_class.c \
+spi_ts_recv.c \
+spi_ts_send.c \
+spi_ts_status.c \
+spi_ts_updt_hdr.c \
+Makefile \
+Makefile.xlc \
+$(LIB_PREF)blade_spi.rts$(LIB_SUFF) \
+
+IDIR = $(BG_SRC)/hoodcomms/libblade/spi/
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter//hoodcomms/libblade/spi/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

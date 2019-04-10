@@ -1,0 +1,11 @@
+TEMP	Temp		20	
+Etot	TotalE		20
+EKtot	KE	        20		
+EPtot   PE		20
+BOND	StdHarmBond     20 
+ANGLE	StdHarmAngle    20 
+DIHED	OPLSTorsion	20
+1-4NB   LJ14		20
+1-4EEL  Coulomb14	20
+EELEC   NSQCoulomb	20
+VDWAALS NSQLJ		20

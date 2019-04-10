@@ -1,0 +1,20 @@
+BG_AUXILIARY = 1
+BG_OPT_LVL = 0
+GFLAGS = -g
+EXPINC_SUBDIRS = \
+ include \
+
+OBJECTS_SUBDIRS = \
+ src
+
+SUBDIRS = \
+     $(EXPINC_SUBDIRS) \
+     $(OBJECTS_SUBDIRS) \
+     data \
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspec/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

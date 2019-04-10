@@ -1,0 +1,23 @@
+# author: maria eleftheriou 
+
+# 23K  (jac) system
+# Here are the namd performance numbers on bgw using the coprocessor
+# the code was compiled by Walkup using -O -qarch=440
+# at execusion time I set the eager limit to 1000 as suggested by Walkup
+
+
+
+R000-1143.stdout:stdout[0]: Info: Benchmark time: 1024 CPUs 0.0168793 s/step 0.195362 days/ns 12999 kB memory
+R000-1144.stdout:stdout[0]: Info: Benchmark time: 512 CPUs 0.0161561 s/step 0.186992 days/ns 11987 kB memory
+R000-1145.stdout:stdout[0]: Info: Benchmark time: 256 CPUs 0.0241312 s/step 0.279296 days/ns 12079 kB memory
+R000-1146.stdout:stdout[0]: Info: Benchmark time: 128 CPUs 0.0386036 s/step 0.446801 days/ns 12610 kB memory
+R000-1147.stdout:stdout[0]: Info: Benchmark time: 64 CPUs 0.0627634 s/step 0.726428 days/ns 12960 kB memory
+R000-1148.stdout:stdout[0]: Info: Benchmark time: 32 CPUs 0.102085 s/step 1.18154 days/ns 14088 kB memory
+R000-1149.stdout:stdout[0]: Info: Benchmark time: 16 CPUs 0.181749 s/step 2.10358 days/ns 16002 kB memory
+R000-1150.stdout:stdout[0]: Info: Benchmark time: 8 CPUs 0.331124 s/step 3.83245 days/ns 19144 kB memory
+R000-1151.stdout:stdout[0]: Info: Benchmark time: 4 CPUs 0.609612 s/step 7.0557 days/ns 26548 kB memory
+R000-1152.stdout:stdout[0]: Info: Benchmark time: 2 CPUs 1.14455 s/step 13.2472 days/ns 41231 kB memory
+R000-1153.stdout:stdout[0]: Info: Benchmark time: 1 CPUs 2.09426 s/step 24.2391 days/ns 66174 kB memory
+
+
+

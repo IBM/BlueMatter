@@ -1,0 +1,14 @@
+EXPINC_SUBDIRS = \
+ include \
+ reduce \
+ throbber \
+ fft3d \
+ PhasedPipeline \
+ spi \
+ rptsort \
+
+OBJECTS_SUBDIRS = $(EXPINC_SUBDIRS) 
+EXPLIB_SUBDIRS = $(EXPINC_SUBDIRS)
+SUBDIRS = $(EXPINC_SUBDIRS) 
+
+.include <$(RULES_MK)>

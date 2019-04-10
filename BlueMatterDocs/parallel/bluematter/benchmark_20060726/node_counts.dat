@@ -1,0 +1,52 @@
+# Node count statistics for real-space broadcast/reduce operations in V4 and V5
+# (both full and sparse skin varieties of V5)
+# Data taken by Alex Rayshubkiy on 7/26/2006
+# 
+# column 1: px
+# column 2: py
+# column 3: pz
+# column 4: V4 node count
+# column 5: V5 full skin
+# column 6: V5 sparse skin (avg.)
+# column 7: V5 sparse skin (min.)
+# column 8: V5 sparse skin (max.)
+#
+# index = 0: Beta Hairpin , 
+# 16x32x16 run uses 1/4 of the available nodes for real space
+8 	8 	8	125	98	43	40	45
+8 	8 	16	217	162	63	58	65
+8 	16 	16	385	274	91	87	93
+16 	16 	16	613	362	126	122	129
+8 	32 	16 	641	410	130	125	135
+16 	32 	16 	1053	850	100	93	105
+
+
+# index = 1: SOPE
+# 16x32x32 run bypasses the sort of option lists on option count to save memory
+8 	8 	8	93	82	32	29	34
+8 	8 	16	135	114	43	39	45
+8 	16 	16	227	178	62	58	64
+16 	16 	16	255	186	77	74	80
+8 	32 	16	309	226	80	77	84
+16 	32 	16	427	282	106	102	108
+16 	32 	32 	737	442	153	55	222
+
+
+# index = 2: Rhodopsin
+8 	8 	8	45	42	22	19	24
+8 	8 	16	63	58	27	24	30
+8 	16 	16	105	90	38	34	40
+16 	16 	16	147	122	50	47	54
+8 	32 	16	147	122	51	46	52
+16 	32 	16	209	162	65	61	67
+16 	32 	32 	349	242	89	84	91
+
+
+#index = 3: ApoA1
+8 	8 	8	45	42	21	18	23
+8 	8 	16	63	58	26	22	28
+8 	16 	16	93	82	32	28	35
+16 	16 	16	135	114	43	39	45
+8 	32 	16	123	106	44	40	46
+16 	32 	16	185	146	57	52	60
+16 	32 	32 	255	186	78	72	81

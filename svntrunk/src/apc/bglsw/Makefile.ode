@@ -1,0 +1,3 @@
+EXPINC_SUBDIRS = common counters devices
+
+.include <$(RULES_MK)>

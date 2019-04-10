@@ -1,0 +1,7 @@
+
+# (c) Copyright IBM Corp. 2006. CPL
+ 
+PROGRAMS = splinerf
+
+.include <$(RULES_MK)>
+

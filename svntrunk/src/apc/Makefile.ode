@@ -1,0 +1,16 @@
+EXPINC_SUBDIRS = include src bglsw
+
+.if $(CONTEXT) == "bgl_cnk_1"
+
+OBJECTS_SUBDIRS = src
+EXPLIB_SUBDIRS = src
+SUBDIRS = src
+
+.elif $(CONTEXT) == "ppc_linux_2"
+
+OBJECTS_SUBDIRS = host
+SUBDIRS = host
+
+.endif
+
+.include <$(RULES_MK)>

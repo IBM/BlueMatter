@@ -1,0 +1,27 @@
+VPATH =.
+
+EXT_LIBRARIES = \
+  $(LIB_PREF)p3me$(LIB_SUFF) \
+  $(LIB_PREF)rfftw$(LIB_SUFF) \
+  $(LIB_PREF)fftw$(LIB_SUFF) \
+        $(LIB_PREF)rfftw_mpi$(LIB_SUFF) \
+        $(LIB_PREF)fftw_mpi$(LIB_SUFF) \
+        $(LIB_PREF)fftw_threads$(LIB_SUFF) \        
+        $(LIB_PREF)rfftw_threads$(LIB_SUFF) \
+
+
+EXPLIBS = $(EXT_LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+ILIST = $(EXT_LIBRARIES) \
+
+IDIR = $(BG_LIB)/
+
+#ILIST += Makefile.ode
+#Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/util/include/
+#INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/p3me/lib/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

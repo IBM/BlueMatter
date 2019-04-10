@@ -1,0 +1,50 @@
+InstallEntity
+{
+
+  EntityInfo
+  {
+    entityName     	=   PACKAGE_ENTITY_NAME ;
+	fullEntityName	=	[ PACKAGE_FULL_ENTITY_NAME ] ;
+	description		=	"db2 package" ;
+    imageName		=   "bluegene.db2";
+    version			=   VERSION;
+    release    		=   RELEASE;
+    maintLevel     	=   MAINTLEVEL;
+    fixLevel       	=   FIXLEVEL;
+    copyright      	=   COPYRIGHT;
+    category       	=   'application';
+    language       	=   'en_us';
+    content        	=   'USR';
+  }
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#ifdef rios_aix_4
+    osName         = [ "rios_aix"];
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+  LinkInfo
+  {
+   immChildEntities = [ RTE_ENTITY_NAME SRC_ENTITY_NAME NIBM_ENTITY_NAME NR_ENTITY_NAME ] ;
+    parent = NULL;
+  }
+
+}

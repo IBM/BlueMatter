@@ -1,0 +1,12 @@
+OBJECTS = test_fft1dfr$(OBJ_SUFF)
+
+CFLAGS += $(SMPCFLAGS)
+
+OFILES = \
+  $(OBJECTS)
+
+LIBS = $(LIB_PREF)fft1dfr$(LIB_SUFF)
+
+PROGRAMS  = test_fft1dfr$(PROG_SUFF)
+
+.include <$(RULES_MK)>

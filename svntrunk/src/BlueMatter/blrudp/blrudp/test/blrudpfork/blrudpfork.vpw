@@ -1,0 +1,7 @@
+[Global]
+Version=8
+[ProjectFiles]
+blrudpfork.vpj
+../../blrudp.vpj
+[Dependencies]
+"blrudpfork.vpj"="../../blrudp.vpj"

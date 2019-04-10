@@ -1,0 +1,12 @@
+# @ class = GENERAL
+# @ initialdir = /tmp_mnt/u/mariae
+# @ executable = /usr/bin/poe
+# @ arguments = fft.exe -procs 1   -fftsize 120 120 120 -procmesh 1 1 1>>FFT.120x120x120.1x1x1
+# @ output = try.log
+# @ error = try.err
+# @ network.MPI = switch, shared, US
+# @ job_type = parallel
+# @ environment = COPY_ALL
+# @ tasks_per_node = 4 
+# @ node = 4
+# @ queue

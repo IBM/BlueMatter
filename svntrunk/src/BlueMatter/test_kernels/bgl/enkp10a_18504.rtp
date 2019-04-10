@@ -1,0 +1,46 @@
+#RTP File name: enkp10a
+#System Id: 18504
+
+#Runtime parameters:
+
+ShakeTolerance: 1.0E-6:double
+EwaldAlpha: 0.0:double
+VelocityResampleTargetTemperature: 300.0:double
+PressureControlPistonInitialVelocity: 0.0:double
+NumberOfOuterTimeSteps: 500:int
+VelocityResampleRandomSeed: 51579:int
+PressureControlPistonMass: 0.0:double
+PressureControlTarget: 1.0:double
+RattleTolerance: 1.0E-4:double
+P3MEinitSpacing: {.5,.5,.5}:XYZ
+Lambda: 0.0:double
+P3MEdiffOrder: 2:int
+OuterTimeStepInPicoSeconds: 0.001:double
+SnapshotPeriodInOTS: 10:int
+ShakeMaxIterations: 5000:int
+LeknerEpsilon: 0.0:double
+DoOuter: 1:int
+EmitEnergyTimeStepModulo: 1:int
+VelocityResamplePeriodInOTS: 200:int
+InnerTimeStepInPicoSeconds: -1.0:double
+EwaldKmax: 0:int
+NumberOfConstraints: 3:int
+P3MEchargeAssignment: 4:int
+ExternalPressure: 1.0:double
+SwitchLowerCutoff: 1.0E100:double
+BoundingBoxDef: { -5.1e5 , -6.7e5 , -4.3e5 , 7.0e5 , 5.2e5 , 4.4e5 }:BoundingBox
+SwitchDelta: 1.0:double
+RattleMaxIterations: 5000:int
+NumberOfInnerTimeSteps: -1:int
+DoWaterInit: 0
+DoVelocityResample: 1
+DoTemperatureControl: 1
+DoShakeRattleProtein: 1
+DoPressureControl: 0
+DoShakeRattleWater: 1
+DoNVT: 1
+DoShakeRattle: 1
+DoFreeEnergy: 0
+DoNSQCheck: 0
+LongRangeForceMethod: STDCOULOMB
+#******************************************************************************

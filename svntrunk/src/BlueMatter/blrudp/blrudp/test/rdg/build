@@ -1,0 +1,2 @@
+xlC -I ./ -I ../../ -I ../../../include GetIpAddr.cpp rdgslave.cpp ../../aix/blrudp.a -o rdgslave.exe
+xlC -I ./ -I ../../ -I ../../../include GetIpAddr.cpp rdgmaster.cpp ../../aix/blrudp.a -o rdgmaster.exe

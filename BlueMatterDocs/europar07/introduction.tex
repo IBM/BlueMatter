@@ -1,0 +1,55 @@
+\section {Introduction}
+
+The three dimensional Fast Fourier Transform (3D-FFT) and other spectral
+methods that require transpose operations are performance critical
+components in a number of scientific and engineering applications
+including molecular dynamics   ~\cite{bluematter_p5:2006,Fitch2003,Lippert2007,amber:95,Kale1999}
+ and climate modeling. %% need reference
+The 3D FFT algorithm and its performance on different machine architecture has been extensively studied ~\cite{johnson97,FrJo98,Cramer00,Ding95,edelman99,Zapata1990,Agarwal99,Haynes00,Kettimuthu2005,Anupindi1994}.
+The implementation and performance of a highly scalable 3D-FFT
+algorithm on Blue Gene/L supercomputer  ~\cite{Gara2005,Adiga2002} that uses the row-column method and distributes the $N^2$
+1D-FFTs required in each phase of a $N\times N\times N$ FFT have been
+described previously ~\cite{Eleftheriou2005b,Eleftheriou2005}.
+In this paper, we present a more detailed study of the effects of
+machine geometry and mapping of the algorithm to the machine on the
+performance of the distributed transpose used for the 3D-FFT.  For
+example, the original implementation of the distributed transpose
+always distributed the data over the largest number of nodes possible.
+In order to optimize performance, it is interesting
+to explore what the effects of distributing the data over a subset
+of nodes might be. Characterizing the tradeoff between
+sending fewer larger messages (with the advantage that header
+overheads are amortized over a larger payload) and carrying out more
+computation on each of the nodes within the subset used
+is of the objective of this work.  However, our goal is to provide a 
+scalable 3D FFT on thousands of processor where the number of processors
+exceeds the number of independent 1D-FFTs to be computed for a given problem size.
+This flexibility can be used to extend the scalability of molecular
+dynamics applications such as Blue Matter.
+
+As part of this study we also
+describe a generalization of the previously described parallel
+implementation that has a number of advantages:
+
+\begin{itemize}
+\item Supports scalability to more than $N^2$ nodes for computing $N^3$ FFT.
+\item Enables flexibility in the choice of the number of nodes used
+    for the distributed transpose operation to maximize efficiency.
+  \item Enables more flexibility in task assignment within an
+    application, e.g. a 3D-FFT can be performed on a subset of nodes
+    while the other nodes can be used for other application work.
+\item Permits use of real-to-complex 3D FFT on larger partition sizes
+  (real-to-complex 3D-FFT sends half as much data during the transpose
+  operation and effectively does half as many 1D FFTs because of symmetry.
+\item In some applications that use a 3D FFT to evaluate a
+  convolution, it may be possible to use spherical cutoffs, to reduce
+  communication volumes and to eliminate computations (depending on
+  the structure of functions being convolved).
+\end{itemize}
+
+This paper is organized as follows: 
+Section~\ref{sec:communications} outlines the network communications on BG/L supercomputer.
+%/Section~\ref{sec:parallel} describes the parallel algorithm. 
+Sections~\ref{sec:results} and~\ref{sec:bluematter} present performance results for the distributed transpose 
+and the Blue Matter molecular simulation software, respectively. 
+Finally, Section~\ref{sec:conclusion} summarizes the conclusions.

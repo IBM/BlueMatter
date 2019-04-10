@@ -1,0 +1,27 @@
+
+INCLUDES = \
+BGLGi.h \
+BGL_GlobalIntSPI.h \
+BGL_PartitionSPI.h \
+BGL_TorusPktSPI.h \
+BGL_TreePktSPI.h \
+bl_dcrmap.h \
+bl_gints.h \
+bl_light_context_swap.h \
+bl_lockbox.h \
+bl_physmap.h \
+bl_torus.h \
+bl_tree.h \
+blade_env.h \
+blade_on_blrts.h \
+BGLTorusAppSupport.c \
+BGLTorusAppSupport.h \
+
+EXPINCDIR = /usr/include/BonB/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_INCLUDE)/BonB/
+
+.include <$(RULES_MK)>
+

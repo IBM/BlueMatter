@@ -1,0 +1,38 @@
+# Results with the active packet code on blade with optimization of
+# dcache flushes to eliminate overhead
+# these data are the result of merging the data taken on April 22, 2004
+# with additional data taken in torus mode on 1024 nodes
+# column 1: node count
+# column 2: execution time for FFT (no reshuffling of data at the end)
+# 32^3 FFT Mesh
+# 512 torus	8.5e-5
+# 512 mesh	1.36e-4
+# 512 node datum below is in torus mode
+1	1.48e-2
+8	1.85e-3
+32	5.85e-4
+128	2.10e-4
+512	8.66e-5
+
+
+# 64^3 FFT Mesh
+# 512 torus	3.56e-4
+# 512 mesh	5.94e-4
+# 512 and 1024 node data below are in torus mode
+1	1.44e-1
+8	1.5e-2
+32	4.35e-3
+128	1.54e-3
+512	3.57e-4
+1024	4.0e-4
+
+
+# 128^3 FFT Mesh
+# 512 torus	2.52e-3
+# 512 mesh	4.55e-3
+# 512 and 1024 node data below are in torus mode
+8	1.44e-1
+32	3.36e-2
+128	1.14e-2
+512	2.54e-3
+1024	2.03e-3

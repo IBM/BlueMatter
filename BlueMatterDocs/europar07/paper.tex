@@ -1,0 +1,86 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% Author :Maria Eleftheriou
+% IBM - T. J. Watson R.C.          
+% Last Modified: 26/07/2006
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[preprint,10pt]{sigplanconf}
+\usepackage{amsmath}
+\usepackage{vmargin}
+
+\setmargnohf{0.8125in}{1in}{6.875in}{8.875in}
+
+\usepackage{subfigure}
+\usepackage{ifpdf}
+
+% requires the ifpdf package
+
+ \ifpdf
+   \usepackage[pdftex]{graphicx}
+   \pdfcompresslevel=9
+   \DeclareGraphicsExtensions{.mps,.pdf,.png,.jpg}
+ \else
+    \usepackage[dvips]{graphicx}
+    \DeclareGraphicsExtensions{.eps,.ps,.bmp,.tif,.tiff,.tga}
+ \fi
+
+\newcommand{\pcolhd}[1]{\multicolumn{1}{c}{#1}}
+\newcommand{\ie}{\mbox{\em i.e.}}
+\newcommand{\eg}{\mbox{\em e.g.}}
+\newcommand{\alltoall}{all-to-all\ }
+\newcommand{\Alltoall}{All-to-all\ }
+\newcommand{\comment}[1]{{}}
+\newcommand{\reffig}[1]{\mbox{Figure~\ref{Fig:#1}}}
+\newcommand{\refeq}[1]{\mbox{Equation~(\ref{Eq:#1})}}
+\newcommand{\refsec}[1]{\mbox{Section~\ref{Sec:#1}}}
+\newcommand{\fftone}[1]{\mbox{fft}_{1}\left( #1 \right)}
+\newcommand{\fftthree}[1]{\mbox{fft}_{3}\left( #1 \right)}
+
+\begin{document}
+\graphicspath{{../patents/p5/},{./figures/},{../presentations/figures/},{../parallel/bluematter/},{../parallel/figures/},{../patents/ellipsoidal/}}
+
+\conferenceinfo{PPoPP '08}{February 20-23, 2008, Salt Lake City, Utah} 
+\copyrightyear{2005} 
+\copyrightdata{[to be supplied]} 
+
+
+\title{A Study of the Effects of Machine Geometry and Mapping on Distributed Transpose Performance}
+
+
+\authorinfo{M.~Eleftheriou}
+	   {IBM Thomas J. Watson Research Center,Yorktown Heights, NY 10598-0218 USA}
+	   {mariae@us.ibm.com}    
+\authorinfo{B.~Fitch\and A.~Rayshubskiy\and T.J.C.~Ward\and P.~Heidelberger\and R.S.~Germain}
+	   {IBM Thomas J. Watson Research Center,Yorktown Heights, NY 10598-0218 USA\\ IBM Software Group, Hursley Park}
+	   {\{bgf, arayshu,philiph, rgermain\} @us.ibm.com \tt tjcw@uk.ibm.com}
+
+
+
+\maketitle
+
+\input{abstract.tex}
+
+\category{CR-number}{subcategory}{third-level}
+
+\terms
+algorithms, FFT, transposed, performance
+%term1, term2
+
+\keywords
+%keyword1, keyword2
+distributed algorithms,Blue Gene/L, distributed transpose, computational biology
+
+
+\input{introduction.tex}
+\input{softwareImplementation}
+\input{background.tex}
+\input{results.tex}
+
+\acks
+
+%\clearpage
+%\newpage
+\bibliographystyle{plain}
+
+\bibliography{../bibliography/md,../bibliography/fft}
+\end{document}

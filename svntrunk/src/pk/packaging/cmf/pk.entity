@@ -1,0 +1,148 @@
+InstallEntity
+{
+#if 0
+  EntityInfo
+  {
+    entityName     =   "bluegene.pk.adt";
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    fullEntityName =   [ "IBM Blue Gene PicoKernel Application Development Toolkit" ];
+    description    =   "IBM Blue Gene PicoKernel Emulator App Dev Toolkit";
+#endif
+
+
+
+    imageName      =   "bluegene.pk.adt";
+    version        =   VERSION;
+    release        =   RELEASE;
+    maintLevel     =   MAINTLEVEL;
+    fixLevel       =   FIXLEVEL;
+    copyright      =   COPYRIGHT;
+    category       =   'application';
+    language       =   'en_us';
+    content        =   'USR';
+  }
+
+
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    osName         = [ "rios_aix"];
+#if defined(rios_aix_4)
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#else
+    osRelease      = [ "5"    ];
+    osVersion      = [ "1"   ];
+#endif
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+  LinkInfo
+  {
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    immChildEntities = [ "bluegene.pk.adt.adt"
+                       ];
+#endif
+    immChildFiles = ;
+    parent = NULL;
+
+  }
+#endif
+
+Common :
+    EntityInfo
+    {
+        entityName      =  "bluegene.pk" ;
+    fullEntityName =   [ "IBM Blue Gene PicoKernel Application Development Toolkit" ];
+    description    =   "IBM Blue Gene PicoKernel Emulator App Dev Toolkit";
+        imageName       =  "bluegene.pk";
+    version        =   VERSION;
+    release        =   RELEASE;
+    maintLevel     =   MAINTLEVEL;
+    fixLevel       =   FIXLEVEL;
+    copyright      =   COPYRIGHT;
+        category        =  CATEGORY ;
+        copyrightKeys   = ["%%_IBMa" "%%_MITb"] ;
+        copyrightMap    = < /usr/pkgtest/copyright.map >;
+        language        =  'en_us' ;
+        content         =  'USR' ;
+    }
+
+    LinkInfo
+    {
+        immChildEntities = [ "bluegene.pk.adt" NR_ENTITY_NAME
+        					];
+        immChildFiles    = ;
+        parent           = NULL ;
+    }
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+
+    ArchitectureInfo
+    {
+        machineType     = MACHINE_TYPE ;
+#ifndef _hp9000_ux_
+        osName          = OS_NAME ;
+        osRelease       = OS_RELEASE ;
+        osVersion       = OS_VERSION ;
+        exclusiveOS     = [ "Linux" ];
+        excludeOS       = [ "NextStep" "BSD_OS" "FreeMiNT" ];
+        excludeArch     = [ "mipsel" "armv4b" "armv4l" ];
+#endif
+    }
+
+    InstallStatesInfo
+    {
+        bootReqmt       = BOOTRQMT  ;
+        packageFlags    =  "-L" ;
+        maxInst         =  "1";
+        adeInvFlags     =  "-Y" ;
+        mediaId         =  '0606291140';
+        installStates   =  "3";
+        removableStates =  "3";
+        constantList    =  [ PKGCONSTANT1  PKGCONSTANT2 ];
+    installDir     = STRING(INSTALLDIR);
+//        installSpace    =  "data 500  1";
+    }
+
+    RequisitesInfo
+    {
+        requisites    = REQUISITES ;
+    }
+
+    ServiceInfo
+    { 
+        retainComponent     = "xxxxxxxxx";   
+        retainRelease       = "xxx" ;   
+        contactName         = "xxxxx";   
+        contactPhone        = "111-111-1111";   
+        contactNode         = "xxxx";   
+        contactUserId       = "xxxxxxx";   
+        memoToUsers         = "This is a sample memo" ;  
+        labelText1          = "This is labelText1"; 
+        labelText2          = "This is labelText2";  
+        ciaProductIdentification   =  "pid";  
+    }
+
+}

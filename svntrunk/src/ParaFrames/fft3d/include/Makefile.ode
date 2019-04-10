@@ -1,0 +1,20 @@
+INCLUDES = \
+PrivateFFT.hpp \
+fftOneDim.hpp \
+fftOneDimESSL.hpp \
+fft3D.hpp     \
+fft3Dlib.hpp     \
+mpiDrc.hpp    \
+spiDrc.hpp   \
+comm3DLayerABC.hpp  \
+distributionOps.hpp \
+arrayBounds.hpp \
+
+# complex.hpp   \
+
+EXPINCDIR = /usr/include/
+
+ILIST = $(INCLUDES)
+IDIR = $(BG_INCLUDE)/
+
+.include <$(RULES_MK)>

@@ -1,0 +1,1105 @@
+Script command is started on Fri Jun 20 22:25:55 EDT 2003.bln1en0:.../station/mp-nc0/1node>./run
+
+--- BG/L bringup console ---
+
+    1   set manual/auto clock starts [manual is default]
+    2   initialize chip
+    3   load and run program
+    5   poll JTAG/mailbox for printf
+    6   run user function on host
+    7   run control function on host
+    9   exit
+
+please enter a command:
+3
+./create_app_sim.csh[15]: ./svc_host: 0403-006 Execute permission denied.
+Open Failed(blade_kernel.elf)
+ScomReset
+EnableOutputs
+StartPll
+ClockInterfaceStatus = 0180cff0 00000000
+ClockInterfaceStatus = 0000cff0 00000000
+StartBlcClocks
+EnableAllClockSubDomains
+SetDdrDiv
+ReadAbistStatus
+ABIST status = 00000020 80690000
+EcidFsense
+ReadClockInterfaceStatus
+ScomClockInterfaceStatus = 0000cff0 00000000
+ScomClockInterfaceStatus = 0000cff0 00000000
+Clock Interface Status = 00000000001706d9
+ReadAccessAddrStatus
+AccessAddrStatus = 8820ffff
+.... ATTENT_DR = 1
+.... ANY_SCATTN = 1
+.... CI_SCATTN = 1
+AccessAddrStatus = 0000ffff
+ReleaseIplResets
+EnableMaskRegisters
+Idleing
+WriteSramProgram
+WriteSramProgram(1 of 1: ffffc000, 4000)
+ido_workunit_send_async: Partial send.
+ido_workunit_send_async: Partial send.
+ido_workunit_send_async: Partial send.
+ido_workunit_send_async: Partial send.
+ReleaseBothCores
+ReadMailboxTable
+JMailTable(1000,0200,1200,0200,1400,0200,1600,0200)
+WaitForCoreReady(0)
+(0) JtagMailHdr(ffffd200: 2,0,0,0000)
+WaitForCoreReady(1)
+(0) JtagMailHdr(ffffd600: 2,0,0,0000)
+WriteDdrProgram
+WriteDdrProgram(1 of 750,size=512)
+WriteDdrProgram(2 of 750,size=512)
+WriteDdrProgram(3 of 750,size=512)
+WriteDdrProgram(4 of 750,size=512)
+WriteDdrProgram(5 of 750,size=512)
+WriteDdrProgram(6 of 750,size=512)
+WriteDdrProgram(7 of 750,size=512)
+WriteDdrProgram(8 of 750,size=512)
+WriteDdrProgram(9 of 750,size=512)
+WriteDdrProgram(10 of 750,size=512)
+WriteDdrProgram(11 of 750,size=512)
+WriteDdrProgram(12 of 750,size=512)
+WriteDdrProgram(13 of 750,size=512)
+WriteDdrProgram(14 of 750,size=512)
+WriteDdrProgram(15 of 750,size=512)
+WriteDdrProgram(16 of 750,size=512)
+WriteDdrProgram(17 of 750,size=512)
+WriteDdrProgram(18 of 750,size=512)
+WriteDdrProgram(19 of 750,size=512)
+WriteDdrProgram(20 of 750,size=512)
+WriteDdrProgram(21 of 750,size=512)
+WriteDdrProgram(22 of 750,size=512)
+WriteDdrProgram(23 of 750,size=512)
+WriteDdrProgram(24 of 750,size=512)
+WriteDdrProgram(25 of 750,size=512)
+WriteDdrProgram(26 of 750,size=512)
+WriteDdrProgram(27 of 750,size=512)
+WriteDdrProgram(28 of 750,size=512)
+WriteDdrProgram(29 of 750,size=512)
+WriteDdrProgram(30 of 750,size=512)
+WriteDdrProgram(31 of 750,size=512)
+WriteDdrProgram(32 of 750,size=512)
+WriteDdrProgram(33 of 750,size=512)
+WriteDdrProgram(34 of 750,size=512)
+WriteDdrProgram(35 of 750,size=512)
+WriteDdrProgram(36 of 750,size=512)
+WriteDdrProgram(37 of 750,size=512)
+WriteDdrProgram(38 of 750,size=512)
+WriteDdrProgram(39 of 750,size=512)
+WriteDdrProgram(40 of 750,size=512)
+WriteDdrProgram(41 of 750,size=512)
+WriteDdrProgram(42 of 750,size=512)
+WriteDdrProgram(43 of 750,size=512)
+WriteDdrProgram(44 of 750,size=512)
+WriteDdrProgram(45 of 750,size=512)
+WriteDdrProgram(46 of 750,size=512)
+WriteDdrProgram(47 of 750,size=512)
+WriteDdrProgram(48 of 750,size=512)
+WriteDdrProgram(49 of 750,size=512)
+WriteDdrProgram(50 of 750,size=512)
+WriteDdrProgram(51 of 750,size=512)
+WriteDdrProgram(52 of 750,size=512)
+WriteDdrProgram(53 of 750,size=512)
+WriteDdrProgram(54 of 750,size=512)
+WriteDdrProgram(55 of 750,size=512)
+WriteDdrProgram(56 of 750,size=512)
+WriteDdrProgram(57 of 750,size=512)
+WriteDdrProgram(58 of 750,size=512)
+WriteDdrProgram(59 of 750,size=512)
+WriteDdrProgram(60 of 750,size=512)
+WriteDdrProgram(61 of 750,size=512)
+WriteDdrProgram(62 of 750,size=512)
+WriteDdrProgram(63 of 750,size=512)
+WriteDdrProgram(64 of 750,size=512)
+WriteDdrProgram(65 of 750,size=512)
+WriteDdrProgram(66 of 750,size=512)
+WriteDdrProgram(67 of 750,size=512)
+WriteDdrProgram(68 of 750,size=512)
+WriteDdrProgram(69 of 750,size=512)
+WriteDdrProgram(70 of 750,size=512)
+WriteDdrProgram(71 of 750,size=512)
+WriteDdrProgram(72 of 750,size=512)
+WriteDdrProgram(73 of 750,size=512)
+WriteDdrProgram(74 of 750,size=512)
+WriteDdrProgram(75 of 750,size=512)
+WriteDdrProgram(76 of 750,size=512)
+WriteDdrProgram(77 of 750,size=512)
+WriteDdrProgram(78 of 750,size=512)
+WriteDdrProgram(79 of 750,size=512)
+WriteDdrProgram(80 of 750,size=512)
+WriteDdrProgram(81 of 750,size=512)
+WriteDdrProgram(82 of 750,size=512)
+WriteDdrProgram(83 of 750,size=512)
+WriteDdrProgram(84 of 750,size=512)
+WriteDdrProgram(85 of 750,size=512)
+WriteDdrProgram(86 of 750,size=512)
+WriteDdrProgram(87 of 750,size=512)
+WriteDdrProgram(88 of 750,size=512)
+WriteDdrProgram(89 of 750,size=512)
+WriteDdrProgram(90 of 750,size=512)
+WriteDdrProgram(91 of 750,size=512)
+WriteDdrProgram(92 of 750,size=512)
+WriteDdrProgram(93 of 750,size=512)
+WriteDdrProgram(94 of 750,size=512)
+WriteDdrProgram(95 of 750,size=512)
+WriteDdrProgram(96 of 750,size=512)
+WriteDdrProgram(97 of 750,size=512)
+WriteDdrProgram(98 of 750,size=512)
+WriteDdrProgram(99 of 750,size=512)
+WriteDdrProgram(100 of 750,size=512)
+WriteDdrProgram(101 of 750,size=512)
+WriteDdrProgram(102 of 750,size=512)
+WriteDdrProgram(103 of 750,size=512)
+WriteDdrProgram(104 of 750,size=512)
+WriteDdrProgram(105 of 750,size=512)
+WriteDdrProgram(106 of 750,size=512)
+WriteDdrProgram(107 of 750,size=512)
+WriteDdrProgram(108 of 750,size=512)
+WriteDdrProgram(109 of 750,size=512)
+WriteDdrProgram(110 of 750,size=512)
+WriteDdrProgram(111 of 750,size=512)
+WriteDdrProgram(112 of 750,size=512)
+WriteDdrProgram(113 of 750,size=512)
+WriteDdrProgram(114 of 750,size=512)
+WriteDdrProgram(115 of 750,size=512)
+WriteDdrProgram(116 of 750,size=512)
+WriteDdrProgram(117 of 750,size=512)
+WriteDdrProgram(118 of 750,size=512)
+WriteDdrProgram(119 of 750,size=512)
+WriteDdrProgram(120 of 750,size=512)
+WriteDdrProgram(121 of 750,size=512)
+WriteDdrProgram(122 of 750,size=512)
+WriteDdrProgram(123 of 750,size=512)
+WriteDdrProgram(124 of 750,size=512)
+WriteDdrProgram(125 of 750,size=512)
+WriteDdrProgram(126 of 750,size=512)
+WriteDdrProgram(127 of 750,size=512)
+WriteDdrProgram(128 of 750,size=512)
+WriteDdrProgram(129 of 750,size=512)
+WriteDdrProgram(130 of 750,size=512)
+WriteDdrProgram(131 of 750,size=512)
+WriteDdrProgram(132 of 750,size=512)
+WriteDdrProgram(133 of 750,size=512)
+WriteDdrProgram(134 of 750,size=512)
+WriteDdrProgram(135 of 750,size=512)
+WriteDdrProgram(136 of 750,size=512)
+WriteDdrProgram(137 of 750,size=512)
+WriteDdrProgram(138 of 750,size=512)
+WriteDdrProgram(139 of 750,size=512)
+WriteDdrProgram(140 of 750,size=512)
+WriteDdrProgram(141 of 750,size=512)
+WriteDdrProgram(142 of 750,size=512)
+WriteDdrProgram(143 of 750,size=512)
+WriteDdrProgram(144 of 750,size=512)
+WriteDdrProgram(145 of 750,size=512)
+WriteDdrProgram(146 of 750,size=512)
+WriteDdrProgram(147 of 750,size=512)
+WriteDdrProgram(148 of 750,size=512)
+WriteDdrProgram(149 of 750,size=512)
+WriteDdrProgram(150 of 750,size=512)
+WriteDdrProgram(151 of 750,size=512)
+WriteDdrProgram(152 of 750,size=512)
+WriteDdrProgram(153 of 750,size=512)
+WriteDdrProgram(154 of 750,size=512)
+WriteDdrProgram(155 of 750,size=512)
+WriteDdrProgram(156 of 750,size=512)
+WriteDdrProgram(157 of 750,size=512)
+WriteDdrProgram(158 of 750,size=512)
+WriteDdrProgram(159 of 750,size=512)
+WriteDdrProgram(160 of 750,size=512)
+WriteDdrProgram(161 of 750,size=512)
+WriteDdrProgram(162 of 750,size=512)
+WriteDdrProgram(163 of 750,size=512)
+WriteDdrProgram(164 of 750,size=512)
+WriteDdrProgram(165 of 750,size=512)
+WriteDdrProgram(166 of 750,size=512)
+WriteDdrProgram(167 of 750,size=512)
+WriteDdrProgram(168 of 750,size=512)
+WriteDdrProgram(169 of 750,size=512)
+WriteDdrProgram(170 of 750,size=512)
+WriteDdrProgram(171 of 750,size=512)
+WriteDdrProgram(172 of 750,size=512)
+WriteDdrProgram(173 of 750,size=512)
+WriteDdrProgram(174 of 750,size=512)
+WriteDdrProgram(175 of 750,size=512)
+WriteDdrProgram(176 of 750,size=512)
+WriteDdrProgram(177 of 750,size=512)
+WriteDdrProgram(178 of 750,size=512)
+WriteDdrProgram(179 of 750,size=512)
+WriteDdrProgram(180 of 750,size=512)
+WriteDdrProgram(181 of 750,size=512)
+WriteDdrProgram(182 of 750,size=512)
+WriteDdrProgram(183 of 750,size=512)
+WriteDdrProgram(184 of 750,size=512)
+WriteDdrProgram(185 of 750,size=512)
+WriteDdrProgram(186 of 750,size=512)
+WriteDdrProgram(187 of 750,size=512)
+WriteDdrProgram(188 of 750,size=512)
+WriteDdrProgram(189 of 750,size=512)
+WriteDdrProgram(190 of 750,size=512)
+WriteDdrProgram(191 of 750,size=512)
+WriteDdrProgram(192 of 750,size=512)
+WriteDdrProgram(193 of 750,size=512)
+WriteDdrProgram(194 of 750,size=512)
+WriteDdrProgram(195 of 750,size=512)
+WriteDdrProgram(196 of 750,size=512)
+WriteDdrProgram(197 of 750,size=512)
+WriteDdrProgram(198 of 750,size=512)
+WriteDdrProgram(199 of 750,size=512)
+WriteDdrProgram(200 of 750,size=512)
+WriteDdrProgram(201 of 750,size=512)
+WriteDdrProgram(202 of 750,size=512)
+WriteDdrProgram(203 of 750,size=512)
+WriteDdrProgram(204 of 750,size=512)
+WriteDdrProgram(205 of 750,size=512)
+WriteDdrProgram(206 of 750,size=512)
+WriteDdrProgram(207 of 750,size=512)
+WriteDdrProgram(208 of 750,size=512)
+WriteDdrProgram(209 of 750,size=512)
+WriteDdrProgram(210 of 750,size=512)
+WriteDdrProgram(211 of 750,size=512)
+WriteDdrProgram(212 of 750,size=512)
+WriteDdrProgram(213 of 750,size=512)
+WriteDdrProgram(214 of 750,size=512)
+WriteDdrProgram(215 of 750,size=512)
+WriteDdrProgram(216 of 750,size=512)
+WriteDdrProgram(217 of 750,size=512)
+WriteDdrProgram(218 of 750,size=512)
+WriteDdrProgram(219 of 750,size=512)
+WriteDdrProgram(220 of 750,size=512)
+WriteDdrProgram(221 of 750,size=512)
+WriteDdrProgram(222 of 750,size=512)
+WriteDdrProgram(223 of 750,size=512)
+WriteDdrProgram(224 of 750,size=512)
+WriteDdrProgram(225 of 750,size=512)
+WriteDdrProgram(226 of 750,size=512)
+WriteDdrProgram(227 of 750,size=512)
+WriteDdrProgram(228 of 750,size=512)
+WriteDdrProgram(229 of 750,size=512)
+WriteDdrProgram(230 of 750,size=512)
+WriteDdrProgram(231 of 750,size=512)
+WriteDdrProgram(232 of 750,size=512)
+WriteDdrProgram(233 of 750,size=512)
+WriteDdrProgram(234 of 750,size=512)
+WriteDdrProgram(235 of 750,size=512)
+WriteDdrProgram(236 of 750,size=512)
+WriteDdrProgram(237 of 750,size=512)
+WriteDdrProgram(238 of 750,size=512)
+WriteDdrProgram(239 of 750,size=512)
+WriteDdrProgram(240 of 750,size=512)
+WriteDdrProgram(241 of 750,size=512)
+WriteDdrProgram(242 of 750,size=512)
+WriteDdrProgram(243 of 750,size=512)
+WriteDdrProgram(244 of 750,size=512)
+WriteDdrProgram(245 of 750,size=512)
+WriteDdrProgram(246 of 750,size=512)
+WriteDdrProgram(247 of 750,size=512)
+WriteDdrProgram(248 of 750,size=512)
+WriteDdrProgram(249 of 750,size=512)
+WriteDdrProgram(250 of 750,size=512)
+WriteDdrProgram(251 of 750,size=512)
+WriteDdrProgram(252 of 750,size=512)
+WriteDdrProgram(253 of 750,size=512)
+WriteDdrProgram(254 of 750,size=512)
+WriteDdrProgram(255 of 750,size=512)
+WriteDdrProgram(256 of 750,size=512)
+WriteDdrProgram(257 of 750,size=240)
+WriteDdrProgram(258 of 750,size=512)
+WriteDdrProgram(259 of 750,size=512)
+WriteDdrProgram(260 of 750,size=512)
+WriteDdrProgram(261 of 750,size=512)
+WriteDdrProgram(262 of 750,size=512)
+WriteDdrProgram(263 of 750,size=512)
+WriteDdrProgram(264 of 750,size=512)
+WriteDdrProgram(265 of 750,size=512)
+WriteDdrProgram(266 of 750,size=512)
+WriteDdrProgram(267 of 750,size=512)
+WriteDdrProgram(268 of 750,size=512)
+WriteDdrProgram(269 of 750,size=512)
+WriteDdrProgram(270 of 750,size=512)
+WriteDdrProgram(271 of 750,size=512)
+WriteDdrProgram(272 of 750,size=512)
+WriteDdrProgram(273 of 750,size=512)
+WriteDdrProgram(274 of 750,size=512)
+WriteDdrProgram(275 of 750,size=512)
+WriteDdrProgram(276 of 750,size=512)
+WriteDdrProgram(277 of 750,size=512)
+WriteDdrProgram(278 of 750,size=512)
+WriteDdrProgram(279 of 750,size=512)
+WriteDdrProgram(280 of 750,size=512)
+WriteDdrProgram(281 of 750,size=512)
+WriteDdrProgram(282 of 750,size=512)
+WriteDdrProgram(283 of 750,size=512)
+WriteDdrProgram(284 of 750,size=512)
+WriteDdrProgram(285 of 750,size=512)
+WriteDdrProgram(286 of 750,size=512)
+WriteDdrProgram(287 of 750,size=512)
+WriteDdrProgram(288 of 750,size=512)
+WriteDdrProgram(289 of 750,size=512)
+WriteDdrProgram(290 of 750,size=512)
+WriteDdrProgram(291 of 750,size=512)
+WriteDdrProgram(292 of 750,size=512)
+WriteDdrProgram(293 of 750,size=512)
+WriteDdrProgram(294 of 750,size=512)
+WriteDdrProgram(295 of 750,size=512)
+WriteDdrProgram(296 of 750,size=512)
+WriteDdrProgram(297 of 750,size=512)
+WriteDdrProgram(298 of 750,size=512)
+WriteDdrProgram(299 of 750,size=512)
+WriteDdrProgram(300 of 750,size=512)
+WriteDdrProgram(301 of 750,size=512)
+WriteDdrProgram(302 of 750,size=512)
+WriteDdrProgram(303 of 750,size=512)
+WriteDdrProgram(304 of 750,size=512)
+WriteDdrProgram(305 of 750,size=512)
+WriteDdrProgram(306 of 750,size=512)
+WriteDdrProgram(307 of 750,size=512)
+WriteDdrProgram(308 of 750,size=512)
+WriteDdrProgram(309 of 750,size=512)
+WriteDdrProgram(310 of 750,size=512)
+WriteDdrProgram(311 of 750,size=512)
+WriteDdrProgram(312 of 750,size=512)
+WriteDdrProgram(313 of 750,size=512)
+WriteDdrProgram(314 of 750,size=512)
+WriteDdrProgram(315 of 750,size=512)
+WriteDdrProgram(316 of 750,size=512)
+WriteDdrProgram(317 of 750,size=512)
+WriteDdrProgram(318 of 750,size=512)
+WriteDdrProgram(319 of 750,size=512)
+WriteDdrProgram(320 of 750,size=512)
+WriteDdrProgram(321 of 750,size=512)
+WriteDdrProgram(322 of 750,size=512)
+WriteDdrProgram(323 of 750,size=512)
+WriteDdrProgram(324 of 750,size=512)
+WriteDdrProgram(325 of 750,size=512)
+WriteDdrProgram(326 of 750,size=512)
+WriteDdrProgram(327 of 750,size=512)
+WriteDdrProgram(328 of 750,size=512)
+WriteDdrProgram(329 of 750,size=512)
+WriteDdrProgram(330 of 750,size=512)
+WriteDdrProgram(331 of 750,size=512)
+WriteDdrProgram(332 of 750,size=512)
+WriteDdrProgram(333 of 750,size=512)
+WriteDdrProgram(334 of 750,size=512)
+WriteDdrProgram(335 of 750,size=512)
+WriteDdrProgram(336 of 750,size=512)
+WriteDdrProgram(337 of 750,size=512)
+WriteDdrProgram(338 of 750,size=512)
+WriteDdrProgram(339 of 750,size=512)
+WriteDdrProgram(340 of 750,size=512)
+WriteDdrProgram(341 of 750,size=512)
+WriteDdrProgram(342 of 750,size=512)
+WriteDdrProgram(343 of 750,size=512)
+WriteDdrProgram(344 of 750,size=512)
+WriteDdrProgram(345 of 750,size=512)
+WriteDdrProgram(346 of 750,size=512)
+WriteDdrProgram(347 of 750,size=512)
+WriteDdrProgram(348 of 750,size=512)
+WriteDdrProgram(349 of 750,size=512)
+WriteDdrProgram(350 of 750,size=512)
+WriteDdrProgram(351 of 750,size=512)
+WriteDdrProgram(352 of 750,size=512)
+WriteDdrProgram(353 of 750,size=512)
+WriteDdrProgram(354 of 750,size=512)
+WriteDdrProgram(355 of 750,size=512)
+WriteDdrProgram(356 of 750,size=512)
+WriteDdrProgram(357 of 750,size=512)
+WriteDdrProgram(358 of 750,size=512)
+WriteDdrProgram(359 of 750,size=512)
+WriteDdrProgram(360 of 750,size=512)
+WriteDdrProgram(361 of 750,size=512)
+WriteDdrProgram(362 of 750,size=512)
+WriteDdrProgram(363 of 750,size=512)
+WriteDdrProgram(364 of 750,size=512)
+WriteDdrProgram(365 of 750,size=512)
+WriteDdrProgram(366 of 750,size=512)
+WriteDdrProgram(367 of 750,size=512)
+WriteDdrProgram(368 of 750,size=512)
+WriteDdrProgram(369 of 750,size=512)
+WriteDdrProgram(370 of 750,size=512)
+WriteDdrProgram(371 of 750,size=512)
+WriteDdrProgram(372 of 750,size=512)
+WriteDdrProgram(373 of 750,size=512)
+WriteDdrProgram(374 of 750,size=512)
+WriteDdrProgram(375 of 750,size=512)
+WriteDdrProgram(376 of 750,size=512)
+WriteDdrProgram(377 of 750,size=512)
+WriteDdrProgram(378 of 750,size=512)
+WriteDdrProgram(379 of 750,size=512)
+WriteDdrProgram(380 of 750,size=512)
+WriteDdrProgram(381 of 750,size=512)
+WriteDdrProgram(382 of 750,size=512)
+WriteDdrProgram(383 of 750,size=512)
+WriteDdrProgram(384 of 750,size=512)
+WriteDdrProgram(385 of 750,size=512)
+WriteDdrProgram(386 of 750,size=512)
+WriteDdrProgram(387 of 750,size=512)
+WriteDdrProgram(388 of 750,size=512)
+WriteDdrProgram(389 of 750,size=512)
+WriteDdrProgram(390 of 750,size=512)
+WriteDdrProgram(391 of 750,size=512)
+WriteDdrProgram(392 of 750,size=512)
+WriteDdrProgram(393 of 750,size=512)
+WriteDdrProgram(394 of 750,size=512)
+WriteDdrProgram(395 of 750,size=512)
+WriteDdrProgram(396 of 750,size=512)
+WriteDdrProgram(397 of 750,size=512)
+WriteDdrProgram(398 of 750,size=512)
+WriteDdrProgram(399 of 750,size=512)
+WriteDdrProgram(400 of 750,size=512)
+WriteDdrProgram(401 of 750,size=512)
+WriteDdrProgram(402 of 750,size=512)
+WriteDdrProgram(403 of 750,size=512)
+WriteDdrProgram(404 of 750,size=512)
+WriteDdrProgram(405 of 750,size=512)
+WriteDdrProgram(406 of 750,size=512)
+WriteDdrProgram(407 of 750,size=512)
+WriteDdrProgram(408 of 750,size=512)
+WriteDdrProgram(409 of 750,size=512)
+WriteDdrProgram(410 of 750,size=512)
+WriteDdrProgram(411 of 750,size=512)
+WriteDdrProgram(412 of 750,size=512)
+WriteDdrProgram(413 of 750,size=512)
+WriteDdrProgram(414 of 750,size=512)
+WriteDdrProgram(415 of 750,size=512)
+WriteDdrProgram(416 of 750,size=512)
+WriteDdrProgram(417 of 750,size=512)
+WriteDdrProgram(418 of 750,size=512)
+WriteDdrProgram(419 of 750,size=512)
+WriteDdrProgram(420 of 750,size=512)
+WriteDdrProgram(421 of 750,size=512)
+WriteDdrProgram(422 of 750,size=512)
+WriteDdrProgram(423 of 750,size=512)
+WriteDdrProgram(424 of 750,size=512)
+WriteDdrProgram(425 of 750,size=512)
+WriteDdrProgram(426 of 750,size=512)
+WriteDdrProgram(427 of 750,size=512)
+WriteDdrProgram(428 of 750,size=512)
+WriteDdrProgram(429 of 750,size=512)
+WriteDdrProgram(430 of 750,size=512)
+WriteDdrProgram(431 of 750,size=512)
+WriteDdrProgram(432 of 750,size=512)
+WriteDdrProgram(433 of 750,size=512)
+WriteDdrProgram(434 of 750,size=512)
+WriteDdrProgram(435 of 750,size=512)
+WriteDdrProgram(436 of 750,size=512)
+WriteDdrProgram(437 of 750,size=512)
+WriteDdrProgram(438 of 750,size=512)
+WriteDdrProgram(439 of 750,size=512)
+WriteDdrProgram(440 of 750,size=512)
+WriteDdrProgram(441 of 750,size=512)
+WriteDdrProgram(442 of 750,size=512)
+WriteDdrProgram(443 of 750,size=512)
+WriteDdrProgram(444 of 750,size=512)
+WriteDdrProgram(445 of 750,size=512)
+WriteDdrProgram(446 of 750,size=512)
+WriteDdrProgram(447 of 750,size=512)
+WriteDdrProgram(448 of 750,size=512)
+WriteDdrProgram(449 of 750,size=512)
+WriteDdrProgram(450 of 750,size=512)
+WriteDdrProgram(451 of 750,size=512)
+WriteDdrProgram(452 of 750,size=512)
+WriteDdrProgram(453 of 750,size=512)
+WriteDdrProgram(454 of 750,size=512)
+WriteDdrProgram(455 of 750,size=512)
+WriteDdrProgram(456 of 750,size=512)
+WriteDdrProgram(457 of 750,size=512)
+WriteDdrProgram(458 of 750,size=512)
+WriteDdrProgram(459 of 750,size=512)
+WriteDdrProgram(460 of 750,size=512)
+WriteDdrProgram(461 of 750,size=512)
+WriteDdrProgram(462 of 750,size=512)
+WriteDdrProgram(463 of 750,size=512)
+WriteDdrProgram(464 of 750,size=512)
+WriteDdrProgram(465 of 750,size=512)
+WriteDdrProgram(466 of 750,size=512)
+WriteDdrProgram(467 of 750,size=512)
+WriteDdrProgram(468 of 750,size=512)
+WriteDdrProgram(469 of 750,size=512)
+WriteDdrProgram(470 of 750,size=512)
+WriteDdrProgram(471 of 750,size=512)
+WriteDdrProgram(472 of 750,size=512)
+WriteDdrProgram(473 of 750,size=512)
+WriteDdrProgram(474 of 750,size=512)
+WriteDdrProgram(475 of 750,size=512)
+WriteDdrProgram(476 of 750,size=512)
+WriteDdrProgram(477 of 750,size=512)
+WriteDdrProgram(478 of 750,size=512)
+WriteDdrProgram(479 of 750,size=512)
+WriteDdrProgram(480 of 750,size=512)
+WriteDdrProgram(481 of 750,size=512)
+WriteDdrProgram(482 of 750,size=512)
+WriteDdrProgram(483 of 750,size=512)
+WriteDdrProgram(484 of 750,size=512)
+WriteDdrProgram(485 of 750,size=512)
+WriteDdrProgram(486 of 750,size=512)
+WriteDdrProgram(487 of 750,size=512)
+WriteDdrProgram(488 of 750,size=512)
+WriteDdrProgram(489 of 750,size=512)
+WriteDdrProgram(490 of 750,size=512)
+WriteDdrProgram(491 of 750,size=512)
+WriteDdrProgram(492 of 750,size=512)
+WriteDdrProgram(493 of 750,size=512)
+WriteDdrProgram(494 of 750,size=512)
+WriteDdrProgram(495 of 750,size=512)
+WriteDdrProgram(496 of 750,size=512)
+WriteDdrProgram(497 of 750,size=512)
+WriteDdrProgram(498 of 750,size=512)
+WriteDdrProgram(499 of 750,size=512)
+WriteDdrProgram(500 of 750,size=512)
+WriteDdrProgram(501 of 750,size=512)
+WriteDdrProgram(502 of 750,size=512)
+WriteDdrProgram(503 of 750,size=512)
+WriteDdrProgram(504 of 750,size=512)
+WriteDdrProgram(505 of 750,size=512)
+WriteDdrProgram(506 of 750,size=512)
+WriteDdrProgram(507 of 750,size=512)
+WriteDdrProgram(508 of 750,size=512)
+WriteDdrProgram(509 of 750,size=512)
+WriteDdrProgram(510 of 750,size=512)
+WriteDdrProgram(511 of 750,size=512)
+WriteDdrProgram(512 of 750,size=512)
+WriteDdrProgram(513 of 750,size=512)
+WriteDdrProgram(514 of 750,size=512)
+WriteDdrProgram(515 of 750,size=512)
+WriteDdrProgram(516 of 750,size=512)
+WriteDdrProgram(517 of 750,size=512)
+WriteDdrProgram(518 of 750,size=512)
+WriteDdrProgram(519 of 750,size=512)
+WriteDdrProgram(520 of 750,size=512)
+WriteDdrProgram(521 of 750,size=512)
+WriteDdrProgram(522 of 750,size=512)
+WriteDdrProgram(523 of 750,size=512)
+WriteDdrProgram(524 of 750,size=512)
+WriteDdrProgram(525 of 750,size=512)
+WriteDdrProgram(526 of 750,size=512)
+WriteDdrProgram(527 of 750,size=512)
+WriteDdrProgram(528 of 750,size=512)
+WriteDdrProgram(529 of 750,size=512)
+WriteDdrProgram(530 of 750,size=512)
+WriteDdrProgram(531 of 750,size=512)
+WriteDdrProgram(532 of 750,size=512)
+WriteDdrProgram(533 of 750,size=512)
+WriteDdrProgram(534 of 750,size=512)
+WriteDdrProgram(535 of 750,size=512)
+WriteDdrProgram(536 of 750,size=512)
+WriteDdrProgram(537 of 750,size=512)
+WriteDdrProgram(538 of 750,size=512)
+WriteDdrProgram(539 of 750,size=512)
+WriteDdrProgram(540 of 750,size=512)
+WriteDdrProgram(541 of 750,size=512)
+WriteDdrProgram(542 of 750,size=512)
+WriteDdrProgram(543 of 750,size=512)
+WriteDdrProgram(544 of 750,size=512)
+WriteDdrProgram(545 of 750,size=512)
+WriteDdrProgram(546 of 750,size=512)
+WriteDdrProgram(547 of 750,size=512)
+WriteDdrProgram(548 of 750,size=512)
+WriteDdrProgram(549 of 750,size=512)
+WriteDdrProgram(550 of 750,size=512)
+WriteDdrProgram(551 of 750,size=512)
+WriteDdrProgram(552 of 750,size=512)
+WriteDdrProgram(553 of 750,size=512)
+WriteDdrProgram(554 of 750,size=512)
+WriteDdrProgram(555 of 750,size=512)
+WriteDdrProgram(556 of 750,size=512)
+WriteDdrProgram(557 of 750,size=512)
+WriteDdrProgram(558 of 750,size=512)
+WriteDdrProgram(559 of 750,size=512)
+WriteDdrProgram(560 of 750,size=512)
+WriteDdrProgram(561 of 750,size=512)
+WriteDdrProgram(562 of 750,size=512)
+WriteDdrProgram(563 of 750,size=512)
+WriteDdrProgram(564 of 750,size=512)
+WriteDdrProgram(565 of 750,size=512)
+WriteDdrProgram(566 of 750,size=512)
+WriteDdrProgram(567 of 750,size=512)
+WriteDdrProgram(568 of 750,size=512)
+WriteDdrProgram(569 of 750,size=512)
+WriteDdrProgram(570 of 750,size=512)
+WriteDdrProgram(571 of 750,size=512)
+WriteDdrProgram(572 of 750,size=512)
+WriteDdrProgram(573 of 750,size=512)
+WriteDdrProgram(574 of 750,size=512)
+WriteDdrProgram(575 of 750,size=512)
+WriteDdrProgram(576 of 750,size=512)
+WriteDdrProgram(577 of 750,size=512)
+WriteDdrProgram(578 of 750,size=512)
+WriteDdrProgram(579 of 750,size=512)
+WriteDdrProgram(580 of 750,size=512)
+WriteDdrProgram(581 of 750,size=512)
+WriteDdrProgram(582 of 750,size=512)
+WriteDdrProgram(583 of 750,size=512)
+WriteDdrProgram(584 of 750,size=512)
+WriteDdrProgram(585 of 750,size=512)
+WriteDdrProgram(586 of 750,size=512)
+WriteDdrProgram(587 of 750,size=512)
+WriteDdrProgram(588 of 750,size=512)
+WriteDdrProgram(589 of 750,size=512)
+WriteDdrProgram(590 of 750,size=512)
+WriteDdrProgram(591 of 750,size=512)
+WriteDdrProgram(592 of 750,size=512)
+WriteDdrProgram(593 of 750,size=512)
+WriteDdrProgram(594 of 750,size=512)
+WriteDdrProgram(595 of 750,size=512)
+WriteDdrProgram(596 of 750,size=512)
+WriteDdrProgram(597 of 750,size=512)
+WriteDdrProgram(598 of 750,size=512)
+WriteDdrProgram(599 of 750,size=512)
+WriteDdrProgram(600 of 750,size=512)
+WriteDdrProgram(601 of 750,size=512)
+WriteDdrProgram(602 of 750,size=512)
+WriteDdrProgram(603 of 750,size=512)
+WriteDdrProgram(604 of 750,size=512)
+WriteDdrProgram(605 of 750,size=512)
+WriteDdrProgram(606 of 750,size=512)
+WriteDdrProgram(607 of 750,size=512)
+WriteDdrProgram(608 of 750,size=512)
+WriteDdrProgram(609 of 750,size=512)
+WriteDdrProgram(610 of 750,size=512)
+WriteDdrProgram(611 of 750,size=512)
+WriteDdrProgram(612 of 750,size=512)
+WriteDdrProgram(613 of 750,size=512)
+WriteDdrProgram(614 of 750,size=512)
+WriteDdrProgram(615 of 750,size=512)
+WriteDdrProgram(616 of 750,size=512)
+WriteDdrProgram(617 of 750,size=512)
+WriteDdrProgram(618 of 750,size=512)
+WriteDdrProgram(619 of 750,size=512)
+WriteDdrProgram(620 of 750,size=512)
+WriteDdrProgram(621 of 750,size=512)
+WriteDdrProgram(622 of 750,size=512)
+WriteDdrProgram(623 of 750,size=512)
+WriteDdrProgram(624 of 750,size=512)
+WriteDdrProgram(625 of 750,size=512)
+WriteDdrProgram(626 of 750,size=512)
+WriteDdrProgram(627 of 750,size=512)
+WriteDdrProgram(628 of 750,size=512)
+WriteDdrProgram(629 of 750,size=512)
+WriteDdrProgram(630 of 750,size=512)
+WriteDdrProgram(631 of 750,size=512)
+WriteDdrProgram(632 of 750,size=512)
+WriteDdrProgram(633 of 750,size=512)
+WriteDdrProgram(634 of 750,size=512)
+WriteDdrProgram(635 of 750,size=512)
+WriteDdrProgram(636 of 750,size=512)
+WriteDdrProgram(637 of 750,size=512)
+WriteDdrProgram(638 of 750,size=512)
+WriteDdrProgram(639 of 750,size=512)
+WriteDdrProgram(640 of 750,size=512)
+WriteDdrProgram(641 of 750,size=512)
+WriteDdrProgram(642 of 750,size=512)
+WriteDdrProgram(643 of 750,size=512)
+WriteDdrProgram(644 of 750,size=512)
+WriteDdrProgram(645 of 750,size=512)
+WriteDdrProgram(646 of 750,size=512)
+WriteDdrProgram(647 of 750,size=512)
+WriteDdrProgram(648 of 750,size=512)
+WriteDdrProgram(649 of 750,size=512)
+WriteDdrProgram(650 of 750,size=512)
+WriteDdrProgram(651 of 750,size=512)
+WriteDdrProgram(652 of 750,size=512)
+WriteDdrProgram(653 of 750,size=512)
+WriteDdrProgram(654 of 750,size=512)
+WriteDdrProgram(655 of 750,size=512)
+WriteDdrProgram(656 of 750,size=512)
+WriteDdrProgram(657 of 750,size=512)
+WriteDdrProgram(658 of 750,size=512)
+WriteDdrProgram(659 of 750,size=512)
+WriteDdrProgram(660 of 750,size=512)
+WriteDdrProgram(661 of 750,size=512)
+WriteDdrProgram(662 of 750,size=512)
+WriteDdrProgram(663 of 750,size=512)
+WriteDdrProgram(664 of 750,size=512)
+WriteDdrProgram(665 of 750,size=512)
+WriteDdrProgram(666 of 750,size=512)
+WriteDdrProgram(667 of 750,size=512)
+WriteDdrProgram(668 of 750,size=512)
+WriteDdrProgram(669 of 750,size=512)
+WriteDdrProgram(670 of 750,size=512)
+WriteDdrProgram(671 of 750,size=512)
+WriteDdrProgram(672 of 750,size=512)
+WriteDdrProgram(673 of 750,size=512)
+WriteDdrProgram(674 of 750,size=512)
+WriteDdrProgram(675 of 750,size=512)
+WriteDdrProgram(676 of 750,size=512)
+WriteDdrProgram(677 of 750,size=512)
+WriteDdrProgram(678 of 750,size=512)
+WriteDdrProgram(679 of 750,size=512)
+WriteDdrProgram(680 of 750,size=512)
+WriteDdrProgram(681 of 750,size=512)
+WriteDdrProgram(682 of 750,size=512)
+WriteDdrProgram(683 of 750,size=512)
+WriteDdrProgram(684 of 750,size=512)
+WriteDdrProgram(685 of 750,size=512)
+WriteDdrProgram(686 of 750,size=512)
+WriteDdrProgram(687 of 750,size=512)
+WriteDdrProgram(688 of 750,size=512)
+WriteDdrProgram(689 of 750,size=512)
+WriteDdrProgram(690 of 750,size=512)
+WriteDdrProgram(691 of 750,size=512)
+WriteDdrProgram(692 of 750,size=512)
+WriteDdrProgram(693 of 750,size=512)
+WriteDdrProgram(694 of 750,size=512)
+WriteDdrProgram(695 of 750,size=512)
+WriteDdrProgram(696 of 750,size=512)
+WriteDdrProgram(697 of 750,size=512)
+WriteDdrProgram(698 of 750,size=512)
+WriteDdrProgram(699 of 750,size=512)
+WriteDdrProgram(700 of 750,size=512)
+WriteDdrProgram(701 of 750,size=512)
+WriteDdrProgram(702 of 750,size=512)
+WriteDdrProgram(703 of 750,size=512)
+WriteDdrProgram(704 of 750,size=512)
+WriteDdrProgram(705 of 750,size=512)
+WriteDdrProgram(706 of 750,size=512)
+WriteDdrProgram(707 of 750,size=512)
+WriteDdrProgram(708 of 750,size=512)
+WriteDdrProgram(709 of 750,size=512)
+WriteDdrProgram(710 of 750,size=512)
+WriteDdrProgram(711 of 750,size=512)
+WriteDdrProgram(712 of 750,size=512)
+WriteDdrProgram(713 of 750,size=512)
+WriteDdrProgram(714 of 750,size=512)
+WriteDdrProgram(715 of 750,size=512)
+WriteDdrProgram(716 of 750,size=512)
+WriteDdrProgram(717 of 750,size=512)
+WriteDdrProgram(718 of 750,size=512)
+WriteDdrProgram(719 of 750,size=512)
+WriteDdrProgram(720 of 750,size=512)
+WriteDdrProgram(721 of 750,size=512)
+WriteDdrProgram(722 of 750,size=512)
+WriteDdrProgram(723 of 750,size=512)
+WriteDdrProgram(724 of 750,size=512)
+WriteDdrProgram(725 of 750,size=512)
+WriteDdrProgram(726 of 750,size=512)
+WriteDdrProgram(727 of 750,size=512)
+WriteDdrProgram(728 of 750,size=512)
+WriteDdrProgram(729 of 750,size=512)
+WriteDdrProgram(730 of 750,size=512)
+WriteDdrProgram(731 of 750,size=512)
+WriteDdrProgram(732 of 750,size=512)
+WriteDdrProgram(733 of 750,size=512)
+WriteDdrProgram(734 of 750,size=512)
+WriteDdrProgram(735 of 750,size=512)
+WriteDdrProgram(736 of 750,size=512)
+WriteDdrProgram(737 of 750,size=512)
+WriteDdrProgram(738 of 750,size=512)
+WriteDdrProgram(739 of 750,size=512)
+WriteDdrProgram(740 of 750,size=512)
+WriteDdrProgram(741 of 750,size=512)
+WriteDdrProgram(742 of 750,size=512)
+WriteDdrProgram(743 of 750,size=512)
+WriteDdrProgram(744 of 750,size=512)
+WriteDdrProgram(745 of 750,size=512)
+WriteDdrProgram(746 of 750,size=512)
+WriteDdrProgram(747 of 750,size=512)
+WriteDdrProgram(748 of 750,size=512)
+WriteDdrProgram(749 of 750,size=512)
+WriteDdrProgram(750 of 750,size=128)
+StartDdrProgram(0)
+StartDdrProgram(1)
+Idleing
+bglbootload SUCCESS
+
+--- BG/L bringup console ---
+
+    1   set manual/auto clock starts [manual is default]
+    2   initialize chip
+    3   load and run program
+    5   poll JTAG/mailbox for printf
+    6   run user function on host
+    7   run control function on host
+    9   exit
+
+please enter a command:
+5
+Hit [enter] to exit the polling loop
+BG/L ADE: V0.27 - Avenger+Oedipus.
+blade_IOP_main: 0x1d97d87de
+blade_CP_main: 0x1da991b36
+bic_init
+(I) _blade_ts_init: (0,0,0) in {0,0,0}.
+(I) _blade_ts_release
+'8000000000000000'xr=%f 0 0  >Forward[0] = ( '3ff0000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+blade_IOP_main: Start='8000000000000000'xr=%f 0 0  >Forward[1] = ( '3feff621e3796d7e'xr=%f, 'bfa91f65f10dd813'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+0x1dd22bd4d'8000000000000000'xr=%f 0 0  >Forward[2] = ( '3fefd88da3d12526'xr=%f, 'bfb917a6bc29b42b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+ Stop='8000000000000000'xr=%f 0 0  >Forward[3] = ( '3fefa7557f08a517'xr=%f, 'bfc2c8106e8e6139'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+0x1dd22bd77'8000000000000000'xr=%f 0 0  >Forward[4] = ( '3fef6297cff75cb0'xr=%f, 'bfc8f8b83c69a609'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+ Cycles='8000000000000000'xr=%f 0 0  >Forward[5] = ( '3fef0a7efb9230d7'xr=%f, 'bfcf19f97b215f19'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+0x0000002a
+'8000000000000000'xr=%f 0 0  >Forward[6] = ( '3fee9f4156c62dda'xr=%f, 'bfd294062ed59f05'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[7] = ( '3fee212104f686e5'xr=%f, 'bfd58f9a75ab1fdd'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[8] = ( '3fed906bcf328d47'xr=%f, 'bfd87de2a6aea962'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[9] = ( '3feced7af43cc774'xr=%f, 'bfdb5d1009e15cc0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[10] = ( '3fec38b2f180bdb2'xr=%f, 'bfde2b5d3806f63b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[11] = ( '3feb728345196e3e'xr=%f, 'bfe073879922ffee'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[12] = ( '3fea9b66290ea1a3'xr=%f, 'bfe1c73b39ae68c8'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[13] = ( '3fe9b3e047f38741'xr=%f, 'bfe30ff7fce17035'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[14] = ( '3fe8bc806b151741'xr=%f, 'bfe44cf325091dd6'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[15] = ( '3fe7b5df226aafaf'xr=%f, 'bfe57d69348cec9f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[16] = ( '3fe6a09e667f3bcd'xr=%f, 'bfe6a09e667f3bcc'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[17] = ( '3fe57d69348ceca0'xr=%f, 'bfe7b5df226aafaf'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[18] = ( '3fe44cf325091dd7'xr=%f, 'bfe8bc806b151741'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[19] = ( '3fe30ff7fce17036'xr=%f, 'bfe9b3e047f38741'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[20] = ( '3fe1c73b39ae68c9'xr=%f, 'bfea9b66290ea1a3'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[21] = ( '3fe073879922ffee'xr=%f, 'bfeb728345196e3d'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[22] = ( '3fde2b5d3806f63c'xr=%f, 'bfec38b2f180bdb0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[23] = ( '3fdb5d1009e15cc2'xr=%f, 'bfeced7af43cc772'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[24] = ( '3fd87de2a6aea965'xr=%f, 'bfed906bcf328d46'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[25] = ( '3fd58f9a75ab1fe0'xr=%f, 'bfee212104f686e5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[26] = ( '3fd294062ed59f09'xr=%f, 'bfee9f4156c62ddb'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[27] = ( '3fcf19f97b215f21'xr=%f, 'bfef0a7efb9230d8'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[28] = ( '3fc8f8b83c69a611'xr=%f, 'bfef6297cff75cb1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[29] = ( '3fc2c8106e8e6141'xr=%f, 'bfefa7557f08a518'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[30] = ( '3fb917a6bc29b439'xr=%f, 'bfefd88da3d12527'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[31] = ( '3fa91f65f10dd82d'xr=%f, 'bfeff621e3796d80'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[32] = ( '3ca85057c155dc93'xr=%f, 'bff0000000000001'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[33] = ( 'bfa91f65f10dd7fc'xr=%f, 'bfeff621e3796d80'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[34] = ( 'bfb917a6bc29b420'xr=%f, 'bfefd88da3d12528'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[35] = ( 'bfc2c8106e8e6135'xr=%f, 'bfefa7557f08a519'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[36] = ( 'bfc8f8b83c69a606'xr=%f, 'bfef6297cff75cb2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[37] = ( 'bfcf19f97b215f16'xr=%f, 'bfef0a7efb9230d9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[38] = ( 'bfd294062ed59f03'xr=%f, 'bfee9f4156c62ddc'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[39] = ( 'bfd58f9a75ab1fdb'xr=%f, 'bfee212104f686e7'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[40] = ( 'bfd87de2a6aea961'xr=%f, 'bfed906bcf328d49'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[41] = ( 'bfdb5d1009e15cbf'xr=%f, 'bfeced7af43cc776'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[42] = ( 'bfde2b5d3806f63a'xr=%f, 'bfec38b2f180bdb4'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[43] = ( 'bfe073879922ffed'xr=%f, 'bfeb728345196e40'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[44] = ( 'bfe1c73b39ae68c8'xr=%f, 'bfea9b66290ea1a5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[45] = ( 'bfe30ff7fce17035'xr=%f, 'bfe9b3e047f38743'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[46] = ( 'bfe44cf325091dd6'xr=%f, 'bfe8bc806b151743'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[47] = ( 'bfe57d69348cec9f'xr=%f, 'bfe7b5df226aafb1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[48] = ( 'bfe6a09e667f3bcc'xr=%f, 'bfe6a09e667f3bcf'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[49] = ( 'bfe7b5df226aafaf'xr=%f, 'bfe57d69348ceca2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[50] = ( 'bfe8bc806b151741'xr=%f, 'bfe44cf325091dd9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[51] = ( 'bfe9b3e047f38741'xr=%f, 'bfe30ff7fce17038'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[52] = ( 'bfea9b66290ea1a3'xr=%f, 'bfe1c73b39ae68cb'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[53] = ( 'bfeb728345196e3e'xr=%f, 'bfe073879922fff0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[54] = ( 'bfec38b2f180bdb1'xr=%f, 'bfde2b5d3806f63f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[55] = ( 'bfeced7af43cc773'xr=%f, 'bfdb5d1009e15cc5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[56] = ( 'bfed906bcf328d47'xr=%f, 'bfd87de2a6aea968'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[57] = ( 'bfee212104f686e6'xr=%f, 'bfd58f9a75ab1fe2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[58] = ( 'bfee9f4156c62ddc'xr=%f, 'bfd294062ed59f0a'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[59] = ( 'bfef0a7efb9230d9'xr=%f, 'bfcf19f97b215f24'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[60] = ( 'bfef6297cff75cb2'xr=%f, 'bfc8f8b83c69a614'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[61] = ( 'bfefa7557f08a519'xr=%f, 'bfc2c8106e8e6144'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[62] = ( 'bfefd88da3d12528'xr=%f, 'bfb917a6bc29b43f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[63] = ( 'bfeff621e3796d81'xr=%f, 'bfa91f65f10dd839'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[64] = ( 'bff0000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[65] = ( 'bfeff621e3796d7e'xr=%f, '3fa91f65f10dd813'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[66] = ( 'bfefd88da3d12526'xr=%f, '3fb917a6bc29b42b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[67] = ( 'bfefa7557f08a517'xr=%f, '3fc2c8106e8e6139'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[68] = ( 'bfef6297cff75cb0'xr=%f, '3fc8f8b83c69a609'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[69] = ( 'bfef0a7efb9230d7'xr=%f, '3fcf19f97b215f19'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[70] = ( 'bfee9f4156c62dda'xr=%f, '3fd294062ed59f05'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[71] = ( 'bfee212104f686e5'xr=%f, '3fd58f9a75ab1fdd'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[72] = ( 'bfed906bcf328d47'xr=%f, '3fd87de2a6aea962'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[73] = ( 'bfeced7af43cc774'xr=%f, '3fdb5d1009e15cc0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[74] = ( 'bfec38b2f180bdb2'xr=%f, '3fde2b5d3806f63b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[75] = ( 'bfeb728345196e3e'xr=%f, '3fe073879922ffee'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[76] = ( 'bfea9b66290ea1a3'xr=%f, '3fe1c73b39ae68c8'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[77] = ( 'bfe9b3e047f38741'xr=%f, '3fe30ff7fce17035'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[78] = ( 'bfe8bc806b151741'xr=%f, '3fe44cf325091dd6'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[79] = ( 'bfe7b5df226aafaf'xr=%f, '3fe57d69348cec9f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[80] = ( 'bfe6a09e667f3bcd'xr=%f, '3fe6a09e667f3bcc'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[81] = ( 'bfe57d69348ceca0'xr=%f, '3fe7b5df226aafaf'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[82] = ( 'bfe44cf325091dd7'xr=%f, '3fe8bc806b151741'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[83] = ( 'bfe30ff7fce17036'xr=%f, '3fe9b3e047f38741'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[84] = ( 'bfe1c73b39ae68c9'xr=%f, '3fea9b66290ea1a3'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[85] = ( 'bfe073879922ffee'xr=%f, '3feb728345196e3d'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[86] = ( 'bfde2b5d3806f63c'xr=%f, '3fec38b2f180bdb0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[87] = ( 'bfdb5d1009e15cc2'xr=%f, '3feced7af43cc772'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[88] = ( 'bfd87de2a6aea965'xr=%f, '3fed906bcf328d46'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[89] = ( 'bfd58f9a75ab1fe0'xr=%f, '3fee212104f686e5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[90] = ( 'bfd294062ed59f09'xr=%f, '3fee9f4156c62ddb'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[91] = ( 'bfcf19f97b215f21'xr=%f, '3fef0a7efb9230d8'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[92] = ( 'bfc8f8b83c69a611'xr=%f, '3fef6297cff75cb1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[93] = ( 'bfc2c8106e8e6141'xr=%f, '3fefa7557f08a518'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[94] = ( 'bfb917a6bc29b439'xr=%f, '3fefd88da3d12527'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[95] = ( 'bfa91f65f10dd82d'xr=%f, '3feff621e3796d80'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[96] = ( 'bca85057c155dc93'xr=%f, '3ff0000000000001'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[97] = ( '3fa91f65f10dd7fc'xr=%f, '3feff621e3796d80'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[98] = ( '3fb917a6bc29b420'xr=%f, '3fefd88da3d12528'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[99] = ( '3fc2c8106e8e6135'xr=%f, '3fefa7557f08a519'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[100] = ( '3fc8f8b83c69a606'xr=%f, '3fef6297cff75cb2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[101] = ( '3fcf19f97b215f16'xr=%f, '3fef0a7efb9230d9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[102] = ( '3fd294062ed59f03'xr=%f, '3fee9f4156c62ddc'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[103] = ( '3fd58f9a75ab1fdb'xr=%f, '3fee212104f686e7'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[104] = ( '3fd87de2a6aea961'xr=%f, '3fed906bcf328d49'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[105] = ( '3fdb5d1009e15cbf'xr=%f, '3feced7af43cc776'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[106] = ( '3fde2b5d3806f63a'xr=%f, '3fec38b2f180bdb4'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[107] = ( '3fe073879922ffed'xr=%f, '3feb728345196e40'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[108] = ( '3fe1c73b39ae68c8'xr=%f, '3fea9b66290ea1a5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[109] = ( '3fe30ff7fce17035'xr=%f, '3fe9b3e047f38743'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[110] = ( '3fe44cf325091dd6'xr=%f, '3fe8bc806b151743'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[111] = ( '3fe57d69348cec9f'xr=%f, '3fe7b5df226aafb1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[112] = ( '3fe6a09e667f3bcc'xr=%f, '3fe6a09e667f3bcf'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[113] = ( '3fe7b5df226aafaf'xr=%f, '3fe57d69348ceca2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[114] = ( '3fe8bc806b151741'xr=%f, '3fe44cf325091dd9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[115] = ( '3fe9b3e047f38741'xr=%f, '3fe30ff7fce17038'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[116] = ( '3fea9b66290ea1a3'xr=%f, '3fe1c73b39ae68cb'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[117] = ( '3feb728345196e3e'xr=%f, '3fe073879922fff0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[118] = ( '3fec38b2f180bdb1'xr=%f, '3fde2b5d3806f63f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[119] = ( '3feced7af43cc773'xr=%f, '3fdb5d1009e15cc5'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[120] = ( '3fed906bcf328d47'xr=%f, '3fd87de2a6aea968'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[121] = ( '3fee212104f686e6'xr=%f, '3fd58f9a75ab1fe2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[122] = ( '3fee9f4156c62ddc'xr=%f, '3fd294062ed59f0a'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[123] = ( '3fef0a7efb9230d9'xr=%f, '3fcf19f97b215f24'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[124] = ( '3fef6297cff75cb2'xr=%f, '3fc8f8b83c69a614'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[125] = ( '3fefa7557f08a519'xr=%f, '3fc2c8106e8e6144'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[126] = ( '3fefd88da3d12528'xr=%f, '3fb917a6bc29b43f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Forward[127] = ( '3feff621e3796d81'xr=%f, '3fa91f65f10dd839'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 34
+'8000000000000000'xr=%f 0 0  >Inverse[0] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[1] = ( '4060000000000001'xr=%f, 'bd060cd316bf46d6'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[2] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[3] = ( 'bcf5f3f78541ede7'xr=%f, 'bd01a98cebb84a6a'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[4] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[5] = ( '3cdc4c30d958747b'xr=%f, '3cf2555022a660d3'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[6] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[7] = ( 'bceadcf0a23da6be'xr=%f, 'bce54d30ebcba07e'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[8] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[9] = ( '3ca95d25c3d5afba'xr=%f, 'bccc83f3190f28a9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[10] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[11] = ( 'bcdbe08ada808c03'xr=%f, 'bcbd437652adbc91'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[12] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[13] = ( 'bcc345a741d1a672'xr=%f, 'bcf0c69528c8c8f1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[14] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[15] = ( 'bcbb42e9ca70b6cc'xr=%f, 'bcd2a6940c4aa57c'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[16] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[17] = ( '3cd01de6093ade7c'xr=%f, '3ceaee22e47aa009'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[18] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[19] = ( 'bcd118eef73ba8c2'xr=%f, 'bcc6a3e5e6d46c26'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[20] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[21] = ( '3cca2b27c3367606'xr=%f, 'bcd1aa1af1107ddc'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[22] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[23] = ( 'bcc12b70c2527adc'xr=%f, 'bcc22e7ec54b2b2d'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[24] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[25] = ( 'bcdfd75c68f148ff'xr=%f, 'bcf26360dbb9aaf2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[26] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[27] = ( 'bcb785d769a1e25d'xr=%f, 'bcb8808b7abd2e2d'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[28] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[29] = ( 'bce33898d8dc3383'xr=%f, 'bcb07440cbd167a4'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[30] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[31] = ( 'bcd13ab9e3dfe911'xr=%f, '3cb899f15ef2d7e0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[32] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[33] = ( 'bce051a308e9cfc9'xr=%f, 'bcf3d3ad85599268'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[34] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[35] = ( 'bcbc45c47cc7f19b'xr=%f, 'bc8ce37dc06bf965'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[36] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[37] = ( 'bcb9ac1e150e86e3'xr=%f, 'bcd87e45336b3eee'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[38] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[39] = ( 'bcb3dba400a5f22f'xr=%f, 'bcb8125dc0c8429f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[40] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[41] = ( 'bcd257ea46fad429'xr=%f, 'bcd65f86a4e7203f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[42] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[43] = ( 'bccbddf1692bfbac'xr=%f, '3c9a624dd76b326a'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[44] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[45] = ( 'bcd3a4b5c3a8613b'xr=%f, 'bc80ff470bfde53e'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[46] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[47] = ( 'bcb809a779d5825d'xr=%f, '3c7808c59d66d47f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[48] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[49] = ( 'bce8d744daec9142'xr=%f, 'bca3902cce773f0f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[50] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[51] = ( 'bcbbb3f3deaa2cea'xr=%f, '3c9fdfbacdd6677a'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[52] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[53] = ( 'bce235a5427d519c'xr=%f, '3cdc443f25a709f2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[54] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[55] = ( 'bcc71375c3c0ac82'xr=%f, '3cb072393a618d43'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[56] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[57] = ( 'bce483c44fb3c24d'xr=%f, '3ccec6b0d8e924c4'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[58] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[59] = ( 'bca0321d4042c735'xr=%f, 'bc8c9a2defdf8c6e'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[60] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[61] = ( '3cc6043c64aab20b'xr=%f, 'bcc3bc70beddcb9c'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[62] = ( '0000000000000000'xr=%f, '0000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[63] = ( 'bcb6693da223c2f4'xr=%f, '3cacc1faab2a9c1e'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[64] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[65] = ( 'bd00753203b4fbc1'xr=%f, '3ce8334c5afd1b58'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[66] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[67] = ( 'bcc5019a88f0a041'xr=%f, '3cb3e51d82b9381b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[68] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[69] = ( 'bcb34c1a7f595b1d'xr=%f, 'bcbba5cdd9a1b7f3'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[70] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[71] = ( 'bca465c6904255d9'xr=%f, '3c7f744fbef87390'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[72] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[73] = ( 'bca14be95ae25998'xr=%f, 'bce92eceb0bdedee'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[74] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[75] = ( 'bcb587d772381dbb'xr=%f, '3cbd5ff46dd75777'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[76] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[77] = ( 'bcd8548f49576722'xr=%f, '3cbce39f039c5df9'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[78] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[79] = ( 'bcb822820db49929'xr=%f, '3cc02b2221b3818b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[80] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[81] = ( 'bce50e48ca261132'xr=%f, 'bcd06de3a19e17e0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[82] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[83] = ( 'bc52cc15d66f8cdb'xr=%f, '3cae10fce6cfbb5f'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[84] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[85] = ( 'bcdcd5273a944a10'xr=%f, '3cc30bd5ab0f588b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[86] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[87] = ( 'bcb816d7f9e5c8ae'xr=%f, '3cbe09838917466b'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[88] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[89] = ( 'bccae777d440170f'xr=%f, '3cea71aa4b4e8925'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[90] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[91] = ( 'bcb5b2eef2720969'xr=%f, '3cb6acb59a5638bb'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[92] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[93] = ( '3caaff6a6a009db5'xr=%f, '3cb4eeb4b6d80f47'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[94] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[95] = ( '3c750a0eee6d6faa'xr=%f, '3cc61b8a1347f326'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[96] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[97] = ( 'bcf2e3368cfb19bf'xr=%f, '3cf44960e4ece3a7'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[98] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[99] = ( 'bcae1e4ebc66a62d'xr=%f, '3cd3c47e008abfbe'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[100] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[101] = ( 'bca20012179e18ff'xr=%f, '3ce2f2aaa343b21e'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[102] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[103] = ( 'bca54bafa452e4c2'xr=%f, '3cbc2c58031edcec'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[104] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[105] = ( 'bced21e385bcce01'xr=%f, '3ce115801127e6ca'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[106] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[107] = ( 'bcaa66981aaea7c2'xr=%f, '3cbb58fc1143e038'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[108] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[109] = ( 'bca6e3296c038ff1'xr=%f, 'bce6cc605c79f3c3'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[110] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[111] = ( 'bcb19bb9bbe79bfd'xr=%f, '3cd3e7dff55c45a1'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[112] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[113] = ( 'bcd2174c73aef053'xr=%f, 'bcb494794eb9ad84'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[114] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[115] = ( '3cbb7d1f4c2b2a7b'xr=%f, '3cd0b3572a54f9a2'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[116] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[117] = ( '3ca5bad4d0df1005'xr=%f, '3cf4b48c13a71de6'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[118] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[119] = ( '3cc0ad74b7408e20'xr=%f, '3ce070d7dd73a635'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[120] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[121] = ( '3ce68f505ae5f672'xr=%f, 'bcded69250c885e4'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[122] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[123] = ( '3cd8b491c9f55b0a'xr=%f, '3ce3b354a4ce651c'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[124] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[125] = ( '3ce22ea3f1504b52'xr=%f, '3cc598cb6b5b79e0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[126] = ( '8000000000000000'xr=%f, '8000000000000000'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+'8000000000000000'xr=%f 0 0  >Inverse[127] = ( '3ce27b4155a28050'xr=%f, '3cf81a93131912a0'xr=%f )<    /gsa/watgsa/home/t/j/tjcw/sandboxes/gsa/src/BlueMatter/bringup/fft1d/src/fft1d.cpp 41
+BGL_PollMailbox: Received outbound BSO_CRASH command: CODE=0x27383030, ADDRESS=0x30303030, LR=0x30303030, ESR=0x30303030
+
+
+--- BG/L bringup console ---
+
+    1   set manual/auto clock starts [manual is default]
+    2   initialize chip
+    3   load and run program
+    5   poll JTAG/mailbox for printf
+    6   run user function on host
+    7   run control function on host
+    9   exit
+
+please enter a command:
+9
+n compute nodes: 1
+n io nodes: 0
+bln1en0:.../station/mp-nc0/1node>exit
+
+Script command is complete on Fri Jun 20 22:26:49 EDT 2003.

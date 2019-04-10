@@ -1,0 +1,8 @@
+ILIST = \
+  PktThrobber.cpp 
+  
+IDIR = $(BG_SRC)/pk/
+
+.include <$(RULES_MK)>
+
+  

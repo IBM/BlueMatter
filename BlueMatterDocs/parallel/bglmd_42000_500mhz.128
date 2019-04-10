@@ -1,0 +1,22 @@
+# estimates of wall clock time/time step (seconds) for molecular dynamics
+# using clock frequency =  500000000.0 Hertz
+column 1: processor count
+column 2: px
+column 3: py
+column 4: pz
+column 5: time(position globalization)
+column 6: time(global force reduction)
+column 7: speedup(position globalization)
+column 8: speedup(global force reduction)
+           1    1    1    1    1.271e+01    6.718e+00    1.000e+00    1.000e+00
+           8    2    2    2    1.656e+00    9.090e-01    7.677e+00    7.391e+00
+          32    2    4    4    4.327e-01    2.479e-01    2.938e+01    2.710e+01
+          64    4    4    4    2.184e-01    1.261e-01    5.821e+01    5.329e+01
+         128    8    4    4    1.164e-01    7.098e-02    1.092e+02    9.465e+01
+         256    8    8    4    6.155e-02    3.950e-02    2.065e+02    1.701e+02
+         512    8    8    8    3.279e-02    2.221e-02    3.876e+02    3.025e+02
+        1024    8    8   16    1.972e-02    1.499e-02    6.445e+02    4.480e+02
+        2048    8   16   16    1.417e-02    1.237e-02    8.970e+02    5.430e+02
+        4096   16   16   16    1.107e-02    1.067e-02    1.149e+03    6.297e+02
+        8192   16   16   32    1.738e-02    1.771e-02    7.314e+02    3.793e+02
+       16384   16   32   32    2.054e-02    2.123e-02    6.190e+02    3.164e+02

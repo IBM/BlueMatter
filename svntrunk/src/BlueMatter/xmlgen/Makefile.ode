@@ -1,0 +1,5 @@
+
+SUBDIRS = charmm22 \
+  oplsaa \
+  amber6
+.include <$(RULES_MK)>

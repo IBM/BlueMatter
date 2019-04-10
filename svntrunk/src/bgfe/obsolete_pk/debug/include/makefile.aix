@@ -1,0 +1,27 @@
+#
+#
+CMSCMPDIRVALUE=foxfm/pk/
+
+include $(BASE)/makedef.aix
+
+all: hdrs
+
+# These header files are to shipped as part of the Framework product
+
+CMSPUBLINCS=\
+	$(CMSPRDBLDINCDIR)/pk/debug.hpp
+
+CMSPRIVINCS=
+
+hdrs: $(CMSPUBLINCS) $(CMSPRIVINCS)
+
+libs:
+
+bins:
+
+clean:
+	rm -f $(CMSPUBLINCS) $(CMSPRIVINCS)
+
+$(CMSPUBLINCS) $(CMSPRIVINCS): $$(@F)
+	rm -f $@
+	$(INSTALL_HDR) $? $@

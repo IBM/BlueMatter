@@ -1,0 +1,14 @@
+xlC_r \
+-M \
+-g \
+-qarch=pwr3 \
+-DARCH_HAS_FSEL -qnoeh -qmaxmem=-1 \
+-DTRACE_DEST_PK -DNDEBUG -DPK_XLC -DPK_AIX -DPK_SMP -DPLIMPTONPPL \
+-qstaticinline -qalign=natural -bloadmap:pktrace_pk.loadmap \
+-I$GFEBUILDROOT/include \
+/gsa/watgsa/home/b/g/bgf/sb/g/src/bgfe/pk/trace/src/pktrace_pk.cpp \
+fxlog.cpp -o fxlog.exe
+
+#-I/gsa/watgsa/home/b/g/bgf/sb/g/export/rios_aix_5/usr/include \
+#-I/u/germain/projects/bluematter/backing_builds/utils_20020323/export/rios_aix_5/usr/include \
+#-DNDEBUG -DPK_SMP -DPLIMPTONPPL -DNEWTON_LIGHT \

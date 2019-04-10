@@ -1,0 +1,9 @@
+# Data taken on 500MHz BG/L prototype
+# Blade environment
+# 128^3 FFT
+# both cpus, compiler flags -qarch=440d
+# Column 1: node count
+# Column 2: time for FFT (seconds)
+8   0.251
+32  0.060
+512 0.018

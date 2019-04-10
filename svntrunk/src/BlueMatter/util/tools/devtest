@@ -1,0 +1,117 @@
+#!/bin/ksh
+
+VOXMESH=32
+if [[ "$2" != "" ]]
+then
+  VOXMESH="$2"
+fi
+
+if [[ "$1" == "" ]]
+then
+  echo "Usage: $0 <MsdBaseName> <voxmesh>"
+  exit -1
+fi
+
+if [[ "$SANDBOX" = "" ]]
+then
+  echo "SANDBOX env var doesn't look set -- either do a workon -sb <sandbox> or set the SANDBOX env var"
+  exit -1
+fi
+
+MSDNAME="$1".msd
+DVSNAME="$1".dvs
+RDGNAME="$1".srdg
+RTSNAME="$1".rts
+
+echo $MSDNAME $DVSNAME $RDGNAME $RTSNAME
+
+if [[ ! -a "$MSDNAME" ]]
+then
+  echo "MSD not found >$MSDNAME<"
+  exit -1
+fi
+
+if [[ ! -a "$DVSNAME" ]]
+then
+  echo "DVS not found >$DVSNAME<"
+  exit -1
+fi
+
+#Here we move into a working dir not to clutter the test dir
+WORKDIR=RUN_`date +%F:%T`
+
+WORKDIR1=`echo ${WORKDIR} | sed 's/:/_/g'`
+WORKDIR=${WORKDIR1}
+
+mkdir "$WORKDIR"
+cp "$MSDNAME" "$WORKDIR/"
+
+cd "$WORKDIR"
+ln -s "../$DVSNAME" "."
+ln -s "../$RDGNAME" "."
+
+
+BLOCK=`bgwmmcs list_blocks | grep $USER | head -1 | awk '{print $1}'`
+if [[ "$BLOCK" = "" ]]
+then
+  echo "WARNING WARNING WARNING: No blocks allocated to user "$USER"  -- go alloc during the compile!!!"
+fi
+
+echo "setenv_ode.ksh; cd $PWD; java com.ibm.bluematter.db2probspec.ProbspecgenDB2 -regen $MSDNAME" | workon -sb $SANDBOX
+
+echo "setenv_ode.ksh; cd $PWD; java com.ibm.bluematter.utils.CompileMSD $MSDNAME" | workon -sb $SANDBOX
+
+
+if [[ ! -a "$RTSNAME" ]]
+then
+  echo "RTS not found -- compile probably failed. >$DVSNAME<"
+  exit -1
+fi
+
+
+BLOCK=`bgwmmcs list_blocks | grep $USER | head -1 | awk '{print $1}'`
+if [[ "$BLOCK" = "" ]]
+then
+  echo "No blocks allocated to user "$USER"  -- allocate a block and try again"
+  exit
+fi
+
+bgwmmcs submitjob $BLOCK $PWD/$RTSNAME $PWD -- -dvs $PWD/$DVSNAME -voxmesh $VOXMESH $VOXMESH $VOXMESH
+bgwmmcs waitjob
+
+
+NEWRDGNAME=`ls -t *srdg | head -1 | awk '{print $1}'`
+
+if [[ ! -a "$NEWRDGNAME" ]]
+then
+  echo "FATAL ERROR --  >$NEWRDGNAME< NOT FOUND"
+  exit -1
+fi
+
+echo "\n\nrdgdiff with REFERENCE rdg >$RDGNAME<"
+rdgdiff -summary -nsteps=100 $RDGNAME $NEWRDGNAME
+# Look to see if the out of tolerance string is there -- if so, report
+rdgdiff -summary -nsteps=100 $RDGNAME $NEWRDGNAME | grep -c "Datagram streams OUT OF TOLERANCE" >/dev/null
+  if [[ $? = "0" ]]
+  then
+    rdgdiff -summary -nsteps=100 $RDGNAME $NEWRDGNAME | mail -s"OUT OF TOLERANCE $1 $WORKDIR " "$USER@us.ibm.com"
+  fi
+
+#name of the last rdg has system and partition sizes in it
+LASTRDGNAME="../LAST.$1.$NEWRDGNAME"
+
+if [[ -a "$LASTRDGNAME" ]]
+then
+  echo "\n\nrdgdiff with **** LAST RUN ON THIS PARTITION SIZE ***  >$LASTRDGNAME<  >$NEWRDGNAME< \n\n"
+  ls -l "$LASTRDGNAME" "$NEWRDGNAME"
+  rdgdiff -summary -nsteps=100 "$LASTRDGNAME" "$NEWRDGNAME"
+  rdgdiff -summary -nsteps=100 "$LASTRDGNAME" "$NEWRDGNAME" | grep -c "Datagram streams IDENTICAL" > /dev/null
+  if [[ ! $? = "0" ]]
+  then
+    rdgdiff -summary -nsteps=100 "$LASTRDGNAME" "$NEWRDGNAME" | mail -s"NOT IDENTICAL TO LAST $1 $WORKDIR" "$USER@us.ibm.com"
+  fi
+fi
+
+
+mv -f "$NEWRDGNAME" "$LASTRDGNAME"
+

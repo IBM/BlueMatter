@@ -1,0 +1,41 @@
+#
+#
+CMSCMPDIRVALUE=foxfm/pk
+
+include $(BASE)/makedef.aix
+
+all: libs bins
+
+# 'setpri' (the 'set priority' utility) builds to binary, and also ships as
+# source
+
+COBJECTS=$(CMSCMPBLDDIR)/setpri.o
+
+$(COBJECTS): $(*F).c
+	$(CC) $(CCFLAGS) -o $@ $?
+
+$(CMSPRDBLDBINDIR)/setpri: $(CMSCMPBLDDIR)/setpri.o
+	$(CC) -o $@ $?
+
+SAMPSRCDIR=$(CMSPRDBLDDIR)/samples/setpri/src
+
+SAMPSRCS=$(SAMPSRCDIR)/setpri.c
+
+$(SAMPSRCS): $(@F)
+	$(INSTALL) $(SAMPSRCDIR) $?
+
+BINS=$(CMSPRDBLDBINDIR)/setpri
+
+
+hdrs:
+
+libs: $(SAMPSRCS)
+
+bins: $(BINS)
+
+clean:
+	rm -f $(CMSPUBLINCS) $(CMSPRIVINCS)
+
+$(CMSPUBLINCS) $(CMSPRIVINCS): $$(@F)
+	rm -f $@
+	$(INSTALL_HDR) $? $@

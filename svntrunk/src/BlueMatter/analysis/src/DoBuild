@@ -1,0 +1,165 @@
+#!/bin/ksh
+
+#
+# This script builds a p1 given a system name, forcefield, regdatadir, buildmode and buildopts
+#
+
+buildxml=1
+buildcpp=1
+buildexe=1
+insertxml=1
+fromdb2sysid=0
+fromname=0
+waitexe=0
+
+function InsertAndBuild  # fstem  forcefield  buildmode buildopt
+{
+    echo "InsertAndBuild $1 $2 $3 $4"
+    if [[ -s ./$1.$2.xml ]]; then
+      xml2exe.py ./$1.$2.xml Run.rtp $1.$2 $3 $4
+    else
+      echo "xml creation failed for $1.$2.xml"
+      return -1
+    fi
+}
+
+function BuildFromDB2SysID  # id name buildmode buildopt
+{
+    echo "BuildFromDB2SysID $1 $2 $3 $4"
+    echo "Starting build - script time $SECONDS -- " `date`
+    ctpstr=`java com.ibm.bluematter.utils.Rtp2db2 Run.rtp`
+    if [[ ${ctpstr%:*} != "CTP_ID" ]]; then
+      echo "rtp2db2 failed with return string $ctpstr"
+      return -1
+    fi
+    ctpid=${ctpstr#CTP_ID:}
+    echo "building using CTP ID: $ctpid"
+
+    SpecialProbspecdb2Interface.sh $1 $ctpid $3 $2
+
+    # java com.ibm.bluematter.db2probspec.ProbspecgenDB2 $1 $ctpid $2 -v
+    if (( $? )); then
+      echo "Error running SpecialProbspecdb2Interface.sh"
+      return -1
+    fi
+    buildopt=${4:-Default}
+    if [[ $buildopt != "Default" ]]; then
+      rm -f tmp.msd
+      mv $2.msd tmp.msd
+      buildopt2=`echo "$buildopt" | sed "s/_s_/ /g"`
+      sed "$buildopt2" tmp.msd > $2.msd
+      rm -f tmp.msd
+    fi
+    echo "Starting CompileMSD - script time $SECONDS -- " `date`
+    java com.ibm.bluematter.utils.CompileMSD $2.msd
+    echo "Finished CompileMSD - script time $SECONDS -- " `date`
+    #compile_msd.sh $2 $3 $4
+    if (( $? )); then
+      echo "Error running compileMSD"
+      return -1
+    fi
+}
+
+for arg in $*
+do
+  if [[ $arg = '-analyzeonly' ]]; then
+    buildexe=0
+    buildxml=0
+    buildcpp=0
+  elif [[ $arg = '-runonly' ]]; then
+    buildexe=0
+    buildxml=0
+    buildcpp=0
+  fi
+done
+
+while [[ $1 = -* ]]
+do 
+  case $1 in
+    -fromxml) buildxml=0;;
+    -fromcpp) buildxml=0; buildcpp=0; insertxml=0;;
+    -fromexe) buildxml=0; buildcpp=0; buildexe=0; insertxml=0;;
+    -fromdb2sysid) buildxml=0; fromdb2sysid=1; insertxml=0;;
+    -fromname) buildxml=0; fromdb2sysid=0; insertxml=0; fromname=1;;
+    -waitexe) waitexe=1;;
+    -dvs) dvsname=$2; shift;;
+    -*)       echo "ignoring $1 in DoBuild";;
+  esac
+  shift
+done
+
+if (( $# < 1 )) ; then
+  echo "DoBuild <-fromxml -fromcpp -fromexe -fromdb2sysid -fromname -waitexe -dvs dvsfilename> sysname_or_ID forcefield <buildmode> <buildopts>"
+  return -1
+fi
+
+installbase=`installbase.py`
+mdtestdir=${installbase}usr/opt/bluegene/mdtest
+
+rundir=${PWD##*/}
+
+# as part of transition to explicitly specifying FFTMesh, check for FFTMesh in Run.rtp
+# and use hack if it isn't present
+if [[ -s Run.rtp ]]; then
+   fftsize=`grep "^FFTSize " Run.rtp`
+   if [[ -z $fftsize ]]; then
+       # Hack in override of deprecated spacing command
+       spacing=`grep "^P3MEinitSpacing " Run.rtp`
+       if [[ -n "$spacing" ]]; then
+	   spacing=${spacing:+-$spacing}
+	   box=`grep "^BoundingBox " Run.rtp`
+	   box=${box:+-$box}
+	   dvsstr=${dvsname:+-dvs $dvsname}
+	   mesh=`dvs2mesh $box $spacing $dvsstr`
+	   rm -f Run0.rtp
+	   mv Run.rtp Run0.rtp
+	   sed 's/\(^P3MEinitSpacing.*\)/##### \1/' Run0.rtp > Run.rtp
+	   echo $mesh >> Run.rtp
+       fi
+   fi
+fi
+
+# Special waitexe feature, gets exe from the Run_0 directory when it appears
+if [[ $rundir != 'Run_0' ]]; then
+  if (( waitexe )); then
+    exename=`ls ../Run_0/*.exe ../Run_0/*.rts 2> /dev/null`
+    while [[ ! -s $exename ]]
+      do
+        sleep 1
+        exename=`ls ../Run_0/*.exe ../Run_0/*.rts 2> /dev/null`
+      done
+    cp -f $exename .
+    return 0
+  fi
+fi
+
+# Build the xml from the source psf's or out files
+if (( buildxml )); then
+  case $2 in
+    charmm) toppardir=${installbase}usr/opt/bluegene/forcefields/charmm22
+            topfile=top_all22_prot_nacl.inp
+            parfile=par_all22_prot_nacl.inp
+            bunzip2 -kc ${mdtestdir}/data/charmm22/$1.psf.bz2 > ./$1.psf
+            psf2xml.pl ${toppardir}/$topfile ${toppardir}/$parfile ./$1.psf;;
+
+    opls)   bunzip2 -kc ${mdtestdir}/data/oplsaa/$1.out.bz2 > ./$1.out
+            bunzip2 -kc ${mdtestdir}/data/oplsaa/$1.pdb.bz2 > ./$1.pdb
+            opls2xml.pl ./$1.out ./$1.pdb;;
+  esac
+fi
+
+#  Given xml, insert it and build exe
+if (( insertxml && buildexe )); then
+  InsertAndBuild $1 $2 $3 $4
+#  Build directly from sysid
+elif (( fromdb2sysid && buildexe )); then
+  BuildFromDB2SysID $1 $2 $3 $4
+fi
+
+if (( fromname )); then
+  SysIDStr=`mddatabase.py -idfromname $1`
+  SysID=${SysIDStr##*SysID}
+  BuildFromDB2SysID $SysID $1 $2 $3
+fi
+
+

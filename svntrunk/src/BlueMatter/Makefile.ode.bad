@@ -1,0 +1,71 @@
+#  random \
+# random     \
+
+EXPLIB_SUBDIRS = \
+  db2 \
+  molsysdef \
+  p3me \
+
+OBJECTS_SUBDIRS = \
+ $(EXPLIB_SUBDIRS) \
+# kerngen \
+
+EXPINC_SUBDIRS = \
+ kerngen \
+ control    \
+ db2        \
+ geometry   \
+ io         \
+ mdvm       \
+ molsysdef  \
+ monitor    \
+ packaging  \
+ plimpton   \
+ udf \
+ util \
+ p3me \
+
+
+.if $(CYCLOPS) == 1
+.else
+EXPLIB_SUBDIRS += \
+  probspecdb2 \
+
+
+EXPINC_SUBDIRS += \
+ probspecdb2 \
+ analysis \
+
+
+OBJECTS_SUBDIRS += \
+ analysis \
+ util \
+
+.if $(CAN_BUILD_PROBSPEC) != 0
+OBJECTS_SUBDIRS += \
+
+
+.endif
+.endif
+
+CMFPARSE_SUBDIRS = packaging
+
+RUNPKGTOOL_SUBDIRS = $(CMFPARSE_SUBDIRS)
+
+ILIST += BlueMatter.version
+
+BlueMatter.version_IDIR = $(BG_DIR)/
+
+
+SUBDIRS = $(EXPINC_SUBDIRS) \
+	tgtbuild \
+	xmlgen \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

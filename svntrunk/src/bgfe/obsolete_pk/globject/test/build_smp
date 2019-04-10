@@ -1,0 +1,47 @@
+rm -f $1.smp.aix.exe
+rm -rf core*
+$GFESOURCEROOT/bgfe/build.ksh
+$GFESOURCEROOT/BlueMatter/build.ksh
+
+# -D PKFXLOG_PKREACTOR \
+# -D PKFXLOG_FORCE_TERMS \
+# -D PKFXLOG_UPDATE_LOOPS=1 \
+# -D BLUEGENE \
+# -D PKFXLOG  \
+# -D DUMP_PROGRESS \
+# -D PLIMPTONPPL \   #USE PHASED PIPELINE VERSION OF PLIMPTON - REQUIRED FOR DIST MEM
+# -g \
+# -qlist   \
+# -qsource  \
+# -D  TEST_UDFIF \
+# -DPKFXLOG_UDF \
+#-DPKFXLOG  \
+#-DPLIMPTON_NB \
+
+rm -rf $1.smp.tempfiles
+xlC_r  \
+-qnolm \
+-DBLUEGENE \
+-DPKFXLOG \
+-DPKFXLOG_GLOBJECT \
+-g \
+-DFORCE_SINGLE_SITE_IRREDUCABLE_PARTITIONING \
+-DMDVM_NO_NEAREST_IMAGE_CALC \
+-DPKFXLOG_PLIMPTONLOOPS \
+-lpthread -DPK_XLC -DPK_AIX -DPK_SMP \
+-qMAXMEM=-1 \
+-DNEWTON_LIGHT \
+-I$GFEBUILDROOT/include \
+-I./ \
+$1.cpp \
+$GFESOURCEROOT/bgfe/pk/platform/src/platform.cpp \
+$GFESOURCEROOT/bgfe/pk/fxlogger/src/fxlogger.cpp \
+$GFESOURCEROOT/bgfe/pk/exception/src/exception.cpp \
+$GFESOURCEROOT/bgfe/pk/reactor/src/smp_reactor.cpp \
+$GFESOURCEROOT/bgfe/pk/globject/src/globject.cpp \
+$GFESOURCEROOT/bgfe/pk/random/src/random.cpp              \
+ -o $1.smp.aix.exe 2>$1.smp.out
+mkdir $1.smp.tempfiles
+mv *.lst $1.smp.tempfiles/
+mv *.out $1.smp.tempfiles/
+$EDITOR $1.smp.tempfiles/$1.smp.out

@@ -1,0 +1,52 @@
+InstallEntity
+{
+
+  EntityInfo
+  {
+    entityName     =   "bluegene.bluematter";
+	fullEntityName = [ "IBM Blue Matter" ] ;
+	description = "IBM Blue Matter" ;
+    imageName      =   "bluegene.bluematter";
+    version        =   VERSION;
+    release        =   RELEASE;
+    maintLevel     =   MAINTLEVEL;
+    fixLevel       =   FIXLEVEL;
+    copyright      =   COPYRIGHT;
+    category       =   'application';
+    language       =   'en_us';
+    content        =   'USR';
+  }
+
+
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#ifdef rios_aix_5
+    osName         = [ "rios_aix"];
+    osRelease      = [ "5"    ];
+    osVersion      = [ "3.3"   ];
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+  LinkInfo
+  {
+    immChildEntities = [ RTE_ENTITY_NAME SRC_ENTITY_NAME NIBM_ENTITY_NAME ] ;
+    parent = NULL;
+  }
+
+}

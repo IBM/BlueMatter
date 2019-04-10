@@ -1,0 +1,143 @@
+#!/bin/ksh
+
+#echo $*
+#echo $PPID
+#echo $$
+#echo $HOME
+#echo $USER
+
+# bgf (2:25 PM) - i mean, to generate it
+# Chris Ward (2:26 PM) - you put it in by hand.
+# bgf (2:26 PM) - how do you generate it?
+# Chris Ward (2:26 PM) - ssh-keygen makes you a private-public key pair.
+# Chris Ward (2:27 PM) - id_rsa and id_rsa.pub
+# bgf (2:27 PM) - it's the output from that program that you put in the authorized keys
+# Chris Ward (2:27 PM) - You put your local public key in the remote machine's authorized_keys file
+# Chris Ward (2:28 PM) - and then you can ssh to the remote machine without a password
+
+PidStateBaseDir=$HOME"/MMCS_SHELL_STATE/"
+if [[ -a $PidStateBaseDir ]]
+then
+  #echo $PidStateBaseDir "Exists"
+  a=$a #nop
+else
+  echo $PidStateBaseDir "Doesn't Exist"
+  mkdir $PidStateBaseDir
+fi
+
+# note ... $1 is the fen host name which needs to be part of the persistent state
+PidStateBaseName=$PidStateBaseDir"MMCS.ShellPID.$PPID.$1"
+#echo "MMCS STATE : This shells mmcs state base name: " $PidStateBaseName
+
+LogFile=$PidStateBaseName".LogFile"
+echo "===========================================================================" >> $LogFile
+date >> $LogFile
+
+#Handle setting and clearing the mmcs username state var
+
+PidStateBaseName_UserName=$PidStateBaseName".CurrentUserName"
+echo "MMCS STATE : Current User file name is (or could be): " $PidStateBaseName_UserName >> $LogFile
+if [[ "$2" = "setusername" ]]
+then
+
+  echo "setusername command intercepted"  >> $LogFile
+  echo "USER: "$USER                      >> $LogFile
+  echo "SETTO "$3                         >> $LogFile
+  echo "PATH: "$PidStateBaseName_UserName >> $LogFile
+  cat $PidStateBaseName_UserName          >> $LogFile  2>&1
+
+  if [[ "$3" = "$USER" ]]
+  then
+    echo "user name is shell user id -- removing state file" >> $LogFile
+    rm -rf $PidStateBaseName_UserName
+  else
+    echo "user name set to "$3 >>$LogFile
+    echo $3 > $PidStateBaseName_UserName
+  fi
+
+  echo "Exiting "$0 >> $LogFile
+  exit
+fi
+
+
+#Handle cases where current block will be set
+CMD_SETS_CURRENT_BLOCK=0
+
+if [[ "$2" = "allocate" || "$2" = "allocate_block" || "$2" = "select_block" ]]
+then
+  CMD_SETS_CURRENT_BLOCK=1
+fi
+
+
+PidStateBaseName_CurrentBlockId=$PidStateBaseName".CurrentBlockId"
+if [[ "$CMD_SETS_CURRENT_BLOCK" = "1" ]]
+then
+  echo "MMCS STATE : Setting current block in the file  " $PidStateBaseName_CurrentBlockId >> $LogFile
+  echo $3 > $PidStateBaseName_CurrentBlockId
+fi
+
+
+PidStateBaseName_LastSubmittedJobInfo=$PidStateBaseName".LastSubmittedJobInfo"
+
+build_cmd()
+{
+
+if [[ -a "$PidStateBaseName_UserName" ]]
+then
+  CurrentUserName=$(cat $PidStateBaseName_UserName)
+  echo "setusername "$CurrentUserName
+fi
+
+#special cases for commands that this script implements using local state
+if [[ "$2" = "waitjob" && "$3" = "" ]]
+then
+  if [[ -a "$PidStateBaseName_LastSubmittedJobInfo" ]]
+  then
+    LastSubmittedJobInfo=$(cat $PidStateBaseName_LastSubmittedJobInfo)
+    echo "waitjob "$LastSubmittedJobInfo
+  fi
+
+else  #... now do normal commands
+
+  # Commands that do not set the current block need to be told what it has been set to by other commands
+  if [[ "$CMD_SETS_CURRENT_BLOCK" == "0" ]]
+  then
+    if [[ -a "$PidStateBaseName_CurrentBlockId" ]]
+    then
+      CurrentBlockId=$(cat $PidStateBaseName_CurrentBlockId)
+      echo "select_block "$CurrentBlockId
+    fi
+  fi
+  #put out the mmcs command as it was typed on the commandline to this script
+  shift
+  echo $@
+
+fi #end special commands handling
+}
+
+echo "MMCS command >>>" >> $LogFile
+build_cmd $@            >> $LogFile
+echo "MMCS command <<<" >> $LogFile
+
+#look out for aix gnu grep... if not there, hope the path grep is right
+if [[ -a /usr/local/bin/grep ]]
+then
+  GREP="/usr/local/bin/grep"
+else
+  GREP="grep"
+fi
+
+(
+build_cmd $@ | ssh "$1" /bgl/console/bin/bglconsole 2>/dev/null
+) | ${GREP} -v "^connect" | tee -a $LogFile
+
+#) | /usr/local/bin/grep -v "^connect" | tee -a $LogFile
+
+
+if [[ "$2" = "submitjob" ]]
+then
+  JID=`tail -1 $LogFile | grep "jobId"  | sed 's/jobId=//' `
+  echo "MMCS STATE : last submitted job BlockId "$3" JobId : "$JID  >>$LogFile
+  echo "MMCS STATE : Setting LastSubmittedJobInfo in  " $PidStateBaseName_LastSubmittedJobInfo >> $LogFile
+  echo $3" "$JID > $PidStateBaseName_LastSubmittedJobInfo
+fi

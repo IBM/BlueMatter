@@ -1,0 +1,24 @@
+ILIST = \
+BGLGi.h \
+BGL_GlobalIntSPI.h \
+BGL_PartitionSPI.h \
+BGL_TorusPktSPI.h \
+BGL_TreePktSPI.h \
+bl_dcrmap.h \
+bl_gints.h \
+bl_lockbox.h \
+bl_physmap.h \
+bl_torus.h \
+bl_tree.h \
+blade_env.h \
+blade_on_blrts.h \
+
+IDIR = $(BG_INCLUDE)/pk/spi/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/hoodcomms/libblade/spi/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

@@ -1,0 +1,40 @@
+
+# these main options same as testproduction
+-DARCH_HAS_FSEL                
+-DPK_XLC                       
+-DPK_AIX
+-DNSQ_SINGLE_COMPUTE           
+
+#these were missing
+-DBLAKE
+-DPK_SMP
+
+#these opt options - same
+
+-DNDEBUG                       
+-DWATER_WATER_CUTOFF           
+-DPERFORMANCE_PERIODIC_IMAGE   
+-DPERFORMANCE_SWITCH           
+-DSITE_SITE_CUTOFF             
+-DPERFORMANCE_PRECOMPUTE_RANGE 
+-DPERFORMANCE_PRECOMPUTE_RANGE_I
+-DPERFORMANCE_VECTOR_NBVM      
+-DPERFORMANCE_ERFC_VIA_ESTIMATE
+
+FFT            fftw
+IFP            IFPTiled
+NSQ            NSQ_fragment_verlet 
+
+#these use selectively
+
+-DSUPPRESS_MONITOR             
+-DNO_EXTERNAL_DATAGRAMS        
+#-DPK_PARALLEL                  
+-DPKTRACE_ON                   
+-DPKTRACE_TUNE=1               
+-DNO_TIME_STAMPS               
+-DPKFXLOG                      
+-DEXCEPTIONS_UNAVAILABLE       
+
+
+

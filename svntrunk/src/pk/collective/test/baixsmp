@@ -1,0 +1,42 @@
+rm -f $1.smp.exe
+rm -rf core*
+$GFESOURCEROOT/pk/build
+# -D PKFXLOG_PKREACTOR \
+# -D PKFXLOG_FORCE_TERMS \
+# -D PKFXLOG_UPDATE_LOOPS=1 \
+# -D BLUEGENE \
+# -D PKFXLOG  \
+# -D DUMP_PROGRESS \
+# -D PLIMPTONPPL \   #USE PHASED PIPELINE VERSION OF PLIMPTON - REQUIRED FOR DIST MEM
+# -g \\
+rm -rf $1.smp.tempfiles
+xlC_r  \
+-D BLUEGENE \
+-O \
+-qlist   \
+-qsource  \
+-D PKFXLOG  \
+-D PLIMPTONPPL \
+-qMAXMEM=10000000 \
+-D NEWTON_LIGHT \
+-D SMP \
+-D GDBM \
+-D A98_TYPENAME= \
+-D bool=int \
+-I $GFEBUILDROOT/include \
+-I ./ \
+$1.cpp \
+$GFESOURCEROOT/pk/pkmain/src/main.cpp    \
+$GFESOURCEROOT/pk/pthread/src/pthread.cpp            \
+$GFESOURCEROOT/pk/globject/src/globject.cpp          \
+$GFESOURCEROOT/pk/reactor/src/reactor.cpp            \
+$GFESOURCEROOT/pk/trace/src/pktrace_pk.cpp           \
+$GFESOURCEROOT/pk/util_comm/src/mpi.cpp              \
+$GFESOURCEROOT/pk/exception/src/exception.cpp        \
+$GFESOURCEROOT/pk/fxlogger/src/fxlogger.cpp          \
+$GFESOURCEROOT/pk/random/src/random.cpp              \
+ -o $1.smp.exe 2>$1.smp.out
+mkdir $1.smp.tempfiles
+cp *.lst $1.smp.tempfiles/
+cp *.out $1.smp.tempfiles/
+e $1.smp.tempfiles/$1.smp.out

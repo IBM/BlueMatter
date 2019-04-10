@@ -1,0 +1,8 @@
+cd ../../../inst.images/rios_aix_5/shipdata/usr/opt/bluegene/src/pk/bonb
+make -f fen_makefile
+cd -
+
+echo "This script must be running on a fen - you are on:"
+hostname
+echo "You must have done a build build_all install_all in an ODE sandbox first"
+

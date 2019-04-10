@@ -1,0 +1,8 @@
+grep "PKTRACE ID 00" $1 >$1.256.id
+grep "PKTRACE DATA 00" $1 >$1.256.data
+cat $1.256.id $1.256.data >$1.256
+rm -f  $1.256.id $1.256.data
+rm -rf Maptrc/
+./fxlog 1000 1000 <$1.256 >/dev/null
+rm -f $1.256
+mv Maptrc/* $1.trc

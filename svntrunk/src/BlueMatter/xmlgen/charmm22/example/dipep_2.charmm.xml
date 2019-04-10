@@ -1,0 +1,1388 @@
+<?xml version='1.0' encoding='US-ASCII' standalone='no' ?>
+<!DOCTYPE ffparams [
+<!ELEMENT ffparams (header_parameter_list, (data_list)+,
+(udf_invocation_table)?, (site_tuple_list | param_tuple_list)*,
+(pair_list)*, (group_list)*)>
+
+<!-- The header parameter list contains per system information.  Each -->
+<!-- parameter has associated name, type, and symbolic_constant -->
+<!-- attributes.  If symbolic_constant="true" then it is intended that -->
+<!-- the parameter so labeled is to be treated as a symbolic constant -->
+<!-- for use by downstream applications-->
+<!ELEMENT header_parameter_list (header_parameter)+>
+<!ELEMENT header_parameter (#PCDATA)>
+<!ATTLIST header_parameter param_id ID #REQUIRED>
+<!ATTLIST header_parameter type (char | double | int) "char">
+<!ATTLIST header_parameter symbolic_constant (true | false) "false">
+
+<!-- The data_list contains a list of type_ids that are used -->
+<!-- for a variety of purposes, including molecule types and molecule -->
+<!-- instances as well as LJ types.   These types may have -->
+<!-- parameter values associated with them which are defined in the -->
+<!-- type_parameter_list. Information about what type_id is -->
+<!-- bound to a particular site_id must be conveyed via a -->
+<!-- site_parameter_ref. It is required that type_ids consist of the -->
+<!-- type_class string with an underscore and number appended -->
+<!ELEMENT data_list (data_title, data_parameter_list, (data_record)*)>
+<!ATTLIST data_list data_class_prepend ID #REQUIRED>
+<!ELEMENT data_title (#PCDATA)>
+<!ELEMENT data_parameter_list (data_parameter_spec)*>
+<!ATTLIST data_parameter_list param_prepend ID #REQUIRED>
+<!ELEMENT data_parameter_spec (#PCDATA)>
+<!ATTLIST data_parameter_spec param_id ID #REQUIRED>
+<!ATTLIST data_parameter_spec type (char | double | int | idref) "char">
+<!ATTLIST data_parameter_spec ref_prepend IDREF #IMPLIED>
+<!ELEMENT data_record ((data_parameter | data_parameter_ref))*>
+<!ATTLIST data_record data_id ID #REQUIRED>
+<!ELEMENT data_parameter (#PCDATA)>
+<!ATTLIST data_parameter param_ref IDREF #REQUIRED>
+<!ELEMENT data_parameter_ref EMPTY>
+<!ATTLIST data_parameter_ref param_ref IDREF #REQUIRED>
+<!ATTLIST data_parameter_ref ref_ptr IDREF #REQUIRED>
+<!-- The invocation table contains a list of all the user defined -->
+<!-- functions required for this system and pointers to tuples of -->
+<!-- sites and parameters required for each UDF   -->
+<!ELEMENT udf_invocation_table (udf_invocation_rec)*>
+<!ELEMENT udf_invocation_rec EMPTY>
+<!ATTLIST udf_invocation_rec udf_id ID #REQUIRED>
+<!ATTLIST udf_invocation_rec site_tuple_ref IDREF #REQUIRED>
+<!ATTLIST udf_invocation_rec param_tuple_ref IDREF #IMPLIED>
+
+<!-- The site tuple list contains a collection of site_id tuples that are -->
+<!-- used by one or more udfs.  The order of the tuples in this list -->
+<!-- must correspond to the order of the tuples in the corresponding -->
+<!-- param_tuple_list -->
+<!ELEMENT site_tuple_list (site_tuple)+>
+<!ATTLIST site_tuple_list id ID #REQUIRED>
+<!ELEMENT site_tuple (site)+>
+<!ELEMENT site EMPTY>
+<!ATTLIST site site_ref IDREF #REQUIRED>
+<!ATTLIST site site_ordinal CDATA #REQUIRED>
+
+<!-- The param tuple list contains a collection of parameter tuples -->
+<!-- that are used by one or more udfs.  The order of the tuples in -->
+<!-- this list must correspond to the order of the tuples in the -->
+<!-- corresponding site_tuple_list.  This list also has the usual -->
+<!-- parameter specification block at the beginning.  The element -->
+<!-- value of the param_spec element is the name of the parameter -->
+<!ELEMENT param_tuple_list (param_spec_list, (param_tuple)+)>
+<!ATTLIST param_tuple_list id ID #REQUIRED>
+<!ELEMENT param_spec_list (param_spec)+>
+<!ATTLIST param_spec_list param_prepend NMTOKEN #REQUIRED>
+<!ELEMENT param_spec (#PCDATA)>
+<!ATTLIST param_spec param_id ID #REQUIRED>
+<!ATTLIST param_spec type (double | int) "double">
+<!ELEMENT param_tuple (param)+>
+<!ELEMENT param (#PCDATA)>
+<!ATTLIST param param_ref IDREF #REQUIRED>
+
+<!-- The pair list contains a list of pair interaction parameters for -->
+<!-- each pair of the associated types-->
+<!ELEMENT pair_list (pair_parameter_list, (pair_record)+)>
+<!ATTLIST pair_list type_class_prepend IDREF #REQUIRED>
+<!ELEMENT pair_parameter_list (pair_parameter_spec)+>
+<!ATTLIST pair_parameter_list param_prepend ID #REQUIRED>
+<!ELEMENT pair_parameter_spec (#PCDATA)>
+<!ATTLIST pair_parameter_spec param_id ID #REQUIRED>
+<!ATTLIST pair_parameter_spec type (char | double | int) "char">
+<!ELEMENT pair_record (pair_parameter)+>
+<!ATTLIST pair_record type_ref_1 IDREF #REQUIRED>
+<!ATTLIST pair_record type_ref_2 IDREF #REQUIRED>
+<!ELEMENT pair_parameter (#PCDATA)>
+<!ATTLIST pair_parameter param_ref IDREF #REQUIRED>
+
+<!-- User defined groups contain group information and a list of group -->
+<!-- members specified by site_id-->
+<!ELEMENT group_list (group_info, (group_member)+)>
+<!ATTLIST group_list group_id ID #REQUIRED>
+<!ATTLIST group_list group_class CDATA #REQUIRED>
+<!ELEMENT group_info (#PCDATA)>
+<!ELEMENT group_member EMPTY>
+<!ATTLIST group_member site_ref IDREF #REQUIRED>
+]>
+<ffparams>
+<header_parameter_list>
+<header_parameter param_id="ff_family" type="char" symbolic_constant="false">CHARMM</header_parameter>
+<header_parameter param_id="ff_spec" type="char" symbolic_constant="false">CHARMM22</header_parameter>
+<header_parameter param_id="charge14" type="int" symbolic_constant="true">1</header_parameter>
+<header_parameter param_id="charge14scale" type="double" symbolic_constant="true">1.0</header_parameter>
+<header_parameter param_id="lj14" type="int" symbolic_constant="true">1</header_parameter>
+<header_parameter param_id="lj14scale" type="double" symbolic_constant="true">1.0</header_parameter>
+<header_parameter param_id="torsioninput" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="improper" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="ureybradley" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="grouping" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="water" type="char" symbolic_constant="false">WATP</header_parameter>
+<header_parameter param_id="units" type="char" symbolic_constant="false">CHEM</header_parameter>
+<header_parameter param_id="ChargeConversion" type="double" symbolic_constant="true">SciConst::StdChargeConversion</header_parameter>
+<header_parameter param_id="TimeConversionFactor" type="double" symbolic_constant="true">SciConst::StdTimeConversion</header_parameter>
+</header_parameter_list>
+
+<data_list data_class_prepend="mn_">
+<data_title>molecule_name</data_title>
+ <data_parameter_list param_prepend="mnp_">
+   <data_parameter_spec param_id="mnp_1" type="char">name</data_parameter_spec>
+   <data_parameter_spec param_id="mnp_2" type="char">type</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="mn_1">
+    <data_parameter param_ref="mnp_1">dipep</data_parameter>
+    <data_parameter param_ref="mnp_2">protein</data_parameter>
+ </data_record>
+ <data_record data_id="mn_2">
+    <data_parameter param_ref="mnp_1">HOH</data_parameter>
+    <data_parameter param_ref="mnp_2">solvent</data_parameter>
+ </data_record>
+ </data_list>
+
+<data_list data_class_prepend="ch_">
+<data_title>chain</data_title>
+<data_parameter_list param_prepend="chp_">
+<data_parameter_spec param_id="chp_1" type="char">name</data_parameter_spec>
+</data_parameter_list>
+    <data_record data_id="ch_1">
+      <data_parameter param_ref="chp_1">A</data_parameter>
+    </data_record>
+</data_list>
+
+<data_list data_class_prepend="cci_">
+<data_title>chemical_component_instance</data_title>
+<data_parameter_list param_prepend="ccip_">
+<data_parameter_spec param_id="ccip_1" type="char">cc_id</data_parameter_spec>
+</data_parameter_list>
+    <data_record data_id="cci_1">
+      <data_parameter param_ref="ccip_1">GLY</data_parameter>
+    </data_record>
+    <data_record data_id="cci_2">
+      <data_parameter param_ref="ccip_1">GLY</data_parameter>
+    </data_record>
+    <data_record data_id="cci_3">
+      <data_parameter param_ref="ccip_1">HOH</data_parameter>
+    </data_record>
+    <data_record data_id="cci_4">
+      <data_parameter param_ref="ccip_1">HOH</data_parameter>
+    </data_record>
+</data_list>
+
+<data_list data_class_prepend="moni_">
+<data_title>monomer_instance</data_title>
+<data_parameter_list param_prepend="monip_">
+<data_parameter_spec param_id="monip_1" type="idref" param_prepend="ch_">chain_id</data_parameter_spec>
+<data_parameter_spec param_id="monip_2" type="idref" param_prepend="cci_">cc_instance_id</data_parameter_spec>
+</data_parameter_list>
+     <data_record data_id="moni_1">
+       <data_parameter_ref param_ref="monip_1" refptr="ch_1"/>
+       <data_parameter_ref param_ref="monip_2" refptr="cci_1"/>
+     </data_record>
+     <data_record data_id="moni_2">
+       <data_parameter_ref param_ref="monip_1" refptr="ch_1"/>
+       <data_parameter_ref param_ref="monip_2" refptr="cci_2"/>
+     </data_record>
+</data_list>
+
+<data_list data_class_prepend="mi_">
+<data_title>molecule_instance</data_title>
+ <data_parameter_list param_prepend="mip_">
+    <data_parameter_spec param_id="mip_1" type="idref" ref_prepend="mn_">molecule_name</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="mi_1">
+ <data_parameter_ref param_ref="mip_1" ref_ptr="mn_1"/>
+ </data_record>
+ <data_record data_id="mi_2">
+ <data_parameter_ref param_ref="mip_1" ref_ptr="mn_2"/>
+ </data_record>
+ <data_record data_id="mi_3">
+ <data_parameter_ref param_ref="mip_1" ref_ptr="mn_3"/>
+ </data_record>
+ </data_list>
+
+<data_list data_class_prepend="site_">
+<data_title>site_list</data_title>
+  <data_parameter_list param_prepend="sp_">
+     <data_parameter_spec param_id="sp_1" type="double">mass</data_parameter_spec>
+     <data_parameter_spec param_id="sp_2" type="double">charge</data_parameter_spec>
+     <data_parameter_spec param_id="sp_3" type="int">mol_instance_id</data_parameter_spec>
+     <data_parameter_spec param_id="sp_4" type="int">cc_instance_id</data_parameter_spec>
+     <data_parameter_spec param_id="sp_5" type="char">atom_tag</data_parameter_spec>
+     <data_parameter_spec param_id="sp_6" type="double">epsilon</data_parameter_spec>
+     <data_parameter_spec param_id="sp_7" type="double">rmin</data_parameter_spec>
+     <data_parameter_spec param_id="sp_8" type="double">epsilon14</data_parameter_spec>
+     <data_parameter_spec param_id="sp_9" type="double">rmin14</data_parameter_spec>
+     <data_parameter_spec param_id="sp_10" type="char">element</data_parameter_spec>
+  </data_parameter_list>
+ <data_record data_id="site_1">
+   <data_parameter param_ref="sp_1">14.0070</data_parameter>
+   <data_parameter param_ref="sp_2">(-.300000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">N</data_parameter>
+   <data_parameter param_ref="sp_6">-0.200000</data_parameter>
+   <data_parameter param_ref="sp_7">1.850000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.200000</data_parameter>
+   <data_parameter param_ref="sp_9">1.850000</data_parameter>
+   <data_parameter param_ref="sp_10">N</data_parameter>
+ </data_record>
+ <data_record data_id="site_2">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.330000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">1H</data_parameter>
+   <data_parameter param_ref="sp_6">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_7">0.224500</data_parameter>
+   <data_parameter param_ref="sp_8">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_9">0.224500</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_3">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.330000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">2H</data_parameter>
+   <data_parameter param_ref="sp_6">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_7">0.224500</data_parameter>
+   <data_parameter param_ref="sp_8">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_9">0.224500</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_4">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.330000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">3H</data_parameter>
+   <data_parameter param_ref="sp_6">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_7">0.224500</data_parameter>
+   <data_parameter param_ref="sp_8">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_9">0.224500</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_5">
+   <data_parameter param_ref="sp_1">12.0110</data_parameter>
+   <data_parameter param_ref="sp_2">(.130000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">CA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.055000</data_parameter>
+   <data_parameter param_ref="sp_7">2.175000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.010000</data_parameter>
+   <data_parameter param_ref="sp_9">1.900000</data_parameter>
+   <data_parameter param_ref="sp_10">C</data_parameter>
+ </data_record>
+ <data_record data_id="site_6">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.900000E-01*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">1HA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_7">1.320000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_9">1.320000</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_7">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.900000E-01*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">2HA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_7">1.320000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_9">1.320000</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_8">
+   <data_parameter param_ref="sp_1">12.0110</data_parameter>
+   <data_parameter param_ref="sp_2">(.510000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">C</data_parameter>
+   <data_parameter param_ref="sp_6">-0.110000</data_parameter>
+   <data_parameter param_ref="sp_7">2.000000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.110000</data_parameter>
+   <data_parameter param_ref="sp_9">2.000000</data_parameter>
+   <data_parameter param_ref="sp_10">C</data_parameter>
+ </data_record>
+ <data_record data_id="site_9">
+   <data_parameter param_ref="sp_1">15.9990</data_parameter>
+   <data_parameter param_ref="sp_2">(-.510000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_7">1.700000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_9">1.400000</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_10">
+   <data_parameter param_ref="sp_1">14.0070</data_parameter>
+   <data_parameter param_ref="sp_2">(-.470000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">N</data_parameter>
+   <data_parameter param_ref="sp_6">-0.200000</data_parameter>
+   <data_parameter param_ref="sp_7">1.850000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.200000</data_parameter>
+   <data_parameter param_ref="sp_9">1.550000</data_parameter>
+   <data_parameter param_ref="sp_10">N</data_parameter>
+ </data_record>
+ <data_record data_id="site_11">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.310000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">H</data_parameter>
+   <data_parameter param_ref="sp_6">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_7">0.224500</data_parameter>
+   <data_parameter param_ref="sp_8">-0.046000</data_parameter>
+   <data_parameter param_ref="sp_9">0.224500</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_12">
+   <data_parameter param_ref="sp_1">12.0110</data_parameter>
+   <data_parameter param_ref="sp_2">(-.200000E-01*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">CA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.055000</data_parameter>
+   <data_parameter param_ref="sp_7">2.175000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.010000</data_parameter>
+   <data_parameter param_ref="sp_9">1.900000</data_parameter>
+   <data_parameter param_ref="sp_10">C</data_parameter>
+ </data_record>
+ <data_record data_id="site_13">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.900000E-01*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">1HA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_7">1.320000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_9">1.320000</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_14">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.900000E-01*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">2HA</data_parameter>
+   <data_parameter param_ref="sp_6">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_7">1.320000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.022000</data_parameter>
+   <data_parameter param_ref="sp_9">1.320000</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_15">
+   <data_parameter param_ref="sp_1">12.0110</data_parameter>
+   <data_parameter param_ref="sp_2">(.340000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">C</data_parameter>
+   <data_parameter param_ref="sp_6">-0.070000</data_parameter>
+   <data_parameter param_ref="sp_7">2.000000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.070000</data_parameter>
+   <data_parameter param_ref="sp_9">2.000000</data_parameter>
+   <data_parameter param_ref="sp_10">C</data_parameter>
+ </data_record>
+ <data_record data_id="site_16">
+   <data_parameter param_ref="sp_1">15.9990</data_parameter>
+   <data_parameter param_ref="sp_2">(-.670000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_7">1.700000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_9">1.700000</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_17">
+   <data_parameter param_ref="sp_1">15.9990</data_parameter>
+   <data_parameter param_ref="sp_2">(-.670000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">OXT</data_parameter>
+   <data_parameter param_ref="sp_6">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_7">1.700000</data_parameter>
+   <data_parameter param_ref="sp_8">-0.120000</data_parameter>
+   <data_parameter param_ref="sp_9">1.700000</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_18">
+   <data_parameter param_ref="sp_1">15.9994</data_parameter>
+   <data_parameter param_ref="sp_2">(-.834000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">3</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_19">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">3</data_parameter>
+   <data_parameter param_ref="sp_5">H1</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_20">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">3</data_parameter>
+   <data_parameter param_ref="sp_5">H2</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_21">
+   <data_parameter param_ref="sp_1">15.9994</data_parameter>
+   <data_parameter param_ref="sp_2">(-.834000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">3</data_parameter>
+   <data_parameter param_ref="sp_4">4</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_22">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">3</data_parameter>
+   <data_parameter param_ref="sp_4">4</data_parameter>
+   <data_parameter param_ref="sp_5">H1</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_23">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(NULL*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">3</data_parameter>
+   <data_parameter param_ref="sp_4">4</data_parameter>
+   <data_parameter param_ref="sp_5">H2</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+</data_list>
+
+<data_list data_class_prepend="bond_">
+ <data_title>bond_list</data_title>
+ <data_parameter_list param_prepend="bondp_">
+   <data_parameter_spec param_id="bondp_1" type="idref" ref_prepend="site_">site_ref1</data_parameter_spec>
+   <data_parameter_spec param_id="bondp_2" type="idref" ref_prepend="site_">site_ref2</data_parameter_spec>
+   <data_parameter_spec param_id="bondp_3" type="char">type</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="bond_1">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_2"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_1"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_2">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_3"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_1"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_3">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_4"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_1"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_4">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_1"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_5"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_5">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_8"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_5"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_6">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_8"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_10"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_7">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_5"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_6"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_8">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_5"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_7"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_9">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_9"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_8"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_10">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_10"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_11"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_11">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_10"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_12"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_12">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_15"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_12"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_13">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_12"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_13"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_14">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_12"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_14"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_15">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_15"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_17"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_16">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_15"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_16"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_17">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_18"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_19"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_18">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_18"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_20"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_19">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_19"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_20"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_20">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_21"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_22"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+</data_list>
+<udf_invocation_table>
+<udf_invocation_rec udf_id="StdHarmonicBondForce" site_tuple_ref="StdHarmonicBondForce_sites" param_tuple_ref="StdHarmonicBondForce_params"/>
+<udf_invocation_rec udf_id="StdHarmonicAngleForce" site_tuple_ref="StdHarmonicAngleForce_sites" param_tuple_ref="StdHarmonicAngleForce_params"/>
+<udf_invocation_rec udf_id="UreyBradleyForce" site_tuple_ref="UreyBradleyForce_sites" param_tuple_ref="UreyBradleyForce_params"/>
+<udf_invocation_rec udf_id="SwopeTorsionForce" site_tuple_ref="SwopeTorsionForce_sites" param_tuple_ref="SwopeTorsionForce_params"/>
+<udf_invocation_rec udf_id="ImproperDihedralForce" site_tuple_ref="ImproperDihedralForce_sites" param_tuple_ref="ImproperDihedralForce_params"/>
+</udf_invocation_table>
+<site_tuple_list id="Water3sites">
+<site_tuple>
+<site site_ref="site_19" site_ordinal="1"/>
+<site site_ref="site_18" site_ordinal="2"/>
+<site site_ref="site_20" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_22" site_ordinal="1"/>
+<site site_ref="site_21" site_ordinal="2"/>
+<site site_ref="site_23" site_ordinal="3"/>
+</site_tuple>
+</site_tuple_list>
+<site_tuple_list id="StdHarmonicBondForce_sites">
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_1" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_10" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_6" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_7" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_9" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_11" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_15" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_13" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_14" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_15" site_ordinal="1"/>
+<site site_ref="site_17" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_15" site_ordinal="1"/>
+<site site_ref="site_16" site_ordinal="2"/>
+</site_tuple>
+</site_tuple_list>
+<param_tuple_list id="StdHarmonicBondForce_params">
+<param_spec_list param_prepend="bh_">
+<param_spec param_id="bh_1" type="double">k</param_spec>
+<param_spec param_id="bh_2" type="double">r0</param_spec>
+</param_spec_list>
+<param_tuple>
+<param param_ref="bh_1">403.000</param>
+<param param_ref="bh_2">1.0400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">403.000</param>
+<param param_ref="bh_2">1.0400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">403.000</param>
+<param param_ref="bh_2">1.0400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">200.000</param>
+<param param_ref="bh_2">1.4800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">250.000</param>
+<param param_ref="bh_2">1.4900</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">370.000</param>
+<param param_ref="bh_2">1.3450</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">330.000</param>
+<param param_ref="bh_2">1.0800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">330.000</param>
+<param param_ref="bh_2">1.0800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">620.000</param>
+<param param_ref="bh_2">1.2300</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">440.000</param>
+<param param_ref="bh_2">0.9970</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">320.000</param>
+<param param_ref="bh_2">1.4300</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">200.000</param>
+<param param_ref="bh_2">1.5220</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">330.000</param>
+<param param_ref="bh_2">1.0800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">330.000</param>
+<param param_ref="bh_2">1.0800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">525.000</param>
+<param param_ref="bh_2">1.2600</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">525.000</param>
+<param param_ref="bh_2">1.2600</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">450.000</param>
+<param param_ref="bh_2">0.9572</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">450.000</param>
+<param param_ref="bh_2">0.9572</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">450.000</param>
+<param param_ref="bh_2">0.9572</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="bh_1">450.000</param>
+<param param_ref="bh_2">0.9572</param>
+</param_tuple>
+</param_tuple_list>
+<site_tuple_list id="StdHarmonicAngleForce_sites">
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_3" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_4" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_4" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_1" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_6" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_1" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_7" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_1" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_8" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_6" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_7" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_6" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_8" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_7" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_8" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_9" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_9" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_10" site_ordinal="2"/>
+<site site_ref="site_11" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_10" site_ordinal="2"/>
+<site site_ref="site_12" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_11" site_ordinal="1"/>
+<site site_ref="site_10" site_ordinal="2"/>
+<site site_ref="site_12" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_13" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_14" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_13" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_14" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_13" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_14" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_15" site_ordinal="2"/>
+<site site_ref="site_16" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_15" site_ordinal="2"/>
+<site site_ref="site_17" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_16" site_ordinal="1"/>
+<site site_ref="site_15" site_ordinal="2"/>
+<site site_ref="site_17" site_ordinal="3"/>
+</site_tuple>
+</site_tuple_list>
+<param_tuple_list id="StdHarmonicAngleForce_params">
+<param_spec_list param_prepend="ah_">
+<param_spec param_id="ah_1" type="double">k</param_spec>
+<param_spec param_id="ah_2" type="double">th0</param_spec>
+</param_spec_list>
+<param_tuple>
+<param param_ref="ah_1">44.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">44.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">30.000</param>
+<param param_ref="ah_2">(109.50*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">44.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">30.000</param>
+<param param_ref="ah_2">(109.50*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">30.000</param>
+<param param_ref="ah_2">(109.50*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">51.500</param>
+<param param_ref="ah_2">(107.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">51.500</param>
+<param param_ref="ah_2">(107.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">43.700</param>
+<param param_ref="ah_2">(110.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">36.000</param>
+<param param_ref="ah_2">(115.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">80.000</param>
+<param param_ref="ah_2">(121.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">80.000</param>
+<param param_ref="ah_2">(116.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">80.000</param>
+<param param_ref="ah_2">(122.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">34.000</param>
+<param param_ref="ah_2">(123.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(120.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">35.000</param>
+<param param_ref="ah_2">(117.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">48.000</param>
+<param param_ref="ah_2">(108.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">48.000</param>
+<param param_ref="ah_2">(108.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(107.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">36.000</param>
+<param param_ref="ah_2">(115.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">50.000</param>
+<param param_ref="ah_2">(109.5000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">40.000</param>
+<param param_ref="ah_2">(118.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">40.000</param>
+<param param_ref="ah_2">(118.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ah_1">100.000</param>
+<param param_ref="ah_2">(124.00*Math::Deg2Rad)</param>
+</param_tuple>
+</param_tuple_list>
+<site_tuple_list id="UreyBradleyForce_sites">
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_16" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_12" site_ordinal="1"/>
+<site site_ref="site_17" site_ordinal="2"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_16" site_ordinal="1"/>
+<site site_ref="site_17" site_ordinal="2"/>
+</site_tuple>
+</site_tuple_list>
+<param_tuple_list id="UreyBradleyForce_params">
+<param_spec_list param_prepend="ub_">
+<param_spec param_id="ub_1" type="double">k</param_spec>
+<param_spec param_id="ub_2" type="double">s0</param_spec>
+</param_spec_list>
+<param_tuple>
+<param param_ref="ub_1">20.00</param>
+<param param_ref="ub_2">2.07400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ub_1">20.00</param>
+<param param_ref="ub_2">2.07400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ub_1">20.00</param>
+<param param_ref="ub_2">2.07400</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ub_1">50.00</param>
+<param param_ref="ub_2">2.38800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ub_1">50.00</param>
+<param param_ref="ub_2">2.38800</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ub_1">70.00</param>
+<param param_ref="ub_2">2.22500</param>
+</param_tuple>
+</param_tuple_list>
+<site_tuple_list id="SwopeTorsionForce_sites">
+<site_tuple>
+<site site_ref="site_1" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_8" site_ordinal="3"/>
+<site site_ref="site_10" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_6" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_7" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_8" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_6" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_7" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_3" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_8" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_6" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_7" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_4" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_5" site_ordinal="3"/>
+<site site_ref="site_8" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_11" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_12" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_12" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_10" site_ordinal="2"/>
+<site site_ref="site_12" site_ordinal="3"/>
+<site site_ref="site_15" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_9" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_11" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_9" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_12" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_16" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_17" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_13" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_16" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_13" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_17" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_14" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_16" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_14" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_15" site_ordinal="3"/>
+<site site_ref="site_17" site_ordinal="4"/>
+</site_tuple>
+</site_tuple_list>
+<param_tuple_list id="SwopeTorsionForce_params">
+<param_spec_list param_prepend="ctp_">
+<param_spec param_id="ctp_1" type="double">k</param_spec>
+<param_spec param_id="ctp_2" type="int">n</param_spec>
+<param_spec param_id="ctp_3" type="double">sinDelta</param_spec>
+<param_spec param_id="ctp_4" type="double">cosDelta</param_spec>
+</param_spec_list>
+<param_tuple>
+<param param_ref="ctp_1">0.4000</param>
+<param param_ref="ctp_2">1</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.1000</param>
+<param param_ref="ctp_2">3</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">2.5000</param>
+<param param_ref="ctp_2">2</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">1.6000</param>
+<param param_ref="ctp_2">1</param>
+<param param_ref="ctp_3">sin(0.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(0.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">2.5000</param>
+<param param_ref="ctp_2">2</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.2000</param>
+<param param_ref="ctp_2">1</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">2.5000</param>
+<param param_ref="ctp_2">2</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">2.5000</param>
+<param param_ref="ctp_2">2</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="ctp_1">0.0500</param>
+<param param_ref="ctp_2">6</param>
+<param param_ref="ctp_3">sin(180.00*Math::Deg2Rad)</param>
+<param param_ref="ctp_4">cos(180.00*Math::Deg2Rad)</param>
+</param_tuple>
+</param_tuple_list>
+<site_tuple_list id="ImproperDihedralForce_sites">
+<site_tuple>
+<site site_ref="site_8" site_ordinal="1"/>
+<site site_ref="site_5" site_ordinal="2"/>
+<site site_ref="site_10" site_ordinal="3"/>
+<site site_ref="site_9" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_10" site_ordinal="1"/>
+<site site_ref="site_8" site_ordinal="2"/>
+<site site_ref="site_12" site_ordinal="3"/>
+<site site_ref="site_11" site_ordinal="4"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_15" site_ordinal="1"/>
+<site site_ref="site_12" site_ordinal="2"/>
+<site site_ref="site_17" site_ordinal="3"/>
+<site site_ref="site_16" site_ordinal="4"/>
+</site_tuple>
+</site_tuple_list>
+<param_tuple_list id="ImproperDihedralForce_params">
+<param_spec_list param_prepend="citp_">
+<param_spec param_id="citp_1" type="double">k</param_spec>
+<param_spec param_id="citp_2" type="double">psi0</param_spec>
+</param_spec_list>
+<param_tuple>
+<param param_ref="citp_1">120.0000</param>
+<param param_ref="citp_2">(0.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="citp_1">20.0000</param>
+<param param_ref="citp_2">(0.0000*Math::Deg2Rad)</param>
+</param_tuple>
+<param_tuple>
+<param param_ref="citp_1">96.0000</param>
+<param param_ref="citp_2">(0.0000*Math::Deg2Rad)</param>
+</param_tuple>
+</param_tuple_list>
+</ffparams>

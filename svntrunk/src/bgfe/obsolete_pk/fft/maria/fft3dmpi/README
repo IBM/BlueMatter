@@ -1,0 +1,27 @@
+//  
+//  IBM T.J.W  R.C.
+//  Date : 3/17/2003
+//  Name : Maria Eleftheriou
+//  
+//
+
+The FFT3D.cpp code performs the 3d fft using volumetric FFT with bars.
+
+
+TO VALIDATE:
+with REVERSE TEST:  define  REGRESS_REVERSE 1
+with 3D FFTW     :  define  REGRESS_FFT3DW  1
+
+LIMITATIONS: 
+The size of each dim of the FFT needs to be multiple of with respect to it bar.
+Eg:  GLOBAL_NX  ~  PZ*PX
+     GLOBAL_NY  ~  PX*PY
+     GLOBAL_NZ  ~  PY*PZ
+
+Regressing with 3D FFTW:
+  The dim of the array needs to be updated any time we perform an new test.
+
+
+TO RUN the FFT:
+run_fft -procs numberOfProc  numberOfprocX numberOfprocY numberOfprocZ 
+	numberOfFFTXdim  numberOfFFTYdim numberOfFFTZdim 

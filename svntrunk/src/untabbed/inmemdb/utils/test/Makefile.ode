@@ -1,0 +1,51 @@
+BG_AUXILIARY = DB2
+
+GEN_STRUCTS_OUTPUT = $(EXPORTBASE)/usr/include/inmemdb/test_gen_structs.hpp \
+
+ERL_FILES = \
+  $(EXPORTBASE)/usr/include/inmemdb/test_tag_select.erl \
+  $(EXPORTBASE)/usr/include/inmemdb/test_tag_import.erl \
+
+USE_FILEFIND ?= 1
+
+.BEGIN:  
+      cp -R ${DIR_CONTENTS} $(EXPORTBASE)/usr/include/inmemdb/ 
+      $(EXPORTBASE)/usr/include/inmemdb/expand_inmem_tags.pl \
+        .cpp \
+        $(GEN_STRUCTS_OUTPUT) \
+        $(ERL_FILES) \
+
+
+OBJECTS += \
+  test_tag_select${OBJ_SUFF} \
+  test_tag_import${OBJ_SUFF} \
+
+OFILES += \
+  test_tag_select${OBJ_SUFF} \
+  test_tag_import${OBJ_SUFF} \
+
+
+LIBRARIES = $(LIB_PREF)inmemdb$(LIB_SUFF)
+
+LIBS += \
+  $(LIB_PREF)db2cli$(LIB_SUFF) \
+  $(LIB_PREF)inmemdb$(LIB_SUFF)
+  
+PROGRAMS = \
+  test_tag_select$(PROG_SUFF) \
+  test_tag_import$(PROG_SUFF) \
+
+test_tag_select$(PROG_SUFF)_OFILES = \
+  test_tag_select${OBJ_SUFF} \
+
+test_tag_import$(PROG_SUFF)_OFILES = \
+  test_tag_import${OBJ_SUFF} \
+
+IDIR = $(BG_BIN)/inmemdb/test/
+ILIST = $(PROGRAMS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./inmemdb/util/test/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

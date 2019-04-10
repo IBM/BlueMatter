@@ -1,0 +1,4 @@
+
+OBJECTS=PaddableVectorReciprocalSquareRoot$(OBJ_SUFF)
+
+.include <${RULES_MK}>

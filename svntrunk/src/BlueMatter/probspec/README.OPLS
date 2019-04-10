@@ -1,0 +1,40 @@
+
+####################################################################
+### opls2xml.pl 
+###          A perl script file for generating force field independent
+###          parameter files for OPLS-AA from IMPACT runs. It will
+###          launch an IMPACT job with the pdb file supplied first, and then
+###          collect OPLS-AA parameters and structural information 
+###          from output files, and finally convert them into a xml file. 
+###          The IMPACT excutable and an input command file (or configuration 
+###          file) oplsprm.inp is required to run opls2xml.pl.
+###
+### usage:   opls2xml.pl jobname.pdb
+### example: opls2xml.pl enkp.pdb 
+###          # this generates "enkp.prm" and "enkp.xml"
+###          opls2xml.pl hiv.pdb 
+###          # this generates "hiv.prm" and "hiv.xml"
+###
+### 
+### input:   pdb file, impact input file (oplsprm.inp) and impact excutable
+### output:  parameter files: jobname.prm (ASCII) and jobname.xml (XML)
+###
+####################################################################
+
+
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+~
+

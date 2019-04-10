@@ -1,0 +1,10 @@
+EXPINCDIR = /usr/include/
+
+INCLUDES = apc.h apc_perfctr.h apc_perfctr_events.h 
+
+IDIR = $(BG_INC)
+
+ILIST = $(INCLUDES)
+
+.include <$(RULES_MK)>
+

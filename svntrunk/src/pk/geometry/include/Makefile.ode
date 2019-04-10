@@ -1,0 +1,9 @@
+INCLUDES = \
+	XYZ.hpp \
+
+EXPINCDIR = /usr/include/pk/
+
+IDIR = $(BG_INCLUDE)/pk/
+ILIST = $(INCLUDES)
+
+.include <$(RULES_MK)>

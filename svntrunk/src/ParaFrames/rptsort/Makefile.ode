@@ -1,0 +1,10 @@
+
+EXPINC_SUBDIRS = include test
+
+.if defined(PKACTORS)
+OBJECTS_SUBDIRS = test
+.endif
+
+SUBDIRS = $(EXPINC_SUBDIRS)
+
+.include <$(RULES_MK)>

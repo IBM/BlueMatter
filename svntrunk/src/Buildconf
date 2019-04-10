@@ -1,0 +1,84 @@
+################################################################################
+#
+# Buildconf
+#
+# This file is expanded only for the backing build level of the backing chain.
+# The sandbox_base variable will therefore represent the backing build for
+# this file's processing.
+#
+################################################################################
+
+# For UNIX systems a path separator is a colon ':' and a directory
+# separator is a forward slash '/'.
+#
+replace setenv PATHSEP :
+replace setenv DIRSEP /
+
+# For non-UNIX systems a path separator is a semi-colon ';' and
+# a directory separator is a backwards slash '\\'.
+#
+#
+# The comments on the DIRSEP lines are to prevent the backslash
+# from being treated as a continuation character.  This is preferable
+# to using double backslashes, since the old version of ODE didn't
+# treat them as escape chars.
+#
+on x86_os2_4 replace setenv PATHSEP ;
+on x86_os2_4 replace setenv DIRSEP \    # don't remove this comment
+on x86_nt_4 replace setenv PATHSEP ;
+on x86_nt_4 replace setenv DIRSEP \     # don't remove this comment
+on x86_95_4 replace setenv PATHSEP ;
+on x86_95_4 replace setenv DIRSEP \     # don't remove this comment
+
+# For AIX, don't try to 'chown' or 'chmod' things in the packaging pass
+on rios_aix_4 replace setenv NO_CHOWN 1
+on rios_aix_4 replace setenv NO_CHMOD 1
+
+on rios_aix_4 replace setenv ODE_TOOLS /
+
+# For BlueLight, set LIBPATH for using the vacpp6 compiler
+# on rios_aix_4 replace setenv LIBPATH /.../torolab.ibm.com/fs/projects/vabld/run/vacpp/dev/aix/daily/020226/lib:/.../torolab.ibm.com/fs/projects/vabld/run/vacpp/dev/aix/daily/020226/lib/aix43
+
+# For compute-node-kernel compiles, set include directory
+#on ppc_linux_2 replace setenv INCDIRS "-I/opt/ibmcmp/vacpp/7.0/include -I/BlueLight/ppcfloor/bglsys/include"
+#on ppc_linux_2 replace setenv INCDIRS "-I/opt/ibmcmp/vacpp/7.0/include"
+#on ppc_linux_2 replace setenv INCDIRS "-I/BlueLight/ppcfloor/bglsys/include -I/opt/ibmcmp/vacpp/7.0/include"
+on ppc_linux_2 replace setenv INCDIRS "-I/bgl/BlueLight/ppcfloor/bglsys/include"
+# disable jit compiler on MVS/OE:
+#
+on mvs390_oe_2 replace setenv JAVA_COMPILER ""
+
+# Our project name.
+#
+setenv PROJECT_NAME bluegene
+
+# Set the maximum number of jobs 'mk' can run in parallel.
+#
+setenv NPROC 4
+
+# The name of the base "rules" makefile to include.
+#
+setenv RULES_MK rules.mk
+
+# Misc variables
+#
+replace tools_base ${sandbox_base}${DIRSEP}tools${DIRSEP}${CONTEXT}
+replace object_base ${sandbox_base}${DIRSEP}obj${DIRSEP}${CONTEXT}
+replace source_base ${sandbox_base}${DIRSEP}${ODESRCNAME}
+replace export_base ${sandbox_base}${DIRSEP}export${DIRSEP}${CONTEXT}
+
+replace setenv OBJECTDIR ..${DIRSEP}obj${DIRSEP}${CONTEXT}
+replace setenv SANDBOXBASE ${sandbox_base}
+replace setenv SOURCEBASE ${source_base}
+replace setenv PACKAGEBASE ${sandbox_base}${DIRSEP}inst.images${DIRSEP}${CONTEXT}
+replace setenv EXPORTDIR ..${DIRSEP}export${DIRSEP}${CONTEXT}
+replace setenv MAKESYSPATH ${source_base}${DIRSEP}rules_mk
+replace setenv BACKED_SOURCEDIR ${source_base}
+replace setenv BACKED_SANDBOXDIR ${sandbox_base}
+replace setenv SOURCEDIR ""
+
+# Chain the CLASSPATH variable so we can build and run Java in a sandbox.
+# Use the source base first in case Jikes is used.
+#
+replace setenv CLASSPATH ${SOURCEBASE}${PATHSEP}${SANDBOXBASE}${DIRSEP}export${DIRSEP}classes${PATHSEP}${CLASSPATH}${PATHSEP}
+

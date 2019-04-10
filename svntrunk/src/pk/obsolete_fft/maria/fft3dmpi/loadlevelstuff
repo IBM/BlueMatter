@@ -1,0 +1,32 @@
+     1	13:13	cd fft3dmpi
+     2	13:13	ls
+     3	13:13	cd /tmp
+     4	13:13	ls
+     5	13:13	cd mariae
+     6	13:13	ls
+     7	13:14	cd fft
+     8	13:14	ls
+     9	13:14	cd fft3dmpi
+    10	13:14	ls
+    11	13:14	pwd
+    12	13:14	cd ../../../loadlev.script
+    13	13:14	cp ../../../loadlev.script .
+    14	13:14	ls
+    15	13:14	vi loadlev.script
+    16	13:17	ls
+    17	13:17	cp loadlev.script loadlev.script
+    18	13:17	green
+    19	13:17	green
+    20	13:17	white
+    21	13:17	which
+    22	13:17	which llsubmit
+    23	13:20	llclass
+    24	13:20	llcheck
+    25	13:21	llq
+    26	13:21	llcancel
+    27	13:21	llcancel jobnumber
+    28	13:22	llsubmit loadlev.script
+    29	13:22	ls
+    30	13:24	llq --help
+    31	13:24	llq --f
+    32	13:25	history > & loadlevelstuff

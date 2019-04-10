@@ -1,0 +1,165 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void ImproperDihedralForce(
+        MDVM &aMDVM,
+        double k,
+        double psi0
+        )
+{
+      // the improper dihedral angle is defined to be between the plane
+      // 1-2-3 and 3-2-4
+
+	// This code is not expressed elegantly. Cautions are ...
+	// 1) Site C is the common atom in the 3 bonds.
+	// 2) Site B is the 'fuselage' of the dihedral, sites A and D are the 'wings'
+	// 3) dVecAB and dVecDB are not bond vectors
+	// 4) 'GetVector (A, B)' returns the vector from B to A
+	// It could be expressed more clearly, and with the same computational result, if it was in terms of bond vectors.
+#if !defined(OMIT_BOND_VECTOR_TABLE)
+          XYZ dVecAB = aMDVM.GetVectorN( 0 ) ; 
+          XYZ dVecCB = aMDVM.GetVectorN( 1 ) ; 
+          XYZ dVecDB = aMDVM.GetVectorN( 2 ) ; 
+          double dVecCBMag2 = dVecCB.LengthSquared() ;
+          double dVecCBMagR = aMDVM.GetRecipLengthN( 1 ) ;
+          
+#else
+          XYZ dVecAB = aMDVM.GetVector( MDVM::SiteA, MDVM::SiteB ),
+                  dVecCB = aMDVM.GetVector( MDVM::SiteC, MDVM::SiteB ),
+                  dVecDB = aMDVM.GetVector( MDVM::SiteD, MDVM::SiteB );
+          double dVecCBMag2 = dVecCB.LengthSquared() ;
+          double dVecCBMagR = 1.0 / sqrt(dVecCBMag2) ;
+
+#endif
+          XYZ dVecT = dVecAB.crossProduct( dVecCB );
+          XYZ dVecU = dVecCB.crossProduct( dVecDB );
+
+          double dVecTMag2 = dVecT.LengthSquared();
+          double dVecUMag2 = dVecU.LengthSquared();
+
+          double dVecTMagR = 1.0 / sqrt(dVecTMag2) ;
+          double dVecUMagR = 1.0 / sqrt(dVecUMag2) ;
+
+      // collinear situation
+#if defined(UDF_ALLOW_BRANCHES) 
+      // Handle 'collinearity' by skipping out
+      if (Heuristics::IsVectorSquareLengthZero(dVecTMag2)
+        || Heuristics::IsVectorSquareLengthZero(dVecUMag2))
+        return;
+#else
+      // Handle 'collinearity' by making the forces come out zero, without a branch
+      dVecTMagR = fsel(Heuristics::EpsilonVectorSquareLength-dVecTMag2,
+                       0.0,
+                       dVecTMagR
+                      ) ;
+      dVecUMagR = fsel(
+                       Heuristics::EpsilonVectorSquareLength-dVecUMag2,
+                       0.0,
+                       dVecUMagR
+                      ) ;       
+#endif    
+
+      XYZ dVecCBUnit = dVecCB * dVecCBMagR,
+        dVecTUnit = dVecT * dVecTMagR,
+        dVecUUnit = dVecU * dVecUMagR;
+
+      double cosPsi = dVecTUnit * dVecUUnit ;
+      double sinPsi = dVecCBUnit*(dVecTUnit.crossProduct(dVecUUnit)) ;
+
+      // This is a 4-quadrant angle finder, so it works even for dihedrals which are more than 90 degrees curled over;
+      // but you have to be careful about the sign of the 'cos'
+//    double psi = Math::atrig(sinPsi, cosPsi) ;
+      double psi = Math::atrig(sinPsi, -cosPsi) ; 
+//        psi = asin(sinPsi);
+
+
+//    XYZ gradientPsiOverdVecT =
+//      -1.0/sqr(dVecT)*(dVecT.crossProduct(dVecCBUnit)),
+//      gradientPsiOverdVecU =
+//      1.0/sqr(dVecU)*(dVecU.crossProduct(dVecCBUnit));
+
+      XYZ gradientPsiOverdVecT =
+        -1.0*dVecTMagR*dVecTMagR*(dVecT.crossProduct(dVecCBUnit)),
+        gradientPsiOverdVecU =
+        1.0*dVecUMagR*dVecUMagR*(dVecU.crossProduct(dVecCBUnit));
+
+      XYZ gradientPsiOverAP2 =
+        gradientPsiOverdVecT.crossProduct(dVecCB - dVecAB) +
+        gradientPsiOverdVecU.crossProduct(dVecDB - dVecCB),
+
+        gradientPsiOverAP1 =
+        -gradientPsiOverdVecT.crossProduct(dVecCB),
+
+        gradientPsiOverAP3 =
+        gradientPsiOverdVecT.crossProduct(dVecAB) -
+        gradientPsiOverdVecU.crossProduct(dVecDB),
+
+        gradientPsiOverAP4 =
+        gradientPsiOverdVecU.crossProduct(dVecCB);
+
+
+// If collinear, and not branching, then set as if in equilibrium
+      double AngleFromEquilibrium = 
+#if defined(UDF_ALLOW_BRANCHES)      
+      psi - psi0 
+#else
+      fsel(Heuristics::EpsilonVectorSquareLength-dVecTMag2,
+           0.0,
+           psi - psi0 
+      ) 
+#endif      
+      ;
+      
+      aMDVM.ReportEnergy( k*sqr(AngleFromEquilibrium) );
+
+      double DenergyOverDpsi = 2.0*k*AngleFromEquilibrium;
+
+      aMDVM.ReportForce( MDVM::SiteA , -DenergyOverDpsi*gradientPsiOverAP1 );
+      aMDVM.ReportForce( MDVM::SiteB , -DenergyOverDpsi*gradientPsiOverAP2 );
+      aMDVM.ReportForce( MDVM::SiteC , -DenergyOverDpsi*gradientPsiOverAP3 );
+      aMDVM.ReportForce( MDVM::SiteD , -DenergyOverDpsi*gradientPsiOverAP4 );
+
+      BegLogLine(0)
+        << "UDF::ImproperDihedralForce()"
+        << " SiteA=" << aMDVM.GetPosition( MDVM::SiteA )
+        << " SiteB=" << aMDVM.GetPosition( MDVM::SiteB )
+        << " SiteC=" << aMDVM.GetPosition( MDVM::SiteC )
+        << " SiteD=" << aMDVM.GetPosition( MDVM::SiteD )
+        << EndLogLine;
+
+      BegLogLine(0)
+        << " dVecAB=" << dVecAB
+        << " dVecCB=" << dVecCB
+        << " dVecDB=" << dVecDB
+        << EndLogLine;
+
+      BegLogLine(0)
+        << " dVecT=" << dVecT
+        << " dVecU=" << dVecU
+        << EndLogLine;
+
+      BegLogLine(0)
+        << " sinPsi=" << sinPsi
+        << " cosPsi=" << cosPsi
+        << " psi=" << psi
+        << " psi0=" << psi0
+        << EndLogLine;
+      return;
+}
+

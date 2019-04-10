@@ -1,0 +1,15 @@
+In order to build the xmlprobspec executable, one must first set some
+environment variables properly and set-up the gfe build environment
+properly ($GFESOURCEROOT and $GFEBUILDROOT must be set). Type the
+following commands (in the foxfm/BlueMatter/probspec/src directory of
+$GFESOURCEROOT in k-shell):
+
+> . aixenv.ksh
+> make -f xmlprobspec.mak gfebuild
+> make -f xmlprobspec.mak
+
+Revision History:
+
+XMLPROBSPEC_006: added header parsing capabilities via HeaderHandler
+singleton class.
+

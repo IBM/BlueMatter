@@ -1,0 +1,16 @@
+
+
+INCLUDES = \
+BGL_spi_wrapper.cpp \
+BGL_spi_wrapper.hpp \
+
+
+EXPINCDIR = /usr/include/spi/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_INCLUDE)/spi/
+
+
+.include <$(RULES_MK)>
+

@@ -1,0 +1,24 @@
+# If we're cross-compiling, build it !
+.if !empty(CONTEXT:Mbgl_cnk_*)
+
+
+TRACE_MACROS=\
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG  \
+-DxPKFXLOG_TRACE_CONNECT \
+-DxPKFXLOG_TRACE_ADDHIT \
+
+
+OBJECTS = \
+globject$(OBJ_SUFF) \
+
+OFILES=$(OBJECTS)
+
+LIBRARIES=libPkglobject$(LIB_SUFF)
+
+EXPLIBS=$(LIBRARIES)
+
+EXPLIBDIR=/usr/lib/
+
+.endif
+.include <$(RULES_MK)>

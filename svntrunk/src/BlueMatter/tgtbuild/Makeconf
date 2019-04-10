@@ -1,0 +1,272 @@
+################################################################################
+#
+# Makeconf
+#
+# This special makefile marks the top of the source tree and is the first
+# file read by 'mk'. Several builtin make variables are defined based upon the
+# location of this file and the subdirectory within this tree where make was
+# invoked.
+#
+################################################################################
+
+# Set variables for all platform (CONTEXT) types.
+#
+TOSTAGE=${SOURCEBASE}/../inst.images/${CONTEXT}/shipdata
+
+# Using the -E flags causes genpath to expand only the export subdirectories.
+#
+INCFLAGS += -Eusr/include
+LIBFLAGS += -Eusr/lib
+
+INCFLAGS += -I/usr/opt/bluegene/include
+LIBFLAGS += -L/usr/opt/bluegene/lib
+
+# Variable triggers the building of java source.
+#
+BUILDJAVA =
+
+# Variable triggers to allow JAVA_CLASSES to be defined from
+# ${PROJECT_NAME}.passes.mk or after the inclusion of ${RULES_MK}
+USE_JAVA_CLASSES =
+
+## Variable triggers to allow building of one file istall image.
+#.if !empty(MACHINE:M*_linux_*)
+##PKG_GEN_DIST_FILE =
+#.elif empty(MACHINE:Mx86_nt_*) && empty(MACHINE:Mx86_95_*)
+#PKG_GEN_DIST_FILE =
+#.endif
+
+#.ifdef PKG_GEN_DIST_FILE
+#INSTALL_IMAGE_NAME = bluegene
+#INSTALL_IMAGE_FILE = ${PKG_OUTPUT_DIR}/${CONTEXT}_install_image
+#.endif #PKG_GEN_DIST_FILE
+
+# The name of the library created.  Can be overridden from
+# the command line or environment (or Buildconf).
+#
+LIBBASE ?= exa
+
+# To build the above library as a dynamic/shared library,
+# uncomment the following variable definition.  By default,
+# it will be built as an archive/static library.
+#
+# USE_SHARED_LIBRARY =
+
+# To build a .RES resource file containing an icon and STRINGTABLE
+# for WinNT or OS/2, uncomment the following variable definition.
+# If USE_SHARED_LIBRARY is defined, the .RES file will be linked with
+# the shared library; otherwise it is linked with server.exe.
+#
+# USE_RESOURCES=
+
+# PKG_NAME
+#
+PKG_NAME ?=bluegene
+
+.if defined(USE_RESOURCES) && !defined(USE_SHARED_LIBRARY)
+# link resources file with server.exe
+USE_RESOURCES_FILE=
+.endif
+
+# Disable LEX and YACC rules for speed
+#  (Comment out the following variable definition if the rules are needed)
+#
+NO_YACC_RULES =
+NO_LEX_RULES  =
+
+# Turn off setting ownership and mode, this is not how AIX packaging works
+NO_CHOWN =
+NO_CHMOD =
+.if defined(CONTEXT)
+# Include platform specific Makeconf
+#
+.include <${CONTEXT}.mk>
+.endif  # context defined
+
+# Setting Java compiler flags for debugging
+.ifdef DEBUGGING
+JFLAGS += -g
+.endif
+
+# Allow makefiles to use spaces to indent commands instead
+# of enforcing hard tabs.
+.MAKEFLAGS: -w
+
+.if defined(OBJECTDIR)
+MAKEOBJDIR=${OBJECTDIR}
+.endif
+
+# Set MAKESRCDIRPATH to the backing chains source directories (SOURCEDIR).
+# Then add in the appropriate object directory for each backing chain.
+.if defined(SOURCEDIR)
+MAKESRCDIRPATH := ${SOURCEDIR:S/${PATHSEP}/ /g}
+MAKESRCDIRPATH := ${MAKESRCDIRPATH:@WORD@${WORD}${DIRSEP}${OBJECTDIR}${PATHSEP}${WORD}@}
+MAKESRCDIRPATH := ${MAKESRCDIRPATH:s/ /${PATHSEP}/g}
+.endif # SOURCEDIR
+
+# Arrange for export to use 'copy' rather than 'symlink', to avoid problems with dangling links
+EXPORT_USING_COPY =
+
+# Set the directories for installing files onto a target system
+BG_NAME = bluegene
+#   -- the 'opt' in the line below is for AIX, becuase ODE and Austin are not in sync ...
+BG_DIR     = $(IDIR_PREF)/opt/$(BG_NAME)
+BG_SRC     = $(BG_DIR)/src
+BG_INCLUDE = $(BG_DIR)/include
+BG_LIB     = $(BG_DIR)/lib
+BG_BIN     = $(BG_DIR)/bin
+
+BG_REG     = $(BG_DIR)/regression
+BG_REGBIN  = $(BG_REG)/bin
+
+MPICFLAGS = -D PK_MPI
+SMPCFLAGS = \
+ -D PK_SMP \
+ -D PKFXLOG \
+ -D PLIMPTONPPL \
+ -D NEWTON_LIGHT \
+
+.if defined(CYCLOPS)
+  # Cross-compiling to run on BlueGene or its simulator
+  CCFAMILY = gnu
+  CCTYPE = cc
+  CAN_BUILD_MPI ?= 0
+  CAN_BUILD_PROBSPEC ?= 0
+
+#  OBJ_SUFF=.o
+#  STATLIB_SUFF=.a
+#  SHLIB_SUFF=.so
+#  LIB_PREFIX=lib
+
+ PROG_SUFF=.cyclops
+ # Cross compiler configuration
+# _gnu_cc_CC_ = gcc
+# _gnu_ansi_CC_ = gcc
+# _gnu_ansi_CC_ = gcc
+# _gnu_cc_LD_ = gcc
+# _gnu_cc_SHLD_ = gcc
+# _gnu_AR_ =
+
+# _gnu_cpp_CFLAGS_ =
+# _gnu_cpp_LDLAGS_ =
+# _gnu_cpp_SHLDLAGS_ =
+
+  # Detailed debugging information
+  CFLAGS += -gstabs -mgas
+  # Run-time addresses  for application code/data (must begin on 512K boundaries)
+  LDFLAGS += -Ttext 0x80180000 -Tdata 0x80200000
+  # Libraries
+  GNU_ROOT ?= /BlueGene/gnu
+  CYCLOPS_ROOT ?= /BlueGene/cyclops
+  CYCLOPS_LIB=$(CYCLOPS_ROOT)/lib
+  BIN_PREFIX=$(GNU_ROOT)/bin/cyclops-ibm-ecoff-
+  LIB_PREFIX=$(GNU_ROOT)/lib/gcc-lib/cyclops-ibm-ecoff/2.95.2
+  LDFLAGS += -L$(CYCLOPS_LIB) -L$(LIB_PREFIX)
+.if $(CCTYPE)=="cc"
+  LDFLAGS += $(CYCLOPS_LIB)/__cstart.o
+.else
+.if $(CCTYPE)=="cpp"
+  LDFLAGS += $(CYCLOPS_LIB)/__cppstart.o
+.endif
+.endif
+
+  CFLAGS += -I$(CYCLOPS_ROOT)/include -I$(CYCLOPS_ROOT)/include/spi
+  EXTRA_LIBS += -lbluegene
+
+
+  _gnu_cc_CC_     ?= $(BIN_PREFIX)gcc ${DEPENDENCIES:D${GNU_GENDEP_FLAG}}
+  _gnu_ansi_CC_   ?= $(BIN_PREFIX)gcc -ansi ${DEPENDENCIES:D${GNU_GENDEP_FLAG}}
+  _gnu_cpp_CC_    ?= $(BIN_PREFIX)g++ ${DEPENDENCIES:D${GNU_GENDEP_FLAG}}
+  _gnu_cc_LD_     ?= $(BIN_PREFIX)gcc
+  _gnu_ansi_LD_   ?= $(BIN_PREFIX)gcc
+  _gnu_cpp_LD_    ?= $(BIN_PREFIX)g++
+  _gnu_cc_SHLD_     ?= $(BIN_PREFIX)gcc
+  _gnu_ansi_SHLD_   ?= $(BIN_PREFIX)gcc
+  _gnu_cpp_SHLD_    ?= $(BIN_PREFIX)g++
+
+.else
+# CFLAGS += \
+#  -D bool=int \
+
+ # Native compilation. We can do this on AIX or Linux
+.if !empty(MACHINE:M*_aix_*)
+ # Compile and link flags
+ CCFAMILY = cset
+ CCTYPE = cppr
+
+ CFLAGS += \
+  -D PK_XLC \
+  -D PK_AIX \
+  -qmaxmem=-1 \
+  -qfuncsect
+
+.else
+.if !empty(MACHINE:M*_linux_*)
+  CCFAMILY = gnu
+  CCTYPE = cpp
+  CFLAGS += \
+    -D PK_GCC \
+    -D PK_LINUX \
+    -D LINUX \
+
+  CAN_BUILD_MPI ?= 0
+  CAN_BUILD_PROBSPEC ?= 0
+.endif
+.endif
+
+.endif
+# If not specifically set up, try a build with 'gcc'
+CCFAMILY ?= gnu
+CCTYPE ?= cpp
+# And hope that we can do MPI, and build the probspec tool
+CAN_BUILD_MPI ?= 1
+CAN_BUILD_PROBSPEC ?= 1
+
+PKSMPLIBS    = \
+            $(LIB_PREF)pksmp_platform$(LIB_SUFF)    \
+            $(LIB_PREF)pkfxlogger$(LIB_SUFF)    \
+            $(LIB_PREF)pkexception$(LIB_SUFF)   \
+            $(LIB_PREF)pksmp_reactor$(LIB_SUFF) \
+            $(LIB_PREF)pkrandom$(LIB_SUFF)      \
+
+PKLIBS       = $(PKSMPLIBS)
+
+PKMPILIBS    = \
+            $(LIB_PREF)pkmpi_platform$(LIB_SUFF)    \
+            $(LIB_PREF)pkfxlogger$(LIB_SUFF)    \
+            $(LIB_PREF)pkexception$(LIB_SUFF)   \
+            $(LIB_PREF)pkmpi_reactor$(LIB_SUFF) \
+            $(LIB_PREF)pkrandom$(LIB_SUFF)      \
+
+# Set PG_PROFILED to get call graph profiling
+PG_PROFILED ?= 0
+.if $(PG_PROFILED) != 0
+CFLAGS += -pg -g
+LDFLAGS += -pg -g
+  # With call-graph profiling, we likely want diagnostic math too ...
+BLUEGENE_DIAG_MATH ?= 1
+.endif
+
+# Set DIAG_MATH to get diagnostic versions of math routines e.g. square roots
+BLUEGENE_DIAG_MATH ?= 0
+.if $(BLUEGENE_DIAG_MATH) != 0
+CFLAGS += -D BLUEGENE_DIAG_MATH
+.endif
+
+# Specials
+CAN_BUILD_EWALD ?= 1
+
+# MPI compilation variables
+_cset_mpcc_CC_    ?= mpcc ${DEPENDENCIES:D-M}
+_cset_mpcpp_CC_   ?= mpCC ${DEPENDENCIES:D-M}
+_cset_mpcppr_CC_  ?= mpCC_r ${DEPENDENCIES:D-M}
+_cset_mpcc_LD_    ?= mpcc
+_cset_mpcpp_LD_   ?= mpCC
+_cset_mpcppr_LD_  ?= mpCC_r
+_cset_mpcc_SHLD_    ?= ld
+_cset_mpcpp_SHLD_   ?= makeC++SharedLib
+_cset_mpcppr_SHLD_  ?= makeC++SharedLib_r
+_cset_mpcc_SHLDFLAGS_    ?= -bnoentry -bM:SRE -bexpall -lc
+_cset_mpcpp_SHLDFLAGS_   ?= -bnoentry -p0
+_cset_mpcppr_SHLDFLAGS_  ?= -bnoentry -p0
+

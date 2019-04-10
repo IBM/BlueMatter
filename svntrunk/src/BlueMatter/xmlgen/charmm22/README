@@ -1,0 +1,9 @@
+psf2xml.pl <topoplogy file> <parameter file> <psf file>
+
+example:
+../psf2xml.pl top_all22_prot.inp par_all22_prot.inp enkp.psf
+../psf2xml.pl top_all22_prot.inp par_all22_prot.inp wat_2.psf
+../psf2xml.pl top_all22_prot.inp par_all22_prot.inp dipep_2.psf
+../psf2xml.pl top_all22_prot.inp par_all22_prot.inp ala.psf
+
+

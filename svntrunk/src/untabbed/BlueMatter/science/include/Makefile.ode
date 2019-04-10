@@ -1,0 +1,35 @@
+
+# the headers to export
+INCLUDES += \
+  DXHistogram.hpp \
+  HBond.hpp \
+  Imaging.hpp \
+  NoesyList.hpp \
+  SimpleTrajectory.hpp \
+  Swap.hpp \
+  Topology.hpp \
+  Bonds.hpp \
+  Align.hpp \
+  SurfaceDistance.hpp \
+  correl.hpp \
+  Geometry.hpp \
+  Fit.hpp \
+  Torsions.hpp \
+  mrc.hpp \
+
+
+# the header export directory
+EXPINCDIR = /usr/include/BlueMatter/
+
+# the path from EXPINCDIR to the CONTEXT-specific dir
+# EXPINCTOP = ../
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/science/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+
+

@@ -1,0 +1,26 @@
+
+===========================================================================
+CVSROOT for sysbringup and blade
+export CVSROOT=/.../watson.ibm.com/fs/projects/vlsi/bluelight/bglsw/cvsroot
+
+These are checked out at the same level above bgfe and BlueMatter
+===========================================================================
+
+// MUST BE ON AN AIX 4.x MACHINE    ex: bl1en0
+// MUST BE ON AN AIX 4.x MACHINE
+// MUST BE ON AN AIX 4.x MACHINE
+
+// to check out the blade directory for BLNIE use
+cvs checkout -r bringup blade
+
+// will make blade on the right machine
+make blnie
+
+
+// in that tree...
+make distclean
+// cleans up the env for a different target
+
+
+// Now go follow directions in enkp10a_blnie/README
+

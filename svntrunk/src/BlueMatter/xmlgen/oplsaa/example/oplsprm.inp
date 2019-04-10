@@ -1,0 +1,28 @@
+!! TITLE OPLS-AA parameters 
+
+WRITE verbose 4 file oplsprm.out -
+   title OPLS-AA parameters  *
+
+CREATE
+   build primary name prot type protein read file myprot.pdb 
+   read coordinates name prot file myprot.pdb
+QUIT
+
+SETMODEL
+  setpotential
+    mmechanic 
+  quit
+  read parm file paramstd.dat noprint
+  energy parm cutoff 99.0 listupdate 1000000 diel 1.0 nodist
+QUIT
+
+MINM
+  input cntl mxcyc 0 rmscut .05 deltae .001
+  conjugate dx0 0.1 dxm 1.0 rest 50
+  run
+QUIT
+
+END
+
+
+

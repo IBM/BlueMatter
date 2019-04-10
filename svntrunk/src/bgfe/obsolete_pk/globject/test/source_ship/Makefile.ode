@@ -1,0 +1,16 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  build \
+  build_mpi \
+  host.list \
+  iv00.cpp \
+  pkdebug \
+  Makefile.ode
+build_IDIR = $(BG_SRC)/bgfe/pk/globject/test/
+build_mpi_IDIR = $(BG_SRC)/bgfe/pk/globject/test/
+host.list_IDIR = $(BG_SRC)/bgfe/pk/globject/test/
+iv00.cpp_IDIR = $(BG_SRC)/bgfe/pk/globject/test/
+pkdebug_IDIR = $(BG_SRC)/bgfe/pk/globject/test/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/globject/test/source_ship/
+.include <$(RULES_MK)>

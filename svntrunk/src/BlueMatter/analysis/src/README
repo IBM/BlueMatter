@@ -1,0 +1,33 @@
+This directory contains two utilities:  MDLogger and rdgdiff
+
+MDLogger RawDatagramOutputFile <WindowWidth>
+will output energy information per time step contained in the file specified.
+The file will be "tail'd" by MDLogger, so that it will work with a file that is growing
+during a simulation.  The termination criterion is the "The End" packet output by the simulation.
+
+If the second parameter, WindowWidth is included, the output will occur every WindowWidth time step,
+and basic energy statistics will be output in a format similar to Bob's perl script.
+The final line gives statistics over the entire run.
+N.B.  Entering a window width longer than the run will output only the statistics for the whole run.
+
+To do:
+1)  Handle time out condition in case the file doesn't contain the "End" packet
+2)  Handle NAN output caused by underflow with the output values are constant.
+3)  Provide other types of statistics, as needed.
+
+
+
+
+rdgdiff RDGFile1 RDGFile2
+will compare the two raw datagram files and return 0 if they are identical, 1 if the differ.
+Note that the comparison is based on a time step by time step comparison of the site variables
+and energies, so two files may be different on a binary level but identical on the basis
+of actual simulation results.  As with MDLogger, the two files must contain the "End" packet.
+
+rdgdiff will also print a simple message to stdout, but regression scripts should check the
+integer value returned by the call.
+
+To do:
+1)  Allow specified tolerance in energy, position, and velocity (others?)
+2)  Check that the two files specified are valid files
+3)  Allow time out condition so that the "End" is not needed

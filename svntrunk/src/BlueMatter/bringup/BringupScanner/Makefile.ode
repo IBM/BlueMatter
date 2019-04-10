@@ -1,0 +1,16 @@
+
+OBJECTS = BringupScanner$(OBJ_SUFF)
+
+PROGRAMS = BringupScanner$(PROG_FILES)
+
+IDIR = $(BG_BIN)/analysis/
+ILIST = BringupScanner
+
+EXTRA_LIBS = -ll
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/analysis/src/BringupScanner
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

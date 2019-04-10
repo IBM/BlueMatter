@@ -1,0 +1,21 @@
+# NAMD port to BG/L (courtesy of Bob Walkup). Minimal optimizations.
+# ApoA1 Benchmark System:  92,224 atoms
+# Benchmarks run by Maria Eleftheriou (see teamroom posting of April 20, 2005
+# Compiler options:  compiled with -O -qarch=440
+# Runtime: +networkProgressPeriod 8
+# Runtime: BGLMPI_EAGER=1000
+# Input parms:
+# PME                  on
+# PMEGridSizeX         108
+# PMEGridSizeY         108
+# PMEGridSizeZ         80
+# fullElectFrequency   1 (for column 2 results), 4 (for column 3 results)
+# timestep   1.0fs
+# column 1: node count
+# column 2: benchmark time/ts (seconds) for fullElectFrequency 1
+# column 3: benchmark time/ts (seconds) for fullElectFrequency 4
+32 	0.576631 	0.583429
+128 	0.196041 	0.173357
+512 	0.0640042 	0.0610197
+1024 	0.0380387 	0.0390262
+2048 	0.0300597 	0.0307072

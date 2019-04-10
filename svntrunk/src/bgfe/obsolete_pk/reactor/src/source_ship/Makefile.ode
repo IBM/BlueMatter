@@ -1,0 +1,18 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  buffer.cpp \
+  makefile.aix \
+  mpi_reactor.cpp \
+  reactor.cpp \
+  smp_reactor.cpp \
+  spi_reactor.cpp \
+  Makefile.ode
+buffer.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+mpi_reactor.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+reactor.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+smp_reactor.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+spi_reactor.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/reactor/src/source_ship/
+.include <$(RULES_MK)>

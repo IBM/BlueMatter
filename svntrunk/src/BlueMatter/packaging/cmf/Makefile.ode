@@ -1,0 +1,47 @@
+# .if (${CONTEXT} == "sparc_solaris_2") || (${CONTEXT} == "rios_aix_4")
+
+.if (${CONTEXT} == "sparc_solaris_2")
+  CCFAMILY = gnu
+  CCTYPE = cpp
+.endif
+
+PPFLAGS += -D${CONTEXT} -DPKGSTAMP="${LEVEL}_${BTYPE} (Packaged on `date`)"
+PREPROCESS = bluematter_cmf.pp
+CFLAGS =
+OBJECTS = $(PREPROCESS)
+
+EXPINCDIR = /usr/include/cmf/
+EXPORT_USING_CP =
+
+.if (${CONTEXT} == "sparc_solaris_2")
+  INCLUDES = copyright
+.elif (${CONTEXT} == "rios_aix_4")
+  INCLUDES = compids.table
+#  copyright
+  IDIR = /../mdata/bluegene.bluematter/
+  ILIST = pcd.conf
+.endif
+
+# .endif
+
+INCLUDES += \
+   bluematter.entity \
+   bluematter_rte.entity \
+   bluematter_rte.files\
+   bluematter_src.entity \
+   bluematter_src.files\
+   bluematter_nibm.entity \
+   bluematter_nibm.files \
+   bluematter_nr.entity \
+   bluematter_nr.files \
+
+PKG_NAME = bluegene.bluematter
+
+CFLAGS += -D CAN_BUILD_EWALD=$(CAN_BUILD_EWALD)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/packaging/cmf/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

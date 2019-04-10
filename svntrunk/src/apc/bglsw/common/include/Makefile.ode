@@ -1,0 +1,5 @@
+INCLUDES = ppc440_core.h
+
+EXPINCDIR = /usr/include/
+
+.include <$(RULES_MK)>

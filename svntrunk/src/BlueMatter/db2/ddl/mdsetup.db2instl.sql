@@ -1,0 +1,177 @@
+-- This CLP file was created using DB2LOOK Version 8.2
+-- Timestamp: Thu May 18 03:05:58 EDT 2006
+-- Database Name: MDSETUP        
+-- Database Manager Version: DB2/6000 Version 8.2.4        
+-- Database Codepage: 819
+-- Database Collating Sequence is: UNIQUE
+
+
+CONNECT TO MDSETUP;
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."CHEMICAL_COMPONENT"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."CHEMICAL_COMPONENT"  (
+		  "COMPONENT_NAME" VARCHAR(60) NOT NULL , 
+		  "DESCRIPTION" VARCHAR(100) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."CHEMICAL_COMPONENT"
+
+ALTER TABLE "CHEM    "."CHEMICAL_COMPONENT" 
+	ADD PRIMARY KEY
+		("COMPONENT_NAME");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."MOLECULE_TYPE"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."MOLECULE_TYPE"  (
+		  "CLASS" VARCHAR(60) NOT NULL , 
+		  "DESCRIPTION" VARCHAR(100) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."MOLECULE_TYPE"
+
+ALTER TABLE "CHEM    "."MOLECULE_TYPE" 
+	ADD PRIMARY KEY
+		("CLASS");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."ELEMENTS"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."ELEMENTS"  (
+		  "ATOMIC_NUMBER" INTEGER NOT NULL , 
+		  "ELEMENT_SYMBOL" VARCHAR(60) NOT NULL , 
+		  "ELEMENT_NAME" VARCHAR(50) NOT NULL , 
+		  "ATOMIC_MASS" VARCHAR(30) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."ELEMENTS"
+
+ALTER TABLE "CHEM    "."ELEMENTS" 
+	ADD PRIMARY KEY
+		("ELEMENT_SYMBOL");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."ATOM_TAG_TABLE"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."ATOM_TAG_TABLE"  (
+		  "COMPONENT_NAME" VARCHAR(60) NOT NULL , 
+		  "ATOM_TAG" VARCHAR(60) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."ATOM_TAG_TABLE"
+
+ALTER TABLE "CHEM    "."ATOM_TAG_TABLE" 
+	ADD PRIMARY KEY
+		("COMPONENT_NAME",
+		 "ATOM_TAG");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."EXTENT_TABLE"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."EXTENT_TABLE"  (
+		  "COMPONENT_NAME" VARCHAR(60) NOT NULL , 
+		  "ATOM_TAG" VARCHAR(60) NOT NULL , 
+		  "MAX_EXTENT" VARCHAR(60) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."EXTENT_TABLE"
+
+ALTER TABLE "CHEM    "."EXTENT_TABLE" 
+	ADD PRIMARY KEY
+		("COMPONENT_NAME");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."SITE_PARAM_TYPE"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."SITE_PARAM_TYPE"  (
+		  "TYPE_ID" INTEGER NOT NULL , 
+		  "TYPE_DESC" VARCHAR(60) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."SITE_PARAM_TYPE"
+
+ALTER TABLE "CHEM    "."SITE_PARAM_TYPE" 
+	ADD PRIMARY KEY
+		("TYPE_ID");
+
+
+
+------------------------------------------------
+-- DDL Statements for table "CHEM    "."WATER_PARAMETERS"
+------------------------------------------------
+ 
+ CREATE TABLE "CHEM    "."WATER_PARAMETERS"  (
+		  "WATER_MODEL" VARCHAR(60) NOT NULL , 
+		  "Q1" VARCHAR(60) NOT NULL , 
+		  "Q2" VARCHAR(60) NOT NULL , 
+		  "O_EPSILON" VARCHAR(60) NOT NULL , 
+		  "O_SIGMA" VARCHAR(60) NOT NULL , 
+		  "H_EPSILON" VARCHAR(60) NOT NULL , 
+		  "H_SIGMA" VARCHAR(60) NOT NULL )   
+		 IN "MDSHORT" ; 
+
+-- DDL Statements for primary key on Table "CHEM    "."WATER_PARAMETERS"
+
+ALTER TABLE "CHEM    "."WATER_PARAMETERS" 
+	ADD PRIMARY KEY
+		("WATER_MODEL");
+
+
+
+
+
+
+
+
+-- DDL Statements for foreign keys on Table "CHEM    "."ATOM_TAG_TABLE"
+
+ALTER TABLE "CHEM    "."ATOM_TAG_TABLE" 
+	ADD CONSTRAINT "SQL030401160536921" FOREIGN KEY
+		("COMPONENT_NAME")
+	REFERENCES "CHEM    "."CHEMICAL_COMPONENT"
+		("COMPONENT_NAME")
+	ON DELETE CASCADE
+	ON UPDATE NO ACTION
+	ENFORCED
+	ENABLE QUERY OPTIMIZATION;
+
+-- DDL Statements for foreign keys on Table "CHEM    "."EXTENT_TABLE"
+
+ALTER TABLE "CHEM    "."EXTENT_TABLE" 
+	ADD CONSTRAINT "SQL030401160537911" FOREIGN KEY
+		("COMPONENT_NAME",
+		 "ATOM_TAG")
+	REFERENCES "CHEM    "."ATOM_TAG_TABLE"
+		("COMPONENT_NAME",
+		 "ATOM_TAG")
+	ON DELETE CASCADE
+	ON UPDATE NO ACTION
+	ENFORCED
+	ENABLE QUERY OPTIMIZATION;
+
+
+COMMIT WORK;
+
+CONNECT RESET;
+
+TERMINATE;

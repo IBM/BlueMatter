@@ -1,0 +1,78 @@
+
+\section{Software Implementation}
+\label{sec:software}
+The 3D Fast Fourier Transform (3D-FFT) for Blue Gene/L is a C++ template-based parallel
+library. The template parameters include a communication class
+that encapsulates the details of the all-to-allv communication collective
+required for the distributed transpose, a sequential 1D-FFT class and a  type class that represents 
+the data type declaration .
+ We have implemented the all-to-allv communication operation using two
+different communications layers, MPI and the Blue Gene/L Advanced
+Diagnostic Environment (BG/L ADE)~\cite{giampapa:2005}. The BG/L MPI is an
+optimized port of the MPICH2 library while the BG/L ADE was developed
+by the BG/L hardware group for machine bring-up and diagnostics.
+Currently, 1D-FFTs  from the IBM ESSL~\cite{ESSL_BGL}
+product, FFTW~\cite{FrJo98} and FFTW-GEL~\cite{lorenz:2005} are
+supported as building blocks for the 3D-FFT. In the
+results presented here we use the FFTW-GEL library developed by
+the Technical University of Vienna which currently achieves the best
+single node performance on BG/L. Finally, the library supports double and float 
+data types. 
+
+The 3D FFT library implementation comprises two phases, planning and compute.
+The planning phase includes:
+\begin{itemize}
+\item{ heuristic function that is used to determine machine partition
+    based on data sizes}
+\item{ classes that are used to pre-allocate all the communication and
+    computation buffers used in the FFT phases}
+\item{ construction of the appropriate group communicators in the MPI
+    based approach.}
+\end{itemize}
+
+The planning class is responsible for managing the data distribution.
+The user can choose the appropriate mapping at run time. If
+a data mapping is not specified at run time, the
+default technique is:  Check to see if there are
+sufficient 1D-FFTs to keep all the processors in the
+system busy.  If yes, it uses the previously published implementation and
+if not, data mapping algorithms are used.
+
+Next, the sub-communicators required for communication are created.
+Once the parallel approach has been selected, the
+code subdivides the world communicator group into smaller row and plane shaped
+non-overlapping processor-groups for each FFT communication phase for the
+2 decomposition approach. Note that 
+the user can also choose to use 1D decomposition (slab decomposition); in that 
+case the world communicator group is subdivided into a planes of nodes
+(perpendicular to a single axis).
+
+In addition, the planning class is responsible for pre-calculating the
+lists with the destination and receiving information. Moreover, the
+data from the collective operation needs to be reordered in order to
+perform the sequential FFT.  We prepare the list in such a way that
+evaluation of single 1D FFT is possible as soon as the data is received and we
+put the transformed data in the correct order in the send buffer for
+the next communication phase. This minimizes the overhead associated
+with data copying.
+
+The compute phase uses the communication and compute classes.
+All communications are executed on processor groups using
+all-to-allv collective operations.  In the BG/L ADE-based approach, we
+have implemented the all-to-allv collective required by the FFT via a
+low level System Programming Interface (SPI). The SPI interface
+provides a direct access to the BG/L network-hardware. The major
+differences between the SPI and MPI all-to-allv implementations are that
+the SPI packet-headers are prepared at the initialization time while in
+the MPI-based implementation the packet headers have to be evaluated
+at all-to-allv runtime and that the MPI implementation requires larger
+messages to be sent at the limits of scalability because of the
+messaging protocol used.  The computation step simply evaluates all
+of the 1D-FFTs required for each 3D-FFT phase independently and
+leaves the data in the transformed format.
+The compute class is decoupled from the data decomposition which
+allows deferral of the choice of data decomposition until runtime. Since
+the library is templatized on the 1D FFT, any serial 1D-FFT implementation 
+may be used within the compute class.
+
+ 

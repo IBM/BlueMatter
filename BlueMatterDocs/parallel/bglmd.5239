@@ -1,0 +1,19 @@
+# estimates of wall clock time/time step (seconds) for molecular dynamics
+# mesh size = 64^3
+column 1: processor count
+column 2: px
+column 3: py
+column 4: pz
+column 5: time(position globalization)
+column 6: time(global force reduction)
+           8    2    2    2    2.004e-01    1.339e-01
+          32    2    4    4    5.387e-02    3.752e-02
+          64    4    4    4    2.711e-02    1.894e-02
+         128    8    4    4    1.491e-02    1.091e-02
+         256    8    8    4    7.926e-03    6.014e-03
+         512    8    8    8    5.020e-03    4.107e-03
+        1024    8    8   16    7.078e-03    6.686e-03
+        2048    8   16   16    8.107e-03    7.976e-03
+        4096   16   16   16    7.744e-03    7.729e-03
+        8192   16   16   32    2.166e-02    2.171e-02
+       16384   16   32   32    2.861e-02    2.870e-02

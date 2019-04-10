@@ -1,0 +1,286 @@
+% This is models.tex, -*-LaTeX-*- 
+% This document describes some crude models for the parallel
+% decomposition of the Blue Matter application
+
+%% 
+%% ******************** IBM INTERNAL USE ONLY ************************* 
+%% Copyright (C) 1994,1995 IBM Corporation 
+%% 
+%% This file is part of the IBM specific collection of LaTeX files 
+%% for use internal to IBM. 
+%% 
+%% You are not allowed to distribute this file outside of IBM under 
+%% any circumstances. 
+%% 
+%% If you have any questions, contact J. Hafner, hafner@almaden.ibm.com 
+%% ******************************************************************** 
+%%
+%% These files are adapted from the old rj.sty files for use in
+%% the new LaTeX2e.  There are many enhancements and a few bugs
+%% have been fixed.  Undoubtedly there are many more.  Contact
+%% the author if you find any or have suggestions for improvement
+%% of this suite of files.
+%% ********************************************************************
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesFile{models.tex}
+           [1996/03/04 v1.2
+   IBM ARC Research Report Sample]
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+%%
+%\documentclass[dvips,finalversion,simpleeqnnos]{rjps}[1995/11/15]
+\documentclass[pdftex,finalversion,simpleeqnnos]{rjps}[1995/11/15]
+\pdfinfo{
+  /Title ()
+%  /Author (Robert S. Germain, Andrea Califano, and Scott Colville)
+}
+
+\usepackage[LY1]{fontenc}	% specify text font encoding
+\usepackage[expert]{lucidabr}
+\usepackage{amsmath}
+\usepackage{graphicx}
+% causes draft and revision number to printed across front page and
+% at bottom of successive pages
+%\usepackage[light, first, bottomafter]{draftcopy}
+\usepackage{rcs}
+%\usepackage{times}
+\usepackage{hyperref}
+\RCS $Revision: 5215 $
+%\draftcopyName{DRAFT \RCSRevision}{140}
+ % In the above, replace 'finalversion' by 'workingversion'
+ % to get your labels and citations printed for easy cross referencing.
+ % Using 'preliminaryversion' or none of these will print a draft
+ % complete with cross references, but no cover page.
+ %
+ % Declare the title, author (use \email too!) and date.
+ % Declare the title, author (use \email too!) and date.
+\bibliographystyle{plain}
+\title{Modelling Blue Matter Scalability on BG/L}
+\author{R.S. Germain
+\and B.G. Fitch
+\and A. Rayshubskiy
+\and F. Suits
+\and T.J.C. Ward
+\and Y. Zhestkov
+\\[.5\baselineskip]  % give a little extra space to
+  IBM Research Division\\       % set off the author names better
+  IBM Thomas J. Watson Research Center\\
+  30 Saw Mill River Road\\
+  Hawthorne, NY 10532
+}
+\date{\today}      % this won't appear on the cover page
+
+ % These are optional, but place this information on the top of the
+ % cover page:
+%\rjnumber{RC 20994(92980) September 30, 1997}
+\rjsubject{Computer Science}
+%\appearedin{SPIE '95}
+
+ % Now we have a place for keywords
+\keywords{Parallel Programming, Molecular Dynamics}
+
+ % use this space for user-defined macros and environments
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\udfcount}{\ensuremath{N^{udf}_{i}}}
+\newcommand{\udftime}{\ensuremath{\tau^{udf}_{i}}}
+\newcommand{\verlettime}{\ensuremath{\tau_{verlet}}}
+\newcommand{\sitecount}{\ensuremath{{N_{sites}}}}
+\newcommand{\rcutoff}{\ensuremath{r_{c}}}
+\newcommand{\density}{\ensuremath{\rho}}
+\newcommand{\nonbondtime}{\ensuremath{\tau_{non-bond}}}
+\newcommand{\nodecount}{\ensuremath{p}}
+\newcommand{\allreducetime}{\ensuremath{\tau_{AllReduce}(\sitecount,\nodecount)}}
+\newcommand{\globalizepostime}{\ensuremath{\tau_{Globalize}(\sitecount, \nodecount)}}
+\newcommand{\meshsize}[1]{\ensuremath{N_{#1}}}
+\newcommand{\nodemeshsize}[1]{\ensuremath{\nodecount_{#1}}}
+\newcommand{\meshpernode}[1]{\ensuremath{n_{#1}}}
+\newcommand{\nodecoord}[1]{\ensuremath{c_{#1}}}
+\newcommand{\pmetime}{\ensuremath{\tau_{p3me}(\nodecount,\meshsize)}}
+
+\begin{document}
+\graphicspath{{./figures/}}
+\pdfcatalog{
+ /PageMode /UseOutlines
+ }
+
+\maketitle
+%
+% Here is the abstract which appears on the title page.
+%
+% Uncomment newpage to force the abstract on a new page. May especially
+% be wanted in the report style.
+%\newpage
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+
+The idea is to use very naive models to explore the scalability of
+various decomposition/parallelization schemes for molecular dynamics
+of macromolecular systems on BG/L.  In essence, scalability for a
+particular set of parameters will be determined by Amdahl's law.
+
+\section{Model Parameters}
+\begin{table}
+\begin{tabular}{|l|l|}\hline
+Parameter & Description\\ \hline\hline
+\udfcount & Number of calls to $i$th UDF \\ \hline
+\udftime & Execution Time for $i$th UDF \\ \hline
+\verlettime & Execution time for dynamics propagation of a single site
+\\ \hline
+\sitecount & Total number of sites \\ \hline
+\rcutoff & Cut-off distance for non-bond forces \\ \hline
+\density & Number density of system \\ \hline
+\nodecount & Node count \\ \hline
+\allreducetime & Execution time for {\tt AllReduce} of forces \\ \hline
+\globalizepostime & Execution time for position globalization \\ \hline
+\meshsize{i} & Dimension of charge mesh in dimension $i$. $\meshsize{i} = L_i/h$ \\ \hline
+\nonbondtime & Execution time for pairwise non-bonded interactions \\ \hline
+\pmetime & Execution time for P$^3$ME including FFT \\ \hline
+\end{tabular}
+\caption{Model Parameters}
+\end{table}
+
+\section{Force Reduction}
+Force computations are distributed via an {\tt AllReduce()} to make
+the force on every atom visible to every node.  Propagation of
+dynamics is replicated on every node.  The first version of this model
+will assume ideal load balancing of bonded and real-space non-bonded
+force evaluations.
+\begin{eqnarray}
+T_{ts} & = & \frac{1}{\nodecount}\,\sum_{i}\udfcount\,\udftime \\
+       &   & \mbox{} + \sitecount\,\verlettime \nonumber \\
+       &   & \mbox{} +
+       \big(\frac{\sitecount}{\nodecount}\big)\,\frac{4}{3}\,\pi\,\rcutoff^3\,\density\,\nonbondtime
+       \nonumber \\
+       &   & \mbox{} + \pmetime \nonumber \\
+       &   & \mbox{} + \allreducetime \nonumber
+\end{eqnarray}
+
+\section{Position Globalization}
+Positions are globalized via an {\tt AllReduce()} using OR once per
+time step.  With use of Respa, it may be advantageous to use some
+other system to deal with the forces in the inner loops.  The
+decomposition used will be an approximate volume decomposition with
+modifications based on fragmentation (particularly to keep groups of
+atoms involved with coupled constraints on the same node) and load
+balancing considerations.  In this initial version of the model,
+double computing of forces will be assumed as well as ideal load
+balancing of bonded and real-space non-bonded forces.
+\begin{eqnarray}
+T_{ts} & = & \frac{1}{\nodecount}\,\sum_{i}\udfcount\,\udftime \\
+       &   & \mbox{} + \frac{1}{\nodecount}\,\sitecount\,\verlettime \nonumber \\
+       &   & \mbox{} +
+       \big(\frac{\sitecount}{\nodecount}\big)\,\frac{4}{3}\,\pi\,\rcutoff^3\,\density\,\nonbondtime
+       \nonumber \\
+       &   & \mbox{} + \pmetime \nonumber \\
+       &   & \mbox{} + \globalizepostime \nonumber
+\end{eqnarray}
+
+\section{Multidimensional FFT}
+% The definitions are shamelessly copied from Jorg Arndt's Algorithms
+% for Programmers document at http://www.jjj.de/fxt/
+Consider the d-dimensional array $a_{\bf x}$ where ${\bf x} =
+(x_0,x_1,x_2,\ldots,x_{d-1}), x_i \in \{0,1,2,\ldots,N_i\}$.  The Fourier
+transform $\mathcal{F}_{\bf x}^d[a]$ consisting of a d-dimensional array of
+$N_0\,N_1\,N_2\,\ldots\,N_{d-1}$ numbers is defined by:
+\begin{eqnarray}
+a_{\bf k} & = &
+\frac{1}{\sqrt{n}}\,\sum_{x_0=0}^{N_0-1}\,\sum_{x_1=0}^{N_1-1}\,\cdots\,\sum_{x_{d-1}=0}^{N_{d-1}}a_{\bf
+  x}\,\prod_{l=0}^{d-1}\exp(2\pi\imath\,x_l\,k_l/N_l) \\
+          & = &
+\frac{1}{\sqrt{N_0}}\,\sum_{x_0=0}^{N_0-1}\exp(2\pi\imath\,x_0\,k_0/N_0)\,
+\frac{1}{\sqrt{N_1}}\,\sum_{x_1=0}^{N_1-1}\exp(2\pi\imath\,x_1\,k_1/N_1)\,
+\cdots\,\nonumber \\
+& & \mbox{} \frac{1}{\sqrt{N_{d-1}}}\,\sum_{x_{d-1}=0}^{N_{d-1}}\exp(2\pi\imath\,x_{d-1}\,k_{d-1}/N_{d-1})a_{\bf
+  x} \nonumber \\
+& = & \mathcal{F}_{x_0}^{1}\circ\mathcal{F}_{x_1}^{1}\circ\cdots
+\circ\mathcal{F}_{x_{d-1}}^{1}[a] \nonumber
+\end{eqnarray}
+
+For the target scientific application, system sizes are such that mesh
+dimensions of 64$^3$ or 128$^3$ are most common.  For small node count
+systems, a ``slab'' decomposition of the FFT onto an array of
+processors is most efficient.  However, this would only allow mapping
+of the FFT onto partitions with at most 64 or 128 nodes.  In
+principle, there is plenty of work to distribute over a much larger
+number of nodes since there are $3\times\meshsize{}^2$ 1D FFTs to be
+computed overall.  Assuming that the 1D FFT is not to be parallelized,
+each stage in the 3D FFT requires $\meshsize{}^2$ 1D FFT computations.
+Figure~\ref{fig:fft_dflow} shows the dataflows for FFT-related computations
+required to solve Poisson's equation for the P3ME method.
+
+Since BG/L is a torus/mesh machine, it is natural to use a volume
+decomposition to map the 3D mesh domain onto the machine.  Assuming
+that the domain mesh dimensions are $\meshsize{0}\times
+meshsize{1}\times meshsize{2}$ and that the machine partition size is
+$p=p_0\times p_1\times p_2$ then each node will have responsibility
+for $(\meshsize{0}/\nodemeshsize{0})\times (\meshsize{1}/\nodemeshsize{1})\times (\meshsize{2}/\nodemeshsize{2})$ mesh points. During
+each phase of the naive decomposition of the 3D FFT illustrated in
+Figure~\ref{fig:fft_dflow}, communication occurs along rows of nodes
+in a particular direction.  The process looks like this:
+\begin{enumerate}
+\item Each node in the row sends $p_i-1$ messages to the other nodes
+  in the row.  Each message contains $(n_0/p_0)\times (n_1/p_1)\times
+  (n_2/p_2)\times (1/p_i)\times \mbox{sizeof}(\mbox{double})$ bytes.
+\item Each node carries out $(n_j/p_j)\times (n_k/p_k)\times (1/p_i)$
+  one-dimensional FFTs on local data.
+\item Each node in the row sends $p_i-1$ messages to the other nodes
+  in the row.  Each message contains $(n_0/p_0)\times (n_1/p_1)\times
+  (n_2/p_2)\times (1/p_i)\times \mbox{sizeof}(\mbox{double})$ bytes.
+\end{enumerate}
+
+For example, a 512 node partition (8$\times$8$\times$8) working on a
+128$\times$128$\times$128 mesh implies a total data volume leaving or
+entering each node of:
+\begin{displaymath}
+2\times 8\times 7\times \frac{128}{8}\times \frac{128}{8}\times
+\frac{128}{8}\times \frac{1}{8}\times \mbox{sizeof}(\mbox{double})
+\end{displaymath}
+
+\begin{figure}
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{fft0.mps}
+\end{center}
+\caption{Schematic view of dataflow and candidate partitioning keys
+  for the computations of the convolution required for the P3ME method.}
+\label{fig:fft_dflow}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[keepaspectratio,width=0.5\textwidth]{fft1.mps}
+\end{center}
+\caption{Schematic view of the data partitioning within a column and
+  the message paths required.}
+\label{fig:fft_column}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\includegraphics[keepaspectratio,width=0.8\textwidth]{fft2.mps}
+\end{center}
+\caption{Schematic view of the data partitioning within a column and
+  the message paths required.}
+\label{fig:fft_column2}
+\end{figure}
+
+%\bibliography{/u/germain/tex/bibliography/vision,/u/germain/tex/bibliography/software}
+
+\end{document}

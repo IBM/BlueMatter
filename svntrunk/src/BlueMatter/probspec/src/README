@@ -1,0 +1,19 @@
+
+	To gerenate a probspec header file from a CHARMM psf file use the following command:
+
+	spec <psf filname> > <hpp filename>
+
+	This will give the defualt fragmentation scheme of one fragment per residue, using the
+	CHARMM 22 parameter set.
+
+To use charmmfilter (compiled from charmmfilter.cpp) to generate xml
+obeying the ffparams.dtd:
+
+         charmmfilter topologyFile paramFile psfFile fragFile
+
+For enkephelin:
+
+         charmmfilter top_all22_prot.inp par_all22_prot.inp enkp.psf enkp.frs
+
+I think that omitting the final fragmentation file will cause all
+sites to be placed in one big fragment.

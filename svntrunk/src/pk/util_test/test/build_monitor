@@ -1,0 +1,7 @@
+../../build
+xlC_r -g  \
+-I /tmp/pkinclude monitor.cpp  \
+../../fxlogger/src/fxlogger.cpp \
+../../exception/src/exception.cpp \
+../../pthread/src/pthread.cpp \
+-o monitor.exe

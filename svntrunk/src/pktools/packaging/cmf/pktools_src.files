@@ -1,0 +1,5 @@
+PACKAGE_DIRECTORY(include/pktools)
+PACKAGE_FILE(include/pktools,selecttrace.hpp)
+PACKAGE_FILE(include/pktools,trcutil.hpp)
+PACKAGE_FILE(include/pktools,trcmetadata.hpp)
+PACKAGE_FILE(include/pktools,traceaggregate.hpp)

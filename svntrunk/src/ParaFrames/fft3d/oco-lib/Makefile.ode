@@ -1,0 +1,22 @@
+# This 'Makefile.ode' places the OCO FFT3D library 
+# into the output tree. It might be prebuilt on a 'fen', or it might be as object code 
+# in the source tree
+
+
+.if $(FFT3DLIB_ON_FEN)
+# Find the lib from VPATH if you have built it from source on a 'fen'
+INCLUDES = libocofft3d.rts.a libocofft3dmpi.rts.a libocofft3dPk.rts.a
+VPATH = ../../../../export/bgl_cnk_1/usr/lib/
+.else
+# Find the prebuilt lib in a 'lib' subdirectory 'here'
+EXPINC_SUBDIRS = lib
+SUBDIRS = $(EXPINC_SUBDIRS)
+.endif
+
+EXPINCDIR = /usr/lib/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_TGTLIB)/
+
+.include <$(RULES_MK)>

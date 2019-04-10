@@ -1,0 +1,25 @@
+# CCFAMILY = gnu
+# CCTYPE = cc
+
+OBJECTS = \
+  apc$(OBJ_SUFF) \
+  upc$(OBJ_SUFF) \
+  bgl_perfctr$(OBJ_SUFF) \
+  bgl_perfctr_counters$(OBJ_SUFF) \
+  bgl_perfctr_kek$(OBJ_SUFF) \
+  
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)apc$(LIB_SUFF)
+
+CFLAGS += -DAPC_ENABLE -O3 -g
+
+VPATH = ../bglsw/counters/bgl_perfctr
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+ 
+ILIST = $(LIBRARIES)
+IDIR = $(BG_LIB)
+
+.include <$(RULES_MK)>

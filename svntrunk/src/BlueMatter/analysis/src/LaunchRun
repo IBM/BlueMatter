@@ -1,0 +1,368 @@
+#!/bin/ksh
+
+#
+#  This script launches a run and keeps track of error logging and failures
+#  It also does an rdgdiff with the corresponding regression data and indicates pass/fail
+#  
+
+dordgdiff=0
+dorun=1
+doanalysis=1
+logperiod=10
+nprocs=1
+localexe=0
+dosnap=0
+dordgname=0
+dorestart=0
+
+for arg in $*
+do
+  if [[ $arg = '-analyzeonly' ]]; then
+    echo "Doing analysis only"
+    dorun=0
+  fi
+done
+
+while [[ $1 = -* ]]
+do 
+  case $1 in 
+    -rdgdiff)     dordgdiff=1
+                  shift
+                  rdgname=$1;;
+    -procs)       shift
+                  nprocs=$1;;
+    -snapname)    dosnap=1
+		  shift
+		  snapname=$1;;
+    -rdgname)     dordgname=1
+		  shift
+		  newrdgname=$1;;
+    -logperiod)   shift
+                  logperiod=$1;;
+    -localexe)    localexe=1;;
+    -restart)     dorestart=1
+		  dorun=0
+		  doanalysis=0;;
+    -analyzeonly) dorun=0;;
+    -*)           echo "ignoring $1 in LaunchRun";;
+  esac
+  shift
+done
+
+nargs=$#
+  
+if ((nargs < 1)); then
+  echo "LaunchRun [-rdgdiff rdgname] [-snapname snapname] [-rdgname newrdgname] [-logperiod logperiod] [-restart] [-procs N] [-localexe] [-analyzeonly] [exename] dvsname"
+  exit 1
+fi
+
+
+if [[ -s ../RunEnv ]]; then
+  . ../RunEnv
+fi
+
+sbbasedir=$SANDBOXBASE
+installbase=`installbase.py`
+bmdatadir=${installbase}usr/opt/bluegene/mdtest/data/bluematter
+
+runname=`basename $PWD`
+
+if (( localexe )); then
+    exename=`ls *.exe 2> /dev/null`
+    dvsname=$1
+else
+    exename=$1
+    dvsname=$2
+fi
+
+echo "exe $exename nprocs $nprocs dvs $dvsname rdgname $rdgname logperiod $logperiod"
+echo "STARTING $PWD " `date`
+cat Run.vars
+
+# First remove any existing RawDatagramOutput file, and instantiate a new one
+# in case p1 fails outright
+
+rm -f Run.done
+rm -f Run.failed
+
+if [[ -s RawDatagramOutput ]]; then
+  mv -f RawDatagramOutput Run.rdg
+fi
+
+rm -f RawDatagramOutput
+touch RawDatagramOutput
+
+# try to wake up the automounter
+ls $dvsname > /dev/null
+# dvs2txt $dvsfile > /dev/null
+
+if (( dorun )); then
+  # Now run p1, logging errors to Run.log
+  rm -f Run.log
+  rm -f Run.pass
+  isparallel=0
+  if [[ $exename = *.mpi.aix.exe ]]; then
+    isparallel=1
+  fi
+  echo "isparallel $isparallel"
+  echo "launching $exename in $PWD"
+  if (( isparallel )); then
+    echo "Parallel run"
+    echo "$exename -procs $nprocs $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename -procs $nprocs $dvsname >> Run.log 2>&1 &
+  else
+    echo "Serial run"
+    echo "$exename $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename $dvsname >> Run.log 2>&1 &
+  fi
+    
+
+  # Wait a bit to make sure the RawDatagram file is in place, if p1 created a new one
+  sleep 2
+  p1pid=$!
+
+  # Launch mdlogger and grab its pid
+  nohup MDLogger -timeout 300 -bootstrap -logperiod $logperiod -delaystats 1 RawDatagramOutput > Run.mdlog &
+  mdpid=$!
+
+  # Wait a bit, then creat a full listing of background jobs (2 of them, if healthy)
+  sleep 2
+  hostname > Run.pid
+  jobs -p >> Run.pid
+  # echo $p1pid >> Run.pid
+  # echo $mdpid >> Run.pid
+elif (( doanalysis )); then
+  # Launch mdlogger and grab its pid
+  # Rename RawDatagramOutput to Run.rdg
+  if [[ -s RawDatagramOutput ]]; then
+    mv -f RawDatagramOutput Run.rdg
+  fi
+  nohup MDLogger -bootstrap -logperiod $logperiod -delaystats 1 Run.rdg > Run.mdlog &
+  sleep 2
+  mdpid=$!
+  p2pid=""
+  hostname > Run.pid
+  jobs -p >> Run.pid
+  # echo $mdpid >> Run.pid
+elif (( dorestart )); then
+  nrestart=200
+  nrestartlong=400
+  dvs2restart $dvsname -nsteps $nrestart > RestartFirst.dvs
+  dvs2restart $dvsname -nsteps $nrestartlong > RestartLong.dvs
+  rm -f RawDatagramOutput
+  isparallel=0
+  if [[ $exename = *.mpi.aix.exe ]]; then
+    isparallel=1
+  fi
+  echo "isparallel $isparallel"
+  echo "launching FIRST restart run as $exename in $PWD"
+  if (( isparallel )); then
+    echo "Parallel run"
+    echo "$exename -procs $nprocs $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename -procs $nprocs RestartFirst.dvs >> Run.log 2>&1 &
+  else
+    echo "Serial run"
+    echo "$exename $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename RestartFirst.dvs >> Run.log 2>&1 &
+  fi
+    
+
+  # Wait a bit to make sure the RawDatagram file is in place, if p1 created a new one
+  sleep 2
+  p1pid=$!
+
+  # Launch mdlogger and grab its pid
+  nohup MDLogger -timeout 100 -bootstrap -logperiod $logperiod -delaystats 1 RawDatagramOutput > RestartFirst.mdlog &
+  mdpid=$!
+
+  # Wait a bit, then creat a full listing of background jobs (2 of them, if healthy)
+  sleep 2
+  hostname > Run.pid
+  jobs -p >> Run.pid
+
+  if ! wait $mdpid
+  then
+    echo "$PWD MDLogger failed $mdpid" `date`
+    touch Run.failed
+    killpidtree.ksh -self $p1pid
+    exit
+  else
+    echo "$PWD MDLogger ended OK $mdpid" `date`
+    killpidtree.ksh -self $p1pid
+  fi
+
+  mv RawDatagramOutput RestartFirst.rdg
+
+  dvs2restart -nsteps $nrestart SnapshotFinal.dvs > RestartSecond.dvs
+  echo "launching SECOND restart run as $exename in $PWD"
+  if (( isparallel )); then
+    echo "Parallel run"
+    echo "$exename -procs $nprocs $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename -procs $nprocs RestartSecond.dvs >> Run.log 2>&1 &
+  else
+    echo "Serial run"
+    echo "$exename $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename RestartSecond.dvs >> Run.log 2>&1 &
+  fi
+
+  # Wait a bit to make sure the RawDatagram file is in place, if p1 created a new one
+  sleep 2
+  p1pid=$!
+
+  # Launch mdlogger and grab its pid
+  nohup MDLogger -timeout 100 -bootstrap -logperiod $logperiod -delaystats 1 RawDatagramOutput > RestartSecond.mdlog &
+  mdpid=$!
+
+  # Wait a bit, then creat a full listing of background jobs (2 of them, if healthy)
+  sleep 2
+  hostname >> Run.pid
+  jobs -p >> Run.pid
+
+  if ! wait $mdpid
+  then
+    echo "$PWD MDLogger failed $mdpid" `date`
+    touch Run.failed
+    killpidtree.ksh -self $p1pid
+    exit
+  else
+    echo "$PWD MDLogger ended OK $mdpid" `date`
+    killpidtree.ksh -self $p1pid
+  fi
+
+  mv RawDatagramOutput RestartSecond.rdg
+
+  echo "launching LONG (Third) restart run as $exename in $PWD"
+  if (( isparallel )); then
+    echo "Parallel run"
+    echo "$exename -procs $nprocs $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename -procs $nprocs RestartLong.dvs >> Run.log 2>&1 &
+  else
+    echo "Serial run"
+    echo "$exename $dvsname" > Run.log
+    nohup /usr/bin/time -p $exename RestartLong.dvs >> Run.log 2>&1 &
+  fi
+
+  # Wait a bit to make sure the RawDatagram file is in place, if p1 created a new one
+  sleep 2
+  p1pid=$!
+
+  # Launch mdlogger and grab its pid
+  nohup MDLogger -timeout 100 -bootstrap -logperiod $logperiod -delaystats 1 RawDatagramOutput > RestartLong.mdlog &
+  mdpid=$!
+
+  # Wait a bit, then creat a full listing of background jobs (2 of them, if healthy)
+  sleep 2
+  hostname >> Run.pid
+  jobs -p >> Run.pid
+
+  if ! wait $mdpid
+  then
+    echo "$PWD MDLogger failed $mdpid" `date`
+    touch Run.failed
+    killpidtree.ksh -self $p1pid
+    exit
+  else
+    echo "$PWD MDLogger ended OK $mdpid" `date`
+    killpidtree.ksh -self $p1pid
+  fi
+
+  mv RawDatagramOutput RestartLong.rdg
+
+  rdgdiff -verbose -skip1=200 RestartLong.rdg RestartSecond.rdg > Restart.drdg
+  rdgdiff -skip1=200 RestartLong.rdg RestartSecond.rdg > Run.drdg
+
+  rcdiff=$?
+  if (( rcdiff < 2 )) ;
+  then
+    echo 0 > Run.pass
+    echo "PASSED RESTART TEST: $runname $exename"
+    cat Run.drdg
+    echo ""
+  else
+    echo $rcdiff > Run.pass
+    echo "FAILED RESTART TEST: $runname $exename"
+  fi
+
+  exit
+
+fi
+
+# Wait for MDLogger to end.  If p1 failed or stalled, MDLogger will eventually
+# timeout, so use MDLogger's status return to judge success, and create Run.failed if bad
+#
+# Also, since MDLogger will fail on appearance of nan's, should kill p1 immediately
+if ! wait $mdpid
+then
+  echo "$PWD MDLogger failed $mdpid" `date`
+  touch Run.failed
+  killpidtree.ksh -self $p1pid
+else
+  echo "$PWD MDLogger ended OK $mdpid" `date`
+  killpidtree.ksh -self $p1pid
+fi
+
+# Rename RawDatagramOutput to Run.rdg
+if [[ -s RawDatagramOutput ]]; then
+  mv -f RawDatagramOutput Run.rdg
+fi
+
+if [[ -a RawDatagramOutput ]]; then
+  rm -f RawDatagramOutput
+fi
+
+if [[ -a Run.rdg ]]; then
+  if (( dordgdiff )) ; then
+    rdgdiff -summary Run.rdg $rdgname > Run.drdg
+    # 0 is exact match, 1 is within tolerance
+    rcdiff=$?
+    if (( rcdiff < 2 )) ;
+    then
+      echo 0 > Run.pass
+      echo "PASSED REGRESSION: $runname $exename"
+      cat Run.drdg
+      echo ""
+    else
+      echo $rcdiff > Run.pass
+      echo "FAILED REGRESSION: $runname $exename"
+      cat Run.drdg
+      echo ""
+    fi
+  else
+    echo "No rdgdiff test done for: $runname $exename"
+    echo -1 > Run.pass
+    echo ""
+  fi
+  SimpleTimeStamper -summary Run.rdg > Run.time
+else
+  touch Run.failed
+  echo 1 > Run.pass
+  echo "FAILED TO RUN: $runname $exename"
+  echo ""
+fi
+
+if (( dosnap )) ; then
+  if [[ -a SnapshotFinal.dvs ]] ; then
+      dvs2restart SnapshotFinal.dvs -reset -mapintobox -zeromomentum > $snapname
+  elif [[ -a Snapshot.dvs ]] ; then
+      dvs2restart Snapshot.dvs -reset -mapintobox -zeromomentum > $snapname
+  else
+      touch $snapname
+  fi
+fi
+    
+if (( dordgname )) ; then
+  if [[ -a Run.rdg ]] ; then
+      KillTimeStamps Run.rdg > $newrdgname
+  elif [[ -a RawDatagramOutput ]] ; then
+      KillTimeStamps > $newrdgname
+  else
+      touch $newrdgname
+  fi
+fi
+    
+# Regardless, make Run.done to indicate it's all over
+hostname > Run.done
+
+echo "FINISHED $PWD " `date`
+cat Run.vars
+echo "\n$exename finished in $SECONDS seconds, " `date` "\n"

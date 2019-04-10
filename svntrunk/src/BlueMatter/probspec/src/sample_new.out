@@ -1,0 +1,71 @@
+Header data:
+Force Field Family: CHARMM Force Field Specification: CHARMM22
+Charge14 Flag: 1 Charge14 Scale: 0.5
+Improper Flag: 1
+Torsion Input Flag: 1
+Urey-Bradley Flag: 1
+Grouping Flag: 0
+Water Model: 0
+Units Flag: 1
+
+
+ Force Field Parameters:
+Site Count: 4
+Site[0]: mass: 14 charge: -0.3 Lennard-Jones Type: 0
+Site[1]: mass: 1 charge: 0.21 Lennard-Jones Type: 2
+Site[2]: mass: 1 charge: 0.21 Lennard-Jones Type: 2
+Site[3]: mass: 12 charge: 0.11 Lennard-Jones Type: 3
+
+
+Bond Count: 3
+Bond[0, 1] K: 403 R0: 1.04
+Bond[0, 2] K: 403 R0: 1.04
+Bond[0, 3] K: 403 R0: 1.04
+
+
+Angle Count: 1
+Angle[0, 1, 2] K: 44 THETA0: 109.5 KU: 0 RU: 0
+
+
+Torsion Count: 1
+Torsion[0, 1, 2, 3] Order: 3 Vn: 0.2 THETA0: 0
+
+
+ImproperTorsion Count: 1
+ImproperTorsion[0, 1, 2, 3] Order: 0 Vn: 120 THETA0: 0
+
+
+Lennard-Jones Type Count: 5
+LJ[0, 0] Epsilon: 1.1 Sigma: 0.4
+LJ[1, 0] Epsilon: 1.2 Sigma: 0.4
+LJ[1, 1] Epsilon: 2.2 Sigma: 0.4
+LJ[2, 0] Epsilon: 1.3 Sigma: 0.4
+LJ[2, 1] Epsilon: 2.3 Sigma: 0.4
+LJ[2, 2] Epsilon: 3.3 Sigma: 0.4
+LJ[3, 0] Epsilon: 1.4 Sigma: 0.4
+LJ[3, 1] Epsilon: 2.4 Sigma: 0.4
+LJ[3, 2] Epsilon: 3.4 Sigma: 0.4
+LJ[3, 3] Epsilon: 4.4 Sigma: 0.4
+LJ[4, 0] Epsilon: 1.5 Sigma: 0.4
+LJ[4, 1] Epsilon: 2.5 Sigma: 0.4
+LJ[4, 2] Epsilon: 3.5 Sigma: 0.4
+LJ[4, 3] Epsilon: 4.5 Sigma: 0.4
+LJ[4, 4] Epsilon: 5.5 Sigma: 0.4
+
+
+LJ14[0, 0] Epsilon: 4.5 Sigma: 1.1
+LJ14[1, 0] Epsilon: 4.5 Sigma: 1.2
+LJ14[1, 1] Epsilon: 4.5 Sigma: 2.2
+LJ14[2, 0] Epsilon: 4.5 Sigma: 1.3
+LJ14[2, 1] Epsilon: 4.5 Sigma: 2.3
+LJ14[2, 2] Epsilon: 4.5 Sigma: 3.3
+LJ14[3, 0] Epsilon: 4.5 Sigma: 1.4
+LJ14[3, 1] Epsilon: 4.5 Sigma: 2.4
+LJ14[3, 2] Epsilon: 4.5 Sigma: 3.4
+LJ14[3, 3] Epsilon: 4.5 Sigma: 4.4
+LJ14[4, 0] Epsilon: 4.5 Sigma: 1.5
+LJ14[4, 1] Epsilon: 4.5 Sigma: 2.5
+LJ14[4, 2] Epsilon: 4.5 Sigma: 3.5
+LJ14[4, 3] Epsilon: 4.5 Sigma: 4.5
+LJ14[4, 4] Epsilon: 4.5 Sigma: 5.5
+

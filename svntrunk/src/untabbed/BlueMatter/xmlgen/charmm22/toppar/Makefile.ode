@@ -1,0 +1,15 @@
+
+IDIR    = $(BG_FIELDS)/charmm22/
+
+ILIST   =  \
+  par_all22_prot.inp \
+  par_all22_prot_na.inp \
+  par_all22_prot_nacl.inp \
+  top_all22_model.inp \
+  top_all22_prot.inp \
+  top_all22_prot_na.inp \
+  top_all22_prot_nacl.inp \
+  top_spc.inp \
+
+
+.include <$(RULES_MK)>

@@ -1,0 +1,103 @@
+execve("/home/tjcw/workspace/ode4linux/tools/at386_linux/bin/build", ["build"], 0x7ffc3f878a28 /* 118 vars */) = 0
+brk(NULL)                               = 0x212f000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 4
+fstat(4, {st_mode=S_IFREG|0644, st_size=133611, ...}) = 0
+mmap(NULL, 133611, PROT_READ, MAP_PRIVATE, 4, 0) = 0x7f01327f8000
+close(4)                                = 0
+openat(AT_FDCWD, "/lib64/libc.so.6", O_RDONLY|O_CLOEXEC) = 4
+read(4, "\177ELF\2\1\1\3\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0`\20\2\0\0\0\0\0"..., 832) = 832
+fstat(4, {st_mode=S_IFREG|0755, st_size=2034808, ...}) = 0
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f01327f6000
+mmap(NULL, 3906144, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 4, 0) = 0x7f013223a000
+mprotect(0x7f01323eb000, 2093056, PROT_NONE) = 0
+mmap(0x7f01325ea000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 4, 0x1b0000) = 0x7f01325ea000
+mmap(0x7f01325f0000, 14944, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f01325f0000
+close(4)                                = 0
+arch_prctl(ARCH_SET_FS, 0x7f01327f7500) = 0
+mprotect(0x7f01325ea000, 16384, PROT_READ) = 0
+mprotect(0x62d000, 4096, PROT_READ)     = 0
+mprotect(0x7f0132819000, 4096, PROT_READ) = 0
+munmap(0x7f01327f8000, 133611)          = 0
+brk(NULL)                               = 0x212f000
+brk(0x2150000)                          = 0x2150000
+access("/home/tjcw/.buildrc", R_OK)     = -1 ENOENT (No such file or directory)
+access("/home/tjcw/.sandboxrc", R_OK)   = 0
+openat(AT_FDCWD, "/home/tjcw/.sandboxrc", O_RDONLY) = 4
+fstat(4, {st_mode=S_IFREG|0644, st_size=145, ...}) = 0
+read(4, "default ode\nbase svntrunk /home/"..., 4096) = 145
+read(4, "", 4096)                       = 0
+access("/home/tjcw/.sandboxrc", R_OK)   = 0
+openat(AT_FDCWD, "/home/tjcw/.sandboxrc", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=145, ...}) = 0
+read(5, "default ode\nbase svntrunk /home/"..., 4096) = 145
+close(5)                                = 0
+openat(AT_FDCWD, "/home/tjcw/.sandboxrc", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=145, ...}) = 0
+read(5, "default ode\nbase svntrunk /home/"..., 4096) = 145
+close(5)                                = 0
+access("/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/projects", R_OK) = 0
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 1024) = 45
+openat(AT_FDCWD, "/home/tjcw/.sandboxrc", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=145, ...}) = 0
+read(5, "default ode\nbase svntrunk /home/"..., 4096) = 145
+close(5)                                = 0
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 1024) = 45
+access("/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/projects", R_OK) = 0
+openat(AT_FDCWD, "/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/projects", O_RDONLY) = 5
+fstat(5, {st_mode=S_IFREG|0644, st_size=13, ...}) = 0
+read(5, ".\tBlueMatter\n", 4096)        = 13
+close(5)                                = 0
+openat(AT_FDCWD, "/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/BlueMatter/sb.conf", O_RDONLY) = 5
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/BlueMatter") = 0
+fstat(5, {st_mode=S_IFREG|0644, st_size=130, ...}) = 0
+read(5, "replace backing_project\tBlueMatt"..., 4096) = 130
+read(5, "", 4096)                       = 0
+close(5)                                = 0
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+openat(AT_FDCWD, "/home/tjcw/workspace/mybb/rc_files/BlueMatter/sb.conf", O_RDONLY) = 5
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/mybb/rc_files/BlueMatter") = 0
+fstat(5, {st_mode=S_IFREG|0644, st_size=0, ...}) = 0
+read(5, "", 4096)                       = 0
+close(5)                                = 0
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+access("/home/tjcw/workspace/BlueMatter/svntrunk/src/BlueMatter/Buildconf", F_OK) = -1 ENOENT (No such file or directory)
+access("/home/tjcw/workspace/mybb/src/BlueMatter/Buildconf", F_OK) = 0
+access("/home/tjcw/workspace/BlueMatter/svntrunk/src/BlueMatter/Buildconf.exp", F_OK) = -1 ENOENT (No such file or directory)
+access("/home/tjcw/workspace/mybb/src/BlueMatter/Buildconf.exp", F_OK) = 0
+openat(AT_FDCWD, "/home/tjcw/workspace/mybb/src/BlueMatter/Buildconf", O_RDONLY) = 5
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/mybb/src/BlueMatter") = 0
+fstat(5, {st_mode=S_IFREG|0644, st_size=3859, ...}) = 0
+read(5, "# COPYRIGHT NOTICE\n# Copyright ("..., 4096) = 3859
+read(5, "", 4096)                       = 0
+close(5)                                = 0
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+openat(AT_FDCWD, "/home/tjcw/workspace/mybb/src/BlueMatter/Buildconf.exp", O_RDONLY) = 5
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/mybb/src/BlueMatter") = 0
+fstat(5, {st_mode=S_IFREG|0644, st_size=2202, ...}) = 0
+read(5, "# COPYRIGHT NOTICE\n# Copyright ("..., 4096) = 2202
+read(5, "", 4096)                       = 0
+close(5)                                = 0
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+access("/home/tjcw/workspace/BlueMatter/svntrunk/rc_files/BlueMatter/Buildconf.local", F_OK) = -1 ENOENT (No such file or directory)
+stat("/home/tjcw/workspace/BlueMatter/svntrunk/src", {st_mode=S_IFDIR|0755, st_size=4096, ...}) = 0
+stat("/home/tjcw/workspace/BlueMatter/svntrunk/obj/at386_linux", {st_mode=S_IFDIR|0755, st_size=6, ...}) = 0
+stat("/home/tjcw/workspace/ode4linux/obj/at386_linux/ode/bin/mksb/make", 0x7ffe82353890) = -1 ENOENT (No such file or directory)
+stat("/home/tjcw/workspace/ode4linux/tools/at386_linux/bin//make", {st_mode=S_IFREG|0755, st_size=137920, ...}) = 0
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+getcwd("/home/tjcw/workspace/BlueMatter/svntrunk/src", 4096) = 45
+chdir("/home/tjcw/workspace/BlueMatter/svntrunk/src") = 0
+fstat(1, {st_mode=S_IFCHR|0600, st_rdev=makedev(136, 4), ...}) = 0
+write(1, "relative path: .\n", 17)      = 17
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x7f01327f77d0) = 31176
+rt_sigprocmask(SIG_BLOCK, [HUP INT QUIT], [], 8) = 0
+wait4(31176, [{WIFSIGNALED(s) && WTERMSIG(s) == SIGINT}], WSTOPPED, NULL) = 31176
+--- SIGCHLD {si_signo=SIGCHLD, si_code=CLD_KILLED, si_pid=31176, si_uid=1000, si_status=SIGINT, si_utime=1220, si_stime=262} ---
+rt_sigprocmask(SIG_SETMASK, [], NULL, 8) = 0
+--- SIGINT {si_signo=SIGINT, si_code=SI_KERNEL} ---
++++ killed by SIGINT +++

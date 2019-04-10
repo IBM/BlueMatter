@@ -1,0 +1,13 @@
+
+INCLUDES        =    \
+  rptree.hpp         \
+  
+
+EXPDIR  = /usr/include/
+
+ILIST = $(INCLUDES) 
+
+IDIR = $(BG_INCLUDE)/
+
+
+.include <${RULES_MK}>

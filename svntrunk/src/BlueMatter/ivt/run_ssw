@@ -1,0 +1,90 @@
+#!/bin/bash
+if [ $# -eq 0 ]
+then
+echo "Usage:  run #cpus executable arg [enter]"
+exit 1
+fi
+
+NP=$1
+DVS_FILE=$3
+
+if [ -e $2 ]
+then
+APP=$2
+else
+echo Error: executable $2 not found
+exit
+fi
+
+#---------------------------------------------------------
+#usage: ciorun  --simulation <bglsim.xml>
+# --machine <bglmachine.xml> --block <bglblock.xml>
+# [-np nprocs] [-env envvar=value]* [-timeout secs]
+# <program> [<args>]
+#---------------------------------------------------------
+
+#BGL_BIN=/BlueLight/bin
+
+BL_INSTALL=/bgl/BlueLight/ppcfloor
+#BL_INSTALL=/bgl/BlueLight/DRV440_2004-041024/ppc/
+#BL_INSTALL=/bgl/BlueLight/DRV420_2004-041008/ppc/
+
+#BL_INSTALL=/bgl/BlueLight/DRV340_2004-040817/x86
+#BL_INSTALL=/bgl/BlueLight/DRV300_2004-040716/x86/
+#BL_INSTALL=/bgl/BlueLight/driver
+
+#BL_INSTALL=/bgl/BlueLight/DRV280_2004-040701/x86
+#BL_INSTALL=/bgl/BlueLight/DRV340_2004-040804/x86/
+
+BGL_BIN=$BL_INSTALL/bglsys/bin
+#BL_INSTALL=/gsa/watgsa/.home/h1/arayshu/sandboxes/gsa_build/bluelight-install
+#BL_MACHINE=/BlueLight/bglmachines/midplane/bglmachine_midplane.xml
+
+#nc 138
+#BL_BLOCK=/BlueLight/bglmachines/midplane/bglblock_M000_P32_6_1.xml
+
+# 512 mesh
+# BL_BLOCK=/BlueLight/bglmachines/midplane/bglblock_M000_P512_8.xml
+
+# Lower midplane
+# export BL_BLOCK=/BlueLight/bglmachines/midplane_b/bglblock_torus_M001_P512_4.xml
+# export BL_MACHINE=/BlueLight/bglmachines/midplane_b/bglmachine_midplane_torus.xml
+
+# Upper midplane
+# export BL_BLOCK=/BlueLight/bglmachines/midplane/bglblock_torus_M000_P512_4.xml
+# export BL_MACHINE=/BlueLight/bglmachines/midplane/bglmachine_midplane_torus.xml
+
+# nc 292 R51 Top midplane
+# BL_MACHINE=/BlueLight/bglmachines-040601/BGL4/R51-M1/bglmachine_midplane.xml
+# BL_BLOCK=/BlueLight/bglmachines-040601/BGL4/R51-M1/bglblock_M001_P32_6_1.xml
+
+# nc 292 R51 Top midplane
+#BL_MACHINE=/BlueLight/bglmachines/BGL4/R51-M1/bglmachine_midplane.xml
+#BL_BLOCK=/BlueLight/bglmachines/BGL4/R51-M1/bglblock_M001_P32_6_1.xml
+
+#--env BGLMPI_TREE=1
+
+#BL_MACHINE=/BlueLight/bglmachines.new/bglmachine_R01-M0.xml
+#BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M0-NC_1.xml
+
+#BL_MACHINE=/BlueLight/bglmachines.new/bglmachine_R01-M0.xml
+#BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M0.xml
+#
+#BL_MACHINE=/BlueLight/bglmachines.new/bglmachine_R01-M0.xml
+#BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M0-NCDEF_1.xml
+BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M0-N4_1.xml
+#BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M0-NC_1.xml
+
+BL_MACHINE=/BlueLight/bglmachines.new/bglmachine_R01-M1.xml
+BL_BLOCK=/BlueLight/bglmachines.new/bglblock_R01-M1.xml
+
+${BL_INSTALL}/bglsys/bin/ciorun --machine $BL_MACHINE --block $BL_BLOCK --uid 158026 --gid 310312 --home /bgl/arayshu/ --np $NP $APP $DVS_FILE -procmesh 8 8 8
+***********************************************************************************************
+
+#Similarly, one needs to pick the proper BL_MACHINE and BL_BLOCK files. These should match 1-to-1 with the files chosen in the boot script. Pick the processor mesh as marked in red a few lines above. Change the lines in blue to reflect your environment. I execute the run_ssw script via:
+#
+#./run_ssw <processor_count> <rts_filename> <dvs_file> 
+#
+#Should be good to go. Let me know if any of this is unclear and/or doesn't work.
+#
+#-Alex

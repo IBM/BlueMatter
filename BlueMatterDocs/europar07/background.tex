@@ -1,0 +1,89 @@
+\section {Communications on BG/L}
+\label{sec:communications}
+
+The BGL/L ASIC supports five different communication
+networks  ~\cite{Gara2005}, only two of which are of interest to
+application developers: torus~\cite{adiga:2005} and collective
+communication network.  The torus is the main
+communication network for performing point to point communication and
+it provides high bandwidth nearest neighbor connectivity. Each node
+has six bi-directional links to connect with of its neighbor
+nodes with 175MB/sec bandwidth on each link. The network hardware delivers
+packets of variable length ranging from 32~bytes to 256~bytes with a
+granularity of 32~bytes. The packet header is of size
+14~bytes. 8~bytes for link level protocol information, 2~bytes for the
+acknowledgment and 4~bytes for the checksum.%Need to verify this w Philip
+The packets may be dynamically or statically routed.
+
+The torus network supports adaptive routing to enhance the network
+performance. Adaptive routing allows packets to dynamically find the
+less congested and minimum path between the sender and nodes.  The
+packet headers include six bits to indicate the direction of the
+packet routed ($x^-, x^+, y^-, y^+, z^-, z^+$) ~\cite{Yu:2006}.
+
+The average number of hops is calculated based on the Manhattan
+distance between two nodes. The Manhattan distance between a pair of
+nodes, $p$ and $q$ is given by 
+\begin{displaymath}
+Hops(p,q) = |x_p -x_q|+|y_p - y_q|+|z_p -z_q|
+\end{displaymath}.
+
+The average number of hops for all the messages send by a given node
+is given by ~\cite{Yu:2006}. 
+                             %needs to ref the sw mpi paper--not sure
+                             %if the JRD ref. is the right one--RSG 
+                             %this from Hao's Yu paper--ME
+\begin{displaymath}
+<N_{Hops}> = \sum{ N^{Hops}_j \times B^{Bytes}_j } / {
+  \sum{B^{Bytes}_j} }
+\end{displaymath}
+where $N^{Hops}_j$ is the number of hops required for the $j$th
+message and $B^{Bytes}_j$ is the corresponding message size.
+
+
+The 3D-FFT requires an \alltoall on a subset of nodes comprising a
+column or plane within the three dimensional torus. Let's consider a
+$16\times 32\times 16$ torus and an \alltoall communication along the
+yz plane. In this case, the number of hops in y direction is double of
+that the z dimension.  That is if x is $100\%$ busy, then y is only
+$50\%$ busy. Thus the link utilization is only $75\%$, which means
+that the bandwidth is the same as in the 32x32 plane-nodes.
+
+The 3D FFT implementation can currently use either of two
+communication layers: SPI and MPI.  The SPI was developed by the BG/L
+hardware group for machine bring-up and diagnostics.  The BG/L MPI
+implementation is an optimized port of the MPICH2
+library ~\cite{Almasi2005, almasi_opt:2005}. The major difference between MPI and SPI is
+that the SPI interface provides direct access to the BG/L
+network hardware while the MPI interface provides a generic message
+passing and collective API for end user applications. The general
+purpose MPI communication layer requires additional protocol which
+implies larger packet headers and this eventually affects performance
+at the limits of scalability.
+
+Since the \alltoall operation is essential for the 3D-FFT, we developed
+an efficient and scalable implementation of the \alltoall collective
+operation for small message sizes using the SPI layer.  As an aid in
+understanding the performance of the transpose operation we will
+briefly compare the \alltoall implementations in the SPI and MPI
+communication layers.  In the MPI implementation, the \alltoall
+communication has larger overhead for smaller message sizes because
+its smallest packet size is 64~bytes versus the 32~bytes used by the
+SPI implementation. Further, the SPI implementation of the \alltoall
+allows data transfer between the sending and receiving nodes without
+any protocol overhead of the receivers (eager protocol). That is, the SPI \alltoall
+doesn't perform flow control; the sending nodes just push data out and
+the receivers will know from context what to do with it.  The MPI
+\alltoall global collective sends more context around with messages and
+there needs to be some way for a receiver to tell a sender to stop
+sending. Both the SPI and MPI \alltoall operations randomize the
+sending of packets to destination nodes to avoid creating network
+hot-spots.  Finally, we have performed an application-specific
+optimization of the SPI implementation of the \alltoall by
+precalculating all the packet headers during the initialization phase
+while MPI generates them dynamically.
+
+
+
+
+  

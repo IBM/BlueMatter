@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ffparams [
+<!ELEMENT ffparams (header, sitelist, bondlist, anglelist, torsionlist, improperlist)>
+<!ELEMENT header (charge | vdw | vdwcombine | charge14 | charge14scale | vdw14 | vdw14scale | improper | torsioninput | ureybradley | grouping | water | units)*>
+<!ELEMENT vdw (#PCDATA)>
+<!ELEMENT vdwcombine (#PCDATA)>
+<!ELEMENT charge14 (#PCDATA)>
+<!ELEMENT charge14scale (#PCDATA)>
+<!ELEMENT vdw14 (#PCDATA)>
+<!ELEMENT vdw14scale (#PCDATA)>
+<!ELEMENT improper (#PCDATA)>
+<!ELEMENT torsioninput (#PCDATA)>
+<!ELEMENT ureybradley (#PCDATA)>
+<!ELEMENT grouping (#PCDATA)>
+<!ELEMENT water (#PCDATA)>
+<!ELEMENT units (#PCDATA)>
+<!ELEMENT sitelist (siterec)+>
+<!ELEMENT bondlist (bondrec)+>
+<!ELEMENT anglelist (anglerec)+>
+<!ELEMENT torsionlist (charmmtorsionrec | oplstorsionrec)+>
+<!ELEMENT improperlist (charmmimproperrec | oplsimproperrec)+>
+<!ELEMENT siterec (siteid, sitetype, epsilon, sigma, epsilon14, sigma14, mass, charge)>
+<!ELEMENT support (#PCDATA)>
+<!ELEMENT siteid (#PCDATA)>
+<!ELEMENT sitetype (#PCDATA)>
+<!ELEMENT mass (#PCDATA)>
+<!ELEMENT charge (#PCDATA)>
+<!ELEMENT sigma (#PCDATA)>
+<!ELEMENT epsilon (#PCDATA)>
+<!ELEMENT bondrec (siteid, siteid, k, r0)>
+<!ELEMENT k (#PCDATA)>
+<!ELEMENT r0 (#PCDATA)>
+<!ELEMENT anglerec (siteid, siteid, siteid, k, th0, ku, ru)>
+<!ELEMENT th0 (#PCDATA)>
+<!ELEMENT ku (#PCDATA)>
+<!ELEMENT ru (#PCDATA)>
+<!ELEMENT charmmtorsionrec (siteid, siteid, siteid, siteid, k, mult, th0)>
+<!ELEMENT charmmimproperrec (siteid, siteid, siteid, siteid, k, th0)>
+<!ELEMENT oplstorsionrec (siteid, siteid, siteid, siteid, (torparm)+)>
+<!ELEMENT oplsimproperrec (siteid, siteid, siteid, siteid, (torparm)+)>
+<!ELEMENT torparm (order, v)>
+<!ELEMENT order (#PCDATA)>
+<!ELEMENT v (#PCDATA)>
+<!ELEMENT mult (#PCDATA)>
+]>

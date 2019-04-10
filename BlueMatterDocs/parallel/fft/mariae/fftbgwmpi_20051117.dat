@@ -1,0 +1,41 @@
+#  Measurements of MPI implementation of 3D-FFT
+# compiler flags: -O5 , 440d
+# 1D FFT : FFTGEL
+# Column 1: node count
+# Column 2: Px
+# Column 3: Py
+# Column 4: Pz
+# Column 5: execution time
+# Index 0: 128x128x128
+
+512  8x8x8     0.002867 
+1024 8x16x8    0.002017 
+2048 16x8x16   0.001282 
+4096 16x16x16  0.00091
+
+
+#Index1: 256x256x256
+512 8x8x8     0.020544
+1024 8x16x8   0.012431
+2048 16x8x16  0.008043  
+4096 16x16x16 0.004933
+
+
+#Index 2: 512x512x512
+512  8x8x8    0.185835
+1024 8x8x16   0.104762 
+2048 16x8x16  0.063146  
+4096 16x16x16 0.034148
+
+
+#Index 3: 1024x1024x1024
+512   8x8x8     1.96737
+1024  8x8x16    1.041248 
+2048  16x8x16   0.636790 
+4096  16x16x16  0.3043
+
+
+#Index 4: 2048x2048x2048
+2048 16x8x16   5.560264 
+4096 16x16x16  2.97442
+

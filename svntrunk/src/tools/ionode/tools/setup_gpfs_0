@@ -1,0 +1,229 @@
+#!/bin/bash -x
+# Set up gpfs on 'asanhosttmp' for access to I/O node file system
+
+# If GPFS is completely broken on asanhosttmp, you should 'rm -fr /var/mmfs' and then run this
+#  function to reconfigure it.
+cold_configure_linux() {
+  set -x
+  sudo /usr/lpp/mmfs/bin/mmcrcluster -N "172.30.1.54:manager-quorum" -p 172.30.1.54 -C asanhosttmp.watson.ibm.com -r /usr/bin/rsh -R /usr/bin/rcp
+  sudo /usr/lpp/mmfs/bin/mmshutdown -a
+  sudo /usr/lpp/mmfs/bin/mmchconfig openssllibname=/usr/local/lib/libssl.so.0.9.7
+  sudo /usr/lpp/mmfs/bin/mmchconfig mmsdrservPort=1192
+  sudo /usr/lpp/mmfs/bin/mmauth genkey new
+  sudo /usr/lpp/mmfs/bin/mmauth update . -l AUTHONLY
+  sudo cp /var/mmfs/ssl/id_rsa.pub /tmp 
+  cp /tmp/id_rsa.pub ${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.asanhosttmp.pub
+  mkdir /ActiveSAN000
+  sudo /usr/lpp/mmfs/bin/mmstartup -a
+}
+
+cold_configure_aix() {
+  set -x
+  /usr/lpp/mmfs/bin/mmcrcluster -N "172.24.1.52:manager-quorum" -p 172.24.1.52 -C asanhosttmp.watson.ibm.com -r /usr/bin/ssh -R /usr/bin/scp
+  /usr/lpp/mmfs/bin/mmshutdown -a
+  /usr/lpp/mmfs/bin/mmchconfig pagepool=2048M
+  /usr/lpp/mmfs/bin/mmauth genkey new
+  /usr/lpp/mmfs/bin/mmauth update . -l AUTHONLY
+  dd if=/var/mmfs/ssl/id_rsa.pub|su tjcw -c "dd of=${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.asanhosttmp.pub"
+  mkdir /ActiveSAN000
+  /usr/lpp/mmfs/bin/mmstartup -a
+}
+
+# This function plugs in the GPFS file system from one block
+add_remote_linux() {
+  set -x
+# Find the IP addresses of nodes in the block
+  if [ -r "${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0" ]
+  then
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/new-keypoints/$1"
+  else
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/keypoints/$1"
+  fi
+  IP_LIST=""
+  for IP_FILE in ${KEYPOINT_DIR}/ip_address.*
+  do
+    IP_LIST="${IP_LIST},`cat ${IP_FILE}`"
+  done
+  IP_LIST="${IP_LIST#,}"
+  sudo /usr/lpp/mmfs/bin/mmremotecluster add ASAN-$1.watson.ibm.com -n ${IP_LIST} -k ${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.$1.pub
+  sudo /usr/lpp/mmfs/bin/mmremotefs add /dev/ActiveSAN000-$1 -f /dev/ActiveSAN000 -C ASAN-$1.watson.ibm.com -T /ActiveSAN000/$1
+}
+
+add_remote_aix() {
+  set -x
+# Find the IP addresses of nodes in the block
+  if [ -r "${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0" ]
+  then
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/new-keypoints/$1"
+  else
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/keypoints/$1"
+  fi
+  IP_LIST=""
+  for IP_FILE in ${KEYPOINT_DIR}/ip_address.*
+  do
+    IP_LIST="${IP_LIST},`cat ${IP_FILE}`"
+  done
+  IP_LIST="${IP_LIST#,}"
+  /usr/lpp/mmfs/bin/mmremotecluster add ASAN-$1.watson.ibm.com -n ${IP_LIST} -k ${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.$1.pub
+  /usr/lpp/mmfs/bin/mmremotefs add /dev/ActiveSAN000-$1 -f /dev/ActiveSAN000 -C ASAN-$1.watson.ibm.com -T /ActiveSAN000/$1
+}
+
+add_remote_all() {
+  set -x
+  for block
+  do
+    add_remote ${block}
+  done
+}
+
+# This function tells a block up pick up asanhosttmp's key file. Normally a block would pick this up on its own at IPL;
+#  this is just in case you re-set-up asanhosttmp and don't want to re-IPL the blocks
+auth_remote() {
+  if [ -r "${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0" ]
+  then
+    ip_remote=`cat ${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0`
+  else
+    ip_remote=`cat ${ASAN_CONTROL_ROOT}/keypoints/$1/ip_address.0`
+  fi
+  rsh ${ip_remote} -l root "/usr/lpp/mmfs/bin/mmauth update asanhosttmp.watson.ibm.com -k /bgdhome/${USER}/ionode/var/mmfs/ssl/id_rsa.asanhosttmp.pub"
+}
+
+auth_remote_all() {
+  set -x
+  for block
+  do
+    auth_remote ${block}
+  done
+}
+
+# This function updates the authentication info ('key file') after a cold start of a block
+upd_remote_aix() {
+  set -x
+  /usr/lpp/mmfs/bin/mmremotecluster update ASAN-$1.watson.ibm.com -k ${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.$1.pub  
+}
+
+upd_remote_linux() {
+  set -x
+  /usr/lpp/mmfs/bin/mmremotecluster update ASAN-$1.watson.ibm.com -k ${ASAN_CONTROL_ROOT}/var/mmfs/ssl/id_rsa.$1.pub  
+}
+
+upd_remote_all() {
+  set -x
+  for block
+  do
+    upd_remote ${block}
+  done
+}
+
+# Mount a file system from a block
+mount_remote() {
+  set -x
+ sudo /usr/lpp/mmfs/bin/mmmount /ActiveSAN000/$1
+}
+
+mount_remote_all() {
+  set -x
+  for block
+  do
+    mount_remote ${block}
+  done
+}
+
+# Unmount a file system from a block
+umount_remote() {
+  set -x
+ sudo /usr/lpp/mmfs/bin/mmumount /ActiveSAN000/$1
+ rc=$?
+# If the block is down, or has been restarted, the 'unmount' will fail. Retry it with a 'force'. 
+ if [ ${rc} -ne 0 ]
+ then
+   sudo /usr/lpp/mmfs/bin/mmumount /ActiveSAN000/$1 -f
+ fi
+}
+
+umount_remote_all() {
+  set -x
+  for block
+  do
+    umount_remote ${block}
+  done
+}
+
+lxtrace_on() {
+  set -x
+# Find the IP addresses of nodes in the block
+  if [ -r "${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0" ]
+  then
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/new-keypoints/$1"
+  else
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/keypoints/$1"
+  fi
+  for file in ${KEYPOINT_DIR}/ip_address.*
+  do
+    ip_address=`cat ${file}`
+    rsh ${ip_address} -l root /usr/lpp/mmfs/bin/lxtrace on ${ASAN_CONTROL_ROOT}/new-keypoints/$1/lxtrace.${ip_address}.trc 16777216 1048576 </dev/null &
+  done
+  echo "Trace is on now; go do your work in another session, then \'setup_gpfs -lxtrace_off $1\' to finish it"
+  wait
+}
+
+lxtrace_off() {
+  set -x
+# Find the IP addresses of nodes in the block
+  if [ -r "${ASAN_CONTROL_ROOT}/new-keypoints/$1/ip_address.0" ]
+  then
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/new-keypoints/$1"
+  else
+    KEYPOINT_DIR="${ASAN_CONTROL_ROOT}/keypoints/$1"
+  fi
+  for file in ${KEYPOINT_DIR}/ip_address.*
+  do
+    ip_address=`cat ${file}`
+    rsh ${ip_address} -l root /usr/lpp/mmfs/bin/lxtrace off </dev/null
+  done
+}
+
+show_help() {
+  echo "setup_gpfs -cold_configure_aix            Set up GPFS on this machine from scratch"
+  echo "setup_gpfs -cold_configure_linux          Set up GPFS on this machine from scratch"
+  echo "setup_gpfs -add_remote_aix R000-N0_32_4   Add in the file system which exists on the block"
+  echo "setup_gpfs -add_remote_linux R000-N0_32_4 Add in the file system which exists on the block"
+  echo "setup_gpfs -add_remote_all R000-N0_32_4 R000-N4_32_4 R000-N8_32_4"
+  echo "setup_gpfs -auth_remote R000-N0_32_4      Tell the block about this machine (after a cold_configure)"
+  echo "setup_gpfs -auth_remote_all R000-N0_32_4 R000-N4_32_4 R000-N8_32_4"
+  echo "setup_gpfs -upd_remote R000-N0_32_4       Tell this machine about the block (after a block cold IPL)"
+  echo "setup_gpfs -upd_remote_all R000-N0_32_4 R000-N4_32_4 R000-N8_32_4"
+  echo "setup_gpfs -mount_remote R000-N0_32_4     Mount the block's file system"
+  echo "setup_gpfs -mount_remote_all R000-N0_32_4 R000-N4_32_4 R000-N8_32_4"
+  echo "setup_gpfs -umount_remote R000-N0_32_4    Unmount the block's file system"
+  echo "setup_gpfs -umount_remote_all R000-N0_32_4 R000-N4_32_4 R000-N8_32_4"
+  echo "setup_gpfs -lxtrace_on R000-N0_32_4       Turn tracing on"
+  echo "setup_gpfs -lxtrace_off R000-N0_32_4      Turn tracing off"
+  echo " setup_gpfs uses 'sudo' internally to run the mmfs commands. "
+  echo " If GPFS is badly broken on this machine, you will need to 'mmshutdown -a' and 'rm -fr /var/mmfs' before the cold_configure"
+}
+
+set -x
+ASAN_CONTROL_ROOT="/bgdhome/${USER}/ionode"
+command="$1"
+shift
+case "${command}" in
+-cold_configure_linux) cold_configure_linux ;;
+-cold_configure_aix) cold_configure_aix ;;
+-add_remote_linux) add_remote_linux $1 ;;
+-add_remote_aix) add_remote_aix $1 ;;
+-add_remote_all) add_remote_all "$@" ;;
+-auth_remote) auth_remote $1 ;;
+-auth_remote_all) auth_remote_all "$@" ;;
+-upd_remote) upd_remote $1 ;;
+-upd_remote_all) upd_remote_all "$@" ;;
+-mount_remote) mount_remote $1 ;;
+-mount_remote_all) mount_remote_all "$@" ;;
+-umount_remote) umount_remote $1 ;;
+-unmount_remote) umount_remote $1 ;;
+-umount_remote_all) umount_remote_all "$@" ;;
+-unmount_remote_all) umount_remote_all "$@" ;;
+-lxtrace_on) lxtrace_on $1 ;;
+-lxtrace_off) lxtrace_off $1 ;;
+*) show_help ;;
+esac

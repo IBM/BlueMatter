@@ -1,0 +1,1 @@
+mpCC_r -g  -DPKFXLOG BladeMpi.cpp fxlogger.cpp fft3d.cpp -offt3d.exe -lpthreads ../../../BlueMatter/p3me/lib/libfftw.a

@@ -1,0 +1,122 @@
+# NAME:        Makefile
+#
+# AUTHOR:      <<Author>>
+#
+# VERSION:     1.1
+#
+# DATE:        97/01/20
+#
+# COPYRIGHT:   %copyright%
+#
+# SYNOPSIS:
+# N/A
+#
+# DESCRIPTION:
+# Makefile for the tracer application
+#
+# CAVEATS/WARNINGS:
+# <<None.>>
+#
+# RETURNED VALUES:
+# N/A
+#
+# GENERATED MESSAGES:
+# N/A
+#
+# PRODUCT TRACE:
+# N/A
+#
+# SIDE EFFECTS:
+# N/A
+#
+# PERFORMANCE:
+# N/A
+#
+# SPECIAL CONSIDERATIONS:
+# N/A
+#
+# RELATED INFORMATION:
+# N/A
+#
+# BUILD OPTIONS:
+# N/A
+#
+# DESIGN:
+# N/A
+#
+# Arrange to integrate with GFE build environment
+
+CMSCMPDIRVALUE=foxfm/dtrace/src
+
+include $(BASE)/makedef.aix
+
+GFEPUBLBINS=$(CMSPRDBLDBINDIR)/tracer
+
+all: $(GFEPUBLBINS)
+
+hdrs:
+
+objs:
+
+libs:
+
+bins: $(GFEPUBLBINS)
+
+APP_NAME  = tracer
+# -qcpluscmt
+CC       = xlC_r
+CFLAGS    = -c -+ -O3 -DTRACE_DEST_PK -qidirfirst -qtempinc=$(CMSCMPBLDDIR)/tempinc
+#-qhd
+#-qinfo=all:novft:nogen
+CPPLFLAGS = -qhsflt  -+ -O3 -DTRACE_DEST_PK -qidirfirst -qtempinc=$(CMSCMPBLDDIR)/tempinc
+INCLUDE   = -I../inc -I/usr/lpp/xlC/include -I../../foxpk
+MOTLIBS   = -lXm -lXt -lX11 -libmcl -lm -lpthreads
+#-lhd
+#LINK_FLAGS = -bnoquiet
+
+COBJECTS= $(CMSCMPBLDDIR)/tracer_main.o \
+	  $(CMSCMPBLDDIR)/tracer_lib.o \
+	  $(CMSCMPBLDDIR)/Tcre_set_dialog_class.o \
+	  $(CMSCMPBLDDIR)/Tfile_class.o \
+	  $(CMSCMPBLDDIR)/Tgroup_class.o \
+	  $(CMSCMPBLDDIR)/Titem_class.o \
+	  $(CMSCMPBLDDIR)/Ttime_mark_class.o \
+	  $(CMSCMPBLDDIR)/Tapplication_class.o \
+	  $(CMSCMPBLDDIR)/Twindow_class.o \
+	  $(CMSCMPBLDDIR)/Tset_scale_dialog.o \
+	  $(CMSCMPBLDDIR)/Tproperties_dialog.o \
+	  $(CMSCMPBLDDIR)/Tgroup_properties_dialog.o \
+	  $(CMSCMPBLDDIR)/Tgroup_save_dialog.o \
+	  $(CMSCMPBLDDIR)/Tgroup_file_class.o \
+	  $(CMSCMPBLDDIR)/Tload_set_dialog.o \
+	  $(CMSCMPBLDDIR)/Ttimer_class.o \
+	  $(CMSCMPBLDDIR)/Tmessage_dialog.o \
+	  $(CMSCMPBLDDIR)/Texport_data_dialog.o \
+	  $(CMSCMPBLDDIR)/Tgnuplot_dialog.o \
+	  $(CMSCMPBLDDIR)/Texported_file_dialog.o
+
+C1OBJECTS= $(CMSCMPBLDDIR)/pktrace_pk.o
+
+OBJS= $(COBJECTS) $(C1OBJECTS)
+
+$(C1OBJECTS): ../../foxpk/pktrace_pk.cpp
+	$(CPP) $(CFLAGS) $(INCLUDE) -o $@ $?
+
+$(COBJECTS): $(*F).C
+	$(CPP) $(CFLAGS) $(INCLUDE) -o $@ $?
+
+$(CMSPRDBLDBINDIR)/tracer :  $(OBJS)
+	$(LINKPP) $(CPPLFLAGS) $(INCLUDE) -o $@ $(LINK_FLAGS) $(OBJS) $(MOTLIBS)
+
+clean:
+	rm $(COBJECTS)
+	rm $(CMSPRDBLDDIR)/tracer
+	rm -r tempinc
+	rm *.hd
+	rm core
+
+clean_objs:
+	rm $(COBJECTS)
+	rm -r tempinc
+	rm *.hd
+	rm core

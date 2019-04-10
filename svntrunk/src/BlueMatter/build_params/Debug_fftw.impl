@@ -1,0 +1,12 @@
+# Main Opts
+-DARCH_HAS_FSEL 
+-DPK_XLC 
+-DPK_AIX 
+-DNSQ_SINGLE_COMPUTE 
+-DBLAKE
+-DPK_SMP
+
+# Debug Opts
+-DPKFXLOG 
+FFT fftw
+

@@ -1,0 +1,27 @@
+
+.if !empty(CONTEXT:Mbgl_cnk_*)
+
+OFILES = rptreetest$(OBJ_SUFF)
+OBJECTS = rptreetest$(OBJ_SUFF)
+PROGRAMS = rptreetest$(PROG_SUFF)
+
+OFILES = $(OBJECTS) \
+          fxlogger$(OBJ_SUFF) \
+          platform$(OBJ_SUFF) \
+          pktrace$(OBJ_SUFF) \
+
+
+VPATH = ../../../pk/fxlogger/src:../../../pk/platform/src:../../../pk/trace/src:../../../pk/a2a/src
+
+
+# LIBS += $(LIB_PREF)pkspi$(LIB_SUFF) $(LIB_PREF)BonB$(LIB_SUFF)
+
+
+EXTRA_LIBS += -ldevices.rts -lrts.rts -ldevices.rts -lrts.rts
+
+.endif
+
+INCLUDES = rptreetest.cpp 
+EXPINCDIR = /usr/rptree/test/
+
+.include <$(RULES_MK)>

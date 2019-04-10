@@ -1,0 +1,17 @@
+INCLUDES = \
+	platform.hpp \
+	dh_intr.h \
+	coprocessor_on_coprocessor.hpp \
+	packetlayer_alltoallv.hpp \
+
+EXPINCDIR = /usr/include/pk/
+
+IDIR = $(BG_INCLUDE)/pk/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/platform/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,18 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  makefile.aix \
+  memfence.hpp \
+  setpri.hpp \
+  time.hpp \
+  timer.hpp \
+  yieldlock.hpp \
+  Makefile.ode
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+memfence.hpp_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+setpri.hpp_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+time.hpp_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+timer.hpp_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+yieldlock.hpp_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/util_aix/include/source_ship/
+.include <$(RULES_MK)>

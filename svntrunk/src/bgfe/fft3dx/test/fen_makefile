@@ -1,0 +1,142 @@
+# ------------------------------------------------------------- #
+# Product(s):                                                   #
+# 5733-BG1                                                      #
+#                                                               #
+# (C)Copyright IBM Corp. 2004, 2004                             #
+# All rights reserved.                                          #
+# US Government Users Restricted Rights -                       #
+# Use, duplication or disclosure restricted                     #
+# by GSA ADP Schedule Contract with IBM Corp.                   #
+#                                                               #
+# Licensed Materials-Property of IBM                            #
+# ------------------------------------------------------------- #
+
+BL_FLOOR = /bgl/BlueLight/ppcfloor
+BL_INSTALL = /bgl/BlueLight/ppcfloor
+
+BGL_HOME_DIR = /bgwhome1/bgf/bonb
+
+#BGLDEVICES=/bgl/giampap/bglsw_20050317/src/bglsw/devices
+BGLDEVICES=/bgl/BlueLight/ppcfloor/bglsys/include
+
+#
+# The following variables, if non-blank, must end in a '/'.
+#
+BLADE_SRCDIR=./
+BLADE_OBJDIR=./
+BLADE_SPIDIR=../../hoodcomms/libblade/spi/
+
+COPY    = /bin/cp -p
+RM      = /bin/rm -f
+#CC      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-gcc
+CC      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-g++
+XLCPP   = /opt/ibmcmp/vacpp/bg/8.0/bin/blrts_xlC -qnolm
+AR      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ar
+RANLIB  = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ranlib
+OBJDUMP = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-objdump -D -f -h -l
+
+#CFLAGS = -Wall -g -I. -I../../../../include/spi/ -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES) -I../../../include/ 
+CFLAGS = -O -DUSE_UNIX_MALLOC -I.  -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES) -I../../../include/  \
+-DNDEBUG \
+-DPKT_STAND_ALONE \
+-DPKFXLOG -DxFXLOG_VERBOSE -DxTOY_APP \
+-DPK_PARALLEL \
+-DPK_BGL \
+-DPK_BLADE_SPI \
+
+# Compiler messages being suppressed are
+# 1540-1088 Exception specification being ignored
+# 1540-1087 Catch block has no effect
+# 1540-1090 Destructor might not be called
+
+XLCFLAGS = -qsource -qshowinc -qnoeh -qarch=440d -qdebug=inl:inl99 -qdebug=inlstats -DUSE_UNIX_MALLOC -I. -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES) -I../../../include/ \
+-qsuppress=1540-1088:1540-1087:1540-1090 \
+-DNDEBUG \
+-O3 \
+-DPKT_STAND_ALONE \
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG -DxFXLOG_VERBOSE -DxTOY_APP \
+-DPK_PARALLEL \
+-DPK_BGL \
+-DPK_XLC \
+-DPK_BLADE_SPI \
+
+#CFLAGS = -Wall -O3 -DNDEBUG -I../include -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES)
+AFLAGS = -D__ASSEMBLY__
+
+LIBS_RTS = /bgl/local/bglfftwgel-2.1.5/lib/libfftw.a \
+           -L$(BL_INSTALL)/bglsys/lib -L$(BLADE_SPIDIR) -lblade_spi.rts -ldevices.rts -lrts.rts -ldevices.rts -lrts.rts
+
+
+.SUFFIXES: .S .c .cpp .o .a
+
+.S.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $(AFLAGS) $< -o $*.o
+
+.c.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $< -o $*.o
+
+.cpp.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $< -o $*.o
+
+
+
+#
+# Default Target for this Makefile is to build the SPI Library.
+#
+#all:	treehood.rts ThrobbinHood.rts
+
+all:	fftmain_pk.rts 
+
+
+
+fftmain_pk.o:	fftmain_pk.cpp
+		$(XLCPP) $(XLCFLAGS) -c -qsource -qshowinc -qlist fftmain_pk.cpp
+
+fxlogger.o: ../../pk/fxlogger.cpp
+		$(XLCPP) $(XLCFLAGS) -c ../../pk/fxlogger.cpp
+
+platform.o: ../../pk/platform.cpp
+		$(XLCPP) $(XLCFLAGS) -c ../../pk/platform.cpp
+
+pktrace.o: ../../pk/pktrace.cpp
+		$(XLCPP) $(XLCFLAGS) -c ../../pk/pktrace.cpp
+
+coprocessor_on_coprocessor.o: ../../pk/coprocessor_on_coprocessor.cpp
+		$(XLCPP) $(XLCFLAGS) -c ../../pk/coprocessor_on_coprocessor.cpp
+		
+packet_alltoallv.o: ../../hoodcomms/libblade/packet_alltoallv.cpp
+		  $(CC) $(CFLAGS)  -c ../../hoodcomms/libblade/packet_alltoallv.cpp
+
+fftmain_pk.rts:	fftmain_pk.o  fxlogger.o platform.o pktrace.o coprocessor_on_coprocessor.o packet_alltoallv.o
+		$(XLCPP) -pg -o fftmain_pk.rts fftmain_pk.o fxlogger.o platform.o pktrace.o coprocessor_on_coprocessor.o packet_alltoallv.o $(LIBS_RTS) 
+		$(OBJDUMP) fftmain_pk.rts > fftmain_pk.objdump
+
+
+clean::
+	@echo "Cleaning `basename $$PWD`"
+	@-$(RM) *.rts *.o *.listing
+
+
+distclean:	clean
+	@echo "Dist-cleaning `basename $$PWD`"
+	@-$(RM) ./Make.depend
+
+
+depend::
+	@echo "Making dependencies for `basename $$PWD`"
+	@-$(RM) ./Make.depend
+	@$(CC) -M $(CFLAGS) fftmain_pk.cpp > ./Make.depend
+
+
+fresh::	distclean all
+
+install::
+	@echo "Copying files to $(BGL_HOME_DIR)"
+	@$(COPY) fftmain_pk.rts $(BGL_HOME_DIR)
+
+
+-include ./Make.depend

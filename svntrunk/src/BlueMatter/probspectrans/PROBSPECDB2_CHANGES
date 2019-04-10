@@ -1,0 +1,59 @@
+Listed below are the intentional algorithmic changes from
+probspecdb2 to probspectrans
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
+**RIGID_GROUP_FRAGMENTATION
+----------
+In create/dump-IrreduciblePartitionTable, for rigid_group_fragmentation mode:
+The old algorithm ensures:
+1) All fragments have at most 1 rigid_site
+2) All Ions get their own fragment
+3) All waters get their own fragment
+4) Crumbs may or may not be added to fragments with rigid_sites
+
+To do (4) in the old algorithm, the crumbs are (sometimes) added to 
+existing rigid_sites by sorting the rigid_sites by the min(all 2-4 site IDs), 
+and adding the crumb's site ID to the fragment nearest this min().
+
+In the new algorithm (4) has been changed. Crumbs are only added
+to fragments with rigid_sites, but this is done differently.  Also, crumbs
+will _always_ be added to rigid_site fragments, whereas, in the old
+algorithm, under special cases there could be fragments with only 1
+crumb inside. In pseudocode, the new method is:
+
+Foreach crumb in crumblist:
+  1) <F> = Set of all fragments that crumb is bonded to
+  2) <C> = Set of all other crumbs in crumblist crumb is bonded to
+           (these are crumbs that havent been reach yet by the 'Foreach') 
+  3) Determine how big the radius of the fragment would be if a crumb
+     was added to <F>_i or <C>_i according to the function
+     guess_radius_of_sites()
+  4) If combining with <F>_i is best overall (for both <F> and <C>), 
+     add crumb to <F>_i
+  5) If combining with <C>_i is best overall, check to see if this is 
+     symmetrical, if <C>_i would be best to combine with this crumb
+
+     5a) If combining choice is symmetrical, create new fragment for
+         this crumb
+     5b) If combining choice is NOT symmetrical, combine crumb with 
+         best <F>_i from (4) --- asymmetry should be uncommon 
+
+Finally, the fragment IDs are chosen according to the ordered sites 
+appearing in the exclusion list.  As the exclusion list is read
+in order, each new fragment encountered is assigned an increasing 
+number for its fragment ID.  This tries to minimize the difference
+between fragment ID values for fragments with atoms that are paired
+in the exclusion list.
+
+
+
+
+
+
+
+
+
+
+

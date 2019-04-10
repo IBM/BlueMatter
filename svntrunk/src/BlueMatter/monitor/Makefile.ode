@@ -1,0 +1,10 @@
+SUBDIRS = \
+ include \
+
+EXPINC_SUBDIRS = $(SUBDIRS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/monitor/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

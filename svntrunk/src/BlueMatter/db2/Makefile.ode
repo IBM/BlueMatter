@@ -1,0 +1,18 @@
+BG_AUXILIARY = 1
+
+EXPINC_SUBDIRS = \
+ include \
+
+EXPLIB_SUBDIRS = \
+ src \
+
+OBJECTS_SUBDIRS = \
+ src \
+
+
+SUBDIRS = \
+     $(EXPINC_SUBDIRS) \
+     $(OBJECTS_SUBDIRS) \
+
+
+.include <$(RULES_MK)>

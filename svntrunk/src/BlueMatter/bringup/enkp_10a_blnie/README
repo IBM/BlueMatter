@@ -1,0 +1,89 @@
+
+Much of the overall directions are in: ../src/BlueMatter/docs/running_on_blnie.txt
+
+These file contain the "production" impl and platform numbers currently in use:
+
+../../build_params/MPIOpt.ref
+../../build_params/Opt.ref
+
+To build an rs6k version to produce regression data:
+
+probspecdb2 50762 33279 121 1  enkp_10a.verlet.opt
+
+
+ex:
+=======================================================
+[quadapus:.../enkp_10a_blnie] probspecdb2 50762 33279 121 1  enkp_10a.verlet.opt
+Generating a cpp for:
+System: ENKP_10A.TIP3.CHARMM created by: pitman on: 2003-04-29 16:56:52.584
+RTP: enkp_10a.simple created by: blake on: 2003-06-09 13:17:14.832
+IMPL: Opt created by: arayshu on: 2003-06-04 11:16:48.269
+PLATFORM: Opt created by: arayshu on: 2003-04-01 19:32:00.317
+Source Id: 33124
+numberOfSitesInSystem: 96
+[quadapus:.../enkp_10a_blnie] compileMSD enkp_10a.verlet.opt
+.......
+       ........
+=======================================================
+
+
+Sequence to create blnie impl and platform db2 reps and then to
+use probspec to gen a cpp
+
+=======================================================
+
+> rtp2db2  enkp_10a.simple.rtp
+
+> impl2db2 Blnie.impl
+IMPL_ID: 131
+> plt2db2 Blnie.plt
+PLATFORM_ID: 45
+> probspecdb2 50762 33279 131 45 enkp_10a.verlet.blnie
+SystemId: 50762
+CtpId: 33279
+Generating a cpp for:
+System: ENKP_10A.TIP3.CHARMM created by: pitman on: 2003-04-29 16:56:52.584
+RTP: enkp_10a.simple created by: blake on: 2003-06-09 13:17:14.832
+IMPL: Blnie created by: blake on: 2003-06-09 13:19:01.985
+PLATFORM: Blnie created by: blake on: 2003-06-09 13:19:27.887
+Source Id: 33124
+numberOfSitesInSystem: 96
+============================================================
+
+compile...
+
+> compileMSD enkp_10a.verlet.blnie.cpp
+
+creates an enkp_10a.verlet.blnie.a
+
+copy .a to sysbringup tree somewhere - MUST BE ON AN AIX4 MACHINE
+In my case:
+
+> cp enkp_10a.verlet.blnie.a /u/blake/sysbringup/apps/BlueMatter/blake/
+
+Copy a make file from a nearby directory:
+In my case:
+
+> cp ../enkp_10a/Makefile ./
+
+// Make.config - must come from sample in BlueMatter/docs AND THAT MUST BE EDITED
+[bln1en0:/u/blake/blade/include] mv Make.config Make.config.old
+[bln1en0:/u/blake/blade/include] cp Make.config.blnie.with.stock.gcc.and.xlC Make.config
+
+
+PROBLEM: tree code is not built.
+MUST SET ../blade/include/Make.config to point to gcc for this build (THEN BACK TO xlC for link!!!)
+> cd /u/blake/sysbringup/tree/tests/tr_broadcast/
+> make treebroadcast.o
+> cp treebroadcast.o ../AIX*/
+> cd /u/blake/sysbringup/tree/tests/tr_fpreduce/
+> rm *.o
+> make treereduce.o
+> cp treereduce.o ../AIX*/
+
+
+//SETTING  ../blade/include/Make.config to use xlC_r
+
+
+
+

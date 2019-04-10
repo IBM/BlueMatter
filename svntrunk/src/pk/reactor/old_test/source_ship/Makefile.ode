@@ -1,0 +1,16 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  bta \
+  build \
+  build_mpi \
+  iv00.cpp \
+  ta.cpp \
+  Makefile.ode
+bta_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/
+build_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/
+build_mpi_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/
+iv00.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/
+ta.cpp_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/reactor/test/source_ship/
+.include <$(RULES_MK)>

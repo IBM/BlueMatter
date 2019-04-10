@@ -1,0 +1,9 @@
+INCLUDES = apc.c apc_scan.c upc.c Makefile
+
+EXPINCDIR = /usr/src/apc/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_SRC)
+
+.include <$(RULES_MK)>

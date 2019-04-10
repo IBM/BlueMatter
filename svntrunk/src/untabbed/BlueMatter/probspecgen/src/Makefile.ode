@@ -1,0 +1,24 @@
+BG_AUXILIARY = 1
+
+PROGRAMS = probspecgen$(PROG_SUFF)
+
+OFILES =                                  \
+  probspecgen$(OBJ_SUFF)            \
+
+LIBS = $(LIB_PREF)xmlff$(LIB_SUFF) $(LIB_PREF)xml4c$(LIB_SUFF)
+
+
+#LDFLAGS += -lpthreads
+
+
+OBJECTS = $(OFILES)
+
+IDIR                = $(BG_BIN)/
+
+ILIST   =       $(PROGRAMS) \
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspecgen/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

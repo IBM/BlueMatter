@@ -1,0 +1,25 @@
+#BG_AUXILIARY = DB2
+
+OBJECTS += \
+        SortGen$(OBJ_SUFF) \
+
+OFILES += \
+        SortGen$(OBJ_SUFF) \
+
+LIBRARIES = $(LIB_PREF)inmemdb_sort$(LIB_SUFF)
+
+#LIBS += \
+#	$(LIB_PREF)inmemdb$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+IDIR = $(BG_LIB)/
+ILIST = $(LIBRARIES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./inmemdb/sort/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

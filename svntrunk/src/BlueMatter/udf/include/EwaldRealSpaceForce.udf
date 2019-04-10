@@ -1,0 +1,79 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void EwaldRealSpaceForce(
+        MDVM &aMDVM,
+        double ChargeAxB,
+        double alpha
+        )
+{
+  PLATFORM_ABORT("EwaldRealSpaceForce udf is deprecated.  Use correct replacement.");
+  // NOTE: This method assumes that distance based cutoffs are handled outside.
+
+  XYZ dVecAB = aMDVM.GetVector( MDVM::SiteA, MDVM::SiteB ) ;
+  double dVecABMag2 = dVecAB.LengthSquared() ;
+  double dVecABMagR = 1.0 / sqrt(dVecABMag2);
+  double dVecABMag = dVecABMag2 * dVecABMagR;
+
+//  double erfc = Math::erfc( alpha * dVecABMag );
+//  double derfc = Math::derfc( alpha * dVecABMag );
+  double erfc;
+  double derfc;
+  Math::erfccd( alpha * dVecABMag, erfc, derfc );
+  double qaqb_r = ChargeAxB * dVecABMagR;
+
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  UDF_Binding::SwitchStd5_Params sp;
+///////////////  UDF_Binding::SwitchStd5_OutputParams op;
+///////////////  sp.r = dVecABMag;
+///////////////  UDF_Binding::Function_Param<UDF_Binding::SwitchStd5_Params, UDF_Binding::SwitchStd5_OutputParams> pin;
+///////////////  pin.A = &sp;
+///////////////  pin.B = &op;
+/////////////////  UDF_Binding::UDF_Execute(UDF_Binding::SwitchStd5_Code, aMDVM, (void *)(&pin));
+///////////////  UDF_Binding::UDF_SwitchStd5_Execute(aMDVM, sp, op);
+///////////////  double S = op.S ;
+///////////////  double dSdR = op.dSdR ;
+///////////////#else
+  double S ;
+  double pdSdR ;
+  SwitchFunctionRadii sfr;
+  aMDVM.GetSwitchFunctionRadii(sfr);
+  SwitchFunction sf(sfr) ;  
+//////////  SwitchFunction sf(RTG.mSwitchFunctionRadii) ;
+  sf.Evaluate(dVecABMag,S,pdSdR) ;
+///////////////#endif
+
+  double energy = qaqb_r * erfc;
+  aMDVM.ReportEnergy( energy * S );
+
+  XYZ unitVecAB = dVecAB * dVecABMagR;
+  double dEdR   = qaqb_r * ( erfc*dVecABMagR - derfc * alpha);
+
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  XYZ fab = ( S * dEdR + dSdR * energy ) * unitVecAB;
+///////////////#else
+  XYZ fab = ( S * dEdR - pdSdR * energy ) * unitVecAB;
+///////////////#endif
+
+  aMDVM.ReportForce( MDVM::SiteA ,   fab ) ;
+  aMDVM.ReportForce( MDVM::SiteB , - fab ) ;
+}
+
+
+

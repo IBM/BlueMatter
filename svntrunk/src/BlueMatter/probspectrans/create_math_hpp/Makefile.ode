@@ -1,0 +1,32 @@
+#
+# ODE makefile
+#
+#
+
+CCTYPE = cwo 
+_cset_cwo_CC_ = $(EXPORTBASE)/usr/include/BlueMatter/probspectrans/stringify_math_hpp.pl \
+                $(EXPORTBASE)/usr/include/BlueMatter/math.hpp \
+                $(EXPORTBASE)/usr/include/pk/pkmath.h \
+                $(EXPORTBASE)/usr/include/BlueMatter/probspectrans/math_hpp.hpp 
+
+_gnu_cwo_CC_ = $(EXPORTBASE)/usr/include/BlueMatter/probspectrans/stringify_math_hpp.pl \
+                $(EXPORTBASE)/usr/include/BlueMatter/math.hpp \
+                $(EXPORTBASE)/usr/include/pk/pkmath.h \
+                $(EXPORTBASE)/usr/include/BlueMatter/probspectrans/math_hpp.hpp 
+
+CFLAGS = 
+LDFLAGS = 
+OPT_LEVEL_0 = 
+OPT_LEVEL_1 = 
+OPT_LEVEL_2 = 
+OPT_LEVEL_3 = 
+BG_AUX_FLAGS_DB2 =
+
+# the object files
+OBJECTS += \
+  create_math_hpp_dummy${OBJ_SUFF}
+
+.include <$(RULES_MK)>
+
+
+

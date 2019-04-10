@@ -1,0 +1,145 @@
+
+# ------------------------------------------------------------- #
+# Product(s):                                                   #
+# 5733-BG1                                                      #
+#                                                               #
+# (C)Copyright IBM Corp. 2004, 2004                             #
+# All rights reserved.                                          #
+# US Government Users Restricted Rights -                       #
+# Use, duplication or disclosure restricted                     #
+# by GSA ADP Schedule Contract with IBM Corp.                   #
+#                                                               #
+# Licensed Materials-Property of IBM                            #
+# ------------------------------------------------------------- #
+
+BL_FLOOR = /bgl/BlueLight/ppcfloor
+BL_INSTALL = /bgl/BlueLight/ppcfloor
+
+#BGLDEVICES=/bgl/giampap/bglsw_20050317/src/bglsw/devices
+BGLDEVICES=/bgl/BlueLight/ppcfloor/bglsys/include
+
+#
+# The following variables, if non-blank, must end in a '/'.
+#
+BLADE_SRCDIR=./
+BLADE_OBJDIR=./
+BLADE_SPIDIR=./
+
+RM = /bin/rm -f
+#CC = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-gcc
+CC = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-g++
+AR = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ar
+RANLIB = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ranlib
+
+CFLAGS = -Wall -O2 -c -I../../../include/pk -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES)
+AFLAGS = -D__ASSEMBLY__
+
+LIBS_RTS = -L$(BL_INSTALL)/bglsys/lib -ldevices.rts -lrts.rts -ldevices.rts -lrts.rts
+
+
+SPI_LIB=$(BLADE_SPIDIR)libblade_spi.rts.a
+
+SPI_SSRC=$(BLADE_SPIDIR)bl_lockbox.s \
+	$(BLADE_SPIDIR)bl_cache.s \
+	$(BLADE_SPIDIR)bl_torus_pkt.s
+
+
+
+SPI_CSRC=$(BLADE_SPIDIR)blade_on_blrts.c \
+	$(BLADE_SPIDIR)spi_partition.c \
+	$(BLADE_SPIDIR)spi_ts_buffers.c \
+	$(BLADE_SPIDIR)spi_ts_status.c \
+	$(BLADE_SPIDIR)spi_ts_hints.c \
+	$(BLADE_SPIDIR)spi_ts_mk_hdr.c \
+	$(BLADE_SPIDIR)spi_ts_mk_hdr_class.c \
+	$(BLADE_SPIDIR)spi_ts_updt_hdr.c \
+	$(BLADE_SPIDIR)spi_ts_recv.c \
+	$(BLADE_SPIDIR)spi_ts_send.c \
+	$(BLADE_SPIDIR)spi_ts_debug.c \
+	$(BLADE_SPIDIR)BGLTreeGetStatus.c \
+	$(BLADE_SPIDIR)BGLTreeConfigureClass.c \
+	$(BLADE_SPIDIR)BGLTreeSetPtpAddress.c \
+	$(BLADE_SPIDIR)BGLTreeMakeHdr.c \
+	$(BLADE_SPIDIR)BGLTreeRawSend.c \
+	$(BLADE_SPIDIR)BGLTreeSend.c \
+	$(BLADE_SPIDIR)BGLTreeRawReceive.c \
+	$(BLADE_SPIDIR)BGLTreeReceive.c \
+	$(BLADE_SPIDIR)BGLTreeBcast.c \
+
+#	$(BLADE_SPIDIR)BGLGi.c \
+
+
+SPI_OBJ=$(BLADE_SPIDIR)blade_on_blrts.o \
+	$(BLADE_SPIDIR)bl_lockbox.o \
+	$(BLADE_SPIDIR)bl_cache.o \
+	$(BLADE_SPIDIR)spi_partition.o \
+	$(BLADE_SPIDIR)spi_ts_buffers.o \
+	$(BLADE_SPIDIR)spi_ts_status.o \
+	$(BLADE_SPIDIR)spi_ts_hints.o \
+	$(BLADE_SPIDIR)spi_ts_mk_hdr.o \
+	$(BLADE_SPIDIR)spi_ts_mk_hdr_class.o \
+	$(BLADE_SPIDIR)spi_ts_updt_hdr.o \
+	$(BLADE_SPIDIR)spi_ts_recv.o \
+	$(BLADE_SPIDIR)spi_ts_send.o \
+	$(BLADE_SPIDIR)spi_ts_debug.o \
+	$(BLADE_SPIDIR)BGLTreeGetStatus.o \
+	$(BLADE_SPIDIR)BGLTreeConfigureClass.o \
+	$(BLADE_SPIDIR)BGLTreeSetPtpAddress.o \
+	$(BLADE_SPIDIR)BGLTreeMakeHdr.o \
+	$(BLADE_SPIDIR)BGLTreeRawSend.o \
+	$(BLADE_SPIDIR)BGLTreeSend.o \
+	$(BLADE_SPIDIR)BGLTreeRawReceive.o \
+	$(BLADE_SPIDIR)BGLTreeReceive.o \
+	$(BLADE_SPIDIR)BGLTreeBcast.o \
+	$(BLADE_SPIDIR)bl_torus_pkt.o \
+
+#	$(BLADE_SPIDIR)BGLGi.o \
+
+
+.SUFFIXES: .S .c .o .a
+
+.S.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $(AFLAGS) $< -o $*.o
+
+.c.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $< -o $*.o
+
+
+
+#
+# Default Target for this Makefile is to build the SPI Library.
+#
+all:	$(SPI_LIB)
+
+
+$(SPI_LIB): $(SPI_OBJ)
+	@echo "Building library $@"
+	@$(AR) crv $(SPI_LIB) $(SPI_OBJ)
+	@$(RANLIB) $(SPI_LIB)
+
+clean::
+	@echo "Cleaning `basename $$PWD`"
+	@-$(RM) $(SPI_OBJ)
+	@-$(RM) $(BLADE_SPIDIR)*.listing
+	@-$(RM) $(SPI_LIB)
+
+
+distclean:	clean
+	@echo "Dist-cleaning `basename $$PWD`"
+	@-$(RM) $(BLADE_SPIDIR)Make.depend
+
+
+depend::
+	@echo "Making dependencies for `basename $$PWD`"
+	@-$(RM) $(BLADE_SPIDIR)Make.depend
+	@$(CC) -M $(CFLAGS)           $(SPI_CSRC) >  $(BLADE_SPIDIR)Make.depend
+	@$(CC) -M $(CFLAGS) $(AFLAGS) $(SPI_SSRC) >> $(BLADE_SPIDIR)Make.depend
+
+
+fresh::	distclean all
+
+
+-include $(BLADE_SPIDIR)Make.depend
+

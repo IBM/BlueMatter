@@ -1,0 +1,7 @@
+EXPINC_SUBDIRS = include
+OBJECTS_SUBDIRS = src 
+EXPLIB_SUBDIRS = src
+
+SUBDIRS = include src
+
+.include <$(RULES_MK)>

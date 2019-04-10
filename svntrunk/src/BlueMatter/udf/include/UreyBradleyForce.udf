@@ -1,0 +1,74 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UreyBradleyForce(
+        MDVM &aMDVM,
+        double k,
+        double s0
+        )
+      {
+#if !defined(OMIT_BOND_VECTOR_TABLE)
+      double DistanceAC = aMDVM.GetLength() ;
+      double DistanceACR= aMDVM.GetRecipLength() ;
+      double DeltaUB  = DistanceAC - s0;
+
+      double Energy = k * Math::sqr(DeltaUB);
+
+      aMDVM.ReportEnergy( Energy );
+
+      double dEdr           = -2.0 * (k * DeltaUB) ;
+      aMDVM.ReportdEdr(dEdr) ;
+#else      
+      XYZ VectorAC = aMDVM.GetVector( MDVM::SiteA, MDVM::SiteB );
+      double DistanceAC2 = VectorAC.LengthSquared() ;
+      double DistanceACR = 1.0 / sqrt(DistanceAC2) ;
+      double DistanceAC = DistanceAC2 * DistanceACR ;
+      // These lines get the distances from the MDVM.
+      // double DistanceAC = aMDVM.GetDistance( MDVM::SiteA, MDVM::SiteC );
+
+      // These vectors will have been computed in the MDVM as a
+      // byproduct of the above distances.
+
+      double DeltaUB  = DistanceAC - s0;
+
+      double Energy = k * Math::sqr(DeltaUB);
+
+      aMDVM.ReportEnergy( Energy );
+
+//      double DEDR           = -2.0 * (k * DeltaUB) / DistanceAC;
+      double DEDR           = -2.0 * (k * DeltaUB) * DistanceACR;
+
+      // XYZ ForceOnSiteB;
+      XYZ ForceOnSiteA;
+      XYZ ForceOnSiteC;
+
+      // ForceOnSiteB.mX = 0.0;
+      // ForceOnSiteB.mY = 0.0;
+      // ForceOnSiteB.mZ = 0.0;
+      ForceOnSiteA          =    VectorAC * DEDR;
+      ForceOnSiteC          =   (VectorAC * DEDR) * (-1);
+
+      aMDVM.ReportForce( MDVM::SiteA, ForceOnSiteA );
+      // aMDVM.ReportForce( MDVM::SiteB, ForceOnSiteB );
+      aMDVM.ReportForce( MDVM::SiteB, ForceOnSiteC );
+
+      return;
+#endif      
+      }
+

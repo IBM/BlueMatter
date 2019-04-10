@@ -1,0 +1,47 @@
+To use the tracer tools
+
+If pktrace output is in many files, you must merge to a single file.
+
+When pk trace output is in a single file, probably a .stdout file:
+1) rename the .stdout file to something you like,
+mv wR431-17326.stdout MyCoolRun.stdout
+
+2) run the proc256trc script on your stdout file (can take a while to run)
+proc256trc MyCoolRun.stdout
+
+3) you will have a MyCoolRun.stdout.trc file.  start the trace tool:
+./tracer &
+
+4) On the tracer tool GUI, click the "Create Trace View" button, and get the "Load Group" popup
+
+5) In the "Trace Data File" field of the popup, selcet your trace file
+MyCoolRun.stdout.trc
+
+
+6) In the "Regular Expression File" field of the popup, selcet your trace tool profile
+TV_Sample20Percent
+
+7) Click OK on the lower left of the popup
+OK
+
+8) wait until trace tool has loaded trace file and plotted (can be a while, esp on a slow network)
+You will probably see some initial traces on the black area and the grey bars in the
+left margine will turn into a little for each trace line on the screen.
+
+9) using the "Scale Selection" buttons at the bottom of the trace GUI, select larger time scales
+until the traces for the run are painted on the screen.  The setup period will probably look like
+a smudge of traces followed by a blank area, followed by a colored bar of trace date.  Move the
+mouse onto the right end colored area and press the middle button to center.
+
+10) Zoom back in gradually using the Scale Selection buttons.  Every one or two orders of magnitude
+during zoom in, you may need to recenter the view using your mouse middle button.
+
+11) Use the "Zoom" arrows to the left of the "Scale Selection" buttons to fine tune the timescale
+displayed.
+
+12) To measure a time interval, make sure the whole interval is displayed on the screen.
+Use the right mouse button by depressing at the start, holding while moving mouse to end of interval,
+and reading time at top of screen.
+
+
+

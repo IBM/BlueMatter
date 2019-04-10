@@ -1,0 +1,29 @@
+
+CCTYPE  = mpcppr
+
+VPATH   = ..
+
+LIBS    =       $(PKMPILIBS)
+
+CFLAGS  +=      $(SMPCFLAGS) $(MPICFLAGS)
+
+OFILES         = \
+  mpip1$(OBJ_SUFF)
+
+PROGRAMS        = \
+  p1$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/kernels/mpi/
+
+ILIST   =       $(PROGRAMS)
+
+.if ($(CAN_BUILD_EWALD) != 0)
+OBJECTS_SUBDIRS = ewald
+SUBDIRS = ewald
+.endif
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/kerngen/mpi/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

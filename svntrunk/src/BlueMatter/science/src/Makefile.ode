@@ -1,0 +1,198 @@
+BG_AUXILIARY=DB2
+
+OFILES = \
+
+# the object files (as targets)
+OBJECTS = \
+	CountContacts$(OBJ_SUFF) \
+	RMS$(OBJ_SUFF) \
+	RMSWindow$(OBJ_SUFF) \
+	fit$(OBJ_SUFF) \
+	fit_correl$(OBJ_SUFF) \
+	#SurfaceDistanceDist$(OBJ_SUFF) \
+	#bmtresample$(OBJ_SUFF) \
+	ElectronDensity$(OBJ_SUFF) \
+	ElectronDensityDist$(OBJ_SUFF) \
+	PrincAxisHistSelect$(OBJ_SUFF) \ 
+	PrincAxisHist$(OBJ_SUFF) \ 
+	ReImage${OBJ_SUFF} \
+	#Displacement$(OBJ_SUFF) \
+	#FindStep$(OBJ_SUFF) \
+	#MolTraj$(OBJ_SUFF) \
+	#Orient$(OBJ_SUFF) \
+	#OrientSelect$(OBJ_SUFF) \
+	#OrientHist$(OBJ_SUFF) \
+	OrderParameter$(OBJ_SUFF) \
+	OrderParameterSelect$(OBJ_SUFF) \
+	bmt2diff${OBJ_SUFF} \
+	DiffusionBootstrap${OBJ_SUFF} \
+	DiffusionSlopeFit${OBJ_SUFF} \
+	HBondClusters${OBJ_SUFF} \
+	LipNoesy${OBJ_SUFF} \
+	NoesyList${OBJ_SUFF} \
+	NoesyTimes${OBJ_SUFF} \
+	GenDistro${OBJ_SUFF} \
+	#SopeHBonds${OBJ_SUFF} \
+	#StraightDiffusion${OBJ_SUFF} \
+	#bmt2diffchol${OBJ_SUFF} \
+	#bmt2histo${OBJ_SUFF} \
+	diff_bootstrap${OBJ_SUFF} \
+	diff_lifetime${OBJ_SUFF} \
+	#float2xyz${OBJ_SUFF} \
+	hbondcor${OBJ_SUFF} \
+	#sope_diff${OBJ_SUFF} \
+	#OrderParameterTimeSeries$(OBJ_SUFF) \
+	#RhodDistro${OBJ_SUFF} \
+	#FakeDiffusion${OBJ_SUFF} \
+	SurfaceDistanceTest${OBJ_SUFF} \
+
+CFLAGS += -D NO_PK_PLATFORM 
+
+.if !empty(CONTEXT:Mrios_aix*)
+CFLAGS += -bmaxdata=0x040000000 
+LDFLAGS += -bmaxdata:0x040000000
+.endif
+
+LIBS = \
+	$(LIB_PREF)analysis$(LIB_SUFF) \
+	$(LIB_PREF)db2chem$(LIB_SUFF) \
+	$(LIB_PREF)db2cli$(LIB_SUFF) \
+
+
+CountContacts$(PROG_SUFF)_OFILES = CountContacts$(OBJ_SUFF)
+RMS$(PROG_SUFF)_OFILES = RMS$(OBJ_SUFF)
+RMDWindow$(PROG_SUFF)_OFILES = RMDWindow$(OBJ_SUFF)
+fit$(PROG_SUFF)_OFILES = fit$(OBJ_SUFF)
+fit_correl$(PROG_SUFF)_OFILES = fit_correl$(OBJ_SUFF)
+#SurfaceDistanceDist$(PROG_SUFF)_OFILES = SurfaceDistanceDist$(OBJ_SUFF)
+ElectronDensityDist$(PROG_SUFF)_OFILES = ElectronDensityDist$(OBJ_SUFF)
+ElectronDensity$(PROG_SUFF)_OFILES = ElectronDensity$(OBJ_SUFF)
+PrincAxisHistSelect$(PROG_SUFF)_OFILES = PrincAxisHistSelect$(OBJ_SUFF)
+PrincAxisHist$(PROG_SUFF)_OFILES = PrincAxisHist$(OBJ_SUFF)  
+ReImage$(PROG_SUFF)_OFILES = ReImage$(OBJ_SUFF)
+#Displacement$(PROG_SUFF)_OFILES = Displacement$(OBJ_SUFF)
+#FindStep$(PROG_SUFF)_OFILES = FindStep$(OBJ_SUFF)
+#MolTraj$(PROG_SUFF)_OFILES = MolTraj$(OBJ_SUFF)
+#Orient$(PROG_SUFF)_OFILES = Orient$(OBJ_SUFF)
+#OrientSelect$(PROG_SUFF)_OFILES = OrientSelect$(OBJ_SUFF)
+#OrientHist$(PROG_SUFF)_OFILES = OrientHist$(OBJ_SUFF)
+OrderParameter$(PROG_SUFF)_OFILES = OrderParameter$(OBJ_SUFF)
+#OrderParameterTimeSeries$(PROG_SUFF)_OFILES = OrderParameterTimeSeries$(OBJ_SUFF)
+OrderParameterSelect$(PROG_SUFF)_OFILES = OrderParameterSelect$(OBJ_SUFF)
+bmt2diff$(PROG_SUFF)_OFILES = bmt2diff$(OBJ_SUFF)
+DiffusionBootstrap$(PROG_SUFF)_OFILES = DiffusionBootstrap$(OBJ_SUFF)
+DiffusionSlopeFit$(PROG_SUFF)_OFILES = DiffusionSlopeFit$(OBJ_SUFF)
+#FakeDiffusion$(PROG_SUFF)_OFILES = FakeDiffusion$(OBJ_SUFF)
+HBondClusters$(PROG_SUFF)_OFILES = HBondClusters$(OBJ_SUFF)
+LipNoesy$(PROG_SUFF)_OFILES = LipNoesy$(OBJ_SUFF) NoesyList$(OBJ_SUFF)
+NoesyTimes$(PROG_SUFF)_OFILES = NoesyTimes$(OBJ_SUFF)
+#RhodDistro$(PROG_SUFF)_OFILES = RhodDistro$(OBJ_SUFF)
+GenDistro$(PROG_SUFF)_OFILES = GenDistro$(OBJ_SUFF)
+#SopeHBonds$(PROG_SUFF)_OFILES = SopeHBonds$(OBJ_SUFF)
+#StraightDiffusion$(PROG_SUFF)_OFILES = StraightDiffusion$(OBJ_SUFF)
+#bmt2diffchol$(PROG_SUFF)_OFILES = bmt2diffchol$(OBJ_SUFF)
+#bmt2histo$(PROG_SUFF)_OFILES = bmt2histo$(OBJ_SUFF)
+diff_bootstrap$(PROG_SUFF)_OFILES = diff_bootstrap$(OBJ_SUFF)
+diff_lifetime$(PROG_SUFF)_OFILES = diff_lifetime$(OBJ_SUFF)
+#float2xyz$(PROG_SUFF)_OFILES = float2xyz$(OBJ_SUFF)
+hbondcor$(PROG_SUFF)_OFILES = hbondcor$(OBJ_SUFF)
+sope_diff$(PROG_SUFF)_OFILES = sope_diff$(OBJ_SUFF)
+SurfaceDistanceTest$(PROG_SUFF)_OFILES = SurfaceDistanceTest$(OBJ_SUFF)
+
+PROGRAMS = \
+	RMSWindow$(PROG_SUFF) \
+	fit$(PROG_SUFF) \
+	fit_correl$(PROG_SUFF) \
+	#SurfaceDistanceDist$(PROG_SUFF) \
+	#bmtresample$(PROG_SUFF) \
+	DiffusionBootstrap$(PROG_SUFF) \
+	DiffusionSlopeFit${PROG_SUFF} \
+	#Displacement${PROG_SUFF} \
+	#FindStep${PROG_SUFF} \
+	#MolTraj${PROG_SUFF} \
+	#Orient${PROG_SUFF} \
+	#OrientSelect${PROG_SUFF} \
+	#OrientHist${PROG_SUFF} \
+	DiffusionBootstrap$(PROG_SUFF) \
+	DiffusionSlopeFit${PROG_SUFF} \
+	HBondClusters${PROG_SUFF} \
+	NoesyTimes${PROG_SUFF} \
+	#SopeHBonds${PROG_SUFF} \
+	#StraightDiffusion${PROG_SUFF} \
+	bmt2diffchol${PROG_SUFF} \
+	bmt2histo${PROG_SUFF} \
+	diff_bootstrap${PROG_SUFF} \
+	diff_lifetime${PROG_SUFF} \
+	#float2xyz${PROG_SUFF} \
+	hbondcor${PROG_SUFF} \
+	#OrderParameterTimeSeries${PROG_SUFF} \
+	#RhodDistro${PROG_SUFF} \
+	#FakeDiffusion${PROG_SUFF} \
+
+ILIST = $(PROGRAMS)
+
+IDIR = $(BG_BIN)/utils/
+
+#CountContacts_IDIR = $(BG_BIN)/utils/
+#RMS_IDIR = $(BG_BIN)/utils/
+#RMSWindow_IDIR = $(BG_BIN)/utils/
+#fit_IDIR = $(BG_BIN)/utils/
+#fit_correl_IDIR = $(BG_BIN)/utils/
+##SurfaceDistanceDist_IDIR = $(BG_BIN)/utils/
+##bmtresample_IDIR = $(BG_BIN)/utils/
+#ElectronDensity_IDIR = $(BG_BIN)/utils/
+#ElectronDensityDist_IDIR = $(BG_BIN)/utils/
+#PrincAxisHistSelect_IDIR = $(BG_BIN)/utils/
+#PrincAxisHist_IDIR = $(BG_BIN)/utils/   
+#ReImage_IDIR = $(BG_BIN)/utils/
+#Displacement_IDIR = $(BG_BIN)/utils/
+##FindStep_IDIR = $(BG_BIN)/utils/
+##MolTraj_IDIR = $(BG_BIN)/utils/
+##Orient_IDIR = $(BG_BIN)/utils/
+##OrientSelect_IDIR = $(BG_BIN)/utils/
+##OrientHist_IDIR = $(BG_BIN)/utils/
+#OrderParameter_IDIR = $(BG_BIN)/utils/
+#OrderParameterSelect_IDIR = $(BG_BIN)/utils/
+##OrderParameterTimeSeries_IDIR = $(BG_BIN)/utils/
+#bmt2diff_IDIR = $(BG_BIN)/utils/
+#DiffusionBootstrap_IDIR = $(BG_BIN)/utils/
+#DiffusionSlope_IDIR = $(BG_BIN)/utils/
+##FakeDiffusion_IDIR = $(BG_BIN)/utils/
+#HBondClusters_IDIR = $(BG_BIN)/utils/
+#LipNoesy_IDIR = $(BG_BIN)/utils/
+#NoesyTimes_IDIR = $(BG_BIN)/utils/
+##RhodDistro_IDIR = $(BG_BIN)/utils/
+#GenDistro_IDIR = $(BG_BIN)/utils/
+##SopeHBonds_IDIR = $(BG_BIN)/utils/
+##StraightDiffusion_IDIR = $(BG_BIN)/utils/
+#bmt2diffchol_IDIR = $(BG_BIN)/utils/
+#bmt2histo_IDIR = $(BG_BIN)/utils/
+#diff_bootstrap_IDIR = $(BG_BIN)/utils/
+#diff_lifetime_IDIR = $(BG_BIN)/utils/
+#float2xyz_IDIR = $(BG_BIN)/utils/
+#hbondcor_IDIR = $(BG_BIN)/utils/
+#sope_diff_IDIR = $(BG_BIN)/utils/
+#SurfaceDistanceTest_IDIR = $(BG_BIN)/utils/
+
+.if !empty(CONTEXT:Mrios_aix_*) || !empty(CONTEXT:Mrios64_aix_*) || defined(TRY_LINUX_BUILD_ANYWAY)
+PROGRAMS += \
+ CountContacts$(PROG_SUFF) \
+ RMS$(PROG_SUFF) \
+ ElectronDensity$(PROG_SUFF) \
+ ElectronDensityDist$(PROG_SUFF) \
+ PrincAxisHistSelect$(PROG_SUFF) \
+ PrincAxisHist$(PROG_SUFF) \  
+ ReImage$(PROG_SUFF) \
+ bmt2diff$(PROG_SUFF) \
+ OrderParameter${PROG_SUFF} \
+ OrderParameterSelect${PROG_SUFF} \
+ LipNoesy${PROG_SUFF} \
+ GenDistro${PROG_SUFF} \
+ sope_diff${PROG_SUFF} \
+ SurfaceDistanceTest${PROG_SUFF} \
+
+
+.endif
+
+CMF_PARENT=bluegene.bluematter.rte
+.include <$(RULES_MK)>

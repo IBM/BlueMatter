@@ -1,0 +1,22 @@
+
+ILIST = \
+ fftmain_pk.cpp \
+ fen_makefile \
+ fen_makefile_actors \
+ fen_makefile_pkactors \
+ fen_makefile_latest_xlc \
+ 
+IDIR = $(BG_SRC)/fft3d/test/
+
+#.if !empty(CONTEXT:Mbgl_cnk_*)
+#OBJECTS_SUBDIRS=PkActors
+#SUBDIRS=PkActors
+#.endif
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC}/BlueMatter/hoodcomms/libblade/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+ 

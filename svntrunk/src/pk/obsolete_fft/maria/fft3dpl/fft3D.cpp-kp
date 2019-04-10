@@ -1,0 +1,612 @@
+#include <iostream>
+#include "fft3D.hpp"
+#include <mpi.h>
+#include <assert.h>
+#include "../fftw/fftw.h"
+#include "math.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+template class FFT3D<FFTOneD, Comm3DLayer>;
+
+#include <sys/atomic_op.h>
+
+void
+ImportFence()
+  {
+  int a = 0 ;
+  (void) _check_lock(&a, 0, 0) ;
+  }
+
+void
+ExportFence()
+   {
+   int a;
+  _clear_lock(&a,0) ;
+  }
+
+template<class FFT_T, class COMM_T>
+FFT3D<FFT_T, COMM_T> :: FFT3D(unsigned int localNx,
+                              unsigned int localNy,
+                              unsigned int localNz,
+                              unsigned int pX,
+                              unsigned int pY,
+                              unsigned int pZ,
+                              int fftDir,
+                              MPI_Comm comm):  // TODO: make this general
+  _localNx(localNx), _localNy(localNy), _localNz(localNz),
+  _pX(pX), _pY(pY), _pZ(pZ),_fftDir(fftDir) {
+  _comm = new COMM_T(_pX, _pY,_pZ, MPI_COMM_WORLD);
+  
+  _barSzX = _localNy/_pX; // size of bars in the y-dim
+  _barSzY = _localNz/_pY; // size of bars in the z-dim
+  _barSzZ = _localNx/_pZ; // size of bars in the x-dim
+  
+  _xCompletePacket = (int*) malloc(_barSzX*_localNz*sizeof(int));
+  _yCompletePacket = (int*) malloc(_barSzY*_localNx*sizeof(int));
+  _zCompletePacket = (int*) malloc(_barSzZ*_localNy*sizeof(int));
+  //_bCompleteFFTsInBarCount = (int*) malloc(_pY*sizeof(int));
+
+  _bCompletePacket = (int**) malloc(_localNx*sizeof(int));
+ 
+  for(int i=0; i<_localNx; i++)
+    _bCompletePacket[i] = (int*) malloc(_localNz*sizeof(int*));
+  
+  for(int i=0; i<_barSzX*_localNz; i++) {
+    _xCompletePacket[i] = 0;
+  }
+
+  for(int i=0; i<_barSzY*_localNx; i++)
+    _yCompletePacket[i] = 0;
+
+  for(int i=0; i<_barSzZ*_localNy; i++){
+    _zCompletePacket[i]  = 0;
+  }
+
+  for(int i=0; i<_localNx; i++)
+    for(int k=0; k<_localNz; k++){
+      _bCompletePacket[i][k] = 0;
+    }
+ 
+  _xCompleteFFTsInBarCount = 0;
+  _yCompleteFFTsInBarCount = 0;
+  _zCompleteFFTsInBarCount = 0;
+  _bCompleteFFTsInBarCount = 0;
+  //  for(int j=0; j<_pY; j++)
+  // _bCompleteFFTsInBarCount[j] = 0;
+   
+  _xPointsPerPacket = min(_localNx, ELEMENTS_PER_PACKET);
+  _yPointsPerPacket = min(_localNy, ELEMENTS_PER_PACKET);
+  _zPointsPerPacket = min(_localNz, ELEMENTS_PER_PACKET);
+  _bPointsPerPacket = _yPointsPerPacket;
+  
+  _xPacketsPerFFT = _pX*ceil((double)_localNx/(double)_xPointsPerPacket);
+  _yPacketsPerFFT = _pY*ceil((double)_localNy/(double)_yPointsPerPacket);
+  _zPacketsPerFFT = _pZ*ceil((double)_localNz/(double)_zPointsPerPacket);
+  _bPacketsPerFFT = _yPacketsPerFFT/_pY;
+
+  _fftx = new FFT_T(_localNx*_pX, _fftDir);  // 1D fft in the x-dim
+  _ffty = new FFT_T(_localNy*_pY, _fftDir);  // 1D fft in the y-dim
+  _fftz = new FFT_T(_localNz*_pZ, _fftDir);  // 1D fft in the z-dim
+
+  int maxBarSz   = max(max(_barSzX, _barSzY), _barSzZ);
+  int maxLocalN  = max(max(_localNx, _localNy), _localNz);
+  int maxGlobalN = max(max(_localNx*_pX, _localNy*_pY), _localNz*_pZ);
+  int maxBarNum  = max(max(_pX, _pY), _pZ);
+ 
+  if(maxBarSz==0 || maxLocalN==0 || maxGlobalN==0 || maxBarNum==0){
+    maxBarSz+=1;
+    cout << " Error in the allocation  "<<endl;
+    cout << " maxBarSz =    " <<maxBarSz <<endl;
+    cout << " barSzX = " << _barSzX     << " barSzY = "
+         << _barSzY     << "barSzZ = " << _barSzZ <<endl;
+    cout << " maxLocalN =   " << maxLocalN <<endl;
+    cout << " maxGlobalN =  " << maxGlobalN << endl;
+    cout << " maxBarNum  =  " << maxBarNum <<endl;
+  }
+
+  _globalIn  = (complex**) new complex[maxLocalN*
+                                      maxBarSz*sizeof(complex)];
+  _globalOut = (complex**) new complex[maxLocalN*
+                                      maxBarSz*sizeof(complex)];
+  
+  for(int i=0; i<maxLocalN*maxBarSz; i++) {
+    _globalIn[i]  = (complex*) new complex[maxGlobalN*sizeof(complex)];
+    _globalOut[i] = (complex*) new complex[maxGlobalN*sizeof(complex)];
+  }
+  
+  _localIn  = (complex***) new complex[maxLocalN*sizeof(complex)];
+  _localOut = (complex***) new complex[maxLocalN*sizeof(complex)];
+  
+  for(int i=0; i<maxLocalN; i++) {
+    _localIn[i]  = (complex**) new complex[maxLocalN*maxLocalN];
+    _localOut[i] = (complex**) new complex[maxLocalN*maxLocalN];
+    
+    for(int j=0; j<maxLocalN*maxLocalN; j++) {
+      _localIn[i][j]  = (complex*) new complex[maxLocalN];
+      _localOut[i][j] = (complex*) new complex[maxLocalN];
+    }
+  }
+  
+}
+
+template<class FFT_T, class COMM_T>
+int  FFT3D<FFT_T, COMM_T>::_ZPacketActorFx(void* pkt) {
+  actorPacket *ap = (actorPacket*) pkt;
+  FFT3D<FFT_T, COMM_T> *This = (*ap).mHdr.This;
+  int a = (*ap).mHdr.aIndex;
+  int b = (*ap).mHdr.bIndex;
+  int myPx, myPy, myPz;
+  int globalNz = (*This)._localNz*(*This)._pZ;
+
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+  // if(myPz=0&&myPx==0)
+//    cout <<"before2 " <<(*This)._zCompletePacket[a] <<endl;
+   ImportFence();
+  (*This)._zCompletePacket[a] ++;
+  //  if(myPz=0&&myPx==0)
+//   cout <<"after2  " <<(*This)._zCompletePacket[a] <<endl;
+     
+  int zPointsPerPacket = (*This)._zPointsPerPacket;
+   ImportFence();
+  if(((*This)._zCompletePacket[a] == (*This)._zPacketsPerFFT/(*This)._pZ)
+     &&((*This)._localNz >  ELEMENTS_PER_PACKET))
+    zPointsPerPacket = (*This)._localNz %
+      ((*This)._zPointsPerPacket/(*This)._pZ);
+  ImportFence();
+  for(int k=0; k<zPointsPerPacket; k++) {
+    if((b+k) >=globalNz) {
+      cout<< "====Error inside _ZPacketActorFx "<<b+k<<" "<< globalNz<<endl;
+      break;
+    }
+    
+     (*This)._globalIn[a][b+k].re = (*ap).mData[k].re;
+     (*This)._globalIn[a][b+k].im = (*ap).mData[k].im;
+  }
+  
+  int cmpl = ((*This)._zCompletePacket[a]);
+   ImportFence();
+    if(cmpl ==(*This)._zPacketsPerFFT ){
+     ((*This)._fftz)->fftInternal(&((*This)._globalIn[a][0]),
+                                  &((*This)._globalOut[a][0]));
+     //    cout <<"beforeC " << (*This)._zCompleteFFTsInBarCount
+     //        << " " << (*This)._barSzZ <<endl;
+       
+     ((*This)._zCompleteFFTsInBarCount) +=1;
+     //  cout <<"afterC "<<(*This)._zCompleteFFTsInBarCount << " " 
+     //      	  <<(*This)._barSzZ <<endl;
+
+     cout <<" ZPa::myCoords = ["
+	  <<myPx <<"]["<< myPy<<"]["<<myPz<<"]"<<
+       ((*This)._zCompleteFFTsInBarCount)<<endl; 
+   }
+
+   return 0;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::gatherZ(complex *** in, int dim) {
+  int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+  actorPacket zap;
+  if(myPx >= _pX ||myPy >= _pY || myPz >= _pZ) {
+    cout<<"ERROR::void FFT3D<FFT_T, COMM_T>:gatherZ(complex *** in, int dim)"
+	<< "("<< myPx << " , "<< myPy << " , " << myPz << " )"<< endl;
+  }
+  
+  int count = 0;
+  for(int i=0; i<_localNx; i++) {
+    int trgPz = i /_barSzZ;
+    cout << " trgPZ  "<<trgPz<<endl;
+    for(int j=0; j<_localNy; j++) {
+      int loadCountZ = 0;
+      int zPointsPerPacket = _zPointsPerPacket;
+     
+      for(int k =0; k<_localNz; k++) {
+        zap.mData[loadCountZ].re = in[i][j][k].re;
+        zap.mData[loadCountZ].im = in[i][j][k].im;
+        loadCountZ++;
+
+        if(k==_localNz-1 && loadCountZ < _zPointsPerPacket){
+          zPointsPerPacket = _localNz%(_zPointsPerPacket);
+        }
+	
+        if(loadCountZ == zPointsPerPacket) {
+	  zap.mHdr.This = this;
+          zap.mHdr.aIndex = (i%_barSzZ)*_localNy+j;
+          zap.mHdr.bIndex = k+1 -loadCountZ + myPz*_localNz;
+          //if(trgPz>=_pZ|| trgPz<0)
+            cout <<" gatherZ::myCoords = ["
+		 <<myPx <<"]["<< myPy<<"]["<<myPz<<"] targetPz = " 
+		 <<trgPz <<endl;
+	 
+	    // if(myPx==0&&myPy==0&&trgPz==1){ cout << "========>>>>"<<endl;
+          BGLTorusSimpleActivePacketSend(_ZPacketActorFx,
+                                         myPx,
+                                         myPy,
+                                         trgPz,
+                                         sizeof( zap ),
+                                         (void *) &zap);
+          loadCountZ = 0;count++;
+        }
+      }
+    }
+  }
+}
+
+template<class FFT_T, class COMM_T>
+int  FFT3D<FFT_T, COMM_T>::_XPacketActorFx(void* pkt) {
+  actorPacket *ap = (actorPacket*) pkt;
+  FFT3D<FFT_T, COMM_T> *This = (*ap).mHdr.This;
+  int a = (*ap).mHdr.aIndex;
+  int b = (*ap).mHdr.bIndex;
+  int myPx, myPy, myPz;
+  
+  //assert(!This);
+  
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+ ImportFence();
+  (*This)._xCompletePacket[a] ++;// (*This)._xPointsPerPacket;
+  
+  for(int i=0;  i<(*This)._xPointsPerPacket; i++) {
+    if(b + i == (*This)._localNx) break;
+    
+    (*This)._globalIn[a][b+i] = (*ap).mData[i];
+  }
+  //cout << "_xPacketsPerFFT "
+  //   <<(*This)._xPacketsPerFFT <<" " <<"XCompletePackets["<<a<<"]"
+  //   <<((*This)._xCompletePacket[a])<<" " <<endl;
+  int cmpl = ((*This)._xCompletePacket[a]);
+  
+
+  if(cmpl ==(*This)._xPacketsPerFFT ){ 
+    				
+     ((*This)._fftx)->fftInternal((*This)._globalIn[a], 
+				  (*This)._globalOut[a]);
+      ImportFence();
+     (*This)._xCompleteFFTsInBarCount++;
+      cout <<   (*This)._xCompleteFFTsInBarCount<<endl;
+    
+   }
+    
+    return 0;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::gatherX(complex ** in, int dim) { 
+  int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+  actorPacket xap;
+  
+  int loadCountX;
+  int count=0;
+  for(int trgPz=0; trgPz<_pZ; trgPz++) { 
+    for(int trgPx=0; trgPx<_pX; trgPx++) {
+      for(int ax=0; ax<_localNz*_barSzX; ax++) {
+	loadCountX=0;
+	for(int bx=myPz*_barSzZ+myPx*_localNx; bx<(myPz+1)*_barSzZ+myPx*_localNx; bx++) { 
+	  int az = ((bx%_localNx)%_barSzZ)*_localNy+ax/_localNz + trgPx*_barSzX;
+	  int bz = ax%_localNz + _localNz*trgPz;
+	  xap.mData[loadCountX].re = _globalOut[az][bz].re;
+	  xap.mData[loadCountX].im = _globalOut[az][bz].im;
+	  loadCountX++;
+    
+	  if(loadCountX == _xPointsPerPacket) {
+	    xap.mHdr.This = this;
+	    
+	    xap.mHdr.aIndex = ax;
+	    xap.mHdr.bIndex = bx-loadCountX+1;
+	    xap.mHdr.cIndex = 0;
+
+	    BGLTorusSimpleActivePacketSend(_XPacketActorFx,
+					   trgPx,
+					   myPy,
+					   trgPz,
+					   sizeof( xap ),
+					   (void *) &xap );
+	    loadCountX = 0;count++; 
+	  }
+	}
+      }
+    }
+  }
+}
+
+
+template<class FFT_T, class COMM_T>
+int  FFT3D<FFT_T, COMM_T>::_YPacketActorFx(void* pkt) {
+  actorPacket *ap = (actorPacket*) pkt;
+  FFT3D<FFT_T, COMM_T> *This = (*ap).mHdr.This;
+  int a = (*ap).mHdr.aIndex;
+  int b = (*ap).mHdr.bIndex;
+  int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords(&myPx, &myPy, &myPz);
+  (*This)._yCompletePacket[a] ++; // (*This)._xPointsPerPacket;
+  
+  for(int i=0;  i<(*This)._yPointsPerPacket; i++) {
+    if(b + i == (*This)._localNy) break;
+    (*This)._globalIn[a][b+i] = (*ap).mData[i];
+  }
+  
+  int cmpl = ((*This)._yCompletePacket[a]);
+  ImportFence();
+  if(cmpl ==(*This)._yPacketsPerFFT ){ 
+  //   if(myPz==6)
+//       for(int l=0; l<(*This)._localNy*(*This)._pY; l++) 
+// 	cout<<"Input "<< (*This)._globalIn[a][l]<<endl;
+    
+    ((*This)._ffty)->fftInternal((*This)._globalIn[a], 
+				 (*This)._globalOut[a]);
+     (*This)._yCompleteFFTsInBarCount++;
+  //   if(myPz==6)
+//       for(int i = 0; i<(*This)._localNy*(*This)._pY; i++) {
+// 	cout << " OutY " << (*This)._globalOut[a][i]<<endl; 
+//       }  
+  }
+  
+  return 0;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::gatherY(complex ** in, int dim) { 
+  int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords(&myPx, &myPy, &myPz);
+  actorPacket yap;
+  int loadCountY;
+
+  for(int trgPx=0; trgPx<_pZ; trgPx++) { 
+    for(int trgPy=0; trgPy<_pY; trgPy++) {
+      for(int ay=0; ay<_localNx*_barSzY; ay++) {
+	loadCountY = 0; 
+	for(int by=myPx*_barSzX+myPy*_localNy;
+	    by<(myPx+1)*_barSzX+myPy*_localNy; by++) {
+	  int ax = ((by%_localNy)%_barSzX)*_localNz+
+	    ay/_localNx + trgPy*_barSzY;
+	  int bx = ay%_localNx + _localNx*trgPx;
+	  yap.mData[loadCountY].re = _globalOut[ax][bx].re;
+	  yap.mData[loadCountY].im = _globalOut[ax][bx].im;
+	  loadCountY++;
+	  
+	  if(loadCountY == _yPointsPerPacket) {
+	    yap.mHdr.This = this;
+	    yap.mHdr.aIndex = ay;
+	    yap.mHdr.bIndex = by - loadCountY+1;
+	    
+	    BGLTorusSimpleActivePacketSend(_YPacketActorFx,
+					   trgPx,
+					   trgPy,
+					   myPz,
+					   sizeof( yap ),
+					   (void *) &yap );
+	    loadCountY = 0; 
+	  }   
+	}
+      }
+    }
+  }
+}
+
+template<class FFT_T, class COMM_T>
+int  FFT3D<FFT_T, COMM_T>::_BPacketActorFx(void* pkt) {
+  actorPacket *ap = (actorPacket*) pkt;
+  FFT3D<FFT_T, COMM_T> *This = (*ap).mHdr.This;
+  int i = (*ap).mHdr.aIndex;
+  int j = (*ap).mHdr.bIndex;
+  int k = (*ap).mHdr.cIndex;
+  //cout << "INSIDE the _BPacketA... "<<endl;
+  int myPx, myPy, myPz;
+  
+  //assert(!This);
+  
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+  ImportFence();
+  (*This)._bCompletePacket[i][k] ++;// (*This)._xPointsPerPacket;
+  cout << "BCOMPLE PAC [" << i << "," <<k <<"]" 
+       <<(*This)._bCompletePacket[i][k] <<endl;
+  for(int jp=0;  jp<(*This)._bPointsPerPacket; jp++) {
+       (*This)._localOut[i][j+jp][k] = (*ap).mData[jp];
+       //  cout << "_OutB[" << i <<" ][" 
+       //       << j +jp    << "][" << k << "] =" 
+       //       <<(*This)._localOut[i][jp][k]<<endl;
+       //  cout << (*This)._localOut[i+ip][j][k] <<endl;	 
+  }
+
+  int cmpl = ((*This)._bCompletePacket[i][k]);
+  ImportFence();
+  if(cmpl ==(*This)._bPacketsPerFFT ){ 
+
+    (*This)._bCompleteFFTsInBarCount++;
+    cout<< "packet per Y " << i << " " <<j<< " "<<
+    (*This)._bCompleteFFTsInBarCount<<endl;
+
+    for(int i=0; i<(*This)._localNx; i++)
+      for(int k=0; k<(*This)._localNz; k++)
+	(*This)._bCompletePacket[i][k]=0;	
+	
+  }
+   return 0;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::gatherB(complex ***out, int dim) { 
+  int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords(&myPx, &myPy, &myPz);
+  actorPacket bap;
+  
+  for(int a=0; a<(_localNz/_pY)*_localNx; a++){
+    int loadCount = 0;
+    int i = a%_localNx;
+    int k = a/_localNx + myPy * _barSzY;
+    
+    for(int b=0; b<_localNy*_pY; b++) {
+      int j = b%_localNy;
+      int trgPy = b/_localNy;
+      
+      bap.mData[loadCount].re = _globalOut[a][b].re;
+      bap.mData[loadCount].im = _globalOut[a][b].im;
+      loadCount++;
+      
+      if(loadCount == _bPointsPerPacket) {
+	bap.mHdr.This = this;
+	bap.mHdr.aIndex = a%_localNx;
+	bap.mHdr.bIndex = b%_localNy -loadCount+1;
+	bap.mHdr.cIndex = a/_localNx + myPy * _barSzY;
+// 	cout << "GatherB::a = " << i << " b = " << j-loadCount+1 
+// 	     << " c = "         << k << endl; 
+
+	BGLTorusSimpleActivePacketSend(_BPacketActorFx,
+				       myPx,
+				       trgPy,
+				       myPz,
+				       sizeof( bap ),
+				       (void *) &bap );
+	loadCount = 0; 
+      }   
+    }
+  }
+}
+
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::_activeMsgBarrier(int  completeFFTsInBarCount,
+					     int barSz)  {
+   int myPx, myPy, myPz;
+  
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+  int barMon = -1;
+  //cout << " inside  "<<completeFFTsInBarCount << " " << barSz <<endl;
+  
+  while(completeFFTsInBarCount != barSz ) {
+     cout << " FFT3D<FFT_T, COMM_T>::_activeMsgBarrier " <<endl;
+     
+    
+     cout <<"  FFT3D<FFT_T, COMM_T>::_activeMsgBarrier::myCoords = ["
+	  <<myPx <<"]["<< myPy<<"]["<<myPz<<"]"
+	  <<completeFFTsInBarCount<<endl; 
+    if( barMon != completeFFTsInBarCount) {
+ 
+      barMon = completeFFTsInBarCount;
+    }
+      sleep(1);
+  }  
+  
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::fft(complex*** in, complex*** out)  {
+  int myPx, myPy, myPz;
+
+  BGLPartitionGetCoords( &myPx, &myPy, &myPz);
+
+  gatherZ(in, 0);
+   cout << "before Z  barrier "<<endl;
+
+    MPI_Barrier(MPI_COMM_WORLD);
+ 
+    // if(myPx==0&&myPy==0&&myPz==1){
+ cout <<"  FFT3D<FFT_T, COMM_T>::fft::myCoords = ["
+      << myPx <<"]["<< myPy<<"]["<<myPz<<"] CompleteFFTsInBar = " 
+      << _zCompleteFFTsInBarCount<< " " << _localNy 
+      <<" " <<_barSzZ<<endl; 
+
+  _activeMsgBarrier( _zCompleteFFTsInBarCount, _localNy*_barSzZ);
+  //}
+  _zCompleteFFTsInBarCount=0;
+   
+   
+   /* 
+   for(int a=0; a<_barSzZ*_localNy; a++)
+     for(int k=0; k< _localNz; k++) {
+       printf(" globalOut[%d][%d](%d, %d) = ",a,k,
+	      myPx,myPy,myPz); 
+       cout <<_globalOut[a][k]<<endl;}
+   */
+ MPI_Barrier(MPI_COMM_WORLD);
+#ifdef  D
+  gatherX(_globalIn, 0);
+  //cout << "before X  barrier "<<endl;
+  //  cout << "before Z barrier "<<endl;
+  //cout << " x count "<<_xCompleteFFTsInBarCount << " " << _localNz 
+  //   << " " << _barSzX 
+  //   << endl;
+
+  _activeMsgBarrier(_xCompleteFFTsInBarCount, _localNz*_barSzX);
+  _xCompleteFFTsInBarCount=0;
+  _zCompleteFFTsInBarCount=0;
+  
+  //  MPI_Barrier(MPI_COMM_WORLD);exit(0);
+  gatherY(_globalIn, 0);
+  //cout << "before Y  barrier "<<endl;
+
+  //cout << " y count "<<_yCompleteFFTsInBarCount << " " 
+  //    << _localNx*_barSzY <<endl;
+  _activeMsgBarrier( _yCompleteFFTsInBarCount, _localNx*_barSzY);
+  _yCompleteFFTsInBarCount=0;
+
+  // MPI_Barrier(MPI_COMM_WORLD); exit(0);
+  //  cout << "before B  barrier "<<endl;
+  MPI_Barrier(MPI_COMM_WORLD);
+  for(int a=0; a=_localNx*_barSzY; a++)
+    for(int j=0; j<_localNy; j++)
+      cout<< "globalOut[" << a <<"]["<<j<<"]="<< _globalOut[a][j]<<endl;
+  
+  gatherB(out, 0);
+
+  // cout << " B count "<<_bCompleteFFTsInBarCount << " " 
+  //      << _localNx*_localNz <<endl;
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  _activeMsgBarrier( _bCompleteFFTsInBarCount, _localNz*_localNx);
+  //_bCompleteFFTsInBarCount=0;
+  //  
+
+  // _localOut[0][0][0] = _globalOut[0][0];
+  cout <<" Out "<<   _localOut[0][0][0] <<endl;
+  cout << "barrier finished .."<<endl;
+  //
+#endif
+ MPI_Finalize();exit(0);
+}
+
+
+template<class FFT_T, class COMM_T>
+FFT3D<FFT_T, COMM_T>::~FFT3D() {
+
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getLocalNx(int &localNx) {
+  localNx = _localNx;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getLocalNy(int &localNy) {
+  localNy = _localNy;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getLocalNz(int &localNz) {
+  localNz = _localNz;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getPx(int &px) {
+  px = _pX;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getPy(int &py) {
+  py = _pY;
+}
+
+template<class FFT_T, class COMM_T>
+void FFT3D<FFT_T, COMM_T>::getPz(int &pz) {
+  pz = _pZ;
+}
+
+

@@ -1,0 +1,33 @@
+BG_AUXILIARY = DB2
+
+OBJECTS = \
+  connhandle${OBJ_SUFF} \
+  envhandle${OBJ_SUFF} \
+  exception${OBJ_SUFF} \
+  handle${OBJ_SUFF} \
+  handleexception${OBJ_SUFF} \
+  stmthandle${OBJ_SUFF} \
+  dbname${OBJ_SUFF} \
+
+
+
+#LDFLAGS += -ldb2
+
+
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)db2cli$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+IDIR = $(BG_LIB)/
+
+ILIST = $(LIBRARIES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./db2/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,26 @@
+# Benchmarking results for NAMD on 92Katom ApoA1 benchmark system
+# Used Quadrics Elan interface (NOT MPI) on PSC Lemieux (1GHz Alpha processors)
+# Presented at SC2002
+#	Time/step 	Speedup 	GFLOPS 	 
+# Total 	Per Node 	Cut 	PME 	MTS 	Cut 	PME 	MTS 	Cut 	PME 	MTS 	 
+# column 1: Total Processors
+# column 2: Processors/node
+# column 3: Time/step (ms) for cutoff
+# column 4: Time/step (ms) for PME
+# column 5: Time/step (ms) for PME MTS (PME one of every four ts)
+# column 6: Speedup (cutoff)
+# column 7: Speedup (PME)
+# column 8: Speedup (PME MTS)
+# column 9: GFLOPS (cutoff)
+# column 10: GFLOPS (PME)
+# column 11: GFLOPS (PME MTS)
+#1024 	4 	18.2e-3 	24.4e-3 	17.6e-3 	389 	338 	446 	193 	149 	218 	 
+#1536 	4 	16.6e-3 	22.6e-3 	17.1e-3 	427 	364 	459 	212 	161 	224 	 
+#512 	4 	21.0e-3 	26.6e-3 	23.9e-3 	336 	309 	329 	167 	137 	161 	 
+1 	1 	7.08 	8.24 	7.86 	1 	1 	1 	0.497 	0.443 	0.489 	 
+128 	4 	62.5e-3 	80.0e-3 	71.5e-3 	113 	103 	109 	56 	45 	53 	 
+256 	4 	37.4e-3 	43.7e-3 	40.3e-3 	189 	188 	194 	94 	83 	95 	 
+510 	3 	20.5e-3 	24.9e-3 	23.3e-3 	344 	331 	337 	171 	146 	164 	 
+1023 	3 	13.8e-3 	15.2e-3 	14.0e-3 	512 	540 	559 	254 	239 	273 	 
+1536 	3 	11.2e-3 	15.0e-3 	12.6e-3 	629 	549 	624 	312 	243 	305 	 
+2250 	3 	11.2e-3 	15.0e-3 	12.8e-3 	629 	549 	613 	313 	243 	299 	 

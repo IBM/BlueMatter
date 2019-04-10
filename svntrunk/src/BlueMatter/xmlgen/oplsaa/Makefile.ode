@@ -1,0 +1,12 @@
+IDIR    = $(BG_BIN)/setup/
+summary_opls.pl_IDIR = $(BG_TEST)/drivers/external/oplsaa/brooks/
+runopls.pl_IDIR = $(BG_TEST)/drivers/external/oplsaa/brooks/
+
+#SUBDIRS = example
+ILIST   =  opls2xml.pl  \
+           runopls.pl   \
+           summary_opls.pl \
+           runp3me.pl   \
+           summary_p3me.pl \
+           generate_opls_xml.pl 
+.include <$(RULES_MK)>

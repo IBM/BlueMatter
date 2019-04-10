@@ -1,0 +1,398 @@
+% Template article for preprint document class `elsart'
+% SP 2001/01/05
+
+%\documentclass{elsart}
+
+% Use the option doublespacing or reviewcopy to obtain double line spacing
+\documentclass[doublespacing]{elsart}
+
+% check for the existence of the variable pdfoutput
+\newif\ifpdf
+ \ifx\pdfoutput\undefined
+   \pdffalse % we are not running PDFLaTeX
+ \else
+   \pdfoutput=1 % we are running PDFLaTeX
+   \pdftrue
+ \fi
+
+% if you use PostScript figures in your article
+% use the graphics package for simple commands
+% \usepackage{graphics}
+% or use the graphicx package for more complicated commands
+
+ %Then use your new variable \ifpdf
+ \ifpdf
+   \usepackage[pdftex]{graphicx}
+   \pdfcompresslevel=9
+   \DeclareGraphicsExtensions{.pdf,.mps,.png,.jpg}
+ \else
+    \usepackage[dvips]{graphicx}
+    \DeclareGraphicsExtensions{.eps,.ps,.bmp,.tif,.tiff,.tga}
+ \fi
+
+\graphicspath{{./},{../jpdc2003/figures/},{../../parallelDecomp/}}
+
+% or use the epsfig package if you prefer to use the old commands
+% \usepackage{epsfig}
+
+% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+
+% The rotating package allows one to rotate tables and figures
+\usepackage{rotating}
+
+% The rcsinfo package allows one to access rcs strings
+\usepackage[fancyhdr]{rcsinfo}
+
+% The lgrind package allows formatting of program listings
+%\usepackage{lgrind}
+
+\bibliographystyle{elsart-num}
+
+% User-defined macros
+
+\newcommand{\udfcount}{\ensuremath{N^{udf}_{i}}}
+\newcommand{\udftime}{\ensuremath{\tau^{udf}_{i}}}
+\newcommand{\verlettime}{\ensuremath{\tau_{verlet}}}
+\newcommand{\sitecount}{\ensuremath{{N_{sites}}}}
+\newcommand{\rcutoff}{\ensuremath{r_{c}}}
+\newcommand{\density}{\ensuremath{\rho}}
+\newcommand{\nonbondtime}{\ensuremath{\tau_{non-bond}}}
+\newcommand{\nodecount}{\ensuremath{p}}
+\newcommand{\allreducetime}{\ensuremath{\tau_{AllReduce}(\sitecount,\nodecount)}}
+\newcommand{\globalizepostime}{\ensuremath{\tau_{Globalize}(\sitecount, \nodecount)}}
+\newcommand{\meshsize}[1]{\ensuremath{N_{#1}}}
+\newcommand{\nodemeshsize}[1]{\ensuremath{\nodecount_{#1}}}
+\newcommand{\meshpernode}[1]{\ensuremath{n_{#1}}}
+\newcommand{\nodecoord}[1]{\ensuremath{c_{#1}}}
+\newcommand{\pmetime}{\ensuremath{\tau_{p3me}(\nodecount,\meshsize{mesh})}}
+
+% End of user defined macros
+
+% settings to cause rcsinfo information to be shown in footer
+%% remove this prior to final printing
+%\pagestyle{fancyplain}
+%\fancyhead[R]{\leftmark}
+%\fancyhead[LE,RO]{\thepage}
+
+%% end of section that should be removed prior to final printing
+
+\begin{document}
+
+\rcsInfo $Id: dopc.tex 4748 2003-02-25 16:02:25Z pitman $
+
+
+\begin{frontmatter}
+
+% Title, authors and addresses
+
+% use the thanksref command within \title, \author or \address for footnotes;
+% use the corauthref command within \author for corresponding author footnotes;
+% use the ead command for the email address,
+% and the form \ead[url] for the home page:
+\title{Surface Area Dependence of Structural Properties for a DOPC Bilayer in Constant Pressure Simulations \thanksref{acks}}
+% \thanks[label1]{}
+\thanks[acks]{The authors wish to acknowledge many useful discussions with Scott Feller, Jed Pitera, and William Swope}
+
+\author[ykt]{M. C. Pitman}
+\author[ykt]{F. Suits}
+\author[ykt]{Y. Zhestkov}
+\author[ykt]{B. G. Fitch}
+\author[ykt]{T. J. C. Ward}
+\author[ykt]{A. Rayshubskiy}
+\author[ykt]{R. S. Germain}
+
+% \ead{email address}
+%\ead[url]{http://www.research.ibm.com/bluegene}
+% \thanks[label2]{}
+% \corauth[cor1]{}
+% \address{Address\thanksref{label3}}
+
+\address[ykt]{IBM Thomas J. Watson Research Center\\
+P.O. Box 218\\
+Yorktown Heights, NY 10598}
+
+% \thanks[label3]{}
+
+
+% use optional labels to link authors explicitly to addresses:
+% \author[label1,label2]{}
+% \address[label1]{}
+% \address[label2]{}
+
+%\author{}
+
+%\address{}
+
+%\address[arc]{IBM Almaden Research Center\\
+%650 Harry Road\\
+%San Jose, CA 95120-6099}
+
+
+\title{}
+
+\begin{abstract}
+% Text of abstract
+The area per lipid of a DOPC patch was systematically varied from 60 {\AA$^2$ } to 
+74 {\AA$^2$ } under constant hydration. The system was characterized in terms of 
+NMR order paramter, fragment density distributions, and overall structural 
+parameters at several values of area per lipid. For each area per lipid, 
+about 1 ns of simulation time was conducted. 
+\end{abstract}
+
+\begin{keyword}
+% keywords here, in the form: keyword \sep keyword
+
+% PACS codes here, in the form: \PACS code \sep code
+  \PACS
+\end{keyword}
+\end{frontmatter}
+
+% main text
+%\section{}
+%\label{}
+
+% The Appendices part is started with the command \appendix;
+% appendix sections are then done as normal sections
+% \appendix
+
+% \section{}
+% \label{}
+
+\setlength{\headheight}{28pts}
+
+\section{Introduction}
+
+\subsection{Methods}
+A bilayer of $72$ DOPC previously equillibrated under conditions of
+low hydration \cite{FELLER96} was hydrated to roughly 27 waters per
+lipid. The slab of the additional waters were equillibrated under
+constant volume and temperature such that the x and y dimensions
+matched the cell dimensions of the previous bilayer
+equillibration. The water slab was then translated to an appropriate Z
+offset to allow thin vacuum layer (about 3 {\AA } ) over the previous
+bilayer under low hydration. The Z dimensions of the cell were the
+adjusted and to include the additional water and thin vaccuum
+layer. The combined system was then allowed to relax for 100ps. The
+relaxation process under constant pressure and temperature removed the
+vaccuum layer. Since volume adjustments are isotropic, removal of the
+vaccuum layer was counter-balanced by contraction of the membrane
+surface area. After 100 ps of simulation time, the average surface
+area was roughly 58 {/AA$^2$ } per lipid, and the chains showed a high
+degree of order as measured by $S_{CD}$ The surface area series was
+then prepared by the following protocol. A snapshot was scaled in x an
+y by 3 percent (both coordinates and cell dimension) and allowed 10-20
+ps to relax with constant pressure and temperature. The velocities
+were resampled every half picosecond. The initial result of the
+anisotropic scaling had an effect of raising the temperature roughly
+25 degrees after the first 50 fs. The total energy converged after 5ps
+with the temperature restored to the bath temperature. Each new system
+prepared in this way differs in terms of the aspect ratio, or the
+ration of $\frac{L_z}{L_{x=y}}$. Within a 100ps of simulation time,
+each system is observed to return to original volume and fluctuate
+within a percent or less. Table (\ref{tab:series_param}) gives the
+area per lipid, the bilayer spacing, and the aspect ratio for the
+eight systems under study.
+ 
+\section{Results}
+
+\subsection{Gross Structural Parameters}
+Table \ref{tab:series_params} shows overall structural parameters for the series.
+
+\begin{table}[p]
+\begin{tabular}{llll}
+\multicolumn{1}{c}{Series}&
+\multicolumn{1}{c}{$A_L$ {\AA$^2$}}&
+\multicolumn{1}{c}{$D$ {/AA}}&
+\multicolumn{1}{c}{$\alpha$} \\
+$ 1 $   & $ 60.6 $  & $ 70.2  $     & $ 1.50 $          \\
+$ 2 $   & $ 61.7 $  & $ 68.8  $     & $ 1.45 $          \\
+$ 3 $   & $ 64.3 $  & $ 66.1  $     & $ 1.37 $          \\
+$ 4 $   & $ 66.9 $  & $ 63.6  $     & $ 1.29 $          \\
+$ 5 $   & $ 68.4 $  & $ 62.5  $     & $ 1.26 $          \\
+$ 6 $   & $ 69.7 $  & $ 61.2  $     & $ 1.22 $          \\
+$ 7 $   & $ 72.4 $  & $ 58.8  $     & $ 1.15 $          \\
+$ 8 $   & $ 74.0 $  & $ 57.7  $     & $ 1.11 $          \\
+\hline
+\end{tabular}
+\caption{Cell dimensions for DOPC series. Areas are given on a per
+  lipid basis. $D$ is the $L_z$ dimensions of the unit cell. The aspect
+  ratio $\alpha$ is the ratio of the plane normal to the tangential
+  dimensions of the unit cell ($\frac {L_z} {L_{x=y}} $)}  
+\label{tab:series_params}
+\end{table}
+
+\subsection{Group Density Distributions}
+
+\subsection{Chain Dynamics}
+
+A modern perspective of how NMR techniques are applied to membranes /cite{GAWRISCH02}
+
+To characterize chain dynamics across the series we looked at two order parameters:
+the orientational order parameter $S_{CD}$ and the $T1$ $^13$C spin-lattice relaxation times $T1$.
+
+The orientational order parameter $S_{CD}$ is related to the average angle C-$^2$H bond 
+vectors make with respect to the bilayer normal. Experimentally, it is measured from the 
+quadrupolar splitting, $\Delta_{\nu_{Q}}$, in an axially average line shape,
+
+\begin{equation}
+\Delta_{\nu_{Q}} = \frac{3}{4}(\frac{e^2qQ}{h})S_{CD}
+\end{equation}
+
+where the term in parentheses is the quadrupolar coupling constant. From siimulation, $S_{CD}$
+is claculated from 
+\begin{equation}
+S_{CD} = \leftbracket \frac{3}{2}\cos^2\theta - \frac{1}{2} \rightbracket
+\end{equation} 
+where $\theta$ denotes the angle the C--H bond vector makes with the bilayer normal and the brakets 
+denote an ensemble average. By selective deuteration of the acyl chain carbons, the orientational 
+order can be measured on a per carbon basis. In simulation, averages can be taken over all C--H 
+bond vectors from carbons at equivalent chain positions. This allows a comparision of chain order 
+versus chain position.
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd3}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 3}
+\label{fig:scd3}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd4}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 4}
+\label{fig:scd4}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd5}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 5}
+\label{fig:scd5}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd6}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 6}
+\label{fig:scd6}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd7}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 7}
+\label{fig:scd7}
+\end{figure}
+
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd8}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 8}
+\label{fig:scd8}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd9}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 9}
+\label{fig:scd9}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd10}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 10}
+\label{fig:scd10}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd11}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 11}
+\label{fig:scd11}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd12}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 12}
+\label{fig:scd12}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd13}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 13}
+\label{fig:scd13}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd14}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 14}
+\label{fig:scd14}
+\end{figure}
+
+\begin{figure}[p]
+\begin{center}
+\includegraphics[keepaspectratio,width=0.9\textwidth]{scd15}
+\end{center}
+\caption{$S_{CD}$ order parameters for carbon 15}
+\label{fig:scd15}
+\end{figure}
+
+% \begin{figure}[p]
+% \begin{center}
+% \includegraphics[keepaspectratio,width=0.9\textwidth]{scd16}
+% \end{center}
+% \caption{$S_{CD}$ order parameters for carbon 16}
+% \label{fig:scd16}
+% \end{figure}
+
+% \begin{figure}[p]
+% \begin{center}
+% \includegraphics[keepaspectratio,width=0.9\textwidth]{scd17}
+% \end{center}
+% \caption{$S_{CD}$ order parameters for carbon 17}
+% \label{fig:scd17}
+% \end{figure}
+
+%\begin{thebibliography}{00}
+
+% \bibitem{label}
+% Text of bibliographic item
+
+% notes:
+% \bibitem{label} \note
+
+% subbibitems:
+% \begin{subbibitems}{label}
+% \bibitem{label1}
+% \bibitem{label2}
+% If there is a note, it should come last:
+% \bibitem{label3} \note
+% \end{subbibitems}
+
+%\bibitem{}
+
+%\end{thebibliography}
+\bibliography{./membrane}
+
+\end{document}
+
+
+:

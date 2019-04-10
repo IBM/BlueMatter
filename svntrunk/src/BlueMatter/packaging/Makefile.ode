@@ -1,0 +1,20 @@
+# Building
+SUBDIRS = \
+ cmf \
+
+EXPINC_SUBDIRS = $(SUBDIRS)
+
+# Packaging
+PKG_CONTROL_DIR = $(PACKAGEBASE)/mdata/bluegene.bluematter.adt
+PKG_TEMP_DIR = $(PACKAGEBASE)/tmp/bluegene.bluematter.adt
+PARSE =
+PKG_CMF_FILE = $(cmf/bluematter_cmf.pp:P)
+
+GATHER =
+RUNPKGTOOL =
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/packaging/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

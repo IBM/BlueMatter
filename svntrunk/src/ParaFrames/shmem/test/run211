@@ -1,0 +1,1 @@
+../AIX_power_NIE/ring.shmem.tree.blnie -X 2 -Y 1 -Z 1 -T../../tree/maps/txt/2_2_2c_tree.txt

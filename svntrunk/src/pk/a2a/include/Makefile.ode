@@ -1,0 +1,14 @@
+
+
+INCLUDES = \
+	packet_alltoallv.hpp \
+	packet_alltoallv_actors.hpp \
+	packet_alltoallv_PkActors.hpp \
+
+EXPINCDIR = /usr/include/pk/a2a/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_INCLUDE)/pk/a2a/
+
+.include <$(RULES_MK)>

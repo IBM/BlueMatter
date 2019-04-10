@@ -1,0 +1,18 @@
+VPATH = ..
+
+OFILES  = \
+	mpi$(OBJ_SUFF) \
+
+CFLAGS += $(SMPCFLAGS)
+OBJECTS = $(OFILES)
+
+LIBRARIES = $(LIB_PREF)pksmp_mpi$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/util_comm/src/smp/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

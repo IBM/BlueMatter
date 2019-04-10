@@ -1,0 +1,90 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UpdateVelocityFirstHalfStepNPT( 
+        MDVM &aMDVM
+        )
+{
+    //
+    // updates particle velocities to T+dT/2
+    //
+    // NOTE: this routine returns with the site velocities holding the
+    //       velocity of the site _relative_ to the fragment center of
+    //       mass -- we clean things back up to real velocities at the
+    //       second half step
+    //
+    // I am assuming this routine runs over a single irreducible fragment
+    // called "thisFragment" or something
+    //
+    const double dt                  = aMDVM.GetDeltaT();
+    const XYZ    vCOM                = aMDVM.GetCenterOfMassVelocity();
+    const double mCOMHalfInverseMass = aMDVM.GetCenterOfMassHalfInverseMass();
+///////////    const XYZ    fCOM                = aMDVM.GetCenterOfMassForce();
+    const XYZ    impulseCOM                = aMDVM.GetCenterOfMassImpulse();
+
+    const XYZ length_ratio           = aMDVM.GetVolumeRatio();
+
+#ifndef NOT_TIME_REVERSIBLE
+    const double expvelrat           = aMDVM.GetExpVolumeVelocityRatio();
+#else
+    const XYZ velocity_ratio         = aMDVM.GetVolumeVelocityRatio();
+#endif
+
+    XYZ new_vCOM;
+
+    // new_vCOM.mX = length_ratio.mX * vCOM.mX * (1.0 - dt * (1.0 / 3.0) * velocity_ratio.mX)
+    //                          + dt * fCOM.mX * mCOMHalfInverseMass;
+    // new_vCOM.mY = length_ratio.mY * vCOM.mX * (1.0 - dt * (1.0 / 3.0) * velocity_ratio.mY)
+    //                          + dt * fCOM.mY * mCOMHalfInverseMass;
+    // new_vCOM.mZ = length_ratio.mZ * vCOM.mZ * (1.0 - dt * (1.0 / 3.0) * velocity_ratio.mZ)
+    //                          + dt * fCOM.mZ * mCOMHalfInverseMass;
+
+    // for now use x-dimension ratios
+///    new_vCOM = length_ratio.mX * ( vCOM * ( 1.0 - dt / 3.0 * velocity_ratio.mX ) +
+///                                   dt * fCOM * mCOMHalfInverseMass );
+
+#ifndef NOT_TIME_REVERSIBLE
+    new_vCOM = expvelrat * ( vCOM + impulseCOM * mCOMHalfInverseMass );
+#else
+    new_vCOM = length_ratio.mX * ( vCOM * ( 1.0 - dt / 3.0 * velocity_ratio.mX ) +
+                                   impulseCOM * mCOMHalfInverseMass );
+#endif
+
+    aMDVM.ReportCenterOfMassVelocity( new_vCOM );
+
+    //
+    // loop over sites in this irreducible fragment
+    //
+
+    for( int SiteIndex = 0; SiteIndex < aMDVM.GetFragmentSiteCount(); SiteIndex++ )
+        {
+            double mSiteHalfInverseMass = aMDVM.GetHalfInverseMass( SiteIndex );
+            XYZ    vSite                = aMDVM.GetVelocity( SiteIndex );
+////////            XYZ    fSite                = aMDVM.GetForce( SiteIndex );
+            XYZ    impulseSite                = aMDVM.GetImpulse( SiteIndex );
+
+///            XYZ new_vSite = (vSite - vCOM) +  dt * 
+///                            ( fSite * mSiteHalfInverseMass - fCOM * mCOMHalfInverseMass );
+            XYZ new_vSite = (vSite - vCOM) + ( impulseSite * mSiteHalfInverseMass - impulseCOM * mCOMHalfInverseMass );
+
+            aMDVM.ReportVelocity( SiteIndex, new_vSite );
+        }
+
+    return;
+}

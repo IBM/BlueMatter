@@ -1,0 +1,67 @@
+
+JAR_LIBRARIES = db2probspec${JAR_SUFF}
+
+JAR_OBJECTS =   \
+  com/ibm/bluematter/db2probspec/BondListAsGraph${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/ConnectedSubgraphs${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/GraphSeparation${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/IntegerPairRep${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/ConnectedPartition${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/VectorComparable${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/Fragment${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/Pair${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/MSDGenerator${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/MSD_WrapperGenerator${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/P2Generator${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/UDFInvocation${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/SiteRep${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/ProbspecgenDB2${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/SiteTypeRep${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/UDF_RegistryIF${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/CompileScriptGenerator${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/ImplManager${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/PltManager${CLASS_SUFF} \
+  com/ibm/bluematter/db2probspec/parser/RunTimeParameters${CLASS_SUFF} \
+  com/ibm/bluematter/xml2db2/ProbspecDB2Setup${CLASS_SUFF} \
+  com/ibm/bluematter/xml2db2/CreateDB2Tables${CLASS_SUFF} \
+  com/ibm/bluematter/xml2db2/DB2TableNames${CLASS_SUFF} \
+  com/ibm/bluematter/xml2db2/ImportSuccessCheck${CLASS_SUFF} \
+  com/ibm/bluematter/udf_registry/UDFRegistryDB2Setup${CLASS_SUFF} \
+  com/ibm/bluematter/utils/DropSchema${CLASS_SUFF} \
+  com/ibm/bluematter/utils/DropSystem${CLASS_SUFF} \
+  com/ibm/bluematter/utils/DumpSysId${CLASS_SUFF} \
+  com/ibm/bluematter/utils/SysIdFromDB2${CLASS_SUFF} \
+  com/ibm/bluematter/utils/SimpleCtpParser${CLASS_SUFF} \
+  com/ibm/bluematter/utils/Rtp2db2${CLASS_SUFF} \
+  com/ibm/bluematter/utils/SimpleImplParser${CLASS_SUFF} \
+  com/ibm/bluematter/utils/Impl2db2${CLASS_SUFF} \
+  com/ibm/bluematter/utils/SimplePltParser${CLASS_SUFF} \
+  com/ibm/bluematter/utils/Plt2db2${CLASS_SUFF} \
+  com/ibm/bluematter/utils/CompileMSD${CLASS_SUFF} \
+
+IDIR = $(BG_BIN)/setup/
+
+ILIST = $(JAR_LIBRARIES)
+
+
+# the subdirs to traverse for the EXPINC pass
+#EXPINC_SUBDIRS += db2probspec udf_registry utils xml2db2
+
+# the subdirs to traverse for the OBJECTS pass
+OBJECTS_SUBDIRS += db2probspec udf_registry utils xml2db2
+
+# the subdirs to traverse for the EXPLIB pass
+#EXPLIB_SUBDIRS += db2probspec udf_registry utils xml2db2
+
+# the subdirs to traverse for the STANDARD pass
+SUBDIRS += db2probspec udf_registry utils xml2db2
+
+# the unrecognized files in this directory (not used)
+#UNKNOWN_FILES +=
+
+# include the ODE rules
+.include <${RULES_MK}>
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspecdb2/com/ibm/bluematter/
+.endif # RESHIP_SOURCE

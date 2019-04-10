@@ -1,0 +1,24 @@
+
+# the subdirs to traverse for the EXPINC pass
+EXPINC_SUBDIRS += WEB-INF
+
+# the subdirs to traverse for the OBJECTS pass
+OBJECTS_SUBDIRS += WEB-INF
+
+# the subdirs to traverse for the EXPLIB pass
+EXPLIB_SUBDIRS += WEB-INF
+
+# the subdirs to traverse for the STANDARD pass
+SUBDIRS += WEB-INF
+
+
+IDIR = $(BG_WEB)/bluematter/
+
+ILIST = \
+	sysquery.html \
+	ctp_query.html \
+	index.html \
+
+
+# include the ODE rules
+.include <${RULES_MK}>

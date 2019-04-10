@@ -1,0 +1,20 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  chem.eps \
+  chem.esd \
+  chem.ps \
+  tcm.ksh \
+  udf.eps \
+  udf.esd \
+  udf.ps \
+  Makefile.ode
+chem.eps_IDIR = $(BG_SRC)/BlueMatter/tcm/
+chem.esd_IDIR = $(BG_SRC)/BlueMatter/tcm/
+chem.ps_IDIR = $(BG_SRC)/BlueMatter/tcm/
+tcm.ksh_IDIR = $(BG_SRC)/BlueMatter/tcm/
+udf.eps_IDIR = $(BG_SRC)/BlueMatter/tcm/
+udf.esd_IDIR = $(BG_SRC)/BlueMatter/tcm/
+udf.ps_IDIR = $(BG_SRC)/BlueMatter/tcm/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/tcm/source_ship/
+.include <$(RULES_MK)>

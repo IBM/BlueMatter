@@ -1,0 +1,10 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  exception.cpp \
+  makefile.aix \
+  Makefile.ode
+exception.cpp_IDIR = $(BG_SRC)/bgfe/pk/exception/src/
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/exception/src/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/exception/src/source_ship/
+.include <$(RULES_MK)>

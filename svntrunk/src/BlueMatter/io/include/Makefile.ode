@@ -1,0 +1,24 @@
+INCLUDES = \
+	DVSFile.hpp \
+	ExternalDatagram.hpp \
+	ExternalDatagram_Helper.hpp \
+
+# For BlueLight bringup, we'll include a set of enkp positions/velocities in the kernel
+.if $(CONTEXT) == "bluelight_sk_1"
+	INCLUDES += enkp.nonzerovel.charmm.hpp \
+	            enkp_20a.tip3.charmm.p3me.equil.aix.dvs.hpp \
+                    wat_2.tip3.charmm.aix.dvs.hpp \
+
+.endif
+
+EXPINCDIR = /usr/include/BlueMatter/
+
+IDIR = $(BG_INCLUDE)/BlueMatter/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/io/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

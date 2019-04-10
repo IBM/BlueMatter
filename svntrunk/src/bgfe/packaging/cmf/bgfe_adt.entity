@@ -1,0 +1,76 @@
+InstallEntity
+{
+
+  EntityInfo
+  {
+#if defined(rios_aix_4) || defined(rios_aix_5)
+    entityName  = "bluegene.bgfe.adt.adt";
+    description = STRING(IBM Blue Gene Functional Emulator App Dev Toolkit);
+#endif
+    version     = VERSION;
+    release     = RELEASE;
+    maintLevel  = MAINTLEVEL;
+    fixLevel    = FIXLEVEL;
+    language    = 'en_us';
+    content     = 'USR';
+#if defined(rios_aix_4) || defined(rios_aix_5)
+    insList     = [ < bluegene.bgfe.adt.adt.il > ];
+#endif
+  }
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#if defined(rios_aix_4) || defined(rios_aix_5)
+    osName         = [ "rios_aix"];
+#if defined(rios_aix_4)
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#else
+    osRelease      = [ "5"    ];
+    osVersion      = [ "1"   ];
+#endif
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+#ifdef rios_aix_4
+  RequisitesInfo
+  {
+    requisites = [
+                   ("P" "bos.rte 4.3.3.0")
+                 ];
+  }
+#endif
+
+  LinkInfo
+  {
+    immChildFiles = [
+#define PACKAGE_DIRECTORY(directory) < MKPATH(INSTALLSRC, directory) >
+#define PACKAGE_FILE(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#define PACKAGE_FILE_EXEC(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#define PACKAGE_FILE_SETUID(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#include <cmf/bgfe_adt.files>
+#undef PACKAGE_DIRECTORY
+#undef PACKAGE_FILE
+#undef PACKAGE_FILE_EXEC
+#undef PACKAGE_FILE_SETUID
+                    ];
+    parent = "bluegene.bgfe.adt";
+  }
+
+
+}

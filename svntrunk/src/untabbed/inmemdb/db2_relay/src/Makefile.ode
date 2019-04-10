@@ -1,0 +1,25 @@
+BG_AUXILIARY = DB2
+
+OBJECTS = \
+  db2_relay${OBJ_SUFF} \
+
+OFILES = $(OBJECTS)
+
+PROGRAMS = \
+  db2_relay${PROG_SUFF}
+
+db2_relay${PROG_SUFF}_OFILES = \
+  db2_relay${OBJ_SUFF} \
+
+LIBS += \
+  $(LIB_PREF)db2cli$(LIB_SUFF)
+
+IDIR = $(BG_LIB)/
+
+ILIST = $(LIBRARIES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./inmemdb/db2_relay/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

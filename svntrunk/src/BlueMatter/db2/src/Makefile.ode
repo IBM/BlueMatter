@@ -1,0 +1,96 @@
+#
+# ODE makefile
+#
+#
+BG_AUXILIARY = DB2
+
+#CFLAGS += -I /opt/ibm/db2/V11.1/include
+#LDFLAGS += -L /opt/ibm/db2/V11.1/lib64
+
+# the object files
+OBJECTS += \
+	moleculetypelist${OBJ_SUFF} \
+	elementlist${OBJ_SUFF} \
+	chemicalcomponentlist${OBJ_SUFF} \
+	atomtaglist${OBJ_SUFF} \
+	moleculenamelist${OBJ_SUFF} \
+	moleculeinstancelist${OBJ_SUFF} \
+	chemicalcomponentinstancelist${OBJ_SUFF} \
+	chainlist${OBJ_SUFF} \
+	monomerinstancelist${OBJ_SUFF} \
+	site${OBJ_SUFF} \
+	sitelist${OBJ_SUFF} \
+	bondlist${OBJ_SUFF} \
+	molecularsystem${OBJ_SUFF} \
+	compareinteger${OBJ_SUFF} \
+	test${OBJ_SUFF} \
+
+OFILES += \
+	moleculetypelist${OBJ_SUFF} \
+	elementlist${OBJ_SUFF} \
+	chemicalcomponentlist${OBJ_SUFF} \
+	atomtaglist${OBJ_SUFF} \
+	moleculenamelist${OBJ_SUFF} \
+	moleculeinstancelist${OBJ_SUFF} \
+	chemicalcomponentinstancelist${OBJ_SUFF} \
+	chainlist${OBJ_SUFF} \
+	monomerinstancelist${OBJ_SUFF} \
+	site${OBJ_SUFF} \
+	sitelist${OBJ_SUFF} \
+	bondlist${OBJ_SUFF} \
+	molecularsystem${OBJ_SUFF} \
+	compareinteger${OBJ_SUFF} \
+
+
+LIBRARIES = $(LIB_PREF)db2chem$(LIB_SUFF)
+
+LIBS += \
+	$(LIB_PREF)db2chem$(LIB_SUFF) \
+	$(LIB_PREF)db2cli$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+PROGRAMS = \
+	testdb2chem$(PROG_SUFF) \
+
+testdb2chem$(PROG_SUFF)_OFILES = \
+	test$(OBJ_SUFF) \	
+
+
+ILIST += \
+	clone_ctp.py \
+	schema.py \
+	schema2.py \
+	schemadb2.py \
+	schema2dot.py \
+	setpriv.db2 \
+	testdb2chem$(PROG_SUFF) \
+	db2diff.py \
+	sysclass.py \
+	putcoords.py \
+	getcoords.py \
+	build2db2.py \
+	mddatabase.py \
+
+
+clone_ctp.py_IDIR= $(BG_BIN)/utils/
+schema.py_IDIR = $(BG_BIN)/utils/
+schema2.py_IDIR = $(BG_BIN)/utils/
+schema2dot.py_IDIR = $(BG_BIN)/utils/
+schemadb2.py_IDIR = $(BG_LIB)/python/
+setpriv.db2_IDIR =  $(BG_BIN)/utils/
+testdb2chem$(PROG_SUFF)_IDIR = $(BG_BIN)/utils/
+db2diff.py_IDIR = $(BG_BIN)/utils/
+sysclass.py_IDIR = $(BG_BIN)/utils/
+getcoords.py_IDIR = $(BG_BIN)/utils/
+putcoords.py_IDIR = $(BG_BIN)/utils/
+mddatabase.py_IDIR = $(BG_BIN)/utils/
+build2db2.py_IDIR = $(BG_BIN)/setup/
+
+
+.include <$(RULES_MK)>
+
+
+

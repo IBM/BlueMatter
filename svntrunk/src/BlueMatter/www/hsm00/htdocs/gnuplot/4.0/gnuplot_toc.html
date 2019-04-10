@@ -1,0 +1,436 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from gnuplot.texi on 12 May 2004 -->
+
+<TITLE>Gnuplot: An Interactive Plotting Program - Table of Contents</TITLE>
+</HEAD>
+<BODY>
+<H1>Gnuplot: An Interactive Plotting Program</H1>
+<P>
+<P><HR><P>
+<UL>
+<LI><A NAME="TOC1" HREF="gnuplot_1.html#SEC1">1. gnuplot</A>
+<UL>
+<LI><A NAME="TOC2" HREF="gnuplot_1.html#SEC2">1.1 Copyright</A>
+<LI><A NAME="TOC3" HREF="gnuplot_1.html#SEC3">1.2 Introduction</A>
+<LI><A NAME="TOC4" HREF="gnuplot_1.html#SEC4">1.3 Seeking-assistance</A>
+<LI><A NAME="TOC5" HREF="gnuplot_1.html#SEC5">1.4 What is New in Version 4.0</A>
+<UL>
+<LI><A NAME="TOC6" HREF="gnuplot_1.html#SEC6">1.4.1 Mouse and hotkey support in interactive terminals</A>
+<LI><A NAME="TOC7" HREF="gnuplot_1.html#SEC7">1.4.2 New terminal features</A>
+<LI><A NAME="TOC8" HREF="gnuplot_1.html#SEC8">1.4.3 New plot style @ref{pm3d}</A>
+<LI><A NAME="TOC9" HREF="gnuplot_1.html#SEC9">1.4.4 New plot style `filledcurves`</A>
+<LI><A NAME="TOC10" HREF="gnuplot_1.html#SEC10">1.4.5 Filled boxes</A>
+<LI><A NAME="TOC11" HREF="gnuplot_1.html#SEC11">1.4.6 New plot option smooth frequency</A>
+<LI><A NAME="TOC12" HREF="gnuplot_1.html#SEC12">1.4.7 Improved text options</A>
+<LI><A NAME="TOC13" HREF="gnuplot_1.html#SEC13">1.4.8 More text encodings</A>
+<LI><A NAME="TOC14" HREF="gnuplot_1.html#SEC14">1.4.9 Arrows</A>
+<LI><A NAME="TOC15" HREF="gnuplot_1.html#SEC15">1.4.10 Data file format</A>
+<LI><A NAME="TOC16" HREF="gnuplot_1.html#SEC16">1.4.11 Other changes and additions</A>
+<LI><A NAME="TOC17" HREF="gnuplot_1.html#SEC17">1.4.12 Accompanying documentation</A>
+</UL>
+<LI><A NAME="TOC18" HREF="gnuplot_1.html#SEC18">1.5 Batch/Interactive Operation</A>
+<LI><A NAME="TOC19" HREF="gnuplot_1.html#SEC19">1.6 Command-line-editing</A>
+<LI><A NAME="TOC20" HREF="gnuplot_1.html#SEC20">1.7 Comments</A>
+<LI><A NAME="TOC21" HREF="gnuplot_1.html#SEC21">1.8 Coordinates</A>
+<LI><A NAME="TOC22" HREF="gnuplot_1.html#SEC22">1.9 Environment</A>
+<LI><A NAME="TOC23" HREF="gnuplot_1.html#SEC23">1.10 Expressions</A>
+<UL>
+<LI><A NAME="TOC24" HREF="gnuplot_1.html#SEC24">1.10.1 Functions</A>
+<UL>
+<LI><A NAME="TOC25" HREF="gnuplot_1.html#SEC25">1.10.1.1 abs</A>
+<LI><A NAME="TOC26" HREF="gnuplot_1.html#SEC26">1.10.1.2 acos</A>
+<LI><A NAME="TOC27" HREF="gnuplot_1.html#SEC27">1.10.1.3 acosh</A>
+<LI><A NAME="TOC28" HREF="gnuplot_1.html#SEC28">1.10.1.4 arg</A>
+<LI><A NAME="TOC29" HREF="gnuplot_1.html#SEC29">1.10.1.5 asin</A>
+<LI><A NAME="TOC30" HREF="gnuplot_1.html#SEC30">1.10.1.6 asinh</A>
+<LI><A NAME="TOC31" HREF="gnuplot_1.html#SEC31">1.10.1.7 atan</A>
+<LI><A NAME="TOC32" HREF="gnuplot_1.html#SEC32">1.10.1.8 atan2</A>
+<LI><A NAME="TOC33" HREF="gnuplot_1.html#SEC33">1.10.1.9 atanh</A>
+<LI><A NAME="TOC34" HREF="gnuplot_1.html#SEC34">1.10.1.10 besj0</A>
+<LI><A NAME="TOC35" HREF="gnuplot_1.html#SEC35">1.10.1.11 besj1</A>
+<LI><A NAME="TOC36" HREF="gnuplot_1.html#SEC36">1.10.1.12 besy0</A>
+<LI><A NAME="TOC37" HREF="gnuplot_1.html#SEC37">1.10.1.13 besy1</A>
+<LI><A NAME="TOC38" HREF="gnuplot_1.html#SEC38">1.10.1.14 ceil</A>
+<LI><A NAME="TOC39" HREF="gnuplot_1.html#SEC39">1.10.1.15 cos</A>
+<LI><A NAME="TOC40" HREF="gnuplot_1.html#SEC40">1.10.1.16 cosh</A>
+<LI><A NAME="TOC41" HREF="gnuplot_1.html#SEC41">1.10.1.17 erf</A>
+<LI><A NAME="TOC42" HREF="gnuplot_1.html#SEC42">1.10.1.18 erfc</A>
+<LI><A NAME="TOC43" HREF="gnuplot_1.html#SEC43">1.10.1.19 exp</A>
+<LI><A NAME="TOC44" HREF="gnuplot_1.html#SEC44">1.10.1.20 floor</A>
+<LI><A NAME="TOC45" HREF="gnuplot_1.html#SEC45">1.10.1.21 gamma</A>
+<LI><A NAME="TOC46" HREF="gnuplot_1.html#SEC46">1.10.1.22 ibeta</A>
+<LI><A NAME="TOC47" HREF="gnuplot_1.html#SEC47">1.10.1.23 inverf</A>
+<LI><A NAME="TOC48" HREF="gnuplot_1.html#SEC48">1.10.1.24 igamma</A>
+<LI><A NAME="TOC49" HREF="gnuplot_1.html#SEC49">1.10.1.25 imag</A>
+<LI><A NAME="TOC50" HREF="gnuplot_1.html#SEC50">1.10.1.26 invnorm</A>
+<LI><A NAME="TOC51" HREF="gnuplot_1.html#SEC51">1.10.1.27 int</A>
+<LI><A NAME="TOC52" HREF="gnuplot_1.html#SEC52">1.10.1.28 lambertw</A>
+<LI><A NAME="TOC53" HREF="gnuplot_1.html#SEC53">1.10.1.29 lgamma</A>
+<LI><A NAME="TOC54" HREF="gnuplot_1.html#SEC54">1.10.1.30 log</A>
+<LI><A NAME="TOC55" HREF="gnuplot_1.html#SEC55">1.10.1.31 log10</A>
+<LI><A NAME="TOC56" HREF="gnuplot_1.html#SEC56">1.10.1.32 norm</A>
+<LI><A NAME="TOC57" HREF="gnuplot_1.html#SEC57">1.10.1.33 rand</A>
+<LI><A NAME="TOC58" HREF="gnuplot_1.html#SEC58">1.10.1.34 real</A>
+<LI><A NAME="TOC59" HREF="gnuplot_1.html#SEC59">1.10.1.35 sgn</A>
+<LI><A NAME="TOC60" HREF="gnuplot_1.html#SEC60">1.10.1.36 sin</A>
+<LI><A NAME="TOC61" HREF="gnuplot_1.html#SEC61">1.10.1.37 sinh</A>
+<LI><A NAME="TOC62" HREF="gnuplot_1.html#SEC62">1.10.1.38 sqrt</A>
+<LI><A NAME="TOC63" HREF="gnuplot_1.html#SEC63">1.10.1.39 tan</A>
+<LI><A NAME="TOC64" HREF="gnuplot_1.html#SEC64">1.10.1.40 tanh</A>
+<LI><A NAME="TOC65" HREF="gnuplot_1.html#SEC65">1.10.1.41 column</A>
+<LI><A NAME="TOC66" HREF="gnuplot_1.html#SEC66">1.10.1.42 defined</A>
+<LI><A NAME="TOC67" HREF="gnuplot_1.html#SEC67">1.10.1.43 tm_hour</A>
+<LI><A NAME="TOC68" HREF="gnuplot_1.html#SEC68">1.10.1.44 tm_mday</A>
+<LI><A NAME="TOC69" HREF="gnuplot_1.html#SEC69">1.10.1.45 tm_min</A>
+<LI><A NAME="TOC70" HREF="gnuplot_1.html#SEC70">1.10.1.46 tm_mon</A>
+<LI><A NAME="TOC71" HREF="gnuplot_1.html#SEC71">1.10.1.47 tm_sec</A>
+<LI><A NAME="TOC72" HREF="gnuplot_1.html#SEC72">1.10.1.48 tm_wday</A>
+<LI><A NAME="TOC73" HREF="gnuplot_1.html#SEC73">1.10.1.49 tm_yday</A>
+<LI><A NAME="TOC74" HREF="gnuplot_1.html#SEC74">1.10.1.50 tm_year</A>
+<LI><A NAME="TOC75" HREF="gnuplot_1.html#SEC75">1.10.1.51 valid</A>
+<LI><A NAME="TOC76" HREF="gnuplot_1.html#SEC76">1.10.1.52 Random number generator</A>
+</UL>
+<LI><A NAME="TOC77" HREF="gnuplot_1.html#SEC77">1.10.2 Operators</A>
+<UL>
+<LI><A NAME="TOC78" HREF="gnuplot_1.html#SEC78">1.10.2.1 Unary</A>
+<LI><A NAME="TOC79" HREF="gnuplot_1.html#SEC79">1.10.2.2 Binary</A>
+<LI><A NAME="TOC80" HREF="gnuplot_1.html#SEC80">1.10.2.3 Ternary</A>
+</UL>
+<LI><A NAME="TOC81" HREF="gnuplot_1.html#SEC81">1.10.3 User-defined</A>
+</UL>
+<LI><A NAME="TOC82" HREF="gnuplot_1.html#SEC82">1.11 Glossary</A>
+<LI><A NAME="TOC83" HREF="gnuplot_1.html#SEC83">1.12 mouse input</A>
+<UL>
+<LI><A NAME="TOC84" HREF="gnuplot_1.html#SEC84">1.12.1 bind</A>
+<LI><A NAME="TOC85" HREF="gnuplot_1.html#SEC85">1.12.2 mouse_variables</A>
+</UL>
+<LI><A NAME="TOC86" HREF="gnuplot_1.html#SEC86">1.13 Plotting</A>
+<LI><A NAME="TOC87" HREF="gnuplot_1.html#SEC87">1.14 Start-up</A>
+<LI><A NAME="TOC88" HREF="gnuplot_1.html#SEC88">1.15 Substitution</A>
+<LI><A NAME="TOC89" HREF="gnuplot_1.html#SEC89">1.16 Syntax</A>
+<LI><A NAME="TOC90" HREF="gnuplot_1.html#SEC90">1.17 Time/Date data</A>
+</UL>
+<LI><A NAME="TOC91" HREF="gnuplot_2.html#SEC91">2. Commands</A>
+<UL>
+<LI><A NAME="TOC92" HREF="gnuplot_2.html#SEC92">2.1 cd</A>
+<LI><A NAME="TOC93" HREF="gnuplot_2.html#SEC93">2.2 call</A>
+<LI><A NAME="TOC94" HREF="gnuplot_2.html#SEC94">2.3 clear</A>
+<LI><A NAME="TOC95" HREF="gnuplot_2.html#SEC95">2.4 exit</A>
+<LI><A NAME="TOC96" HREF="gnuplot_2.html#SEC96">2.5 fit</A>
+<UL>
+<LI><A NAME="TOC97" HREF="gnuplot_2.html#SEC97">2.5.1 adjustable parameters</A>
+<LI><A NAME="TOC98" HREF="gnuplot_2.html#SEC98">2.5.2 short introduction</A>
+<LI><A NAME="TOC99" HREF="gnuplot_2.html#SEC99">2.5.3 error estimates</A>
+<UL>
+<LI><A NAME="TOC100" HREF="gnuplot_2.html#SEC100">2.5.3.1 statistical overview</A>
+<LI><A NAME="TOC101" HREF="gnuplot_2.html#SEC101">2.5.3.2 practical guidelines</A>
+</UL>
+<LI><A NAME="TOC102" HREF="gnuplot_2.html#SEC102">2.5.4 fit controlling</A>
+<UL>
+<LI><A NAME="TOC103" HREF="gnuplot_2.html#SEC103">2.5.4.1 control variables</A>
+<LI><A NAME="TOC104" HREF="gnuplot_2.html#SEC104">2.5.4.2 environment variables</A>
+</UL>
+<LI><A NAME="TOC105" HREF="gnuplot_2.html#SEC105">2.5.5 multi-branch</A>
+<LI><A NAME="TOC106" HREF="gnuplot_2.html#SEC106">2.5.6 starting values</A>
+<LI><A NAME="TOC107" HREF="gnuplot_2.html#SEC107">2.5.7 tips</A>
+</UL>
+<LI><A NAME="TOC108" HREF="gnuplot_2.html#SEC108">2.6 help</A>
+<LI><A NAME="TOC109" HREF="gnuplot_2.html#SEC109">2.7 history</A>
+<LI><A NAME="TOC110" HREF="gnuplot_2.html#SEC110">2.8 if</A>
+<LI><A NAME="TOC111" HREF="gnuplot_2.html#SEC111">2.9 load</A>
+<LI><A NAME="TOC112" HREF="gnuplot_2.html#SEC112">2.10 pause</A>
+<LI><A NAME="TOC113" HREF="gnuplot_2.html#SEC113">2.11 plot</A>
+<UL>
+<LI><A NAME="TOC114" HREF="gnuplot_2.html#SEC114">2.11.1 data-file</A>
+<UL>
+<LI><A NAME="TOC115" HREF="gnuplot_2.html#SEC115">2.11.1.1 every</A>
+<LI><A NAME="TOC116" HREF="gnuplot_2.html#SEC116">2.11.1.2 example datafile</A>
+<LI><A NAME="TOC117" HREF="gnuplot_2.html#SEC117">2.11.1.3 index</A>
+<LI><A NAME="TOC118" HREF="gnuplot_2.html#SEC118">2.11.1.4 smooth</A>
+<LI><A NAME="TOC119" HREF="gnuplot_2.html#SEC119">2.11.1.5 special-filenames</A>
+<LI><A NAME="TOC120" HREF="gnuplot_2.html#SEC120">2.11.1.6 thru</A>
+<LI><A NAME="TOC121" HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A>
+</UL>
+<LI><A NAME="TOC122" HREF="gnuplot_2.html#SEC122">2.11.2 errorbars</A>
+<LI><A NAME="TOC123" HREF="gnuplot_2.html#SEC123">2.11.3 errorlines</A>
+<LI><A NAME="TOC124" HREF="gnuplot_2.html#SEC124">2.11.4 parametric</A>
+<LI><A NAME="TOC125" HREF="gnuplot_2.html#SEC125">2.11.5 ranges</A>
+<LI><A NAME="TOC126" HREF="gnuplot_2.html#SEC126">2.11.6 title</A>
+<LI><A NAME="TOC127" HREF="gnuplot_2.html#SEC127">2.11.7 with</A>
+</UL>
+<LI><A NAME="TOC128" HREF="gnuplot_2.html#SEC128">2.12 print</A>
+<LI><A NAME="TOC129" HREF="gnuplot_2.html#SEC129">2.13 pwd</A>
+<LI><A NAME="TOC130" HREF="gnuplot_2.html#SEC130">2.14 quit</A>
+<LI><A NAME="TOC131" HREF="gnuplot_2.html#SEC131">2.15 replot</A>
+<LI><A NAME="TOC132" HREF="gnuplot_2.html#SEC132">2.16 reread</A>
+<LI><A NAME="TOC133" HREF="gnuplot_2.html#SEC133">2.17 reset</A>
+<LI><A NAME="TOC134" HREF="gnuplot_2.html#SEC134">2.18 save</A>
+<LI><A NAME="TOC135" HREF="gnuplot_2.html#SEC135">2.19 set-show</A>
+<UL>
+<LI><A NAME="TOC136" HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>
+<LI><A NAME="TOC137" HREF="gnuplot_2.html#SEC137">2.19.2 arrow</A>
+<LI><A NAME="TOC138" HREF="gnuplot_2.html#SEC138">2.19.3 autoscale</A>
+<UL>
+<LI><A NAME="TOC139" HREF="gnuplot_2.html#SEC139">2.19.3.1 parametric mode</A>
+<LI><A NAME="TOC140" HREF="gnuplot_2.html#SEC140">2.19.3.2 polar mode</A>
+</UL>
+<LI><A NAME="TOC141" HREF="gnuplot_2.html#SEC141">2.19.4 bars</A>
+<LI><A NAME="TOC142" HREF="gnuplot_2.html#SEC142">2.19.5 bmargin</A>
+<LI><A NAME="TOC143" HREF="gnuplot_2.html#SEC143">2.19.6 border</A>
+<LI><A NAME="TOC144" HREF="gnuplot_2.html#SEC144">2.19.7 boxwidth</A>
+<LI><A NAME="TOC145" HREF="gnuplot_2.html#SEC145">2.19.8 clabel</A>
+<LI><A NAME="TOC146" HREF="gnuplot_2.html#SEC146">2.19.9 clip</A>
+<LI><A NAME="TOC147" HREF="gnuplot_2.html#SEC147">2.19.10 cntrparam</A>
+<LI><A NAME="TOC148" HREF="gnuplot_2.html#SEC148">2.19.11 color box</A>
+<LI><A NAME="TOC149" HREF="gnuplot_2.html#SEC149">2.19.12 contour</A>
+<LI><A NAME="TOC150" HREF="gnuplot_2.html#SEC150">2.19.13 data style</A>
+<LI><A NAME="TOC151" HREF="gnuplot_2.html#SEC151">2.19.14 datafile</A>
+<UL>
+<LI><A NAME="TOC152" HREF="gnuplot_2.html#SEC152">2.19.14.1 set datafile missing</A>
+<LI><A NAME="TOC153" HREF="gnuplot_2.html#SEC153">2.19.14.2 set datafile separator</A>
+<LI><A NAME="TOC154" HREF="gnuplot_2.html#SEC154">2.19.14.3 set datafile commentschars</A>
+</UL>
+<LI><A NAME="TOC155" HREF="gnuplot_2.html#SEC155">2.19.15 decimalsign</A>
+<LI><A NAME="TOC156" HREF="gnuplot_2.html#SEC156">2.19.16 dgrid3d</A>
+<LI><A NAME="TOC157" HREF="gnuplot_2.html#SEC157">2.19.17 dummy</A>
+<LI><A NAME="TOC158" HREF="gnuplot_2.html#SEC158">2.19.18 encoding</A>
+<LI><A NAME="TOC159" HREF="gnuplot_2.html#SEC159">2.19.19 fit</A>
+<LI><A NAME="TOC160" HREF="gnuplot_2.html#SEC160">2.19.20 fontpath</A>
+<LI><A NAME="TOC161" HREF="gnuplot_2.html#SEC161">2.19.21 format</A>
+<UL>
+<LI><A NAME="TOC162" HREF="gnuplot_2.html#SEC162">2.19.21.1 format specifiers</A>
+<LI><A NAME="TOC163" HREF="gnuplot_2.html#SEC163">2.19.21.2 time/date specifiers</A>
+</UL>
+<LI><A NAME="TOC164" HREF="gnuplot_2.html#SEC164">2.19.22 function style</A>
+<LI><A NAME="TOC165" HREF="gnuplot_2.html#SEC165">2.19.23 functions</A>
+<LI><A NAME="TOC166" HREF="gnuplot_2.html#SEC166">2.19.24 grid</A>
+<LI><A NAME="TOC167" HREF="gnuplot_2.html#SEC167">2.19.25 hidden3d</A>
+<LI><A NAME="TOC168" HREF="gnuplot_2.html#SEC168">2.19.26 historysize</A>
+<LI><A NAME="TOC169" HREF="gnuplot_2.html#SEC169">2.19.27 isosamples</A>
+<LI><A NAME="TOC170" HREF="gnuplot_2.html#SEC170">2.19.28 key</A>
+<LI><A NAME="TOC171" HREF="gnuplot_2.html#SEC171">2.19.29 label</A>
+<LI><A NAME="TOC172" HREF="gnuplot_2.html#SEC172">2.19.30 lmargin</A>
+<LI><A NAME="TOC173" HREF="gnuplot_2.html#SEC173">2.19.31 loadpath</A>
+<LI><A NAME="TOC174" HREF="gnuplot_2.html#SEC174">2.19.32 locale</A>
+<LI><A NAME="TOC175" HREF="gnuplot_2.html#SEC175">2.19.33 logscale</A>
+<LI><A NAME="TOC176" HREF="gnuplot_2.html#SEC176">2.19.34 mapping</A>
+<LI><A NAME="TOC177" HREF="gnuplot_2.html#SEC177">2.19.35 margin</A>
+<LI><A NAME="TOC178" HREF="gnuplot_2.html#SEC178">2.19.36 mouse</A>
+<UL>
+<LI><A NAME="TOC179" HREF="gnuplot_2.html#SEC179">2.19.36.1 x11_mouse</A>
+</UL>
+<LI><A NAME="TOC180" HREF="gnuplot_2.html#SEC180">2.19.37 multiplot</A>
+<LI><A NAME="TOC181" HREF="gnuplot_2.html#SEC181">2.19.38 mx2tics</A>
+<LI><A NAME="TOC182" HREF="gnuplot_2.html#SEC182">2.19.39 mxtics</A>
+<LI><A NAME="TOC183" HREF="gnuplot_2.html#SEC183">2.19.40 my2tics</A>
+<LI><A NAME="TOC184" HREF="gnuplot_2.html#SEC184">2.19.41 mytics</A>
+<LI><A NAME="TOC185" HREF="gnuplot_2.html#SEC185">2.19.42 mztics</A>
+<LI><A NAME="TOC186" HREF="gnuplot_2.html#SEC186">2.19.43 offsets</A>
+<LI><A NAME="TOC187" HREF="gnuplot_2.html#SEC187">2.19.44 origin</A>
+<LI><A NAME="TOC188" HREF="gnuplot_2.html#SEC188">2.19.45 output</A>
+<LI><A NAME="TOC189" HREF="gnuplot_2.html#SEC189">2.19.46 parametric</A>
+<LI><A NAME="TOC190" HREF="gnuplot_2.html#SEC190">2.19.47 plot</A>
+<LI><A NAME="TOC191" HREF="gnuplot_2.html#SEC191">2.19.48 pm3d</A>
+<LI><A NAME="TOC192" HREF="gnuplot_2.html#SEC192">2.19.49 palette</A>
+<UL>
+<LI><A NAME="TOC193" HREF="gnuplot_2.html#SEC193">2.19.49.1 rgbformulae</A>
+<LI><A NAME="TOC194" HREF="gnuplot_2.html#SEC194">2.19.49.2 defined</A>
+<LI><A NAME="TOC195" HREF="gnuplot_2.html#SEC195">2.19.49.3 functions</A>
+<LI><A NAME="TOC196" HREF="gnuplot_2.html#SEC196">2.19.49.4 file</A>
+<LI><A NAME="TOC197" HREF="gnuplot_2.html#SEC197">2.19.49.5 gamma-correction</A>
+<LI><A NAME="TOC198" HREF="gnuplot_2.html#SEC198">2.19.49.6 postscript</A>
+</UL>
+<LI><A NAME="TOC199" HREF="gnuplot_2.html#SEC199">2.19.50 pointsize</A>
+<LI><A NAME="TOC200" HREF="gnuplot_2.html#SEC200">2.19.51 polar</A>
+<LI><A NAME="TOC201" HREF="gnuplot_2.html#SEC201">2.19.52 print</A>
+<LI><A NAME="TOC202" HREF="gnuplot_2.html#SEC202">2.19.53 rmargin</A>
+<LI><A NAME="TOC203" HREF="gnuplot_2.html#SEC203">2.19.54 rrange</A>
+<LI><A NAME="TOC204" HREF="gnuplot_2.html#SEC204">2.19.55 samples</A>
+<LI><A NAME="TOC205" HREF="gnuplot_2.html#SEC205">2.19.56 size</A>
+<LI><A NAME="TOC206" HREF="gnuplot_2.html#SEC206">2.19.57 style</A>
+<UL>
+<LI><A NAME="TOC207" HREF="gnuplot_2.html#SEC207">2.19.57.1 set style arrow</A>
+<LI><A NAME="TOC208" HREF="gnuplot_2.html#SEC208">2.19.57.2 set style data</A>
+<LI><A NAME="TOC209" HREF="gnuplot_2.html#SEC209">2.19.57.3 set style fill</A>
+<LI><A NAME="TOC210" HREF="gnuplot_2.html#SEC210">2.19.57.4 set style function</A>
+<LI><A NAME="TOC211" HREF="gnuplot_2.html#SEC211">2.19.57.5 set style line</A>
+<LI><A NAME="TOC212" HREF="gnuplot_2.html#SEC212">2.19.57.6 plotting styles</A>
+</UL>
+<LI><A NAME="TOC213" HREF="gnuplot_2.html#SEC213">2.19.58 surface</A>
+<LI><A NAME="TOC214" HREF="gnuplot_2.html#SEC214">2.19.59 terminal</A>
+<UL>
+<LI><A NAME="TOC215" HREF="gnuplot_2.html#SEC215">2.19.59.1 aed767</A>
+<LI><A NAME="TOC216" HREF="gnuplot_2.html#SEC216">2.19.59.2 aifm</A>
+<LI><A NAME="TOC217" HREF="gnuplot_2.html#SEC217">2.19.59.3 amiga</A>
+<LI><A NAME="TOC218" HREF="gnuplot_2.html#SEC218">2.19.59.4 apollo</A>
+<LI><A NAME="TOC219" HREF="gnuplot_2.html#SEC219">2.19.59.5 aqua</A>
+<LI><A NAME="TOC220" HREF="gnuplot_2.html#SEC220">2.19.59.6 atari ST (via AES)</A>
+<LI><A NAME="TOC221" HREF="gnuplot_2.html#SEC221">2.19.59.7 atari ST (via VDI)</A>
+<LI><A NAME="TOC222" HREF="gnuplot_2.html#SEC222">2.19.59.8 be</A>
+<LI><A NAME="TOC223" HREF="gnuplot_2.html#SEC223">2.19.59.9 cgi</A>
+<LI><A NAME="TOC224" HREF="gnuplot_2.html#SEC224">2.19.59.10 cgm</A>
+<LI><A NAME="TOC225" HREF="gnuplot_2.html#SEC225">2.19.59.11 corel</A>
+<LI><A NAME="TOC226" HREF="gnuplot_2.html#SEC226">2.19.59.12 debug</A>
+<LI><A NAME="TOC227" HREF="gnuplot_2.html#SEC227">2.19.59.13 svga</A>
+<LI><A NAME="TOC228" HREF="gnuplot_2.html#SEC228">2.19.59.14 dumb</A>
+<LI><A NAME="TOC229" HREF="gnuplot_2.html#SEC229">2.19.59.15 dxf</A>
+<LI><A NAME="TOC230" HREF="gnuplot_2.html#SEC230">2.19.59.16 dxy800a</A>
+<LI><A NAME="TOC231" HREF="gnuplot_2.html#SEC231">2.19.59.17 eepic</A>
+<LI><A NAME="TOC232" HREF="gnuplot_2.html#SEC232">2.19.59.18 emf</A>
+<LI><A NAME="TOC233" HREF="gnuplot_2.html#SEC233">2.19.59.19 emxvga</A>
+<LI><A NAME="TOC234" HREF="gnuplot_2.html#SEC234">2.19.59.20 epslatex</A>
+<LI><A NAME="TOC235" HREF="gnuplot_2.html#SEC235">2.19.59.21 epson-180dpi</A>
+<LI><A NAME="TOC236" HREF="gnuplot_2.html#SEC236">2.19.59.22 excl</A>
+<LI><A NAME="TOC237" HREF="gnuplot_2.html#SEC237">2.19.59.23 hercules</A>
+<LI><A NAME="TOC238" HREF="gnuplot_2.html#SEC238">2.19.59.24 fig</A>
+<LI><A NAME="TOC239" HREF="gnuplot_2.html#SEC239">2.19.59.25 png (NEW)</A>
+<LI><A NAME="TOC240" HREF="gnuplot_2.html#SEC240">2.19.59.26 ggi</A>
+<LI><A NAME="TOC241" HREF="gnuplot_2.html#SEC241">2.19.59.27 gif</A>
+<LI><A NAME="TOC242" HREF="gnuplot_2.html#SEC242">2.19.59.28 Gnugraph(GNU plotutils)</A>
+<LI><A NAME="TOC243" HREF="gnuplot_2.html#SEC243">2.19.59.29 gpic</A>
+<LI><A NAME="TOC244" HREF="gnuplot_2.html#SEC244">2.19.59.30 gpic</A>
+<LI><A NAME="TOC245" HREF="gnuplot_2.html#SEC245">2.19.59.31 gpr</A>
+<LI><A NAME="TOC246" HREF="gnuplot_2.html#SEC246">2.19.59.32 grass</A>
+<LI><A NAME="TOC247" HREF="gnuplot_2.html#SEC247">2.19.59.33 hp2623a</A>
+<LI><A NAME="TOC248" HREF="gnuplot_2.html#SEC248">2.19.59.34 hp2648</A>
+<LI><A NAME="TOC249" HREF="gnuplot_2.html#SEC249">2.19.59.35 hp500c</A>
+<LI><A NAME="TOC250" HREF="gnuplot_2.html#SEC250">2.19.59.36 hpgl</A>
+<LI><A NAME="TOC251" HREF="gnuplot_2.html#SEC251">2.19.59.37 hpljii</A>
+<LI><A NAME="TOC252" HREF="gnuplot_2.html#SEC252">2.19.59.38 hppj</A>
+<LI><A NAME="TOC253" HREF="gnuplot_2.html#SEC253">2.19.59.39 imagen</A>
+<LI><A NAME="TOC254" HREF="gnuplot_2.html#SEC254">2.19.59.40 iris4d</A>
+<LI><A NAME="TOC255" HREF="gnuplot_2.html#SEC255">2.19.59.41 kyo</A>
+<LI><A NAME="TOC256" HREF="gnuplot_2.html#SEC256">2.19.59.42 latex</A>
+<LI><A NAME="TOC257" HREF="gnuplot_2.html#SEC257">2.19.59.43 linux</A>
+<LI><A NAME="TOC258" HREF="gnuplot_2.html#SEC258">2.19.59.44 linux</A>
+<LI><A NAME="TOC259" HREF="gnuplot_2.html#SEC259">2.19.59.45 macintosh</A>
+<LI><A NAME="TOC260" HREF="gnuplot_2.html#SEC260">2.19.59.46 mf</A>
+<LI><A NAME="TOC261" HREF="gnuplot_2.html#SEC261">2.19.59.47 mp</A>
+<LI><A NAME="TOC262" HREF="gnuplot_2.html#SEC262">2.19.59.48 mgr</A>
+<LI><A NAME="TOC263" HREF="gnuplot_2.html#SEC263">2.19.59.49 mif</A>
+<LI><A NAME="TOC264" HREF="gnuplot_2.html#SEC264">2.19.59.50 mtos</A>
+<LI><A NAME="TOC265" HREF="gnuplot_2.html#SEC265">2.19.59.51 next</A>
+<LI><A NAME="TOC266" HREF="gnuplot_2.html#SEC266">2.19.59.52 Openstep (next)</A>
+<LI><A NAME="TOC267" HREF="gnuplot_2.html#SEC267">2.19.59.53 pbm</A>
+<LI><A NAME="TOC268" HREF="gnuplot_2.html#SEC268">2.19.59.54 dospc</A>
+<LI><A NAME="TOC269" HREF="gnuplot_2.html#SEC269">2.19.59.55 pdf</A>
+<LI><A NAME="TOC270" HREF="gnuplot_2.html#SEC270">2.19.59.56 png (OLD)</A>
+<LI><A NAME="TOC271" HREF="gnuplot_2.html#SEC271">2.19.59.57 postscript</A>
+<LI><A NAME="TOC272" HREF="gnuplot_2.html#SEC272">2.19.59.58 pslatex and pstex</A>
+<LI><A NAME="TOC273" HREF="gnuplot_2.html#SEC273">2.19.59.59 pstricks</A>
+<LI><A NAME="TOC274" HREF="gnuplot_2.html#SEC274">2.19.59.60 qms</A>
+<LI><A NAME="TOC275" HREF="gnuplot_2.html#SEC275">2.19.59.61 regis</A>
+<LI><A NAME="TOC276" HREF="gnuplot_2.html#SEC276">2.19.59.62 regis</A>
+<LI><A NAME="TOC277" HREF="gnuplot_2.html#SEC277">2.19.59.63 rgip</A>
+<LI><A NAME="TOC278" HREF="gnuplot_2.html#SEC278">2.19.59.64 sun</A>
+<LI><A NAME="TOC279" HREF="gnuplot_2.html#SEC279">2.19.59.65 svg</A>
+<LI><A NAME="TOC280" HREF="gnuplot_2.html#SEC280">2.19.59.66 tek410x</A>
+<LI><A NAME="TOC281" HREF="gnuplot_2.html#SEC281">2.19.59.67 tek410x</A>
+<LI><A NAME="TOC282" HREF="gnuplot_2.html#SEC282">2.19.59.68 table</A>
+<LI><A NAME="TOC283" HREF="gnuplot_2.html#SEC283">2.19.59.69 tek40</A>
+<LI><A NAME="TOC284" HREF="gnuplot_2.html#SEC284">2.19.59.70 texdraw</A>
+<LI><A NAME="TOC285" HREF="gnuplot_2.html#SEC285">2.19.59.71 tgif</A>
+<LI><A NAME="TOC286" HREF="gnuplot_2.html#SEC286">2.19.59.72 tgif</A>
+<LI><A NAME="TOC287" HREF="gnuplot_2.html#SEC287">2.19.59.73 tkcanvas</A>
+<LI><A NAME="TOC288" HREF="gnuplot_2.html#SEC288">2.19.59.74 tpic</A>
+<LI><A NAME="TOC289" HREF="gnuplot_2.html#SEC289">2.19.59.75 unixpc</A>
+<LI><A NAME="TOC290" HREF="gnuplot_2.html#SEC290">2.19.59.76 unixplot</A>
+<LI><A NAME="TOC291" HREF="gnuplot_2.html#SEC291">2.19.59.77 vx384</A>
+<LI><A NAME="TOC292" HREF="gnuplot_2.html#SEC292">2.19.59.78 vgagl</A>
+<LI><A NAME="TOC293" HREF="gnuplot_2.html#SEC293">2.19.59.79 VWS</A>
+<LI><A NAME="TOC294" HREF="gnuplot_2.html#SEC294">2.19.59.80 windows</A>
+<LI><A NAME="TOC295" HREF="gnuplot_2.html#SEC295">2.19.59.81 x11</A>
+<LI><A NAME="TOC296" HREF="gnuplot_2.html#SEC296">2.19.59.82 x11</A>
+<LI><A NAME="TOC297" HREF="gnuplot_2.html#SEC297">2.19.59.83 xlib</A>
+<LI><A NAME="TOC298" HREF="gnuplot_2.html#SEC298">2.19.59.84 xlib</A>
+</UL>
+<LI><A NAME="TOC299" HREF="gnuplot_2.html#SEC299">2.19.60 tics</A>
+<LI><A NAME="TOC300" HREF="gnuplot_2.html#SEC300">2.19.61 ticslevel</A>
+<LI><A NAME="TOC301" HREF="gnuplot_2.html#SEC301">2.19.62 ticscale</A>
+<LI><A NAME="TOC302" HREF="gnuplot_2.html#SEC302">2.19.63 timestamp</A>
+<LI><A NAME="TOC303" HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A>
+<LI><A NAME="TOC304" HREF="gnuplot_2.html#SEC304">2.19.65 title</A>
+<LI><A NAME="TOC305" HREF="gnuplot_2.html#SEC305">2.19.66 tmargin</A>
+<LI><A NAME="TOC306" HREF="gnuplot_2.html#SEC306">2.19.67 trange</A>
+<LI><A NAME="TOC307" HREF="gnuplot_2.html#SEC307">2.19.68 urange</A>
+<LI><A NAME="TOC308" HREF="gnuplot_2.html#SEC308">2.19.69 variables</A>
+<LI><A NAME="TOC309" HREF="gnuplot_2.html#SEC309">2.19.70 version</A>
+<LI><A NAME="TOC310" HREF="gnuplot_2.html#SEC310">2.19.71 view</A>
+<LI><A NAME="TOC311" HREF="gnuplot_2.html#SEC311">2.19.72 vrange</A>
+<LI><A NAME="TOC312" HREF="gnuplot_2.html#SEC312">2.19.73 x2data</A>
+<LI><A NAME="TOC313" HREF="gnuplot_2.html#SEC313">2.19.74 x2dtics</A>
+<LI><A NAME="TOC314" HREF="gnuplot_2.html#SEC314">2.19.75 x2label</A>
+<LI><A NAME="TOC315" HREF="gnuplot_2.html#SEC315">2.19.76 x2mtics</A>
+<LI><A NAME="TOC316" HREF="gnuplot_2.html#SEC316">2.19.77 x2range</A>
+<LI><A NAME="TOC317" HREF="gnuplot_2.html#SEC317">2.19.78 x2tics</A>
+<LI><A NAME="TOC318" HREF="gnuplot_2.html#SEC318">2.19.79 x2zeroaxis</A>
+<LI><A NAME="TOC319" HREF="gnuplot_2.html#SEC319">2.19.80 xdata</A>
+<LI><A NAME="TOC320" HREF="gnuplot_2.html#SEC320">2.19.81 xdtics</A>
+<LI><A NAME="TOC321" HREF="gnuplot_2.html#SEC321">2.19.82 xlabel</A>
+<LI><A NAME="TOC322" HREF="gnuplot_2.html#SEC322">2.19.83 xmtics</A>
+<LI><A NAME="TOC323" HREF="gnuplot_2.html#SEC323">2.19.84 xrange</A>
+<LI><A NAME="TOC324" HREF="gnuplot_2.html#SEC324">2.19.85 xtics</A>
+<LI><A NAME="TOC325" HREF="gnuplot_2.html#SEC325">2.19.86 xzeroaxis</A>
+<LI><A NAME="TOC326" HREF="gnuplot_2.html#SEC326">2.19.87 y2data</A>
+<LI><A NAME="TOC327" HREF="gnuplot_2.html#SEC327">2.19.88 y2dtics</A>
+<LI><A NAME="TOC328" HREF="gnuplot_2.html#SEC328">2.19.89 y2label</A>
+<LI><A NAME="TOC329" HREF="gnuplot_2.html#SEC329">2.19.90 y2mtics</A>
+<LI><A NAME="TOC330" HREF="gnuplot_2.html#SEC330">2.19.91 y2range</A>
+<LI><A NAME="TOC331" HREF="gnuplot_2.html#SEC331">2.19.92 y2tics</A>
+<LI><A NAME="TOC332" HREF="gnuplot_2.html#SEC332">2.19.93 y2zeroaxis</A>
+<LI><A NAME="TOC333" HREF="gnuplot_2.html#SEC333">2.19.94 ydata</A>
+<LI><A NAME="TOC334" HREF="gnuplot_2.html#SEC334">2.19.95 ydtics</A>
+<LI><A NAME="TOC335" HREF="gnuplot_2.html#SEC335">2.19.96 ylabel</A>
+<LI><A NAME="TOC336" HREF="gnuplot_2.html#SEC336">2.19.97 ymtics</A>
+<LI><A NAME="TOC337" HREF="gnuplot_2.html#SEC337">2.19.98 yrange</A>
+<LI><A NAME="TOC338" HREF="gnuplot_2.html#SEC338">2.19.99 ytics</A>
+<LI><A NAME="TOC339" HREF="gnuplot_2.html#SEC339">2.19.100 yzeroaxis</A>
+<LI><A NAME="TOC340" HREF="gnuplot_2.html#SEC340">2.19.101 zdata</A>
+<LI><A NAME="TOC341" HREF="gnuplot_2.html#SEC341">2.19.102 zdtics</A>
+<LI><A NAME="TOC342" HREF="gnuplot_2.html#SEC342">2.19.103 cbdata</A>
+<LI><A NAME="TOC343" HREF="gnuplot_2.html#SEC343">2.19.104 cbdtics</A>
+<LI><A NAME="TOC344" HREF="gnuplot_2.html#SEC344">2.19.105 zero</A>
+<LI><A NAME="TOC345" HREF="gnuplot_2.html#SEC345">2.19.106 zeroaxis</A>
+<LI><A NAME="TOC346" HREF="gnuplot_2.html#SEC346">2.19.107 zlabel</A>
+<LI><A NAME="TOC347" HREF="gnuplot_2.html#SEC347">2.19.108 zmtics</A>
+<LI><A NAME="TOC348" HREF="gnuplot_2.html#SEC348">2.19.109 zrange</A>
+<LI><A NAME="TOC349" HREF="gnuplot_2.html#SEC349">2.19.110 ztics</A>
+<LI><A NAME="TOC350" HREF="gnuplot_2.html#SEC350">2.19.111 cblabel</A>
+<LI><A NAME="TOC351" HREF="gnuplot_2.html#SEC351">2.19.112 cbmtics</A>
+<LI><A NAME="TOC352" HREF="gnuplot_2.html#SEC352">2.19.113 cbrange</A>
+<LI><A NAME="TOC353" HREF="gnuplot_2.html#SEC353">2.19.114 cbtics</A>
+</UL>
+<LI><A NAME="TOC354" HREF="gnuplot_2.html#SEC354">2.20 shell</A>
+<LI><A NAME="TOC355" HREF="gnuplot_2.html#SEC355">2.21 splot</A>
+<UL>
+<LI><A NAME="TOC356" HREF="gnuplot_2.html#SEC356">2.21.1 data-file</A>
+<UL>
+<LI><A NAME="TOC357" HREF="gnuplot_2.html#SEC357">2.21.1.1 binary</A>
+<LI><A NAME="TOC358" HREF="gnuplot_2.html#SEC358">2.21.1.2 example datafile</A>
+<LI><A NAME="TOC359" HREF="gnuplot_2.html#SEC359">2.21.1.3 matrix</A>
+</UL>
+<LI><A NAME="TOC360" HREF="gnuplot_2.html#SEC360">2.21.2 grid_data</A>
+<LI><A NAME="TOC361" HREF="gnuplot_2.html#SEC361">2.21.3 splot_overview</A>
+</UL>
+<LI><A NAME="TOC362" HREF="gnuplot_2.html#SEC362">2.22 system</A>
+<LI><A NAME="TOC363" HREF="gnuplot_2.html#SEC363">2.23 test</A>
+<LI><A NAME="TOC364" HREF="gnuplot_2.html#SEC364">2.24 unset</A>
+<LI><A NAME="TOC365" HREF="gnuplot_2.html#SEC365">2.25 update</A>
+</UL>
+<LI><A NAME="TOC366" HREF="gnuplot_3.html#SEC366">3. Graphical User Interfaces</A>
+<LI><A NAME="TOC367" HREF="gnuplot_4.html#SEC367">4. Bugs</A>
+<UL>
+<LI><A NAME="TOC368" HREF="gnuplot_4.html#SEC368">4.1 Old_bugs</A>
+</UL>
+<LI><A NAME="TOC369" HREF="gnuplot_5.html#SEC369">Concept Index</A>
+<LI><A NAME="TOC370" HREF="gnuplot_6.html#SEC370">Command Index</A>
+<LI><A NAME="TOC371" HREF="gnuplot_7.html#SEC371">Options Index</A>
+<LI><A NAME="TOC372" HREF="gnuplot_8.html#SEC372">Function Index</A>
+<LI><A NAME="TOC373" HREF="gnuplot_9.html#SEC373">Terminal Index</A>
+</UL>
+<P><HR><P>
+This document was generated on 12 May 2004 using
+<A HREF="http://wwwinfo.cern.ch/dis/texi2html/">texi2html</A>&nbsp;1.56k.
+</BODY>
+</HTML>

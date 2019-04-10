@@ -1,0 +1,13 @@
+OBJECTS = tenvalidate$(OBJ_SUFF)
+
+# Don't try a link-edit for BG/L here ...
+.if !empty(CONTEXT:Mbluelight_*)                                                                                    
+.else
+PROGRAMS = tenvalidate$(PROG_SUFF)
+.endif
+
+LIBS = $(PKSMPLIBS)
+
+CFLAGS += $(SMPCFLAGS) -DRDG_TO_FXLOGGER
+
+.include <$(RULES_MK)>

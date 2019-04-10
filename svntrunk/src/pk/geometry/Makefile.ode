@@ -1,0 +1,7 @@
+EXPINC_SUBDIRS = \
+ include \
+
+SUBDIRS = $(EXPINC_SUBDIRS) 
+
+.include <$(RULES_MK)>
+ 

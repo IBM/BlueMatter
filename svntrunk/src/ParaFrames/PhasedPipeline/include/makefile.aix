@@ -1,0 +1,31 @@
+#
+#
+CMSCMPDIRVALUE=foxfm/PhasedPipeline/include
+
+include $(BASE)/makedef.aix
+
+# These header files are to shipped as part of the Framework product
+
+CMSPUBLINCS=\
+	$(CMSPRDBLDINCDIR)/PhasedPipeline/PPL_SystemIF.hpp \
+	$(CMSPRDBLDINCDIR)/PhasedPipeline/PPL_UserIF.hpp \
+	$(CMSPRDBLDINCDIR)/PhasedPipeline/PPL_ProtocolDriver.hpp
+
+CMSPRIVINCS=
+
+all: hdrs
+
+hdrs: $(CMSPUBLINCS) $(CMSPRIVINCS)
+
+libs:
+
+objs:
+
+bins:
+
+clean:
+	rm -f $(CMSPUBLINCS) $(CMSPRIVINCS)
+
+$(CMSPUBLINCS) $(CMSPRIVINCS): $$(@F)
+	rm -f $@
+	$(INSTALL_HDR) $? $@

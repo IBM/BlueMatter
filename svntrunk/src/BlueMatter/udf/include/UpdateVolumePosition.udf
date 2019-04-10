@@ -1,0 +1,100 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UpdateVolumePosition(
+        MDVM &aMDVM
+        )
+{
+    //
+    // updates the volume position to T+dT [or if TIME_REVERSIBLE to T+dt/2]
+    //
+    const double dt                = aMDVM.GetDeltaT();
+    const XYZ    old_inversevolume = aMDVM.GetVolumeInversePosition();
+    const XYZ    old_volume        = aMDVM.GetVolumePosition();
+#ifndef NOT_TIME_REVERSIBLE
+    const XYZ    new_volume        = old_volume + 0.5 * dt * aMDVM.GetVolumeVelocity();
+#else
+    const XYZ    new_volume        = old_volume + dt * aMDVM.GetVolumeVelocity();
+#endif
+
+   // aMDVM.ReportVolumePosition( new_volume );
+
+    // aMDVM.ReportVolumeRatio( pow( ( new_volume * old_inversevolume), (1.0 / 3.0) ));
+   
+    const double cuberoot = 1.0 / 3.0;
+
+    XYZ ratio;
+
+    // Report all components to same value
+    ratio.mX = ratio.mY = ratio.mZ = 
+        pow( new_volume.mX * old_inversevolume.mX, cuberoot );
+
+    // ratio.mY = pow( new_volume.mY * old_inversevolume.mY, cuberoot );
+    // ratio.mZ = pow( new_volume.mZ * old_inversevolume.mZ, cuberoot );
+
+    // 3-Vector calculation
+    // ratio.mX = new_volume.mX * old_inversevolume.mX;
+    // ratio.mY = new_volume.mY * old_inversevolume.mY;
+    // ratio.mZ = new_volume.mZ * old_inversevolume.mZ;
+
+    aMDVM.ReportVolumeRatio( ratio );
+
+    XYZ DynamicBoxDimensionVector = aMDVM.GetDynamicBoxDimensionVector();
+	
+    DynamicBoxDimensionVector.mX *= ratio.mX;
+    DynamicBoxDimensionVector.mY *= ratio.mY;     
+    DynamicBoxDimensionVector.mZ *= ratio.mZ;
+
+///    XYZ boxSizeAbsoluteRatio;
+    // for now just compute it here
+///    double initvolume = boundingBoxDimensionVector.mX 
+///                      * boundingBoxDimensionVector.mY 
+///                      * boundingBoxDimensionVector.mZ;
+///    boxSizeAbsoluteRatio.mX = pow( initvolume / new_volume.mX, cuberoot );
+///    boxSizeAbsoluteRatio.mY = pow( initvolume / new_volume.mY, cuberoot );
+///    boxSizeAbsoluteRatio.mZ = pow( initvolume / new_volume.mZ, cuberoot );
+
+    aMDVM.ReportDynamicBoxDimensionVector( DynamicBoxDimensionVector );
+
+
+    XYZ real_volume;
+    real_volume.mX = real_volume.mY = real_volume.mZ = 
+        DynamicBoxDimensionVector.mX * DynamicBoxDimensionVector.mY * DynamicBoxDimensionVector.mZ;
+
+    aMDVM.ReportVolumePosition( real_volume );
+
+    XYZ DynamicBoxInverseDimensionVector;             
+    DynamicBoxInverseDimensionVector.mX = 1.0 / DynamicBoxDimensionVector.mX;
+    DynamicBoxInverseDimensionVector.mY = 1.0 / DynamicBoxDimensionVector.mY;
+    DynamicBoxInverseDimensionVector.mZ = 1.0 / DynamicBoxDimensionVector.mZ;
+
+    aMDVM.ReportDynamicBoxInverseDimensionVector(  DynamicBoxInverseDimensionVector );        
+
+
+    XYZ BirthBoxDimensionVector         = aMDVM.GetBirthBoxDimensionVector();
+    XYZ BirthBoxAbsoluteRatio;
+        
+    BirthBoxAbsoluteRatio.mX = DynamicBoxInverseDimensionVector.mX * BirthBoxDimensionVector.mX;
+    BirthBoxAbsoluteRatio.mY = DynamicBoxInverseDimensionVector.mY * BirthBoxDimensionVector.mY;
+    BirthBoxAbsoluteRatio.mZ = DynamicBoxInverseDimensionVector.mZ * BirthBoxDimensionVector.mZ;
+    
+    aMDVM.ReportBirthBoxAbsoluteRatio( BirthBoxAbsoluteRatio );
+
+    return;
+}

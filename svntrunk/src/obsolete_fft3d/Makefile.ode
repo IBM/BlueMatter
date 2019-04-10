@@ -1,0 +1,14 @@
+ILIST = \
+PrivateFFT_MPI.hpp \
+arrayBounds_MPI.hpp \
+comm3DLayer_MPI.hpp \
+complex_MPI.hpp \
+fft3D_MPI.hpp \
+fft_one_dim_MPI.hpp \
+fftw.h \
+rectangles_MPI.hpp \
+
+IDIR = $(BG_INCLUDE)/spi/ 
+fftw.h_IDIR = $(BG_INCLUDE)/ 
+
+.include <$(RULES_MK)>

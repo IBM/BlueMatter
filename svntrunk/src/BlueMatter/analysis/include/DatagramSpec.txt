@@ -1,0 +1,332 @@
+// DatagramSpect.txt
+// This describes all the datagrams used in BlueMatter
+// This file is parsed by MakePacketStructures.pl
+// to create ExternalDatagram.hpp
+//
+// The syntax of this file is fairly simple.
+// The one tricky item is that Types should not use 0, which
+// is reserved for the "Unknown" type.
+
+
+
+// The following currently isn't being used
+GENERATEDFILENAMES:
+DatagramBaseHPPFileName      = ExternalDatagramBase.hpp
+DatagramPKHPPFileName        = ExternalDatagramPK.hpp
+DatagramPrimitiveHPPFileName = ExternalDatagramPrimitive.hpp
+
+
+PRIMITIVESIZES:
+unsigned         =  4
+unsigned long    =  4
+int              =  4
+unsigned int     =  4
+double           =  8
+float            =  4
+unsigned short   =  2
+XYZ              = 24
+
+
+CLASSES:
+Unknown          = 0
+Control          = 1
+DynamicVariables = 2
+Energy           = 3
+Information      = 4
+UDF              = 5
+RTPValues        = 6
+
+
+DATAGRAMSPECS:
+
+
+Control/SyncId    = 1:
+IMC1              unsigned
+FullOuterTimeStep unsigned
+IMC2              unsigned
+IMC3              unsigned
+CheckSum          unsigned
+
+Control/TheEnd    = 2:
+FullOuterTimeStep unsigned
+
+Control/Pressure   = 3:
+FullOuterTimeStep  unsigned
+Virial             XYZ
+VolumePosition     XYZ
+VolumeVelocity     XYZ
+VolumeAcceleration XYZ
+InternalPressure   XYZ
+
+Control/TimeStamp  = 4:
+FullOuterTimeStep  unsigned
+Tag1               unsigned
+Tag2               unsigned 
+Seconds            unsigned
+NanoSeconds        unsigned
+
+Control/Trigger    = 5:
+FullOuterTimeStep  unsigned
+Action             unsigned short
+TotalPayload       unsigned
+
+Control/PortAssignment = 6:
+PortID             unsigned
+TrajectoryID       unsigned short
+Dummy1             int
+Dummy2             int
+Dummy3             int
+Dummy4             int
+Dummy5             int
+Dummy6             int
+
+Control/ReplicaExchangePeriodInOTS = 7:
+Period             unsigned
+
+Control/ReplicaExchangeAttempt = 8:
+FullOuterTimeStep  unsigned
+ID1                unsigned
+ID2                unsigned
+T1                 double
+T2                 double
+E1                 double
+SwapAttempts       unsigned
+SwapAccepts        unsigned
+
+DynamicVariables/Site = 1:
+VoxelId               int
+SiteId                int
+Position              XYZ
+Velocity              XYZ
+
+DynamicVariables/Force = 2:
+VoxelId               int
+SiteId                int
+RESPALevel            int
+Force                 XYZ
+
+DynamicVariables/Momentum = 3:
+SiteId                int
+Momentum              XYZ
+
+DynamicVariables/FloatSite = 4:
+SiteId                int
+X                     float
+Y                     float
+Z                     float
+
+DynamicVariables/BoundingBox = 5:
+Origin                XYZ
+Size                  XYZ
+
+DynamicVariables/ShortSite = 6:
+SiteId                int
+X0                    unsigned short
+Y0                    unsigned short
+Z0                    unsigned short
+X1                    unsigned short
+Y1                    unsigned short
+Z1                    unsigned short
+X2                    unsigned short
+Y2                    unsigned short
+Z2                    unsigned short
+X3                    unsigned short
+Y3                    unsigned short
+Z3                    unsigned short
+
+DynamicVariables/TwoChainFragmentThermostat = 7:
+FragmentNumber        int
+VoxelId               int
+NumberOfSitesPerChain unsigned short
+Position00            double
+Position01            double
+Position02            double
+Position03            double
+Position04            double
+Velocity00            double
+Velocity01            double
+Velocity02            double
+Velocity03            double
+Velocity04            double
+Position10            double
+Position11            double
+Position12            double
+Position13            double
+Position14            double
+Velocity10            double
+Velocity11            double
+Velocity12            double
+Velocity13            double
+Velocity14            double
+
+DynamicVariables/OneChainThermostat = 8:
+VoxelId               int
+NumberOfSitesPerChain unsigned short
+Position0            double
+Position1            double
+Position2            double
+Position3            double
+Position4            double
+Velocity0            double
+Velocity1            double
+Velocity2            double
+Velocity3            double
+Velocity4            double
+
+DynamicVariables/RandomState = 9:
+VoxelId              int
+MachineContext       int
+MoleculeContext      int
+HaveDeviate          int
+StoredNormalDeviate  double
+Seed                 int
+X0_N0                unsigned int
+X0_N1                unsigned int
+X0_N2                unsigned int
+X1_N0                unsigned int
+X1_N1                unsigned int
+X1_N2                unsigned int
+Dummy4               int
+Dummy5               int
+Dummy6               int
+Dummy7               int
+Dummy8               int
+Dummy9               int
+Dummy10              int
+Dummy11              int
+Dummy12              int
+Dummy13              int
+Dummy14              int
+Dummy15              int
+Dummy16              int
+Dummy17              int
+Dummy18              int
+Dummy19              int
+Dummy20              int
+Dummy21              int
+Dummy22              int
+Dummy23              int
+Dummy24              int
+Dummy25              int
+Dummy26              int
+Dummy27              int
+Dummy28              int
+Dummy29              int
+Dummy30              int
+Dummy31              int
+
+Energy/Bonded              = 1:
+FragmentId                 int
+FragmentCount              int
+KineticEnergy              double
+BondEnergy                 double
+AngleEnergy                double
+UBEnergy                   double
+TorsionEnergy              double
+ImproperEnergy             double
+ExcludedChargeEnergy       double
+ExcludedLennardJonesEnergy double
+14ChargeEnergy             double
+14LennardJonesEnergy       double
+
+Energy/NonBonded             = 2:
+Ordinal                      int
+Count                        int
+ChargeEnergyPartialSum       double
+LennardJonesEnergyPartialSum double
+EwaldKSpaceEnergyPartialSum  double
+
+Energy/Free                  = 3:
+DHDLambda                    double
+
+Information/MolecularSystemDefinition = 1:
+MSDCheckSum                           unsigned
+SiteCount                             unsigned
+FragmentCount                         unsigned
+
+Information/RunTimeConfiguration      = 2:
+VoxelCount                            unsigned
+NonBondedEngineCount                  unsigned
+
+Information/UDFCount                  = 3:
+Count                                 int
+
+Information/FrameContents             = 4:
+Contents                              unsigned
+
+Information/Constraints               = 5:
+ConstraintCount                       unsigned
+DegreesOfFreedomCount                 unsigned
+Dummy1                                unsigned
+
+Information/RTP                       = 6:
+CoulombMethod                         int
+InnerTimeStepInPicoSeconds            double
+NumberOfInnerTimeSteps                int
+OuterTimeStepInPicoSeconds            double
+NumberOfOuterTimeSteps                int
+NumberOfRESPALevels                   int
+PressureControlPistonMass             double
+PressureControlTarget                 double
+VelocityResampleTargetTemperature     double
+VelocityResamplePeriodInOTS           int
+Ensemble                              int
+SnapshotPeriodInOTS                   unsigned
+VelocityResampleRandomSeed            unsigned
+SourceID                              unsigned
+ExecutableID                          unsigned
+NumberOfTwoChainThermostats           unsigned
+JobID                                 unsigned
+DynamicBoundingBoxMin                 XYZ
+DynamicBoundingBoxMax                 XYZ
+
+Information/Site                      = 7:
+SiteId                                int
+Mass                                  double
+Charge                                double
+LJType                                int
+FragmentId                            int
+FragmentIndex                         int
+AtomType                              int
+dummy1                                double
+dummy2                                double
+dummy3                                double
+
+Information/Bond                      = 8:
+BondId                                int
+SiteA                                 int
+SiteB                                 int
+BondType                              int
+dummy1                                double
+dummy2                                double
+
+UDF/d1    = 1:
+Code      unsigned
+count     unsigned
+Value     double
+
+UDF/d2    = 2:
+Code      unsigned
+count     unsigned
+Value1    double
+Value2    double
+
+RTPValues/VelocityResampleTargetTemperature = 1:
+Value                                       double
+
+RTPValues/NumberOfOuterTimeSteps            = 2:
+Value                                       unsigned
+
+RTPValues/SnapshotPeriodInOTS               = 3:
+Value                                       unsigned
+
+RTPValues/EmitEnergyTimeStepModulo          = 4:
+Value                                       unsigned
+
+RTPValues/VelocityResampleRandomSeed        = 5:
+Value                                       unsigned
+
+
+//***********************************
+
+END:

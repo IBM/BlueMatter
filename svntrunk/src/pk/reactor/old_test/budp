@@ -1,0 +1,15 @@
+$GFESOURCEROOT/bgfe/build.ksh
+mpCC_r \
+-O3  \
+-D_REENTRANT -D_ALL_SOURCE \
+-DDATAGRAM_SIZE=1024 \
+-DPKFXLOG \
+-lpthread \
+-DPK_XLC -DPK_AIX -DPK_SMP -DPK_MPI -DPK_UDP \
+-I$GFEBUILDROOT/include \
+$1.cpp  \
+$GFESOURCEROOT/bgfe/pk/platform/src/platform.cpp \
+$GFESOURCEROOT/bgfe/pk/fxlogger/src/fxlogger.cpp \
+$GFESOURCEROOT/bgfe/pk/reactor/src/udp_reactor.cpp \
+-o $1.exe 2>$1.out
+e $1.out

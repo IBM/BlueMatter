@@ -1,0 +1,24 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  InstructionSet.hpp \
+  IntraMolecularVM.hpp \
+  MDVM_BaseIF.hpp \
+  MDVM_IF.hpp \
+  MDVM_ManagerIF.hpp \
+  MDVM_UVP_IF.hpp \
+  Translation.hpp \
+  UpdateVPVM.hpp \
+  WorkOrderRep.hpp \
+  Makefile.ode
+InstructionSet.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+IntraMolecularVM.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+MDVM_BaseIF.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+MDVM_IF.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+MDVM_ManagerIF.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+MDVM_UVP_IF.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+Translation.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+UpdateVPVM.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+WorkOrderRep.hpp_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/mdvm/include/source_ship/
+.include <$(RULES_MK)>

@@ -1,0 +1,6 @@
+IDIR    = $(BG_BIN)/setup/
+
+SUBDIRS = toppar \
+
+ILIST   =  psf2xml.pl 
+.include <$(RULES_MK)>

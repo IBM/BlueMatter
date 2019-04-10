@@ -1,0 +1,95 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ struct NSQCoulomb_Params
+{
+  double ChargeAxB;
+};
+void NSQCoulomb(
+        MDVM &aMDVM,
+        const NSQCoulomb_Params &A
+        )
+  {
+  // const double ChargeAxB = A.Charge * B.Charge;
+  const double ChargeAxB = A.ChargeAxB;
+
+  double dVecABMag2 = aMDVM.GetDistanceSquared( MDVM::SiteA, MDVM::SiteB ) ;
+//  double dVecABMagR = 1.0 / sqrt(dVecABMag2) ;
+  double dVecABMagR = aMDVM.GetReciprocalDistance( MDVM::SiteA, MDVM::SiteB ) ;
+  double dVecABMag = dVecABMag2 * dVecABMagR ;
+
+  double ca         = ChargeAxB * dVecABMagR ;
+
+// Note: What we call 'DEDR' is really -d/d|r| (Energy assuming no switch)
+//       i.e. the opposite sign from what you probably expected
+  double DEDR       = ca * dVecABMagR ;
+
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  UDF_Binding::SwitchStd5_Params sp;
+///////////////  UDF_Binding::SwitchStd5_OutputParams op;
+///////////////  sp.r = sqrt(dVecABMag2);
+///////////////  UDF_Binding::Function_Param<UDF_Binding::SwitchStd5_Params, UDF_Binding::SwitchStd5_OutputParams> pin;
+///////////////  pin.A = &sp;
+///////////////  pin.B = &op;
+/////////////////  UDF_Binding::UDF_Execute(UDF_Binding::SwitchStd5_Code, aMDVM, (void *)(&pin));
+///////////////  UDF_Binding::UDF_SwitchStd5_Execute(aMDVM, sp, op);
+///////////////  double S = op.S ;
+///////////////  double dSdR = op.dSdR ;
+///////////////#else
+////////////////  double S ;
+///////////////  double pdSdR ;
+///////////////  SwitchFunctionRadii sfr;
+//////////////  aMDVM.GetSwitchFunctionRadii(sfr);
+///////////////  SwitchFunction sf(sfr) ;
+
+//////  SwitchFunction sf(RTG.mSwitchFunctionRadii) ;
+///////////////#if defined(PERFORMANCE_EXPLOIT_FULLY_ON)
+//////////////  sf.Evaluate<aMDVM.kForceFullyOn>(dVecABMag,S,pdSdR) ;
+//////////////#else
+///////////////  sf.Evaluate(dVecABMag,S,pdSdR) ;
+//////////////////#endif
+///////////////#endif
+
+  // XYZ fab   = dVecAB * DEDR;
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  XYZ fab = dVecAB * dVecABMagR * ( S * DEDR + dSdR * ca );
+///////////////#else
+
+// Force = -d/d(position) of Energy
+// Energy = Energy0 * Switch
+// so apply the rule for differentiation of products, (uv)' = u'v + uv'
+// 'DEDR' is negated from what you might expect, so we have to negate pdSdR as well
+// and be careful as to which atom we apply it to
+
+/////////////////  XYZ fab = dVecAB * dVecABMagR * ( S * DEDR - pdSdR * ca );
+///////////////#endif
+
+  aMDVM.ReportEnergy( ca );
+  aMDVM.ReportdEdr( -DEDR ) ;
+
+  if ( 0 == aMDVM.kSuppressVectorReporting )
+  {
+    XYZ dVecAB = aMDVM.GetVector( MDVM::SiteA, MDVM::SiteB ) ;
+    XYZ fab = dVecAB * dVecABMagR * DEDR;
+
+    aMDVM.ReportForce( MDVM::SiteA ,   fab ) ;
+    aMDVM.ReportForce( MDVM::SiteB , - fab ) ;
+   }
+  }
+

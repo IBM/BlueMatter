@@ -1,0 +1,137 @@
+#**************************************************************
+#* Water model definition                               OPTIONAL
+#*
+#* If a RIGID model is specified then shake and rattle
+#* parameters have to be set
+#*
+#* Water model options are TIP3P, SPC, SPCE, and 
+#* Floppy versions of these ex. TIP3PFloppy, etc.
+#**************************************************************
+
+
+# TIP3P Example:
+#WaterModel TIP3P 
+#ShakeTolerance 10E-10
+#ShakeMaxIterations 1000
+#RattleTolerance 10E-10
+#RattleMaxIterations 1000
+
+#OR
+#WaterModel TIP3PFloppy
+
+#**************************************************************
+#* Ensemble specification                               REQUIRED
+#*
+#* There are 3 Types: NVT, NPT, NVE
+#**************************************************************
+
+# NVT Example
+#Ensemble NVT 
+#//BoundingBox -5.1e5 -6.7e5 -4.3e5 7.0e5 5.2e5 4.4e5
+#BoundingBox           -11.0 -11.0 -11.0 11.0 11.0 11.0
+#VelocityResamplePeriodInOTS 2
+#VelocityResampleTargetTemperature 300.0
+
+
+# NPT Example
+#Ensemble NPT 
+#BoundingBox -12.0 -12.0 -12.0 12.0 12.0 12.0
+#VelocityResamplePeriodInOTS        	2 
+#VelocityResampleTargetTemperature 	300.0
+#PressureControlPistonMass          	   .001
+#PressureControlTarget              	   .0001
+#PressureControlPistonInitialVelocity      0.0
+#ExternalPressure                          1.0
+
+#NVE Example
+Ensemble NVE 
+BoundingBox -5.1e5 -6.7e5 -4.3e5 7.0e5 5.2e5 4.4e5
+#BoundingBox           -11.0 -11.0 -11.0 11.0 11.0 11.0
+#**************************************************************
+#* Integrator specification                             REQUIRED
+#*
+#* There are 2 Types: Verlet, Respa
+#**************************************************************/
+
+# Verlet Example
+#Integrator Verlet 
+#InnerTimeStepInPicoSeconds  0.001
+#NumberOfInnerTimeSteps      10
+
+
+#Integrator Verlet
+#OuterTimeStepInPicoSeconds  0.001
+#NumberOfOuterTimeSteps      20
+
+#Respa Example
+Integrator Respa
+OuterTimeStepInPicoSeconds                0.001
+NumberOfOuterTimeSteps      		 10
+DefineRespaLevel            		1 2	
+DefineRespaLevel            		2 2	
+DefineRespaLevelForForceCategory        Harmonic 0
+DefineRespaLevelForForceCategory        Torsion  1
+DefineRespaLevelForForceCategory        NonBonded  2
+#***************************************************************
+#* Long Range Force specification                        OPTIONAL
+#*
+#* There are 4 Types: FinitRangeCutoffs, EWALD, P3ME, StdCoulomb
+#***************************************************************
+#StdCoulomb Example
+LRFMethod StdCoulomb
+
+#FiniteRangeCutoffs example
+#LRFMethod FiniteRangeCutoffs
+#SwitchLowerCutoff 3.0
+#SwitchDelta 2.0
+
+#Ewald Example
+#LRFMethod Ewald
+#EwaldAlpha         0.35
+#EwaldKmax         10
+#SwitchLowerCutoff  5.5
+#SwitchDelta        1.0
+
+#P3ME Example
+#LRFMethod P3ME
+#P3MEinitSpacing      0.5
+#P3MEchargeAssignment 3
+#P3MEdiffOrder        ANALYTICAL
+#EwaldAlpha           0.35
+#SwitchLowerCutoff    6.3
+#SwitchDelta          1.0
+
+#***************************************************************
+#* Constrains specification                              OPTIONAL
+#*
+#* Note: Non including Constraint on, turns off the constraint
+#****************************************************************
+
+#Constraint Example
+#Constraints on
+NumberOfConstraints 3
+
+#***************************************************************
+#* FEP specification                                     OPTIONAL
+#*
+#* Note: Non including FEP on, turns off fep calculations
+#****************************************************************
+
+# FEP Example
+#FEP on
+#Lambda 3.3
+
+#***************************************************************
+#* MISC specification                                    OPTIONAL
+#****************************************************************
+
+# MISC Example (all are optional)
+#RandomNumberSeed     12
+SnapshotPeriodInOTS    5 
+EmitEnergyTimeStepModulo  1
+
+#Fragmentation options: NOTE:  Default option is nmnf.
+#Fragmentation asof                 // all sites in one fragment
+#Fragmentation amof                 // all molecules in one fragment
+#Fragmentation nsnf                 // all sites in their own fragment
+#Fragmentation nmnf                 // all molecules in their own fragment 

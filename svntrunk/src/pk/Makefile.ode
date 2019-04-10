@@ -1,0 +1,73 @@
+
+EXPINC_SUBDIRS = \
+# atomic_op    \
+ a2a          \
+# bgl          \
+# barrier      \
+# collective   \
+# debug        \
+# exception    \
+ fxlogger     \
+ geometry     \
+ globject     \
+ heap         \
+# ltopology    \
+ math         \
+# multicast    \
+ platform     \
+# pthread      \
+# ptopology    \
+# queues       \
+# reactor      \
+# rnew         \
+# rpc          \
+ statistic    \
+ throbber     \
+ trace        \
+$(MACHINE_SUBDIR)     \
+# util_comm    \
+# util_cpp     \
+
+.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*)
+  MACHINE_SUBDIR = util_aix util_test
+  EXPINC_SUBDIRS += packaging
+.elif !empty(CONTEXT:Mbluelight_*)
+  MACHINE_SUBDIR = util_bgl
+.elif !empty(CONTEXT:M*_linux_*)
+  MACHINE_SUBDIR = util_linux
+.else
+  MACHINE_SUBDIR =
+.endif
+
+OBJECTS_SUBDIRS = \
+# bgl \
+# exception \
+ fxlogger \
+# globject \
+ math \
+ platform \
+# reactor \
+ trace \
+ $(MACHINE_SUBDIR) \
+
+.if empty(CONTEXT:Mbgl_cnk*)
+
+OBJECTS_SUBDIRS += dtrace
+EXPINC_SUBDIRS += dtrace
+
+.endif
+
+.if !empty(CONTEXT:Mbgl_cnk_*)
+
+OBJECTS_SUBDIRS += a2a
+
+.endif
+
+
+EXPLIB_SUBDIRS = $(OBJECTS_SUBDIRS)
+
+SUBDIRS = $(EXPINC_SUBDIRS)
+
+CMFPARSE_SUBDIRS = packaging
+
+.include <$(RULES_MK)>

@@ -1,0 +1,17 @@
+
+\begin{abstract}
+  
+  This paper describes a parallel strategy to extend the scalability
+  of a small 3D FFT on thousands of Blue Gene/L processors.
+  The approach is to execute the intermediate phases of the 3D FFT on
+  smaller processor subsets.  Performance
+  measurements of the standalone 3D FFT on two communication
+  protocols, MPI and BG/L ADE \cite{giampapa:2005} are presented.
+  While the performance of the 3D-FFT with MPI-based and BG/L ADE-based implementations
+  exhibited qualitatively similar behavior, the BG/L ADE-based version
+  has lower communication cost than the MPI based version for small message sizes.
+  Measurements also show that the proposed approach is effective
+  in improving Particle-Mesh-based N-body simulation performance
+  significantly at the limits of scalability.
+\end{abstract}
+

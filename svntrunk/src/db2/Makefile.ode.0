@@ -1,0 +1,30 @@
+BG_AUXILIARY = 1
+
+EXPINC_SUBDIRS = \
+ include \
+
+.if empty(CONTEXT:Mx86_linux_*)
+# No building the DB2 bits on a Personal Computer
+EXPLIB_SUBDIRS = \
+ src \
+
+OBJECTS_SUBDIRS = \
+ src \
+ 
+CMFPARSE_SUBDIRS=packaging
+
+<<<<<<< .mine
+.endif
+
+=======
+>>>>>>> .r12520
+SUBDIRS = \
+     $(EXPINC_SUBDIRS) \
+     $(OBJECTS_SUBDIRS) \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./db2/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

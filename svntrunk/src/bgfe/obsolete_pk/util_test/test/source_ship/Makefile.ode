@@ -1,0 +1,10 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  build_monitor \
+  monitor.cpp \
+  Makefile.ode
+build_monitor_IDIR = $(BG_SRC)/bgfe/pk/util_test/test/
+monitor.cpp_IDIR = $(BG_SRC)/bgfe/pk/util_test/test/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/util_test/test/source_ship/
+.include <$(RULES_MK)>

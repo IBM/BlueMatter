@@ -1,0 +1,29 @@
+# Performance data from Bowers et al. Scalable Algorithms for
+# Molecular Dynamics Simulations on Commodity Clusters (Supercomputing
+# 2006)
+# Data taken using Desmond running on 1056 node (2112 processor)
+# Infiniband cluster. Dual AMD Opteron (2.4GHz) Model 250 nodes.
+#
+# Column 1: Processor Count
+# Column 2: Average Time Per Time-step (seconds)
+# Index = 0: DHFR
+8 	0.0414
+16 	0.0210
+32 	0.0115
+64 	0.0063
+128 	0.0037
+256 	0.0020
+512 	0.0014
+
+
+# Index = 1: ApoA1
+# one process per cpu (rather than a two-threaded process
+8 	0.2568
+16 	0.1268
+32 	0.0643
+64 	0.0335
+128 	0.0182
+256 	0.0094
+512 	0.0052
+1024 	0.0030
+2049 	0.0020

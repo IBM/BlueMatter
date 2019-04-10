@@ -1,0 +1,12 @@
+CFLAGS += $(SPICFLAGS) ${SMPCFLAGS}
+
+EXTRA_LIBS = -lrts.rts -ldevices.rts
+.if ${BG_USE_BLADE} == 1
+LIBS =  ${PKSPILIBS} 
+.else
+LIBS =  ${PKMPILIBS}
+.endif
+
+PROGRAMS = torus${PROG_SUFF}
+
+.include <${RULES_MK}>

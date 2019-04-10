@@ -1,0 +1,26 @@
+LIBS    =       $(PKSMPLIBS)
+
+CFLAGS += $(SMPCFLAGS)
+
+VPATH   = ..
+
+OFILES         = \
+  smpp1$(OBJ_SUFF)
+
+PROGRAMS        = \
+  p1$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/kernels/smp/
+
+ILIST   =       $(PROGRAMS)
+
+.if ($(CAN_BUILD_EWALD) != 0)
+OBJECTS_SUBDIRS = ewald
+SUBDIRS = ewald
+.endif
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/kerngen/smp/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

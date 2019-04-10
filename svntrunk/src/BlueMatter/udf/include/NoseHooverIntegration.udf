@@ -1,0 +1,241 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void NoseHooverIntegration ( 
+        MDVM &aMDVM
+        )
+{
+  
+   int NumberOfThermostats        = aMDVM.GetNumberOfThermostats();     
+   int NumberOfSitesPerThermostat = aMDVM.GetNumberOfSitesPerThermostat();     
+   int NumberOfNHRespaLevels      = aMDVM.GetNumberOfNHRespaLevels();
+   int NumberOfYoshParams         = NHC::NYOSH;     
+
+   double kineticEnergy[ NHC::NUMBER_OF_THERMOSTATS ];     
+   kineticEnergy[ 0 ] = aMDVM.GetFragmentCOMKineticEnergy();
+   kineticEnergy[ 1 ] = aMDVM.GetFragmentKineticEnergy() - kineticEnergy[ 0 ];
+
+   double scale[ NHC::NUMBER_OF_THERMOSTATS ];
+   scale[ 0 ] = 1.0;  
+   scale[ 1 ] = 1.0;  
+   
+ /****************************************************************
+  *      Update Thermostat Forces
+  ****************************************************************/       
+  for(int thermostat = 0; thermostat < NumberOfThermostats; thermostat++)
+    {
+        
+      // _thermostatForces[thermostat][0] =
+      // (2*_particleKineticEnergy[thermostat]-_dkt[thermostat][0])
+      //                  /_thermostatMasses[thermostat][0];
+
+      double thermostatForce = ( 2 * kineticEnergy[ thermostat ] -  aMDVM.GetDkt( thermostat, 0 ) )
+                                  / aMDVM.GetThermostatMass( thermostat , 0 );
+        
+      aMDVM.ReportThermostatForce( thermostat, 0, thermostatForce );
+
+      for(int inhc=1; inhc < NumberOfSitesPerThermostat; inhc++)
+	{
+	  // _thermostatForces[thermostat][inhc] =
+	  //   (_thermostatMasses[thermostat][inhc-1]
+	  //   *_thermostatVelocities[thermostat][inhc-1]
+	  //   *_thermostatVelocities[thermostat][inhc-1]
+	  //   - _dkt[thermostat][inhc])/_thermostatMasses[thermostat][inhc];
+
+          double tVel = aMDVM.GetThermostatVelocity( thermostat, inhc-1 );
+          double tMass_1 = aMDVM.GetThermostatMass( thermostat, inhc-1 );
+          double tMass = aMDVM.GetThermostatMass( thermostat, inhc );
+          double dtk  =  aMDVM.GetDkt( thermostat, inhc );
+          double tForce =  ( tMass_1 * tVel * tVel - dtk ) / tMass ;
+
+          aMDVM.ReportThermostatForce( thermostat, inhc, tForce );
+	}
+    }
+   /****************************************************************/
+
+  
+   /****************************************************************
+    *  Propagate Nose-Hoover chain dynamics 
+    ****************************************************************/
+    for(int thermostat = 0; thermostat < NumberOfThermostats; thermostat++)
+      {
+        // aMDVM.ReportNHScaling( thermostat,  1.0 ); 
+        // _scale[thermostat]=1.0;
+        // scale[ thermostat ] = 1.0;  
+ 
+
+        for(int respStep=0; respStep < NumberOfNHRespaLevels ; respStep++)
+          {
+            for(int yosh=0; yosh < NumberOfYoshParams; yosh++)
+              {
+   	        // loop over the thermostates 
+                /********************************************************
+	        * updateFirstHalfThermostatVelocities(yosh,thermostat);
+                *********************************************************/
+                //  _thermostatVelocities[thermostat][_INHC-1] += 
+                //    _thermostatForces[thermostat][_INHC-1]*_wdti4[yosh];
+          
+                // for(int inhc=_INHC-2; inhc>=0;  inhc--)
+                //    {
+                //      double aa =exp(-_wdti8[yosh]*_thermostatVelocities[thermostat][inhc+1]);
+                //      _thermostatVelocities[thermostat][inhc] = 
+                // 	   _thermostatVelocities[thermostat][inhc]*aa*aa
+                //          +_wdti4[yosh]*_thermostatForces[thermostat][inhc]*aa;
+                //     } 
+                double tVel_last = aMDVM.GetThermostatVelocity( thermostat, NumberOfSitesPerThermostat-1 );
+                double tForce_last = aMDVM.GetThermostatForce( thermostat, NumberOfSitesPerThermostat-1 );  
+                double tVel_last_new = tVel_last + tForce_last * NHC::wdti4[ yosh ];        
+
+                aMDVM.ReportThermostatVelocity( thermostat, NumberOfSitesPerThermostat-1, tVel_last_new );
+
+                for(int inhc=NumberOfSitesPerThermostat-2; inhc>=0;  inhc--)
+                  {
+                    double tVel_p1 = aMDVM.GetThermostatVelocity( thermostat, inhc+1 );
+                    double aa = exp( -NHC::wdti8[ yosh ] * tVel_p1 );
+                    double tVel = aMDVM.GetThermostatVelocity( thermostat, inhc );    
+                    double tForce = aMDVM.GetThermostatForce( thermostat, inhc );    
+                    double tVel_new = tVel * aa * aa + NHC::wdti4[yosh] * tForce * aa;
+
+                    aMDVM.ReportThermostatVelocity(thermostat, inhc, tVel_new );
+                  }
+                /*****************************************************************/
+
+                /****************************************************************
+	        * calcRespParticleVelocitiesScale(yosh,thermostat);
+                *****************************************************************/
+                // double aa = exp(-_wdti2[yosh]*_thermostatVelocities[thermostat][0]);
+                // _scale[thermostat] *= aa;
+                double tVel_first =  aMDVM.GetThermostatVelocity( thermostat, 0 );
+                double aa = exp(-NHC::wdti2[yosh] * tVel_first);
+                scale[ thermostat ] *= aa;
+	       /*****************************************************************/
+	      	       
+                /****************************************************************
+	        *  updateThermostatPositions(yosh,thermostat);
+                *****************************************************************/
+                //for(int inhc=0; inhc<_INHC; inhc++)
+                //  {
+                //    _thermostatPositions[thermostat][inhc] += 
+           	//    _thermostatVelocities[thermostat][inhc]*_wdti2[yosh];
+                //  }
+                for(int inhc=0; inhc < NumberOfSitesPerThermostat; inhc++)
+                  {
+                    double tPos = aMDVM.GetThermostatPosition( thermostat, inhc );
+                    double tVel = aMDVM.GetThermostatVelocity( thermostat, inhc );
+                    double tPos_new = tPos + tVel * NHC::wdti2[ yosh ];
+                    aMDVM.ReportThermostatPosition(thermostat, inhc, tPos_new);
+                  }
+                /*****************************************************************/
+
+                /****************************************************************
+	        *  update thermostat forces
+                *****************************************************************/
+	        //_thermostatForces[thermostat][0] =
+		//    (_scale[thermostat]*_scale[thermostat]
+  		//     *2.*_particleKineticEnergy[thermostat]
+		//     -_dkt[thermostat][0])/_thermostatMasses[thermostat][0];
+                double tForce = ( 2 * scale[ thermostat ] * scale[ thermostat ] * kineticEnergy[ thermostat ] 
+                                -  aMDVM.GetDkt( thermostat, 0 ) )
+                                / aMDVM.GetThermostatMass( thermostat , 0 );
+                aMDVM.ReportThermostatForce( thermostat, 0, tForce );                                       
+                /*****************************************************************/
+
+                /****************************************************************
+	        * updateSecondHalfThermostatVelocities(yosh,thermostat);
+                *****************************************************************/
+                //for(int inhc=0; inhc<_INHC-1; inhc++)
+                //  {
+                //    double aa = exp(-_wdti8[yosh]*_thermostatVelocities[thermostat][inhc+1]);
+      
+                //   _thermostatVelocities[thermostat][inhc] =
+              	//           _thermostatVelocities[thermostat][inhc]*aa*aa
+	        //         + _wdti4[yosh]*_thermostatForces[thermostat][inhc]*aa;
+      
+                //  _thermostatForces[thermostat][inhc+1] =
+              	//          (_thermostatMasses[thermostat][inhc]
+                //      	  *_thermostatVelocities[thermostat][inhc]
+                //          * _thermostatVelocities[thermostat][inhc]
+ 	        //          -_dkt[thermostat][inhc+1])/_thermostatMasses[thermostat][inhc+1];
+                //  }
+
+                // _thermostatVelocities[thermostat][_INHC-1] += 
+                // _thermostatForces[thermostat][_INHC-1]*_wdti4[yosh]; 
+                for(int inhc=0; inhc < NumberOfSitesPerThermostat-1; inhc++)
+                  {
+                    double tVel_p1 = aMDVM.GetThermostatVelocity( thermostat, inhc+1 );
+                    double aa1 = exp( -NHC::wdti8[ yosh ] * tVel_p1 );
+                    double tVel = aMDVM.GetThermostatVelocity( thermostat, inhc );    
+                    double tForce = aMDVM.GetThermostatForce( thermostat, inhc );    
+                    double tVel_new = tVel * aa1 * aa1 + NHC::wdti4[yosh] * tForce * aa1;
+
+                    aMDVM.ReportThermostatVelocity(thermostat, inhc, tVel_new );
+
+                    double tMass     = aMDVM.GetThermostatMass( thermostat, inhc );     
+                    double tMass_p1  = aMDVM.GetThermostatMass( thermostat, inhc+1 );     
+                    double dkt_p1    = aMDVM.GetDkt( thermostat, inhc+1 ); 
+                    double tForce_p1 = ( tMass * tVel_new * tVel_new - dkt_p1 ) / tMass_p1;
+                    aMDVM.ReportThermostatForce(thermostat, inhc+1, tForce_p1 );  
+                  }
+                  
+                double tVel_last1     = aMDVM.GetThermostatVelocity( thermostat, NumberOfSitesPerThermostat-1 );
+                double tForce_last1   = aMDVM.GetThermostatForce( thermostat, NumberOfSitesPerThermostat-1 );
+                double tVel_last_new1 = tVel_last1 + tForce_last1 * NHC::wdti4[yosh];
+                aMDVM.ReportThermostatVelocity(thermostat, NumberOfSitesPerThermostat-1, tVel_last_new1 );  
+                /*****************************************************************/
+              }
+           }
+        }
+      /****************************************************************/
+
+
+  /****************************************************************
+  * Update Particle Velocity
+  ****************************************************************/       
+  //TYPE particleCMVelocity;
+  //(*_ms).getFragmentCMVelocity(particleCMVelocity);
+  // getNumOfParticles(numOfParticles);
+
+  //for(int particle=0; particle<numOfParticles; particle++)
+  //  {
+  //    double particleVelocity;
+  //    (*_ms).getParticleVelocity(particleVelocity, particle);
+  //   
+  //    particleVelocity =(particleVelocity-particleCMVelocity)
+  //	*_scale[1] + particleCMVelocity*_scale[0];
+  //      (*_ms).putParticleVelocity(particleVelocity, particle);
+  //  }
+  
+ const XYZ    vCOM = aMDVM.GetCenterOfMassVelocity(); 
+
+ if( aMDVM.GetFragmentSiteCount() == 1 )
+   {
+     XYZ vSite = vCOM * scale[ 0 ];
+     aMDVM.ReportVelocity( 0, vSite );        
+   }  
+ else
+   {
+     for( int SiteIndex = 0; SiteIndex < aMDVM.GetFragmentSiteCount(); SiteIndex++ ) 
+       {
+       XYZ vSite  = aMDVM.GetVelocity( SiteIndex );
+       vSite = ( vSite - vCOM ) * scale[ 1 ] + vCOM * scale[ 0 ];
+       aMDVM.ReportVelocity( SiteIndex, vSite );
+       }
+   }
+  /****************************************************************/
+}

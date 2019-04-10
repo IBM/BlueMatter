@@ -1,0 +1,102 @@
+
+.if $(CAN_BUILD_MPI) != 0
+#EXTRA_SUBDIRS = mpi
+.endif
+#OBJECTS_SUBDIRS = smp $(EXTRA_SUBDIRS)
+#SUBDIRS = smp $(EXTRA_SUBDIRS)
+
+CFLAGS += \
+  -DBLAKE \
+  -DNO_P3M_CPP \
+  -DFORCE_SINGLE_SITE_IRREDUCABLE_PARTITIONING \
+  -DMDVM_NO_NEAREST_IMAGE_CALC \
+  -DPKFXLOG_PLIMPTONLOOPS \
+  -DNEWTON_LIGHT \
+#  -qnounwind \
+  -qsource \
+  -qshowinc \
+  -qlist \
+  -qxflag=fileid \
+  -qdebug=fileid \
+  -qdebug=inl:inl24 \
+  -qdebug=plst3:cycles \
+  -qdebug=nhwspilmv \
+  -qdebug=ebbpass1:ebbpass2 \
+  -qspill=1000000 \
+  $(SMPCFLAGS) \
+
+
+EXPINCDIR = /usr/include/BlueMatter/
+
+INCLUDES += \
+       BMM_RDG_MPI_SendToNodeZero.hpp \
+       BMM_RDG_blade_spi.hpp \
+       BMM_RDG_EmitWrappers.hpp \
+       RunTimeGlobalsInit.hpp \
+       RunTimeGlobals.hpp \
+       UDF_BindingWrapper.hpp \
+       Combining_Rules.hpp \
+       DynamicVariableManager.hpp \
+       DynamicVariableManager_phase5.hpp \
+       TupleDriverUdfBinder.hpp \
+       LocalFragmentDirectDriver.hpp \
+       LocalTupleListDriver.hpp \
+       IFP.hpp \
+       IFPSimple.hpp \
+       IFPSplit.hpp \
+       IFPSimpleTile.hpp \
+       IFPTiled.hpp \
+       IFPHelper.hpp \
+       IFPWaterSite.hpp \
+       IFP_Binder.hpp \
+       NSQ_fragment_verlet.hpp \
+       NSQ_site_verlet.hpp \
+       NSQ_watersite2_verlet_phase5.hpp \
+       Tag.hpp \
+       p2.hpp  \
+       pktrace_control.hpp  \
+       NeighborList.hpp  \
+       DirectMDVM.hpp  \
+       DirectPistonMDVM.hpp  \
+       ORBManagerIF.hpp  \
+       InteractionStateManagerIF.hpp  \
+       IntegratorStateManagerIF.hpp  \
+       NeighborhoodCommDriver.hpp  \
+       MsgThrobberIF.hpp  \
+       InteractionModel.hpp  \
+       KSpaceCommManagerIF.hpp  \
+       SparseSkinManagerIF.hpp  \
+
+#       qsort.h  \
+
+ILIST   =       $(INCLUDES) \
+#	compile_msd.sh \
+	xml2exe.py \
+	id2exe.py \
+	REM.pl \
+
+IDIR    = $(BG_INCLUDE)/BlueMatter/
+
+.if defined(BUILD_FPTEST)
+OBJECTS = fptest$(OBJ_SUFF)
+.endif
+
+.if empty(CONTEXT:Mbluelight_sk*)
+.if defined(BUILD_FPTEST)
+PROGRAMS = fptest$(PROG_SUFF)
+.endif
+.endif
+
+fptest.o_CFLAGS = $(CFLAGS) $(UNICFLAGS)
+fptest_LIBS = $(MDLIBS) $(PKSMPLIBS)
+compile_msd.sh_IDIR = $(BG_BIN)/setup/
+xml2exe.py_IDIR = $(BG_BIN)/setup/
+id2exe.py_IDIR = $(BG_BIN)/setup/
+REM.pl_IDIR = $(BG_BIN)/setup/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/kerngen/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

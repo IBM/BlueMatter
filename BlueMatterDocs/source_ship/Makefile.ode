@@ -1,0 +1,10 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  ProbSpecUserMan.pdf \
+  ProbSpecUserMan.tex \
+  Makefile.ode
+ProbSpecUserMan.pdf_IDIR = $(BG_SRC)/BlueMatter/docs/
+ProbSpecUserMan.tex_IDIR = $(BG_SRC)/BlueMatter/docs/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/docs/source_ship/
+.include <$(RULES_MK)>

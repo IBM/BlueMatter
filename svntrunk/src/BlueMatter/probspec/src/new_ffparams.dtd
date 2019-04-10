@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE ffparams [
+
+<!ELEMENT ffparams (header_parameter_list, (molecule_type_list)?,
+(molecule_list)?, (chem_comp_list)?, (atom_type_list)?, site_list,
+(bond_list)?, (force_list)*, (type_list)*, (pair_list)*,
+(group_list)*)>
+
+<!-- The header parameter list contains per system information.  Each -->
+<!-- parameter has associated name and type attributes -->
+<!ELEMENT header_parameter_list (header_parameter)+>
+<!ELEMENT header_parameter (#PCDATA)>
+<!ATTLIST header_parameter name ID #REQUIRED>
+<!ATTLIST header_parameter type (char | double | int) "char">
+
+<!ELEMENT molecule_type_list (molecule_type)+>
+<!ELEMENT molecule_type (#PCDATA)>
+<!ATTLIST molecule_type mol_type_id ID #REQUIRED>
+<!ATTLIST molecule_type mol_class (solvent | protein | ligand | dna |
+other-polymer | other) #REQUIRED>
+
+<!ELEMENT molecule_list (molecule)+>
+<!ELEMENT molecule (#PCDATA)>
+<!ATTLIST molecule mol_id ID #REQUIRED>
+<!ATTLIST molecule mol_type_id IDREF #REQUIRED>
+
+<!ELEMENT chem_comp_list (chem_comp)+>
+<!ELEMENT chem_comp (#PCDATA)>
+<!ATTLIST chem_comp chem_comp_id ID #REQUIRED>
+
+<!ELEMENT atom_type_list (atom_type)+>
+<!ELEMENT atom_type (#PCDATA)>
+<!ATTLIST atom_type atom_type_id ID #REQUIRED>
+
+<!-- The site_list contains a list of all sites in the system.  The -->
+<!-- parameter list at the beginning contains a list of all the names -->
+<!-- and types of the parameters to be specified for each site.  Each -->
+<!-- site has a site_id associated with it and the site_id provide is -->
+<!-- required to consist of a number with site_ prepended to it, like -->
+<!-- "site_1". The site_list is also the first of two structures that -->
+<!-- provide a sense of the system as a graph.  The site_list is the -->
+<!-- node list.  -->
+<!ELEMENT site_list (site_parameter_list, (site_parameter_record)+)>
+<!ELEMENT site_parameter_list (site_parameter_spec)+>
+<!ELEMENT site_parameter_spec EMPTY>
+<!ATTLIST site_parameter_spec name ID #REQUIRED>
+<!ATTLIST site_parameter_spec type (char | double | int) "char">
+<!ELEMENT site_parameter_record (site_parameter)*>
+<!ATTLIST site_parameter_record site_id ID #REQUIRED>
+<!ATTLIST site_parameter_record molecule_ref IDREF #IMPLIED>
+<!ATTLIST site_parameter_record chem_comp_ref IDREF #IMPLIED>
+<!ATTLIST site_parameter_record atom_type_ref IDREF #IMPLIED>
+<!ELEMENT site_parameter (#PCDATA)>
+<!ATTLIST site_parameter name IDREF #REQUIRED>
+
+<!-- The bond_list is the second of the two structures that provide a -->
+<!-- sense of the system as a graph.  The bond_list is the edge list -->
+<!-- for the graph that represents the covalent bond connectivity of -->
+<!-- the system.  This is a separate concept from the binding of -->
+<!-- parameters to a pair of site_ids for the purpose of force -->
+<!-- calculations.  In general, there will be a one-to-one -->
+<!-- correspondence between the bonds listed in the bond_list and the -->
+<!-- records in the force_list associated with harmonic bond stretch -->
+<!-- interactions, but this doesn't have to be so. -->
+<!ELEMENT bond_list (bond)*>
+<!ELEMENT bond EMPTY>
+<!ATTLIST bond site_id1 IDREF #REQUIRED>
+<!ATTLIST bond site_id2 IDREF #REQUIRED>
+
+<!-- The force_term_list contains the list of parameters and sites for -->
+<!-- each force term type defined.  The force_term_id is a unique -->
+<!-- identifier that specifies the functional form to be used. Each -->
+<!-- force parameter record contains a list of sites whose positions -->
+<!-- are required for force computation, as well as the parameter -->
+<!-- values required. Examples of force_term_ids are: -->
+<!-- torsion_oplsaa_proper, torsion_charmm_improper, bond_harmonic, -->
+<!-- urey_bradley, angle_harmonic, ...-->
+<!ELEMENT force_list (force_parameter_list, (force_parameter_record)*)>
+<!ATTLIST force_list force_term_id ID #REQUIRED>
+<!ATTLIST force_list site_count CDATA #REQUIRED>
+<!ELEMENT force_parameter_list (force_parameter_spec)+>
+<!ELEMENT force_parameter_spec EMPTY>
+<!ATTLIST force_parameter_spec name ID #REQUIRED>
+<!ATTLIST force_parameter_spec type (char | double | int) "char">
+<!ELEMENT force_parameter_record ((force_site)+, (force_parameter)+)>
+<!ELEMENT force_site EMPTY>
+<!ATTLIST force_site site_id IDREF #REQUIRED>
+<!ATTLIST force_site site_ordinal #REQUIRED>
+<!ELEMENT force_parameter (#PCDATA)>
+<!ATTLIST force_parameter name IDREF #REQUIRED>
+
+<!-- The type_list contains a list of type_ids that are usually used -->
+<!-- for a particular type of pair interaction.  These types may have -->
+<!-- parameter values associated with them which are defined in the -->
+<!-- type_parameter_list. For now, information about what type_id is -->
+<!-- bound to a particular site_id must be conveyed via a -->
+<!-- site_parameter. It is required that type_ids consist of the -->
+<!-- type_class string with an underscore and number appended -->
+<!ELEMENT type_list (type_parameter_list, (type_record)+)>
+<!ATTLIST type_list type_class ID #REQUIRED>
+<!ELEMENT type_parameter_list (type_parameter_spec)*>
+<!ELEMENT type_parameter_spec EMPTY>
+<!ATTLIST type_parameter_spec name ID #REQUIRED>
+<!ATTLIST type_parameter_spec type (char | double | int) "char">
+<!ELEMENT type_record (type_parameter)*>
+<!ATTLIST type_record type_id ID #REQUIRED>
+<!ELEMENT type_parameter (#PCDATA)>
+<!ATTLIST type_parameter name IDREF #REQUIRED>
+
+<!-- The pair list contains a list of pair interaction parameters for -->
+<!-- each pair of the associated types-->
+<!ELEMENT pair_list (pair_parameter_list, (pair_record)+)>
+<!ATTLIST pair_list pair_class ID #REQUIRED>
+<!ATTLIST pair_list type_class IDREF #REQUIRED>
+<!ELEMENT pair_parameter_list (pair_parameter_spec)+>
+<!ELEMENT pair_parameter_spec EMPTY>
+<!ATTLIST pair_parameter_spec name ID #REQUIRED>
+<!ATTLIST pair_parameter_spec type (char | double | int) "char">
+<!ELEMENT pair_record (pair_parameter)+>
+<!ATTLIST pair_record type_id_1 IDREF #REQUIRED>
+<!ATTLIST pair_record type_id_2 IDREF #REQUIRED>
+<!ELEMENT pair_parameter (#PCDATA)>
+<!ATTLIST pair_parameter name IDREF #REQUIRED>
+
+<!-- User defined groups contain group information and a list of group -->
+<!-- members specified by site_id-->
+<!ELEMENT group_list (group_info, (group_member)+)>
+<!ATTLIST group_list group_id ID #REQUIRED>
+<!ATTLIST group_list group_class CDATA #REQUIRED>
+<!ELEMENT group_info (#PCDATA)>
+<!ELEMENT group_member EMPTY>
+<!ATTLIST group_member site_id IDREF #REQUIRED>
+]>

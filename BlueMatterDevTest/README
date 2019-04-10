@@ -1,0 +1,19 @@
+
+This directory tree can run several md runs using Blue Matter and checks the
+results against selfcontianed regression data.
+
+The scripts check against save baseline regression data and also the last
+of a succession of runs.  For successive runs, the check (rdgdiff) must
+see the md results as identical -- binary regression.  If a run fails to be within
+tolerance of the baseline or identical to your last run, and email will be sent yo
+your user id formed as <gsaid>@us.ibm.com
+
+To run this, you must either be in a ode sandbox or have the SANDBOX env variable
+set to identify a sandbox to test.
+
+To use this, the whole directory tree must be in a filesystem that can run on BGW.
+You may need to copy this directory to another location eg /bgwhome1/...
+
+Keep in mind that no old results are automatically deleted so you need to clean up
+now and then.
+

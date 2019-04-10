@@ -1,0 +1,5 @@
+IDIR    = $(BG_BIN)/setup/
+
+ILIST   =  lwc2xml_dev.pl \
+           lwc2dvs.pl
+.include <$(RULES_MK)>

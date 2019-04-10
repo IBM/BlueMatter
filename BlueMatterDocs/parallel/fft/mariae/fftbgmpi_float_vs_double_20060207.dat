@@ -1,0 +1,11 @@
+# Standalone benchmarks of double precision vs. single precision complex-complex 
+# 3D-FFT on BG/L
+# column 1: node count
+# column 2: execution time for fft<float>
+# column 3: execution time for fft<double>
+512 	0.00205 	0.00290
+1024 	0.00132 	0.00202
+2048 	0.00089 	0.00135
+4096 	0.00069 	0.000912
+8192 	0.00083 	0.00109
+16384 	0.00092 	0.00093

@@ -1,0 +1,25 @@
+
+INCLUDES += \
+  moleculetypelist.hpp \
+  elementlist.hpp \
+  chemicalcomponentlist.hpp \
+  atomtaglist.hpp \
+  moleculenamelist.hpp \
+  moleculeinstancelist.hpp \
+  chemicalcomponentinstancelist.hpp \
+  chainlist.hpp \
+  monomerinstancelist.hpp \
+  site.hpp \
+  sitelist.hpp \
+  bondlist.hpp \
+  molecularsystem.hpp \
+  sequenceindex.hpp \
+  compareinteger.hpp \
+
+
+EXPINCDIR = /usr/include/BlueMatter/db2/
+
+# IDIR = $(BG_INCLUDE)/BlueMatter/db2/
+# ILIST = $(INCLUDES)
+
+.include <$(RULES_MK)>

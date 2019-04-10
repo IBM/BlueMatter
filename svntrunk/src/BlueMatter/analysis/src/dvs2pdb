@@ -1,0 +1,47 @@
+#!/usr/bin/perl -w
+# given a dvs file and a template pdb file, print a new pdb file with the 
+# coordinates from the dvs file to stdout
+
+$dvsfile = shift;
+$pdbfile = shift;
+
+if (-T $dvsfile)
+    {
+    open(DVS, "$dvsfile") || die  "couldn't read $dvsfile: $!\n";
+    }
+else
+    {
+    print STDERR "DVS not a text file, running it through dvs2txt\n";
+    open(DVS, "dvs2txt $dvsfile|") || die "couldn't run dvs2txt: $!\n";
+    }
+
+open(PDB, "$pdbfile") || die  "couldn't read $pdbfile: $!\n";
+
+while (<PDB>)
+    {
+    if (!(/^ATOM/))
+        {
+        print;
+        }
+    else
+        {
+        $pdbline = $_;
+        $dvsline = <DVS>;
+        @fields = split(' ', $dvsline);
+        $dvsx = $fields[2];
+        $dvsy = $fields[3];
+        $dvsz = $fields[4];
+
+        # format the values appropriately
+        $dvsx = sprintf("%8.3f", $dvsx);
+        $dvsy = sprintf("%8.3f", $dvsy);
+        $dvsz = sprintf("%8.3f", $dvsz);
+
+        #print $pdbline;
+        substr($pdbline,30,8) = $dvsx;
+        substr($pdbline,38,8) = $dvsy;
+        substr($pdbline,46,8) = $dvsz;
+        print $pdbline;
+        #print "\n";
+        }
+    }

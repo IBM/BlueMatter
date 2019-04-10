@@ -1,0 +1,27 @@
+ILIST = \
+	BGL_MPI.plt \
+	BGL_P1_5_MPI.impl \
+	BGL_P1_5_MPI.ref \
+	BGL_P1_5_MPI_rolling_regression.impl \
+	BGL_P1_5_MPI_rolling_regression.ref \
+	BGL_P5_SPI.impl \
+	BGL_SPI.plt \
+	BGL_P5_SPI.ref \
+	BGL_P5_SPI_rolling_regression.impl \
+	BGL_P5_SPI_rolling_regression.ref \
+	BGL_P5_SPI_FLOAT_FFT.impl \
+	BGL_P5_SPI_FLOAT_FFT.ref \
+	BGL_P5_SPI_FLOAT_FFT_TRACING.impl \
+	BGL_P5_SPI_FLOAT_FFT_TRACING.ref \
+	BGL_P5_SPI_DOUBLE_FFT_TRACING.impl \
+	BGL_P5_SPI_DOUBLE_FFT_TRACING.ref \
+
+
+IDIR = $(BG_BIN)/setup/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/build_params/to_open_source/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

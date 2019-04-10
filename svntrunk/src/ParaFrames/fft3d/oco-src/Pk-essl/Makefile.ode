@@ -1,0 +1,46 @@
+
+VPATH = ..
+
+OBJECTS = \
+   arrayBounds$(OBJ_SUFF) \
+   distributionOps$(OBJ_SUFF) \
+   PrivateFFT_double$(OBJ_SUFF) \
+   PrivateFFT_float$(OBJ_SUFF)
+
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)ocofft3dPkessl$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+ILIST = \
+ $(LIBRARIES) \
+ 
+IDIR = $(BG_SRC)/fft3d/
+
+BUILD_PARAM_MACROS = \
+-DUSE_PK_ACTORS \
+-DA2A_WITH_ACTORS \
+-DPK_BGL \
+-DPK_XLC \
+-DPK_PHASE4 \
+-DPK_PARALLEL \
+-DPK_BLADE_SPI \
+-DPKFXLOG \
+-DISM_PACKET_ORDINAL \
+-DFFT_ESSL \
+
+TRACE_MACROS=\
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG \
+-DPKTRACE_ALLTOALLV_DETAIL \
+
+
+CFLAGS += $(BUILD_PARAM_MACROS) -DOCO_SRC
+
+## Select tracing to help Maria
+#CFLAGS += $(TRACE_MACROS)
+
+.include <$(RULES_MK)>

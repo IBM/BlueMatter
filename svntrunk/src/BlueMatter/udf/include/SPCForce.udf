@@ -1,0 +1,167 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void SPCForce(
+    MDVM &aMDVM
+    )
+{
+//  duplicated from TIP3PForce.udf, RZ 10/2001
+//  We need separate udf's for various water models now,
+//  even though TIP3P and SPC, SPC/E only differs in parameters
+    const double kr  =  450.0;
+    const double r0  =    1.000;
+    const double kth =   55.0;
+    const double th0 =    1.910611932;  // 109.47 * Math::Deg2Rad;
+//  This code previously assumed OHH order and now assumes HOH
+//  changes were made only at the MDVM interface - not variable names
+
+    XYZ    vAB = aMDVM.GetVector(  MDVM::SiteA, MDVM::SiteB);
+    XYZ    vAC = aMDVM.GetVector(  MDVM::SiteC, MDVM::SiteB);
+    XYZ RP = vAC.crossProduct(vAB);
+
+    double RPL2 = RP.LengthSquared() ;
+
+    double r2AB = vAB.LengthSquared() ;
+    double r2AC = vAC.LengthSquared() ;
+
+    double recipAB = 1.0/sqrt(r2AB) ;
+    double recipAC = 1.0/sqrt(r2AC) ;
+    // Caution: If the bond angle was 180 degrees, RPL2 will be zero so RPL will be Inf or NaN
+    // This will propagate through SINTHE, atrig, AngleEnergy, DTD* but will all get
+    // resolved in the IsVectorSquareLengthZero conditional
+    double RPL = 1.0/sqrt(RPL2) ;
+
+    double SINTHE = RPL2 * RPL * ( recipAB * recipAC) ;
+    double rAB = recipAB * r2AB ;
+    double rAC = recipAC * r2AC ;
+    //double rAB = vAB.Length();
+    //double rAC = vAC.Length();
+    //double rAB = aMDVM.GetDistance( MDVM::SiteB, MDVM::SiteA );
+    //double rAC = aMDVM.GetDistance( MDVM::SiteC, MDVM::SiteA );
+
+//===========================================================
+
+    double DeltaFromEquilibrium  = rAB - r0;
+
+    double Energy = ( kr * DeltaFromEquilibrium ) * DeltaFromEquilibrium;
+
+    // double  DEDR  = -2.0 * ( kr * DeltaFromEquilibrium ) / rAB;
+    double  DEDR  = -2.0 * ( kr * DeltaFromEquilibrium ) * recipAB;
+
+    XYZ ForceB = vAB * DEDR;
+    XYZ ForceA = -ForceB;
+
+//===========================================================
+
+    DeltaFromEquilibrium  = rAC - r0;
+
+    Energy += ( kr * DeltaFromEquilibrium ) * DeltaFromEquilibrium;
+
+    //DEDR    = -2.0 * ( kr * DeltaFromEquilibrium ) / rAC;
+    DEDR    = -2.0 * ( kr * DeltaFromEquilibrium ) * recipAC;
+
+    XYZ ForceC  = vAC * DEDR;
+        ForceA -= ForceC;
+
+#ifdef DEBUG_UDF
+    aMDVM.ReportUdfEnergy(UDF_Binding::StdHarmonicBondForce_Code ,Energy);
+#endif
+//===========================================================
+
+
+    double COSTHE = ( vAB.DotProduct( vAC ) ) * (recipAB * recipAC);
+
+    // double sindelta = SINTHE * costh0 - COSTHE * sinth0 ;
+    // double delta = asin_small(sindelta) ;
+
+    double THETA = Math::atrig(SINTHE, COSTHE) ;
+    double delta = THETA - th0 ;
+
+    // double THETA = acos(COSTHE);
+
+    // Energy += kth * Math::sqr(THETA - th0);
+
+    // Beware, the energy will be NaN if the angle was 180 degrees
+    double AngleEnergy = kth * Math::sqr(delta);
+
+
+    // double DEDTH = 2.0 * kth * (THETA - th0);
+    double DEDTH = 2.0 * kth * (delta);
+
+    // double RPL = RP.Length();
+
+    // if (Heuristics::IsVectorLengthZero(RPL))
+    //     RPL = 0.0;
+    // else
+    //    RPL = 1.0 / RPL;
+
+    // double    R12R = -1.0 /  (rAB * rAB);
+    // double    R32R =  1.0 /  (rAC * rAC);
+    double    R12R = -1.0 *  (recipAB * recipAB);
+    double    R32R =  1.0 *  (recipAC * recipAC);
+    double    DTD12X = R12R*(RPL*DEDTH) * (vAB.mY*RP.mZ - vAB.mZ*RP.mY);
+    double    DTD12Y = R12R*(RPL*DEDTH) * (vAB.mZ*RP.mX - vAB.mX*RP.mZ);
+    double    DTD12Z = R12R*(RPL*DEDTH) * (vAB.mX*RP.mY - vAB.mY*RP.mX);
+    double    DTD32X = R32R*(RPL*DEDTH) * (vAC.mY*RP.mZ - vAC.mZ*RP.mY);
+    double    DTD32Y = R32R*(RPL*DEDTH) * (vAC.mZ*RP.mX - vAC.mX*RP.mZ);
+    double    DTD32Z = R32R*(RPL*DEDTH) * (vAC.mX*RP.mY - vAC.mY*RP.mX);
+
+    if ( !  Heuristics::IsVectorSquareLengthZero(RPL2) )
+      {
+
+        ForceB.mX -=  DTD12X        ;
+        ForceB.mY -=  DTD12Y        ;
+        ForceB.mZ -=  DTD12Z        ;
+        ForceA.mX -= -DTD12X-DTD32X ;
+        ForceA.mY -= -DTD12Y-DTD32Y ;
+        ForceA.mZ -= -DTD12Z-DTD32Z ;
+        ForceC.mX -=         DTD32X ;
+        ForceC.mY -=         DTD32Y ;
+        ForceC.mZ -=         DTD32Z ;
+#ifdef DEBUG_UDF
+        aMDVM.ReportUdfEnergy(UDF_Binding::StdHarmonicAngleForce_Code,AngleEnergy );
+#endif
+
+        Energy += AngleEnergy ;
+        aMDVM.ReportEnergy(Energy);
+
+        aMDVM.ReportForce( MDVM::SiteA, ForceB );
+        aMDVM.ReportForce( MDVM::SiteB, ForceA );
+        aMDVM.ReportForce( MDVM::SiteC, ForceC );
+      }
+      else
+      {
+        // In the special case, we computed AngleEnergy as NaN; perform the correct computation
+        // (Assume the angle is 180 degrees, since 0 degrees is not physical)
+        // Also, do not add the angle force in; its direction is undefined.
+        double CollinearAngleEnergy = kth * Math::sqr(M_PI - th0 ) ;
+#ifdef DEBUG_UDF
+        aMDVM.ReportUdfEnergy(UDF_Binding::StdHarmonicAngleForce_Code,CollinearAngleEnergy );
+#endif
+        Energy += CollinearAngleEnergy ;
+        aMDVM.ReportEnergy( Energy );
+
+        aMDVM.ReportForce( MDVM::SiteA, ForceB );
+        aMDVM.ReportForce( MDVM::SiteB, ForceA );
+        aMDVM.ReportForce( MDVM::SiteC, ForceC );
+      }
+
+    return;
+}
+

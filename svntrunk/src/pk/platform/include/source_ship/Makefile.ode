@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  platform.hpp \
+  Makefile.ode
+platform.hpp_IDIR = $(BG_SRC)/bgfe/pk/platform/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/platform/include/source_ship/
+.include <$(RULES_MK)>

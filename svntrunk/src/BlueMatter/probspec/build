@@ -1,0 +1,8 @@
+
+if [ "$BLUEMATTERROOT" = "" ]; then echo "Not so fast... Define BLUEMATTERROOT first!" ; exit -1; fi;
+
+
+$BLUEMATTERROOT/probspec/src/build.probspec
+$BLUEMATTERROOT/probspec/src/build.psf2xml
+
+

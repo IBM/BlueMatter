@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  makefile.aix \
+  Makefile.ode
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/source_ship/
+.include <$(RULES_MK)>

@@ -1,0 +1,102 @@
+# Makefile for GFE base directory
+#
+
+CMSCMPDIRVALUE=foxfm/pk
+
+include $(BASE)/makedef.aix
+
+all: hdrs objs libs bins
+
+
+COBJECTS_UNI=$(CMSCMPBLDDIR)/uni/main.o \
+	     $(CMSCMPBLDDIR)/uni/pktrace_pk.o \
+	     $(CMSCMPBLDDIR)/uni/pthread.o \
+	     $(CMSCMPBLDDIR)/uni/globject.o \
+	     $(CMSCMPBLDDIR)/uni/exception.o \
+	     $(CMSCMPBLDDIR)/uni/reactor.o \
+	     $(CMSCMPBLDDIR)/uni/fxlogger.o \
+	     $(CMSCMPBLDDIR)/uni/pkrnew.o \
+	     $(CMSCMPBLDDIR)/uni/pktrace.o \
+	     $(CMSCMPBLDDIR)/uni/pthread_aix4.o \
+	     $(CMSCMPBLDDIR)/uni/resize_pk.o
+
+
+COBJECTS_SMP=$(CMSCMPBLDDIR)/smp/main.o \
+	     $(CMSCMPBLDDIR)/smp/pktrace_pk.o \
+	     $(CMSCMPBLDDIR)/smp/pthread.o \
+	     $(CMSCMPBLDDIR)/smp/globject.o \
+	     $(CMSCMPBLDDIR)/smp/exception.o \
+	     $(CMSCMPBLDDIR)/smp/reactor.o \
+	     $(CMSCMPBLDDIR)/smp/fxlogger.o \
+	     $(CMSCMPBLDDIR)/smp/pkrnew.o \
+	     $(CMSCMPBLDDIR)/smp/pktrace.o \
+	     $(CMSCMPBLDDIR)/smp/pthread_aix4.o \
+	     $(CMSCMPBLDDIR)/smp/resize_pk.o
+
+COBJECTS_MPI=$(CMSCMPBLDDIR)/mp/main.o \
+	     $(CMSCMPBLDDIR)/mp/pktrace_pk.o \
+	     $(CMSCMPBLDDIR)/mp/pthread.o \
+	     $(CMSCMPBLDDIR)/mp/globject.o \
+	     $(CMSCMPBLDDIR)/mp/exception.o \
+	     $(CMSCMPBLDDIR)/mp/reactor.o \
+	     $(CMSCMPBLDDIR)/mp/fxlogger.o \
+	     $(CMSCMPBLDDIR)/mp/pkrnew.o \
+	     $(CMSCMPBLDDIR)/mp/pktrace.o \
+	     $(CMSCMPBLDDIR)/mp/pthread_aix4.o \
+	     $(CMSCMPBLDDIR)/mp/resize_pk.o \
+	     $(CMSCMPBLDDIR)/mp/mpi.o
+
+LIBUNI=$(CMSPRDBLDLIBDIR)/libgfe_uni.a
+LIBSMP=$(CMSPRDBLDLIBDIR)/libgfe_smp.a
+LIBMPI=$(CMSPRDBLDLIBDIR)/libgfe_mpi.a
+
+
+$(LIBUNI): $(COBJECTS_UNI)
+	rm -f $(LIBUNI)
+	ar crv $(LIBUNI) $(COBJECTS_UNI)
+
+
+$(LIBSMP): $(COBJECTS_SMP)
+	rm -f $(LIBSMP)
+	ar crv $(LIBSMP) $(COBJECTS_SMP)
+
+
+$(LIBMPI): $(COBJECTS_MPI)
+	rm -f $(LIBMPI)
+	ar crv $(LIBMPI) $(COBJECTS_MPI)
+
+hdrs:
+	+cd debug; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd exception; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd fxlogger; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd globject; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd pthread; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd queues; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd reactor; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd rnew; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd rpc; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd trace; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd util_aix; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd util_comm; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd util_cpp; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd util_test; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+
+objs:
+	mkdir -p  $(CMSCMPBLDDIR)/uni
+	mkdir -p  $(CMSCMPBLDDIR)/smp
+	mkdir -p  $(CMSCMPBLDDIR)/mp
+	+cd exception; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd fxlogger; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd globject; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd pkmain; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd pthread; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd reactor; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd rnew; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd trace; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+	+cd util_comm; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+
+libs:   $(LIBUNI) $(LIBSMP) $(LIBMPI)
+	+cd util_aix; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+
+bins:
+	+cd util_aix; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@

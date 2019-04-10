@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ffparams [
+<!ELEMENT ffparams (header, sitelist, bondlist, anglelist, torsionlist, improperlist)>
+<!ELEMENT header (charge | vdw | vdwcombine | charge14 | charge14scale | vdw14 | vdw14scale | improper | torsioninput | ureybradley | grouping | water | units)*>
+<!ELEMENT vdw (#PCDATA)>
+<!ELEMENT vdwcombine (#PCDATA)>
+<!ELEMENT charge14 (#PCDATA)>
+<!ELEMENT charge14scale (#PCDATA)>
+<!ELEMENT vdw14 (#PCDATA)>
+<!ELEMENT vdw14scale (#PCDATA)>
+<!ELEMENT improper (#PCDATA)>
+<!ELEMENT torsioninput (#PCDATA)>
+<!ELEMENT ureybradley (#PCDATA)>
+<!ELEMENT grouping (#PCDATA)>
+<!ELEMENT water (#PCDATA)>
+<!ELEMENT units (#PCDATA)>
+<!ELEMENT sitelist (siterec)+>
+<!ELEMENT bondlist (bondrec)+>
+<!ELEMENT anglelist (anglerec)+>
+<!ELEMENT torsionlist (torsionrec)+>
+<!ELEMENT improperlist (improperrec)+>
+<!ELEMENT siterec (siteid, sitetype, charge, sigma, epsilon)>
+<!ELEMENT support (#PCDATA)>
+<!ELEMENT siteid (#PCDATA)>
+<!ELEMENT sitetype (#PCDATA)>
+<!ELEMENT charge (#PCDATA)>
+<!ELEMENT sigma (#PCDATA)>
+<!ELEMENT epsilon (#PCDATA)>
+<!ELEMENT bondrec (siteid, siteid, k, r0)>
+<!ELEMENT k (#PCDATA)>
+<!ELEMENT r0 (#PCDATA)>
+<!ELEMENT anglerec (siteid, siteid, siteid, k, th0, ku, ru)>
+<!ELEMENT th0 (#PCDATA)>
+<!ELEMENT ku (#PCDATA)>
+<!ELEMENT ru (#PCDATA)>
+<!ELEMENT torsionrec (siteid, siteid, siteid, siteid, (torparm)+)>
+<!ELEMENT improperrec (siteid, siteid, siteid, siteid, (torparm)+)>
+<!ELEMENT torparm (order, v)>
+<!ELEMENT order (#PCDATA)>
+<!ELEMENT v (#PCDATA)>
+]>
+<ffparams>
+<header>
+<charge>1</charge>
+<vdw>1</vdw>
+<vdwcombine>2</vdwcombine>
+<charge14>2</charge14>
+<charge14scale>0.5</charge14scale>
+<vdw14>2</vdw14>
+<vdw14scale>0.5</vdw14scale>
+<improper>2</improper>
+<torsioninput>2</torsioninput>
+<ureybradley>0</ureybradley>
+<grouping>0</grouping>
+<water>0</water>
+<units>1</units>
+</header>
+<sitelist>
+<siterec><siteid>N1</siteid><sitetype>N3</sitetype><charge>-0.3000</charge><sigma>3.2500</sigma><epsilon>0.1700</epsilon></siterec>
+<siterec><siteid>H2</siteid><sitetype>H3</sitetype><charge>0.3300</charge><sigma>0.0000</sigma><epsilon>0.0000</epsilon></siterec>
+<siterec><siteid>H3</siteid><sitetype>H3</sitetype><charge>0.3300</charge><sigma>0.0000</sigma><epsilon>0.0000</epsilon></siterec>
+<siterec><siteid>H4</siteid><sitetype>H3</sitetype><charge>0.3300</charge><sigma>0.0000</sigma><epsilon>0.0000</epsilon></siterec>
+</sitelist>
+<bondlist>
+<bondrec><siteid>N1</siteid><siteid>H2</siteid><k>434.0000</k><r0>1.0100</r0></bondrec>
+<bondrec><siteid>N1</siteid><siteid>H3</siteid><k>434.0000</k><r0>1.0100</r0></bondrec>
+<bondrec><siteid>N1</siteid><siteid>H4</siteid><k>434.0000</k><r0>1.0100</r0></bondrec>
+<bondrec><siteid>N1</siteid><siteid>C5</siteid><k>367.0000</k><r0>1.4710</r0></bondrec>
+<bondrec><siteid>C5</siteid><siteid>H6</siteid><k>340.0000</k><r0>1.0900</r0></bondrec>
+<bondrec><siteid>C5</siteid><siteid>C7</siteid><k>268.0000</k><r0>1.5290</r0></bondrec>
+<bondrec><siteid>C5</siteid><siteid>C22</siteid><k>317.0000</k><r0>1.5220</r0></bondrec>
+<bondrec><siteid>C7</siteid><siteid>H8</siteid><k>340.0000</k><r0>1.0900</r0></bondrec>
+<bondrec><siteid>C7</siteid><siteid>H9</siteid><k>340.0000</k><r0>1.0900</r0></bondrec>
+<bondrec><siteid>C7</siteid><siteid>C10</siteid><k>317.0000</k><r0>1.5100</r0></bondrec>
+<bondrec><siteid>C10</siteid><siteid>C11</siteid><k>469.0000</k><r0>1.4000</r0></bondrec>
+<bondrec><siteid>C10</siteid><siteid>C20</siteid><k>469.0000</k><r0>1.4000</r0></bondrec>
+<bondrec><siteid>C11</siteid><siteid>H12</siteid><k>367.0000</k><r0>1.0800</r0></bondrec>
+<bondrec><siteid>C11</siteid><siteid>C13</siteid><k>469.0000</k><r0>1.4000</r0></bondrec>
+<bondrec><siteid>C13</siteid><siteid>H14</siteid><k>367.0000</k><r0>1.0800</r0></bondrec>
+<bondrec><siteid>C13</siteid><siteid>C15</siteid><k>469.0000</k><r0>1.4000</r0></bondrec>
+</bondlist>
+<anglelist>
+<anglerec><siteid>N1</siteid><siteid>C5</siteid><siteid>H6</siteid><k>35.0000</k><th0>109.5000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+<anglerec><siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid><k>80.0000</k><th0>111.2000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+<anglerec><siteid>N1</siteid><siteid>C5</siteid><siteid>C22</siteid><k>80.0000</k><th0>111.2000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+<anglerec><siteid>H3</siteid><siteid>N1</siteid><siteid>H2</siteid><k>35.0000</k><th0>109.5000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+<anglerec><siteid>H4</siteid><siteid>N1</siteid><siteid>H2</siteid><k>35.0000</k><th0>109.5000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+<anglerec><siteid>H4</siteid><siteid>N1</siteid><siteid>H3</siteid><k>35.0000</k><th0>109.5000</th0><ku>0.0000</ku><ru>0.0000</ru></anglerec>
+</anglelist>
+<torsionlist>
+<torsionrec>
+<siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid><siteid>H8</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.4640</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid><siteid>H9</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.4640</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid><siteid>C10</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.8450</v></torparm>
+<torparm><order>2</order><v>-0.9620</v></torparm>
+<torparm><order>3</order><v>0.7130</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>N1</siteid><siteid>C5</siteid><siteid>C22</siteid><siteid>O23</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>N1</siteid><siteid>C5</siteid><siteid>C22</siteid><siteid>N24</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>1.8160</v></torparm>
+<torparm><order>2</order><v>1.2220</v></torparm>
+<torparm><order>3</order><v>1.5810</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H2</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>H6</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.2610</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H2</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.3470</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H2</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>C22</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.3470</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H3</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>H6</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.2610</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H3</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>C7</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.3470</v></torparm>
+</torsionrec>
+<torsionrec>
+<siteid>H3</siteid><siteid>N1</siteid><siteid>C5</siteid><siteid>C22</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>0.0000</v></torparm>
+<torparm><order>3</order><v>0.3470</v></torparm>
+</torsionrec>
+</torsionlist>
+<improperlist>
+<improperrec>
+<siteid>C5</siteid><siteid>N24</siteid><siteid>C22</siteid><siteid>O23</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>21.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C26</siteid><siteid>C22</siteid><siteid>N24</siteid><siteid>H25</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>2.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C26</siteid><siteid>N31</siteid><siteid>C29</siteid><siteid>O30</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>21.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C33</siteid><siteid>C29</siteid><siteid>N31</siteid><siteid>H32</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>2.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C33</siteid><siteid>N51</siteid><siteid>C49</siteid><siteid>O50</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>21.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C53</siteid><siteid>C49</siteid><siteid>N51</siteid><siteid>H52</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>2.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+<improperrec>
+<siteid>C53</siteid><siteid>O67</siteid><siteid>C66</siteid><siteid>O68</siteid>
+<torparm><order>0</order><v>0.0000</v></torparm>
+<torparm><order>1</order><v>0.0000</v></torparm>
+<torparm><order>2</order><v>21.0000</v></torparm>
+<torparm><order>3</order><v>0.0000</v></torparm>
+</improperrec>
+</improperlist>
+</ffparams>

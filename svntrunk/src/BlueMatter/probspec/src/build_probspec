@@ -1,0 +1,8 @@
+# Need defines like (BUT NOT EXACTLY) the following:
+# GFESOURCEROOT=/u/blake/foxfm
+# GFEBUILDROOT=/u/blake/GFEBUILDROOT
+# XERCESCROOT=/u/germain/projects/cbc/alphaworks/xml4c_debug
+
+am4new -Pxmlprobspec.pro xmlprobspec.cpp
+make -f xmlprobspec.mak gfebuild
+make -f xmlprobspec.mak

@@ -1,0 +1,9 @@
+ILIST = \
+PktThrobberIF.cpp \
+PktThrobberIF.hpp \
+
+IDIR = $(BG_INCLUDE)/spi/
+
+
+.include <$(RULES_MK)>
+

@@ -1,0 +1,35 @@
+
+INCLUDES = \
+Tapplication_class.hpp \
+Tcre_set_dialog.hpp \
+Tdefs.hpp \
+Texport_data_dialog.hpp \
+Texported_file_dialog.hpp \
+Tfile_class.hpp \
+Tgnuplot_dialog.hpp \
+Tgroup_class.hpp \
+Tgroup_file_class.hpp \
+Tgroup_properties_dialog.hpp \
+Tgroup_save_dialog.hpp \
+Tinclude.hpp \
+Titem_class.hpp \
+Tlib.hpp \
+Tload_set_dialog.hpp \
+Tmessage_dialog.hpp \
+Tproperties_dialog.hpp \
+Tset_scale_dialog.hpp \
+Ttime_mark.hpp \
+Ttimer_class.hpp \
+Ttypes.hpp \
+Twindow_class.hpp \
+pktracefile_api.hpp \
+
+EXPINCDIR = /usr/include/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/dtrace/inc/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

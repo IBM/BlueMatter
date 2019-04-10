@@ -1,0 +1,64 @@
+#
+# ODE makefile
+#
+#
+BG_AUXILIARY=DB2
+
+# the object files
+OBJECTS = \
+  transform_sysparams${OBJ_SUFF} \
+  udf_registryif${OBJ_SUFF} \
+  probspectrans${OBJ_SUFF} \
+  probspectrans_to_MSD${OBJ_SUFF} \
+  probspectrans_to_MSD_lib${OBJ_SUFF} 
+  
+
+#CFLAGS += -I/gsa/yktgsa/projects/b/bluematter/bgl/include
+
+#OFILES += \
+#	transform_sysparams${OBJ_SUFF} \
+#	udf_registryif${OBJ_SUFF} \
+#	probspectrans_to_MSD${OBJ_SUFF} 
+
+libprobspectrans.a_OFILES=udf_registryif${OBJ_SUFF} \
+                          transform_sysparams${OBJ_SUFF} \
+                        probspectrans_to_MSD_lib${OBJ_SUFF} \
+                          
+                          
+probspectrans_OFILES=probspectrans${OBJ_SUFF}
+probspectrans_to_MSD_OFILES=probspectrans_to_MSD${OBJ_SUFF}
+#transform_sysparams_OFILES=transform_sysparams${OBJ_SUFF}
+
+LIBRARIES = $(LIB_PREF)probspectrans$(LIB_SUFF)
+
+LIBS += \
+  $(LIB_PREF)db2cli$(LIB_SUFF) \
+  $(LIB_PREF)probspectrans$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+PROGRAMS = \
+  probspectrans$(PROG_SUFF) \
+  probspectrans_to_MSD$(PROG_SUFF) \
+
+#	transform_sysparams$(PROG_SUFF) 
+
+probspectrans$(PROG_SUFF)_OFILES = \
+  probspectrans$(OBJ_SUFF) 
+
+probspectrans_to_MSD$(PROG_SUFF)_OFILES = \
+  probspectrans_to_MSD$(OBJ_SUFF) 
+
+#transform_sysparams$(PROG_SUFF)_OFILES = \
+# transform_sysparams$(OBJ_SUFF) 
+
+IDIR = $(BG_BIN)/setup/
+
+ILIST = $(PROGRAMS)
+
+.include <$(RULES_MK)>
+
+
+

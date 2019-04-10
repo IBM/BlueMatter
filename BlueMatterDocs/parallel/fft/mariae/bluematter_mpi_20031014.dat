@@ -1,0 +1,10 @@
+# data collected on 500MHz BG/L prototype
+# compiler flags:  -O2 -qarch=440
+# 3D-FFT size: 64^3
+# system: beta hairpin: sys_id=19297, ctp_id=40295
+# column 1: proc count
+# column 2: Total time per timestep
+32  0.405
+128 0.109
+256 0.104
+512 0.119

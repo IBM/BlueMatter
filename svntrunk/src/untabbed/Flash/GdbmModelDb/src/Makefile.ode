@@ -1,0 +1,17 @@
+OBJECTS = \
+  dbm_mss$(OBJ_SUFF) \
+
+OFILES  = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)dbm_mss$(LIB_SUFF)
+
+EXPLIBDIR = /usr/lib/
+EXPLIBS = $(LIBRARIES)
+
+ILIST = $(LIBRARIES)
+IDIR = $(BG_LIB)/
+
+ILIST += dbm_mss.cpp
+dbm_mss.cpp_IDIR = $(BG_SRC)/Flash/
+
+.include <$(RULES_MK)>

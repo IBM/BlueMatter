@@ -1,0 +1,8 @@
+OBJECTS = SinCosTable$(OBJ_SUFF)
+
+PROGRAMS = SinCosTable$(PROG_SUFF)
+
+CFLAGS += -qlongdouble
+LDFLAGS += -qlongdouble
+
+.include <$(RULES_MK)>

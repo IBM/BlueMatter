@@ -1,0 +1,44 @@
+#
+# ODE makefile
+#
+#
+BG_AUXILIARY=DB2
+
+# the object files
+OBJECTS += \
+	runMD${OBJ_SUFF} \
+	TimeStep${OBJ_SUFF} \
+	MDSystemData${OBJ_SUFF} \
+
+CFLAGS += -I/gsa/yktgsa/projects/b/bluematter/bgl/include
+
+OFILES += \
+	runMD${OBJ_SUFF} \
+	TimeStep${OBJ_SUFF} \
+	MDSystemData${OBJ_SUFF} \
+
+LIBRARIES = $(LIB_PREF)concept_dbalg$(LIB_SUFF)
+
+LIBS += \
+	$(LIB_PREF)db2cli$(LIB_SUFF) \
+	$(LIB_PREF)concept_dbalg$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+PROGRAMS = \
+	runMD$(PROG_SUFF) \
+
+runMD$(PROG_SUFF)_OFILES = \
+	runMD$(OBJ_SUFF) \
+
+IDIR = $(BG_BIN)/setup/
+#IDIR = $(BG_BIN)/
+
+ILIST = $(PROGRAMS)
+
+.include <$(RULES_MK)>
+
+
+

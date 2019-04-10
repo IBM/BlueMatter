@@ -1,0 +1,57 @@
+# strong scaling data from Alex Rayshubskiy on an in-memory 
+# parallel implementation of Jim Gray's sort benchmark:
+# http://research.microsoft.com/barc/SortBenchmark/
+# For strong scaling data:
+# Column 1: node count
+# Column 2: time in seconds for sort
+# Index = 0: Strong scaling for 1TB sort
+4096	29.94 
+4096	23.72 
+8192	16.49
+16384	8.97
+#20480 	16.49
+
+
+# Index = 1: Strong scaling for 2TB sort
+8192	34.05
+16384	18.45
+20480	16.72
+
+
+# Index = 2: Strong scaling for 3TB sort
+16384	28.98
+20480	19.14
+
+
+# Index = 3: Strong scaling for 4TB sort
+20480	25.87
+
+
+# For weak scaling data, load balancing by bisection was used
+# except for 20480 nodes (not a power of two):
+# Column 1: node count
+# Column 2: max time in seconds for sort over nodes
+# Column 3: min time in seconds for sort over nodes
+# Column 4: total size of sort in GB
+# Index = 4: Weak scaling
+32    	16.84	13.86	10.3
+512   	18.52	13.92	110.0
+1024  	21.14	15.53	220.0
+2048  	22.71	10.53	440.0
+4096  	26.48	10.52	880.0  cubic
+4096  	31.57	15.71	880.0  row
+8192  	30.78	16.16	1760.0
+16384 	34.02	16.43	3520.0
+20480 	27.66	15.24	4400.0
+
+
+# Index = 5: Weak scaling using "Sweep" method for load balancing:
+# Column 1: node count
+# Column 2: time for sort in seconds
+# Column 3: total size of sort in GB
+32    	23.98	10.3
+512   	16.18	110.0
+1024  	25.80	220.0
+2048  	17.11	440.0
+4096  	22.91	880.0
+8192  	23.60	1760.0

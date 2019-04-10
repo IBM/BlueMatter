@@ -1,0 +1,13 @@
+INCLUDES = \
+tree_reduce.cpp \
+tree_reduce.hpp \
+
+EXPINCDIR = /usr/include/spi/
+
+ILIST = $(INCLUDES)
+
+IDIR = $(BG_INCLUDE)/spi/
+
+
+.include <$(RULES_MK)>
+

@@ -1,0 +1,11 @@
+# Makefile for GFE base directory
+#
+
+CMSCMPDIRVALUE=foxfm/PhasedPipeline
+
+include $(BASE)/makedef.aix
+
+all: hdrs libs bins objs
+
+.DEFAULT::
+	+cd include; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@

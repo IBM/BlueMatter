@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  Barrier.hpp \
+  Makefile.ode
+Barrier.hpp_IDIR = $(BG_SRC)/bgfe/pk/barrier/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/barrier/include/source_ship/
+.include <$(RULES_MK)>

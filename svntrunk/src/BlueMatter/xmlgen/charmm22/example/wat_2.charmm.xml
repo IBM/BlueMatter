@@ -1,0 +1,289 @@
+<?xml version='1.0' encoding='US-ASCII' standalone='no' ?>
+<!DOCTYPE ffparams [
+<!ELEMENT ffparams (header_parameter_list, (data_list)+,
+(udf_invocation_table)?, (site_tuple_list | param_tuple_list)*,
+(pair_list)*, (group_list)*)>
+
+<!-- The header parameter list contains per system information.  Each -->
+<!-- parameter has associated name, type, and symbolic_constant -->
+<!-- attributes.  If symbolic_constant="true" then it is intended that -->
+<!-- the parameter so labeled is to be treated as a symbolic constant -->
+<!-- for use by downstream applications-->
+<!ELEMENT header_parameter_list (header_parameter)+>
+<!ELEMENT header_parameter (#PCDATA)>
+<!ATTLIST header_parameter param_id ID #REQUIRED>
+<!ATTLIST header_parameter type (char | double | int) "char">
+<!ATTLIST header_parameter symbolic_constant (true | false) "false">
+
+<!-- The data_list contains a list of type_ids that are used -->
+<!-- for a variety of purposes, including molecule types and molecule -->
+<!-- instances as well as LJ types.   These types may have -->
+<!-- parameter values associated with them which are defined in the -->
+<!-- type_parameter_list. Information about what type_id is -->
+<!-- bound to a particular site_id must be conveyed via a -->
+<!-- site_parameter_ref. It is required that type_ids consist of the -->
+<!-- type_class string with an underscore and number appended -->
+<!ELEMENT data_list (data_title, data_parameter_list, (data_record)*)>
+<!ATTLIST data_list data_class_prepend ID #REQUIRED>
+<!ELEMENT data_title (#PCDATA)>
+<!ELEMENT data_parameter_list (data_parameter_spec)*>
+<!ATTLIST data_parameter_list param_prepend ID #REQUIRED>
+<!ELEMENT data_parameter_spec (#PCDATA)>
+<!ATTLIST data_parameter_spec param_id ID #REQUIRED>
+<!ATTLIST data_parameter_spec type (char | double | int | idref) "char">
+<!ATTLIST data_parameter_spec ref_prepend IDREF #IMPLIED>
+<!ELEMENT data_record ((data_parameter | data_parameter_ref))*>
+<!ATTLIST data_record data_id ID #REQUIRED>
+<!ELEMENT data_parameter (#PCDATA)>
+<!ATTLIST data_parameter param_ref IDREF #REQUIRED>
+<!ELEMENT data_parameter_ref EMPTY>
+<!ATTLIST data_parameter_ref param_ref IDREF #REQUIRED>
+<!ATTLIST data_parameter_ref ref_ptr IDREF #REQUIRED>
+<!-- The invocation table contains a list of all the user defined -->
+<!-- functions required for this system and pointers to tuples of -->
+<!-- sites and parameters required for each UDF   -->
+<!ELEMENT udf_invocation_table (udf_invocation_rec)*>
+<!ELEMENT udf_invocation_rec EMPTY>
+<!ATTLIST udf_invocation_rec udf_id ID #REQUIRED>
+<!ATTLIST udf_invocation_rec site_tuple_ref IDREF #REQUIRED>
+<!ATTLIST udf_invocation_rec param_tuple_ref IDREF #IMPLIED>
+
+<!-- The site tuple list contains a collection of site_id tuples that are -->
+<!-- used by one or more udfs.  The order of the tuples in this list -->
+<!-- must correspond to the order of the tuples in the corresponding -->
+<!-- param_tuple_list -->
+<!ELEMENT site_tuple_list (site_tuple)+>
+<!ATTLIST site_tuple_list id ID #REQUIRED>
+<!ELEMENT site_tuple (site)+>
+<!ELEMENT site EMPTY>
+<!ATTLIST site site_ref IDREF #REQUIRED>
+<!ATTLIST site site_ordinal CDATA #REQUIRED>
+
+<!-- The param tuple list contains a collection of parameter tuples -->
+<!-- that are used by one or more udfs.  The order of the tuples in -->
+<!-- this list must correspond to the order of the tuples in the -->
+<!-- corresponding site_tuple_list.  This list also has the usual -->
+<!-- parameter specification block at the beginning.  The element -->
+<!-- value of the param_spec element is the name of the parameter -->
+<!ELEMENT param_tuple_list (param_spec_list, (param_tuple)+)>
+<!ATTLIST param_tuple_list id ID #REQUIRED>
+<!ELEMENT param_spec_list (param_spec)+>
+<!ATTLIST param_spec_list param_prepend NMTOKEN #REQUIRED>
+<!ELEMENT param_spec (#PCDATA)>
+<!ATTLIST param_spec param_id ID #REQUIRED>
+<!ATTLIST param_spec type (double | int) "double">
+<!ELEMENT param_tuple (param)+>
+<!ELEMENT param (#PCDATA)>
+<!ATTLIST param param_ref IDREF #REQUIRED>
+
+<!-- The pair list contains a list of pair interaction parameters for -->
+<!-- each pair of the associated types-->
+<!ELEMENT pair_list (pair_parameter_list, (pair_record)+)>
+<!ATTLIST pair_list type_class_prepend IDREF #REQUIRED>
+<!ELEMENT pair_parameter_list (pair_parameter_spec)+>
+<!ATTLIST pair_parameter_list param_prepend ID #REQUIRED>
+<!ELEMENT pair_parameter_spec (#PCDATA)>
+<!ATTLIST pair_parameter_spec param_id ID #REQUIRED>
+<!ATTLIST pair_parameter_spec type (char | double | int) "char">
+<!ELEMENT pair_record (pair_parameter)+>
+<!ATTLIST pair_record type_ref_1 IDREF #REQUIRED>
+<!ATTLIST pair_record type_ref_2 IDREF #REQUIRED>
+<!ELEMENT pair_parameter (#PCDATA)>
+<!ATTLIST pair_parameter param_ref IDREF #REQUIRED>
+
+<!-- User defined groups contain group information and a list of group -->
+<!-- members specified by site_id-->
+<!ELEMENT group_list (group_info, (group_member)+)>
+<!ATTLIST group_list group_id ID #REQUIRED>
+<!ATTLIST group_list group_class CDATA #REQUIRED>
+<!ELEMENT group_info (#PCDATA)>
+<!ELEMENT group_member EMPTY>
+<!ATTLIST group_member site_ref IDREF #REQUIRED>
+]>
+<ffparams>
+<header_parameter_list>
+<header_parameter param_id="ff_family" type="char" symbolic_constant="false">CHARMM</header_parameter>
+<header_parameter param_id="ff_spec" type="char" symbolic_constant="false">CHARMM22</header_parameter>
+<header_parameter param_id="charge14" type="int" symbolic_constant="true">1</header_parameter>
+<header_parameter param_id="charge14scale" type="double" symbolic_constant="true">1.0</header_parameter>
+<header_parameter param_id="lj14" type="int" symbolic_constant="true">1</header_parameter>
+<header_parameter param_id="lj14scale" type="double" symbolic_constant="true">1.0</header_parameter>
+<header_parameter param_id="torsioninput" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="improper" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="ureybradley" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="grouping" type="int" symbolic_constant="false">1</header_parameter>
+<header_parameter param_id="water" type="char" symbolic_constant="false">WATP</header_parameter>
+<header_parameter param_id="units" type="char" symbolic_constant="false">CHEM</header_parameter>
+<header_parameter param_id="ChargeConversion" type="double" symbolic_constant="true">SciConst::StdChargeConversion</header_parameter>
+<header_parameter param_id="TimeConversionFactor" type="double" symbolic_constant="true">SciConst::StdTimeConversion</header_parameter>
+</header_parameter_list>
+
+<data_list data_class_prepend="mn_">
+<data_title>molecule_name</data_title>
+ <data_parameter_list param_prepend="mnp_">
+   <data_parameter_spec param_id="mnp_1" type="char">name</data_parameter_spec>
+   <data_parameter_spec param_id="mnp_2" type="char">type</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="mn_1">
+    <data_parameter param_ref="mnp_1">HOH</data_parameter>
+    <data_parameter param_ref="mnp_2">solvent</data_parameter>
+ </data_record>
+ </data_list>
+
+<data_list data_class_prepend="cci_">
+<data_title>chemical_component_instance</data_title>
+<data_parameter_list param_prepend="ccip_">
+<data_parameter_spec param_id="ccip_1" type="char">cc_id</data_parameter_spec>
+</data_parameter_list>
+    <data_record data_id="cci_1">
+      <data_parameter param_ref="ccip_1">HOH</data_parameter>
+    </data_record>
+    <data_record data_id="cci_2">
+      <data_parameter param_ref="ccip_1">HOH</data_parameter>
+    </data_record>
+</data_list>
+
+<data_list data_class_prepend="mi_">
+<data_title>molecule_instance</data_title>
+ <data_parameter_list param_prepend="mip_">
+    <data_parameter_spec param_id="mip_1" type="idref" ref_prepend="mn_">molecule_name</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="mi_1">
+ <data_parameter_ref param_ref="mip_1" ref_ptr="mn_1"/>
+ </data_record>
+ <data_record data_id="mi_2">
+ <data_parameter_ref param_ref="mip_1" ref_ptr="mn_2"/>
+ </data_record>
+ </data_list>
+
+<data_list data_class_prepend="site_">
+<data_title>site_list</data_title>
+  <data_parameter_list param_prepend="sp_">
+     <data_parameter_spec param_id="sp_1" type="double">mass</data_parameter_spec>
+     <data_parameter_spec param_id="sp_2" type="double">charge</data_parameter_spec>
+     <data_parameter_spec param_id="sp_3" type="int">mol_instance_id</data_parameter_spec>
+     <data_parameter_spec param_id="sp_4" type="int">cc_instance_id</data_parameter_spec>
+     <data_parameter_spec param_id="sp_5" type="char">atom_tag</data_parameter_spec>
+     <data_parameter_spec param_id="sp_6" type="double">epsilon</data_parameter_spec>
+     <data_parameter_spec param_id="sp_7" type="double">rmin</data_parameter_spec>
+     <data_parameter_spec param_id="sp_8" type="double">epsilon14</data_parameter_spec>
+     <data_parameter_spec param_id="sp_9" type="double">rmin14</data_parameter_spec>
+     <data_parameter_spec param_id="sp_10" type="char">element</data_parameter_spec>
+  </data_parameter_list>
+ <data_record data_id="site_1">
+   <data_parameter param_ref="sp_1">15.9994</data_parameter>
+   <data_parameter param_ref="sp_2">(-.834000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_2">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">H1</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_3">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">1</data_parameter>
+   <data_parameter param_ref="sp_4">1</data_parameter>
+   <data_parameter param_ref="sp_5">H2</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_4">
+   <data_parameter param_ref="sp_1">15.9994</data_parameter>
+   <data_parameter param_ref="sp_2">(-.834000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">O</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">O</data_parameter>
+ </data_record>
+ <data_record data_id="site_5">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(.417000*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">H1</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+ <data_record data_id="site_6">
+   <data_parameter param_ref="sp_1">1.00800</data_parameter>
+   <data_parameter param_ref="sp_2">(NULL*ChargeConversion)</data_parameter>
+   <data_parameter param_ref="sp_3">2</data_parameter>
+   <data_parameter param_ref="sp_4">2</data_parameter>
+   <data_parameter param_ref="sp_5">H2</data_parameter>
+   <data_parameter param_ref="sp_6">NULL</data_parameter>
+   <data_parameter param_ref="sp_7">NULL</data_parameter>
+   <data_parameter param_ref="sp_8">NULL</data_parameter>
+   <data_parameter param_ref="sp_9">NULL</data_parameter>
+   <data_parameter param_ref="sp_10">H</data_parameter>
+ </data_record>
+</data_list>
+
+<data_list data_class_prepend="bond_">
+ <data_title>bond_list</data_title>
+ <data_parameter_list param_prepend="bondp_">
+   <data_parameter_spec param_id="bondp_1" type="idref" ref_prepend="site_">site_ref1</data_parameter_spec>
+   <data_parameter_spec param_id="bondp_2" type="idref" ref_prepend="site_">site_ref2</data_parameter_spec>
+   <data_parameter_spec param_id="bondp_3" type="char">type</data_parameter_spec>
+ </data_parameter_list>
+ <data_record data_id="bond_1">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_1"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_2"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_2">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_1"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_3"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_3">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_2"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_3"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+ <data_record data_id="bond_4">
+   <data_parameter_ref param_ref="bondp_1" ref_ptr="site_4"/>
+   <data_parameter_ref param_ref="bondp_2" ref_ptr="site_5"/>
+   <data_parameter param_ref="bondp_3">single</data_parameter>
+ </data_record>
+</data_list>
+<udf_invocation_table>
+</udf_invocation_table>
+<site_tuple_list id="Water3sites">
+<site_tuple>
+<site site_ref="site_2" site_ordinal="1"/>
+<site site_ref="site_1" site_ordinal="2"/>
+<site site_ref="site_3" site_ordinal="3"/>
+</site_tuple>
+<site_tuple>
+<site site_ref="site_5" site_ordinal="1"/>
+<site site_ref="site_4" site_ordinal="2"/>
+<site site_ref="site_6" site_ordinal="3"/>
+</site_tuple>
+</site_tuple_list>
+</ffparams>

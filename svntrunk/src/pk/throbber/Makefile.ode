@@ -1,0 +1,3 @@
+SUBDIRS = src test
+
+.include <$(RULES_MK)>

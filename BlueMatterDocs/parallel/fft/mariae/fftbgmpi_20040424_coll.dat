@@ -1,0 +1,29 @@
+# MPI AllToAll global collectives used
+# Incomplete regression so far
+# Column 1: node count
+# Column 2: time for FFT (no reshuffling to fix order at end)
+# 32^3 FFT Mesh
+1	8.717000e-03
+8	2.053500e-03
+32	5.873000e-04
+128	4.148000e-04
+256	4.337000e-04
+
+
+# 64^3 FFT Mesh
+1	1.955839e-01
+8	2.058000e-02 
+32	4.598300e-03 
+128	2.000800e-03
+256	1.208300e-03
+512	1.139800e-03 
+
+
+# 128^3 FFT Mesh
+#512 torus	3.174900e-03
+1	2.355677e+00 
+8	3.412928e-01
+32	5.604700e-02
+128	1.495660e-02 
+256	7.655700e-03
+512 	5.011000e-03 

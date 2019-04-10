@@ -1,0 +1,61 @@
+
+
+ILIST = \
+ fftmain_libspi_generic.cpp \
+ fftmain_libspi_double.cpp \
+ fftmain_libspi_float.cpp \
+ fen_makefile \
+ report_timings.awk \
+ 
+IDIR = $(BG_SRC)/fft3d/libspitest/
+ 
+.if !empty(CONTEXT:Mbgl_cnk_*)
+
+INCLUDES = fftmain_libspi_generic.cpp 
+EXPINCDIR = /usr/include/ 
+
+LIBRARIES = $(LIB_PREF)pkspi$(LIB_SUFF)
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+OBJECTS = fxlogger$(OBJ_SUFF) \
+          platform$(OBJ_SUFF) \
+          pktrace$(OBJ_SUFF) \
+          packet_alltoallv$(OBJ_SUFF) \
+          coprocessor_on_coprocessor$(OBJ_SUFF)
+
+OFILES = $(OBJECTS) 
+
+VPATH = ../../../pk/fxlogger/src:../../../pk/platform/src:../../../pk/trace/src:../../../pk/a2a/src
+
+TRACE_MACROS=\
+-DPKTRACE -DPKTRACE_ON -DPKTRACE_TUNE=1 \
+-DPKFXLOG -DxFXLOG_VERBOSE \
+-DPKTRACE_ALLTOALLV_EXECUTE \
+
+COMPILE_MACROS= \
+-DUSE_UNIX_MALLOC \
+-DNDEBUG \
+-DPKT_STAND_ALONE \
+-DPK_PARALLEL \
+-DPK_BGL \
+-DPK_BLADE_SPI \
+-DPK_ALL2ALL_BY_DRAIN \
+-DxREPORT_FIFO_HISTOGRAM \
+-DPKFXLOG \
+-DPKFXLOG_MAIN=1-1 \
+-DPKFXLOG_FFTBENCHMARK \
+-DxFFT_FIX_DATA \
+-DxPRINT_OUTPUT \
+$(TRACE_MACROS)
+
+CFLAGS += $(COMPILE_MACROS)
+
+
+  OBJECTS_SUBDIRS = double float
+  SUBDIRS = double float
+
+.endif
+ 
+
+.include <$(RULES_MK)>

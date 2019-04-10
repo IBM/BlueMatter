@@ -1,0 +1,30 @@
+spidir = $(pkgdatadir)/spi
+spi_HEADERS = \
+ BGLGi.c \
+ BGLTreeBcast.c \
+ BGLTreeConfigureClass.c \
+ BGLTreeGetStatus.c \
+ BGLTreeInjCsum.c \
+ BGLTreeMakeHdr.c \
+ BGLTreeRawReceive.c \
+ BGLTreeRawSend.c \
+ BGLTreeReceive.c \
+ BGLTreeSend.c \
+ BGLTreeSetPtpAddress.c \
+ blade_on_blrts.c \
+ bl_cache.S \
+ bl_lockbox.S \
+ bl_torus_pkt.S \
+ spi_partition.c \
+ spi_ts_buffers.c \
+ spi_ts_debug.c \
+ spi_ts_hints.c \
+ spi_ts_mk_hdr.c \
+ spi_ts_mk_hdr_class.c \
+ spi_ts_recv.c \
+ spi_ts_send.c \
+ spi_ts_status.c \
+ spi_ts_updt_hdr.c \
+ fen_makefile \
+ fen_makefile.xlc
+ 

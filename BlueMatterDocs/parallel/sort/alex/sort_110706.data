@@ -1,0 +1,96 @@
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Column 4: Size on each node in MB
+# Column 5: Total size in TB
+# Index = 0:
+#4096  74.00  90.70 386.23 1.51 row
+
+32    11.30  25.57 386.23 0.012
+512   26.49  35.30 386.23 0.19
+1024  35.68  45.96 386.23 0.38
+2048  47.11  56.38 386.23 0.75
+4096  57.46  70.40 386.23 1.51 cubic
+8192  49.82  68.71 386.23 3.02
+16384 81.30 102.73 386.23 6.03
+20480 88.01 106.21 386.23 7.54
+
+
+# 1TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 1:
+4096  47.97 55.18 row
+4096  50.59 58.39 cubic
+8192  18.93 22.55
+16384 11.97 20.52
+20480  9.85 13.37
+
+
+# 2TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 2:
+8192  38.12 50.32
+16384 27.07 31.01
+20480 22.76 38.29
+
+
+# 3TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 3:
+8192  57.72 69.10
+16384 40.88 55.83
+20480 34.77 39.43
+
+
+# 4TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 4:
+16384 52.59 65.56
+20480 44.05 54.38
+
+
+# 5TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 5:
+16384 68.27 77.67
+20480 58.91 69.11
+
+
+# 6TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 6:
+16384 86.02 98.25
+20480 70.99 85.46
+
+
+# 7TB
+# Column 1: node count
+# Column 2: min time in seconds
+# Column 3: max time in seconds
+# Index = 7:
+20480 86.07 99.60
+
+
+# Column 1: TeraBytes
+# Column 2: Max time for 20k
+# Column 3: Max time for 16k
+# Index = 8:
+1 13.37 20.52
+2 38.29 31.01
+3 39.43 55.83
+4 54.38 65.56
+5 69.11 77.67
+6 85.46 98.25
+7 99.60 

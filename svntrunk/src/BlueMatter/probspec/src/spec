@@ -1,0 +1,3 @@
+ if [ "$BLUEMATTERROOT" = "" ]; then echo "Not so fast... Define BLUEMATTERROOT first!"; exit -1; fi 
+$BLUEMATTERROOT/probspec/bin/probspec $BLUEMATTERROOT/probspec/data/top_all22_prot.inp $BLUEMATTERROOT/probspec/data/par_all22_prot.inp $1 DEFAULT 
+

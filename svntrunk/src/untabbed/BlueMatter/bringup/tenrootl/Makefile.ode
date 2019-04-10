@@ -1,0 +1,21 @@
+
+OBJECTS = \
+  tenrootl$(OBJ_SUFF) \
+  call_tenrootl$(OBJ_SUFF)
+
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)tenrootl$(LIB_SUFF)
+
+CFLAGS += \
+-qsource \
+-qlist \
+-qdebug=plst3:cycles \
+-qdebug=plsthumm:hummdbg \
+-qdebug=recipf \
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/fpexploit/src/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

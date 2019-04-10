@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  iv00.cpp \
+  Makefile.ode
+iv00.cpp_IDIR = $(BG_SRC)/bgfe/pk/rnew/test/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/rnew/test/source_ship/
+.include <$(RULES_MK)>

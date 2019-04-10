@@ -1,0 +1,47 @@
+.if !empty(CONTEXT:M*_aix_*)
+OFILES  = \
+  fxlogger$(OBJ_SUFF) \
+
+LIBRARIES = $(LIB_PREF)pkfxlogger$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+CFLAGS += $(SMPCFLAGS)
+
+logdiff$(PROG_SUFF)_OFILES = \
+  logdiff$(OBJ_SUFF) \
+
+logstrip$(PROG_SUFF)_OFILES = \
+  logstrip$(OBJ_SUFF) \
+
+.if empty(CONTEXT:Mbgl*)
+PROGRAMS = \
+  logdiff$(PROG_SUFF) \
+  logstrip$(PROG_SUFF) \
+
+OFILES += \
+  logdiff$(OBJ_SUFF) \
+  logstrip$(OBJ_SUFF) \
+
+.endif
+
+OBJECTS = $(OFILES)
+.endif
+
+ILIST = $(LIBRARIES) \
+  $(PROGRAMS) \
+  fxlogger.cpp \
+
+
+IDIR = $(BG_LIB)/
+fxlogger.cpp_IDIR = $(BG_SRC)/pk/
+logdiff_IDIR = $(BG_BIN)/utils/
+logstrip_IDIR = $(BG_BIN)/utils/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/fxlogger/src/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

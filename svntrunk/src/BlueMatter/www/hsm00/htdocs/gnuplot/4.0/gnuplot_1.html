@@ -1,0 +1,2649 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k from gnuplot.texi on 12 May 2004 -->
+
+<TITLE>Gnuplot: An Interactive Plotting Program - 1. gnuplot</TITLE>
+</HEAD>
+<BODY>
+Go to the first, previous, <A HREF="gnuplot_2.html">next</A>, <A HREF="gnuplot_9.html">last</A> section, <A HREF="gnuplot_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC1" HREF="gnuplot_toc.html#TOC1">1. gnuplot</A></H1>
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC2">Copyright</A>
+<LI><A HREF="gnuplot_1.html#SEC3">Introduction</A>
+<LI><A HREF="gnuplot_1.html#SEC4">Seeking-assistance</A>
+<LI><A HREF="gnuplot_1.html#SEC5">What_is_New_in_Version_4.0</A>
+<LI><A HREF="gnuplot_1.html#SEC18">Batch/Interactive_Operation</A>
+<LI><A HREF="gnuplot_1.html#SEC19">Command-line-editing</A>
+<LI><A HREF="gnuplot_1.html#SEC20">Comments</A>
+<LI><A HREF="gnuplot_1.html#SEC21">Coordinates</A>
+<LI><A HREF="gnuplot_1.html#SEC22">Environment</A>
+<LI><A HREF="gnuplot_1.html#SEC23">Expressions</A>
+<LI><A HREF="gnuplot_1.html#SEC82">Glossary</A>
+<LI><A HREF="gnuplot_1.html#SEC83">mouse_input</A>
+<LI><A HREF="gnuplot_1.html#SEC86">Plotting</A>
+<LI><A HREF="gnuplot_1.html#SEC87">Start-up</A>
+<LI><A HREF="gnuplot_1.html#SEC88">Substitution</A>
+<LI><A HREF="gnuplot_1.html#SEC89">Syntax</A>
+<LI><A HREF="gnuplot_1.html#SEC90">Time/Date_data</A>
+</UL>
+
+
+
+<H2><A NAME="SEC2" HREF="gnuplot_toc.html#TOC2">1.1 Copyright</A></H2>
+
+<P>
+<A NAME="IDX1"></A>
+
+
+<P>
+<A NAME="IDX2"></A>
+
+
+
+<PRE>
+      Copyright (C) 1986 - 1993, 1998, 2004   Thomas Williams, Colin Kelley
+
+</PRE>
+
+<P>
+Permission to use, copy, and distribute this software and its
+documentation for any purpose with or without fee is hereby granted,
+provided that the above copyright notice appear in all copies and
+that both that copyright notice and this permission notice appear
+in supporting documentation.
+
+
+<P>
+Permission to modify the software is granted, but not the right to
+distribute the complete modified source code.  Modifications are to
+be distributed as patches to the released version.  Permission to
+distribute binaries produced by compiling modified sources is granted,
+provided you
+
+<PRE>
+  1. distribute the corresponding source modifications from the
+   released version in the form of a patch file along with the binaries,
+  2. add special version identification to distinguish your version
+   in addition to the base release version number,
+  3. provide your name and address as the primary contact for the
+   support of your modified version, and
+  4. retain our contact information in regard to use of the base
+   software.
+</PRE>
+
+<P>
+Permission to distribute the released version of the source code along
+with corresponding source modifications in the form of a patch file is
+granted with same provisions 2 through 4 for binary distributions.
+
+
+<P>
+This software is provided "as is" without express or implied warranty
+to the extent permitted by applicable law.
+
+
+
+<PRE>
+      AUTHORS
+
+</PRE>
+
+
+<PRE>
+      Original Software:
+         Thomas Williams,  Colin Kelley.
+
+</PRE>
+
+
+<PRE>
+      Gnuplot 2.0 additions:
+         Russell Lang, Dave Kotz, John Campbell.
+
+</PRE>
+
+
+<PRE>
+      Gnuplot 3.0 additions:
+         Gershon Elber and many others.
+
+</PRE>
+
+
+<PRE>
+      Gnuplot 4.0 additions:
+         See list of contributors at head of this document.
+
+</PRE>
+
+
+
+<H2><A NAME="SEC3" HREF="gnuplot_toc.html#TOC3">1.2 Introduction</A></H2>
+
+<P>
+<A NAME="IDX3"></A>
+
+
+<P>
+`gnuplot` is a command-driven interactive function and data plotting program.
+It is case sensitive (commands and function names written in lowercase are
+not the same as those written in CAPS).  All command names may be abbreviated
+as long as the abbreviation is not ambiguous.  Any number of commands may
+appear on a line (with the exception that `load` or section <A HREF="gnuplot_2.html#SEC93">2.2 call</A> must be the final
+command), separated by semicolons (;).  Strings are indicated with quotes.
+They may be either single or double quotation marks, e.g.,
+
+
+
+<PRE>
+      load "filename"
+      cd 'dir'
+
+</PRE>
+
+<P>
+although there are some subtle differences (see `syntax` for more details).
+
+
+<P>
+Any command-line arguments are assumed to be names of files containing
+`gnuplot` commands, with the exception of standard X11 arguments, which are
+processed first.  Each file is loaded with the `load` command, in the order
+specified.  `gnuplot` exits after the last file is processed.  When no load
+files are named, `gnuplot` enters into an interactive mode.  The special
+filename "-" is used to denote standard input.  See "help batch/interactive"
+for more details.
+
+
+<P>
+Many `gnuplot` commands have multiple options.  These options must appear in
+the proper order, although unwanted ones may be omitted in most cases.  Thus
+if the entire command is "command a b c", then "command a c" will probably
+work, but "command c a" will fail.
+
+
+<P>
+Commands may extend over several input lines by ending each line but the last
+with a backslash (\).  The backslash must be the _last_ character on each
+line.  The effect is as if the backslash and newline were not there.  That
+is, no white space is implied, nor is a comment terminated.  Therefore,
+commenting out a continued line comments out the entire command
+(see `comments`).  But note that if an error occurs somewhere on a multi-line
+command, the parser may not be able to locate precisely where the error is
+and in that case will not necessarily point to the correct line.
+
+
+<P>
+In this document, curly braces ({}) denote optional arguments and a vertical
+bar (|) separates mutually exclusive choices.  `gnuplot` keywords or section <A HREF="gnuplot_2.html#SEC108">2.6 help</A>
+topics are indicated by backquotes or `boldface` (where available).  Angle
+brackets (&#60;&#62;) are used to mark replaceable tokens.  In many cases, a default
+value of the token will be taken for optional arguments if the token is
+omitted, but these cases are not always denoted with braces around the angle
+brackets.
+
+
+<P>
+For on-line help on any topic, type section <A HREF="gnuplot_2.html#SEC108">2.6 help</A> followed by the name of the topic
+or just section <A HREF="gnuplot_2.html#SEC108">2.6 help</A> or `?` to get a menu of available topics.
+
+
+<P>
+The new `gnuplot` user should begin by reading about `plotting` (if on-line,
+type `help plotting`).
+
+
+<P>
+See the simple.dem demo, also available together with other demos on the web page
+<A HREF="http://www.gnuplot.info/demo/simple.html">http://www.gnuplot.info/demo/simple.html
+</A>
+
+
+
+
+<H2><A NAME="SEC4" HREF="gnuplot_toc.html#TOC4">1.3 Seeking-assistance</A></H2>
+
+<P>
+^ &#60;a name="Seeking-assistance"&#62;&#60;/a&#62;
+<A NAME="IDX4"></A>
+
+
+<P>
+<A NAME="IDX5"></A>
+
+
+<P>
+There is a mailing list for `gnuplot` users.  Note, however, that the
+newsgroup
+
+<PRE>
+      comp.graphics.apps.gnuplot
+</PRE>
+
+<P>
+is identical to the mailing list (they both carry the same set of messages).
+We prefer that you read the messages through the newsgroup rather than
+subscribing to the mailing list.  Instructions for subscribing to gnuplot
+mailing lists may be found via the gnuplot development website on SourceForge
+<A HREF="http://sourceforge.net/projects/gnuplot">http://sourceforge.net/projects/gnuplot
+</A>
+
+
+<P>
+The address for mailing to list members is:
+
+<PRE>
+      gnuplot-info@lists.sourceforge.net
+
+</PRE>
+
+<P>
+Bug reports and code contributions should be mailed to:
+
+<PRE>
+      gnuplot-bugs@lists.sourceforge.net
+
+</PRE>
+
+<P>
+The list of those interested in beta-test versions is:
+
+<PRE>
+      gnuplot-beta@lists.sourceforge.net
+
+</PRE>
+
+<P>
+There is also the canonical (if occassionally out-of-date) gnuplot web page at
+
+
+<P>
+<A HREF="http://www.gnuplot.info">http://www.gnuplot.info
+</A>
+
+
+<P>
+Before seeking help, please check the
+
+
+<P>
+<A HREF="http://www.gnuplot.info/faq/">FAQ (Frequently Asked Questions) list.
+</A>
+
+
+<P>
+When posting a question, please include full details of the version of
+`gnuplot`, the machine, and operating system you are using.  A _small_ script
+demonstrating the problem may be useful.  Function plots are preferable to
+datafile plots.  If email-ing to gnuplot-info, please state whether or not
+you are subscribed to the list, so that users who use news will know to email
+a reply to you.  There is a form for such postings on the WWW site.
+
+
+
+
+<H2><A NAME="SEC5" HREF="gnuplot_toc.html#TOC5">1.4 What is New in Version 4.0</A></H2>
+
+<P>
+<A NAME="IDX6"></A>
+
+
+<P>
+The previous official release of gnuplot was version 3.7, with subversions up
+to 3.7.3. Gnuplot version 4.0 contains many new features, which were gradually
+introduced into a series of development snapshots 3.8a through 3.8k. This
+section lists major additions and gives a partial list of changes and minor
+new features. Sample gnuplot scripts demonstrating many of these features are
+provided in the gnuplot distribution, and are referred to here by name.
+
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC6">Mouse_and_hotkey_support_in_interactive_terminals</A>
+<LI><A HREF="gnuplot_1.html#SEC7">New_terminal_features</A>
+<LI><A HREF="gnuplot_1.html#SEC10">Filled_boxes</A>
+<LI><A HREF="gnuplot_1.html#SEC11">New_plot_option_smooth_frequency</A>
+<LI><A HREF="gnuplot_1.html#SEC12">Improved_text_options</A>
+<LI><A HREF="gnuplot_1.html#SEC13">More_text_encodings</A>
+<LI><A HREF="gnuplot_1.html#SEC14">Arrows</A>
+<LI><A HREF="gnuplot_1.html#SEC15">Data_file_format</A>
+<LI><A HREF="gnuplot_1.html#SEC16">Other_changes_and_additions</A>
+<LI><A HREF="gnuplot_1.html#SEC17">Accompanying_documentation</A>
+</UL>
+
+
+
+<H3><A NAME="SEC6" HREF="gnuplot_toc.html#TOC6">1.4.1 Mouse and hotkey support in interactive terminals</A></H3>
+
+<P>
+Interaction with the current plot via mouse and hotkeys is supported for the
+X11, OS/2 Presentation Manager, ggi and Windows terminals. See `mouse input`
+for more information on mousing. See help for section <A HREF="gnuplot_1.html#SEC84">1.12.1 bind</A> for information on
+hotkeys. Also see the documentation for individual mousing terminals `ggi`,
+`pm`, `windows` and `x11`.
+
+
+<P>
+Here are briefly some useful hotkeys.
+Hit 'h' in the interactive interval for help. Hit 'm' to switch mousing on/off.
+Hit 'g' for grid, 'l' for log and 'e' for replot.
+Hit 'r' for ruler to measure peak distances (linear scale) or peak ratios (log
+scale), and '5' for polar coordinates inside a map.
+Zoom by mouse (MB3), and move in the zoom history by 'p', 'u', 'n'; hit 'a' for
+autoscale.
+Use other mouse buttons to put current mouse coordinates to clipboard (double
+click of MB1), add temporarily or permanently labels to the plot (middle mouse
+button MB2).
+Rotate a 3D surface by mouse. 
+Hit spacebar to switch to the gnuplot command window.
+
+
+<P>
+Sample script: mousevariables.dem
+
+
+
+
+<H3><A NAME="SEC7" HREF="gnuplot_toc.html#TOC7">1.4.2 New terminal features</A></H3>
+
+<P>
+`aqua`: New terminal for Mac OS X. Requires AquaTerm 1.0 or later.
+
+
+<P>
+`epslatex`: New terminal. Prepares eps figures for inclusion in LaTeX
+documents.
+
+
+<P>
+`gif`: Support for this terminal has been dropped in favour of the `png`
+format for legal reasons; under usual configure conditions, old scripts that
+request gif will work but will produce a `png` file instead.
+
+
+<P>
+`ggi`: New full-screen interactive terminal for Linux. Interface to the
+General Graphics Interface Library.
+
+
+<P>
+`pdf`: New terminal exporting Adobe Portable Document Format. Requires libpdf.
+
+
+<P>
+`png` and `jpeg`: Support for both PNG and JPEG image output is provided by a
+new driver via libgd. The new driver supports many more features than the
+old png driver, including TrueType fonts. Requires libgd.
+
+
+<P>
+section <A HREF="gnuplot_2.html#SEC198">2.19.49.6 postscript</A>: The PostScript driver now provides an oblique symbol font, and
+allows run-time inclusion of embedded PostScript fonts. It also supports
+additional character encodings. See `postscript fontfile` and section <A HREF="gnuplot_2.html#SEC158">2.19.18 encoding</A>.
+
+
+<P>
+Sample script: fontfile.dem
+
+
+<P>
+`svg`: New terminal exporting Scalable Vector Graphics.
+
+
+<P>
+`x11`: The X-windows driver now allows you to specify fonts, see
+`set term x11 x11_fonts`. There is no longer a limit to the number of x11 plot
+windows opened simultaneously, and each plot window can be given its own
+title. See `set term x11`.
+
+
+
+
+<H3><A NAME="SEC8" HREF="gnuplot_toc.html#TOC8">1.4.3 New plot style section <A HREF="gnuplot_2.html#SEC191">2.19.48 pm3d</A></A></H3>
+
+<P>
+The `splot` command is now capable of plotting 2D maps and 3D surfaces 
+colored by greyscale or color palettes. See help for section <A HREF="gnuplot_2.html#SEC191">2.19.48 pm3d</A>, section <A HREF="gnuplot_2.html#SEC192">2.19.49 palette</A>, 
+section <A HREF="gnuplot_2.html#SEC352">2.19.113 cbrange</A>, `set view map`, `set colorbox` and section <A HREF="gnuplot_2.html#SEC192">2.19.49 palette</A>.
+
+
+<P>
+Sample scripts: pm3d.dem pm3dcolors.dem pm3dgamma.dem
+
+
+
+
+<H3><A NAME="SEC9" HREF="gnuplot_toc.html#TOC9">1.4.4 New plot style `filledcurves`</A></H3>
+
+<P>
+The style `filledcurves` allows to fill an area between the drawn curve and a
+horizontal line.
+
+
+<P>
+Sample script: fillcrvs.dem
+
+
+
+
+<H3><A NAME="SEC10" HREF="gnuplot_toc.html#TOC10">1.4.5 Filled boxes</A></H3>
+
+<P>
+A solid color or patterned fill style can be set for any plot style that 
+contains boxes. See `boxes`, `boxerrorbars`, `boxxyerrorbars`,
+`candlesticks`, `set style fill`.
+
+
+<P>
+Sample scripts: fillstyle.dem candlesticks.dem
+
+
+
+
+<H3><A NAME="SEC11" HREF="gnuplot_toc.html#TOC11">1.4.6 New plot option smooth frequency</A></H3>
+
+<P>
+Input data can be filtered through several built-in routines for interpolation
+or approximation of data.  See section <A HREF="gnuplot_2.html#SEC118">2.11.1.4 smooth</A>, `frequency`, `unique`.
+
+
+<P>
+Sample scripts: step.dem mgr.dem
+
+
+
+
+<H3><A NAME="SEC12" HREF="gnuplot_toc.html#TOC12">1.4.7 Improved text options</A></H3>
+
+<P>
+Most gnuplot plot commands that produce text labels now accept modifiers to 
+specify text color, font, size, and rotation angle. See section <A HREF="gnuplot_2.html#SEC171">2.19.29 label</A>.
+Not all terminal types support these options, however.  The enhanced text
+mode previously available for the postscript and pm terminals has been
+extended to other terminal types as well.  Terminal types currently supported
+include dumb, jpeg, pdf, pm, png, postscript, and x11. See `enhanced text`.
+
+
+<P>
+Sample scripts: textcolor.dem textrotate.dem
+
+
+
+
+<H3><A NAME="SEC13" HREF="gnuplot_toc.html#TOC13">1.4.8 More text encodings</A></H3>
+
+<P>
+Several terminals, including section <A HREF="gnuplot_2.html#SEC198">2.19.49.6 postscript</A>, `x11` and `pm`, support additional
+text `encodings`: ISO 8859-1 (Latin 1), ISO 8859-2 (Latin 2), ISO 8859-15 
+(variant of 8859-1 with Euro sign), KOI8-R (cyrillic), and miscellaneous
+codepages. See section <A HREF="gnuplot_2.html#SEC158">2.19.18 encoding</A> for more details.
+
+
+
+
+<H3><A NAME="SEC14" HREF="gnuplot_toc.html#TOC14">1.4.9 Arrows</A></H3>
+
+<P>
+Single- or double-ended arrows can be placed on a plot individually from the
+command line or from a data file via the `plot with vectors` style.
+See section <A HREF="gnuplot_2.html#SEC137">2.19.2 arrow</A>, `plotting styles vectors`.
+
+
+<P>
+Sample script: arrowstyle.dem
+
+
+
+
+<H3><A NAME="SEC15" HREF="gnuplot_toc.html#TOC15">1.4.10 Data file format</A></H3>
+
+<P>
+The new `set datafile` command can be used to specify information about the
+format of input data files, including the characters used to separate fields, 
+to indicate comment lines, and to specify missing data.  Gnuplot now attempts 
+to recognize text fields with embedded blanks as single entities based on the 
+datafile format settings.  This allows input from csv (comma-separated value)
+files such as those exported by spreadsheet programs. See `set datafile`.
+
+
+
+
+<H3><A NAME="SEC16" HREF="gnuplot_toc.html#TOC16">1.4.11 Other changes and additions</A></H3>
+
+<P>
+The preferred syntax to undo a command `set &#60;something&#62;` is now 
+`unset &#60;something&#62;` rather than `set no&#60;something&#62;`. The older form has been
+deprecated.  Version 4.0 continues to allow the older syntax, but such 
+backwards compatibility may be lost in future versions.
+
+
+<P>
+Commands of the form `set &#60;something&#62; &#60;style&#62;` also are deprectated in favor
+of the more general form `set style &#60;something&#62; &#60;options&#62;`.  Many more plot
+elements now have style options of their own, including arrows, filled
+areas, lines, and points. There are also style settings for input data and
+formatting. Please see section <A HREF="gnuplot_2.html#SEC206">2.19.57 style</A>, section <A HREF="gnuplot_2.html#SEC155">2.19.15 decimalsign</A>, and `set datafile`.
+
+
+<P>
+Improved 2D and 3D clipping (hidden lines).
+
+
+<P>
+More consistent point styles and other default formatting styles across
+all terminals. Please use the section <A HREF="gnuplot_2.html#SEC363">2.23 test</A> command to check default styles and
+plotting capabilities for the currently selected terminal type.
+
+
+<P>
+The section <A HREF="gnuplot_2.html#SEC171">2.19.29 label</A> command supports associated points, and allows you to 
+specify point style and text style (font, rotation, etc). User variables
+can be included in labels via format specifiers in the label text.
+See section <A HREF="gnuplot_2.html#SEC171">2.19.29 label</A>.
+
+
+<P>
+New command `set view map` to select top-view 2D projection of 3D surface plot.
+
+
+<P>
+New commands `set term push` and `set term pop` to achieve platform
+independent restoring of the terminal after printing,
+
+
+<P>
+The `load` and section <A HREF="gnuplot_2.html#SEC134">2.18 save</A> commands accept piped input and output, respectively.
+
+
+<P>
+The `history` command (for gnuplot with its own readline, not with GNU
+readline) now includes several useful options.
+
+
+<P>
+The built-in function `rand(x)` has been modified to allow explicit seeding
+of the pseudo-random number generator. See `random`.
+
+
+<P>
+The MS Windows package includes an additional executable `pgnuplot.exe` to
+support piping command through standard input, which is otherwise not
+available for graphical applications on this system.
+
+
+
+
+<H3><A NAME="SEC17" HREF="gnuplot_toc.html#TOC17">1.4.12 Accompanying documentation</A></H3>
+
+<P>
+In directory docs/psdocs/ you may find new information in the gnuplot output
+postscript file guide, list of postscript symbols in different encodings.
+
+
+<P>
+Improved FAQ. Please read it before asking your question in a public forum.
+
+
+<P>
+There are plenty of new demos *.dem in the demo/ directory. Please run them,
+for example by
+
+<PRE>
+      load "all.dem"
+</PRE>
+
+<P>
+before asking for help.  Plots produced by the demo scripts can also be viewed
+at 
+<A HREF="http://www.gnuplot.info/demo/">http://www.gnuplot.info/demo/
+</A>
+
+
+
+
+<H2><A NAME="SEC18" HREF="gnuplot_toc.html#TOC18">1.5 Batch/Interactive Operation</A></H2>
+
+<P>
+<A NAME="IDX7"></A>
+
+
+<P>
+`gnuplot` may be executed in either batch or interactive modes, and the two
+may even be mixed together on many systems.
+
+
+<P>
+Any command-line arguments are assumed to be names of files containing
+`gnuplot` commands (with the exception of standard X11 arguments, which are
+processed first).  Each file is loaded with the `load` command, in the order
+specified.  `gnuplot` exits after the last file is processed.  When no load
+files are named, `gnuplot` enters into an interactive mode.  The special
+filename "-" is used to denote standard input.
+
+
+<P>
+Both the section <A HREF="gnuplot_2.html#SEC95">2.4 exit</A> and section <A HREF="gnuplot_2.html#SEC130">2.14 quit</A> commands terminate the current command file and
+`load` the next one, until all have been processed.
+
+
+<P>
+Examples:
+
+
+<P>
+To launch an interactive session:
+
+<PRE>
+      gnuplot
+
+</PRE>
+
+<P>
+To launch a batch session using two command files "input1" and "input2":
+
+<PRE>
+      gnuplot input1 input2
+
+</PRE>
+
+<P>
+To launch an interactive session after an initialization file "header" and
+followed by another command file "trailer":
+
+<PRE>
+      gnuplot header - trailer
+
+</PRE>
+
+
+
+<H2><A NAME="SEC19" HREF="gnuplot_toc.html#TOC19">1.6 Command-line-editing</A></H2>
+
+<P>
+<A NAME="IDX8"></A>
+
+
+<P>
+<A NAME="IDX9"></A>
+
+
+<P>
+<A NAME="IDX10"></A>
+
+
+<P>
+Command-line editing is supported by the Unix, Atari, VMS, MS-DOS and OS/2
+versions of `gnuplot`.  Also, a history mechanism allows previous commands to
+be edited and re-executed.  After the command line has been edited, a newline
+or carriage return will enter the entire line without regard to where the
+cursor is positioned.
+
+
+<P>
+(The readline function in `gnuplot` is not the same as the readline used in
+GNU Bash and GNU Emacs.  If the GNU version is desired, it may be selected
+instead of the `gnuplot` version at compile time.)
+
+
+<P>
+The editing commands are as follows:
+
+
+
+<PRE>
+      `Line-editing`:
+
+</PRE>
+
+
+<PRE>
+      ^B    moves back a single character.
+      ^F    moves forward a single character.
+      ^A    moves to the beginning of the line.
+      ^E    moves to the end of the line.
+      ^H    and DEL delete the previous character.
+      ^D    deletes the current character.
+      ^K    deletes from current position to the end of line.
+      ^L,^R redraws line in case it gets trashed.
+      ^U    deletes the entire line.
+      ^W    deletes from the current word to the end of line.
+
+</PRE>
+
+
+<PRE>
+      `History`:
+
+</PRE>
+
+
+<PRE>
+      ^P    moves back through history.
+      ^N    moves forward through history.
+
+</PRE>
+
+<P>
+On the IBM PC, the use of a TSR program such as DOSEDIT or CED may be desired
+for line editing.  The default makefile assumes that this is the case;  by
+default `gnuplot` will be compiled with no line-editing capability.  If you
+want to use `gnuplot`'s line editing, set READLINE in the makefile and add
+readline.obj to the link file.  The following arrow keys may be used on the
+IBM PC and Atari versions if readline is used:
+
+
+
+<PRE>
+      Left  Arrow      - same as ^B.
+      Right Arrow      - same as ^F.
+      Ctrl Left  Arrow - same as ^A.
+      Ctrl Right Arrow - same as ^E.
+      Up    Arrow      - same as ^P.
+      Down  Arrow      - same as ^N.
+
+</PRE>
+
+<P>
+The Atari version of readline defines some additional key aliases:
+
+
+
+<PRE>
+      Undo            - same as ^L.
+      Home            - same as ^A.
+      Ctrl Home       - same as ^E.
+      Esc             - same as ^U.
+      Help            - section <A HREF="gnuplot_2.html#SEC108">2.6 help</A> plus return.
+      Ctrl Help       - `help `.
+
+</PRE>
+
+
+
+<H2><A NAME="SEC20" HREF="gnuplot_toc.html#TOC20">1.7 Comments</A></H2>
+
+<P>
+<A NAME="IDX11"></A>
+
+
+<P>
+Comments are supported as follows: a `#` may appear in most places in a line
+and `gnuplot` will ignore the rest of the line.  It will not have this effect
+inside quotes, inside numbers (including complex numbers), inside command
+substitutions, etc.  In short, it works anywhere it makes sense to work.
+
+
+<P>
+See also `set datafile commentschars` for specifying comment characters in
+data files.
+
+
+
+
+<H2><A NAME="SEC21" HREF="gnuplot_toc.html#TOC21">1.8 Coordinates</A></H2>
+
+<P>
+<A NAME="IDX12"></A>
+
+
+<P>
+The commands section <A HREF="gnuplot_2.html#SEC137">2.19.2 arrow</A>, section <A HREF="gnuplot_2.html#SEC170">2.19.28 key</A>, and section <A HREF="gnuplot_2.html#SEC171">2.19.29 label</A> allow you to draw
+something at an arbitrary position on the graph.  This position is specified
+by the syntax:
+
+
+
+<PRE>
+      {&#60;system&#62;} &#60;x&#62;, {&#60;system&#62;} &#60;y&#62; {,{&#60;system&#62;} &#60;z&#62;}
+
+</PRE>
+
+<P>
+Each &#60;system&#62; can either be `first`, `second`, `graph` or `screen`.
+
+
+<P>
+`first` places the x, y, or z coordinate in the system defined by the left
+and bottom axes; `second` places it in the system defined by the second axes
+(top and right); `graph` specifies the area within the axes--0,0 is bottom
+left and 1,1 is top right (for splot, 0,0,0 is bottom left of plotting area;
+use negative z to get to the base--see section <A HREF="gnuplot_2.html#SEC300">2.19.61 ticslevel</A>); and `screen`
+specifies the screen area (the entire area--not just the portion selected by
+section <A HREF="gnuplot_2.html#SEC205">2.19.56 size</A>), with 0,0 at bottom left and 1,1 at top right.
+
+
+<P>
+If the coordinate system for x is not specified, `first` is used.  If the
+system for y is not specified, the one used for x is adopted.
+
+
+<P>
+If one (or more) axis is timeseries, the appropriate coordinate should
+be given as a quoted time string according to the section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A> format string.
+See section <A HREF="gnuplot_2.html#SEC319">2.19.80 xdata</A> and section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A>.  `gnuplot` will also accept an integer
+expression, which will be interpreted as seconds from 1 January 2000.
+
+
+
+
+<H2><A NAME="SEC22" HREF="gnuplot_toc.html#TOC22">1.9 Environment</A></H2>
+
+<P>
+<A NAME="IDX13"></A>
+
+
+<P>
+A number of shell environment variables are understood by `gnuplot`.  None of
+these are required, but may be useful.
+
+
+<P>
+If GNUTERM is defined, it is used as the name of the terminal type to be
+used.  This overrides any terminal type sensed by `gnuplot` on start-up, but
+is itself overridden by the .gnuplot (or equivalent) start-up file
+(see `start-up`) and, of course, by later explicit changes.
+
+
+<P>
+On Unix, AmigaOS, AtariTOS, MS-DOS and OS/2, GNUHELP may be defined to be the
+pathname of the HELP file (gnuplot.gih).
+
+
+<P>
+On VMS, the logical name GNUPLOT$HELP should be defined as the name of the
+help library for `gnuplot`.  The `gnuplot` help can be put inside any system
+help library, allowing access to help from both within and outside `gnuplot`
+if desired.
+
+
+<P>
+On Unix, HOME is used as the name of a directory to search for a .gnuplot
+file if none is found in the current directory.  On AmigaOS, AtariTOS,
+MS-DOS, Windows and OS/2, GNUPLOT is used.  On Windows, the NT-specific
+variable USERPROFILE is tried, too. VMS, SYS$LOGIN: is used. Type `help
+start-up`.
+
+
+<P>
+On Unix, PAGER is used as an output filter for help messages.
+
+
+<P>
+On Unix, AtariTOS and AmigaOS, SHELL is used for the section <A HREF="gnuplot_2.html#SEC354">2.20 shell</A> command.  On
+MS-DOS and OS/2, COMSPEC is used for the section <A HREF="gnuplot_2.html#SEC354">2.20 shell</A> command.
+
+
+<P>
+On MS-DOS, if the BGI or Watcom interface is used, PCTRM is used to tell
+the maximum resolution supported by your monitor by setting it to
+S&#60;max. horizontal resolution&#62;. E.g. if your monitor's maximum resolution is
+800x600, then use:
+
+<PRE>
+      set PCTRM=S800
+</PRE>
+
+<P>
+If PCTRM is not set, standard VGA is used.
+
+
+<P>
+FIT_SCRIPT may be used to specify a `gnuplot` command to be executed when a
+fit is interrupted--see `fit`.  FIT_LOG specifies the default filename of the
+logfile maintained by fit.
+
+
+<P>
+GNUPLOT_LIB may be used to define additional search directories for data
+and command files. The variable may contain a single directory name, or
+a list of directories separated by a platform-specific path separator,
+eg. ':' on Unix, or ';' on DOS/Windows/OS/2/Amiga platforms. The contents
+of GNUPLOT_LIB are appended to the section <A HREF="gnuplot_2.html#SEC173">2.19.31 loadpath</A> variable, but not saved
+with the section <A HREF="gnuplot_2.html#SEC134">2.18 save</A> and `save set` commands.
+
+
+<P>
+Several gnuplot terminal drivers access TrueType fonts via the gd library.
+For these drivers the font search path is controlled by the environmental
+variable GDFONTPATH.  Furthermore, a default font for these drivers may be
+set via the environmental variable GNUPLOT_DEFAULT_GDFONT.
+
+
+<P>
+The postscript terminal uses its own font search path. It is controlled by
+the environmental variable GNUPLOT_FONTPATH. The format is the same as for
+GNUPLOT_LIB. The contents of GNUPLOT_FONTPATH are appended to the section <A HREF="gnuplot_2.html#SEC160">2.19.20 fontpath</A>
+variable, but not saved with the section <A HREF="gnuplot_2.html#SEC134">2.18 save</A> and `save set` commands.
+
+
+
+
+<H2><A NAME="SEC23" HREF="gnuplot_toc.html#TOC23">1.10 Expressions</A></H2>
+
+<P>
+<A NAME="IDX14"></A>
+
+
+<P>
+In general, any mathematical expression accepted by C, FORTRAN, Pascal, or
+BASIC is valid.  The precedence of these operators is determined by the
+specifications of the C programming language.  White space (spaces and tabs)
+is ignored inside expressions.
+
+
+<P>
+Complex constants are expressed as {&#60;real&#62;,&#60;imag&#62;}, where &#60;real&#62; and &#60;imag&#62;
+must be numerical constants.  For example, {3,2} represents 3 + 2i; {0,1}
+represents 'i' itself.  The curly braces are explicitly required here.
+
+
+<P>
+Note that gnuplot uses both "real" and "integer" arithmetic, like FORTRAN and
+C.  Integers are entered as "1", "-10", etc; reals as "1.0", "-10.0", "1e1",
+3.5e-1, etc.  The most important difference between the two forms is in
+division: division of integers truncates: 5/2 = 2; division of reals does
+not: 5.0/2.0 = 2.5.  In mixed expressions, integers are "promoted" to reals
+before evaluation: 5/2e0 = 2.5.  The result of division of a negative integer
+by a positive one may vary among compilers.  Try a test like "print -5/2" to
+determine if your system chooses -2 or -3 as the answer.
+
+
+<P>
+The integer expression "1/0" may be used to generate an "undefined" flag,
+which causes a point to ignored; the `ternary` operator gives an example.
+
+
+<P>
+The real and imaginary parts of complex expressions are always real, whatever
+the form in which they are entered: in {3,2} the "3" and "2" are reals, not
+integers.
+
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC24">Functions</A>
+<LI><A HREF="gnuplot_1.html#SEC77">Operators</A>
+<LI><A HREF="gnuplot_1.html#SEC81">User-defined</A>
+</UL>
+
+
+
+<H3><A NAME="SEC24" HREF="gnuplot_toc.html#TOC24">1.10.1 Functions</A></H3>
+
+<P>
+<A NAME="IDX15"></A>
+<A NAME="IDX16"></A>
+
+
+<P>
+The functions in `gnuplot` are the same as the corresponding functions in
+the Unix math library, except that all functions accept integer, real, and
+complex arguments, unless otherwise noted.
+
+
+<P>
+For those functions that accept or return angles that may be given in either
+degrees or radians (sin(x), cos(x), tan(x), asin(x), acos(x), atan(x),
+atan2(x) and arg(z)), the unit may be selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>, which
+defaults to radians.
+
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC25">abs</A>
+<LI><A HREF="gnuplot_1.html#SEC26">acos</A>
+<LI><A HREF="gnuplot_1.html#SEC27">acosh</A>
+<LI><A HREF="gnuplot_1.html#SEC28">arg</A>
+<LI><A HREF="gnuplot_1.html#SEC29">asin</A>
+<LI><A HREF="gnuplot_1.html#SEC30">asinh</A>
+<LI><A HREF="gnuplot_1.html#SEC31">atan</A>
+<LI><A HREF="gnuplot_1.html#SEC32">atan2</A>
+<LI><A HREF="gnuplot_1.html#SEC33">atanh</A>
+<LI><A HREF="gnuplot_1.html#SEC34">besj0</A>
+<LI><A HREF="gnuplot_1.html#SEC35">besj1</A>
+<LI><A HREF="gnuplot_1.html#SEC36">besy0</A>
+<LI><A HREF="gnuplot_1.html#SEC37">besy1</A>
+<LI><A HREF="gnuplot_1.html#SEC38">ceil</A>
+<LI><A HREF="gnuplot_1.html#SEC39">cos</A>
+<LI><A HREF="gnuplot_1.html#SEC40">cosh</A>
+<LI><A HREF="gnuplot_1.html#SEC41">erf</A>
+<LI><A HREF="gnuplot_1.html#SEC42">erfc</A>
+<LI><A HREF="gnuplot_1.html#SEC43">exp</A>
+<LI><A HREF="gnuplot_1.html#SEC44">floor</A>
+<LI><A HREF="gnuplot_1.html#SEC45">gamma</A>
+<LI><A HREF="gnuplot_1.html#SEC46">ibeta</A>
+<LI><A HREF="gnuplot_1.html#SEC47">inverf</A>
+<LI><A HREF="gnuplot_1.html#SEC48">igamma</A>
+<LI><A HREF="gnuplot_1.html#SEC49">imag</A>
+<LI><A HREF="gnuplot_1.html#SEC50">invnorm</A>
+<LI><A HREF="gnuplot_1.html#SEC51">int</A>
+<LI><A HREF="gnuplot_1.html#SEC52">lambertw</A>
+<LI><A HREF="gnuplot_1.html#SEC53">lgamma</A>
+<LI><A HREF="gnuplot_1.html#SEC54">log</A>
+<LI><A HREF="gnuplot_1.html#SEC55">log10</A>
+<LI><A HREF="gnuplot_1.html#SEC56">norm</A>
+<LI><A HREF="gnuplot_1.html#SEC57">rand</A>
+<LI><A HREF="gnuplot_1.html#SEC58">real</A>
+<LI><A HREF="gnuplot_1.html#SEC59">sgn</A>
+<LI><A HREF="gnuplot_1.html#SEC60">sin</A>
+<LI><A HREF="gnuplot_1.html#SEC61">sinh</A>
+<LI><A HREF="gnuplot_1.html#SEC62">sqrt</A>
+<LI><A HREF="gnuplot_1.html#SEC63">tan</A>
+<LI><A HREF="gnuplot_1.html#SEC64">tanh</A>
+<LI><A HREF="gnuplot_1.html#SEC65">column</A>
+<LI><A HREF="gnuplot_1.html#SEC66">defined</A>
+<LI><A HREF="gnuplot_1.html#SEC67">tm_hour</A>
+<LI><A HREF="gnuplot_1.html#SEC68">tm_mday</A>
+<LI><A HREF="gnuplot_1.html#SEC69">tm_min</A>
+<LI><A HREF="gnuplot_1.html#SEC70">tm_mon</A>
+<LI><A HREF="gnuplot_1.html#SEC71">tm_sec</A>
+<LI><A HREF="gnuplot_1.html#SEC72">tm_wday</A>
+<LI><A HREF="gnuplot_1.html#SEC73">tm_yday</A>
+<LI><A HREF="gnuplot_1.html#SEC74">tm_year</A>
+<LI><A HREF="gnuplot_1.html#SEC75">valid</A>
+<LI><A HREF="gnuplot_1.html#SEC76">Random_number_generator</A>
+</UL>
+
+
+
+<H4><A NAME="SEC25" HREF="gnuplot_toc.html#TOC25">1.10.1.1 abs</A></H4>
+
+<P>
+<A NAME="IDX17"></A>
+<A NAME="IDX18"></A>
+
+
+<P>
+The `abs(x)` function returns the absolute value of its argument.  The
+returned value is of the same type as the argument.
+
+
+<P>
+For complex arguments, abs(x) is defined as the length of x in the complex
+plane [i.e.,  sqrt(real(x)**2 + imag(x)**2) ].
+
+
+
+
+<H4><A NAME="SEC26" HREF="gnuplot_toc.html#TOC26">1.10.1.2 acos</A></H4>
+
+<P>
+<A NAME="IDX19"></A>
+<A NAME="IDX20"></A>
+
+
+<P>
+The `acos(x)` function returns the arc cosine (inverse cosine) of its
+argument.  `acos` returns its argument in radians or degrees, as selected by
+section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC27" HREF="gnuplot_toc.html#TOC27">1.10.1.3 acosh</A></H4>
+
+<P>
+<A NAME="IDX21"></A>
+<A NAME="IDX22"></A>
+
+
+<P>
+The `acosh(x)` function returns the inverse hyperbolic cosine of its argument
+in radians.
+
+
+
+
+<H4><A NAME="SEC28" HREF="gnuplot_toc.html#TOC28">1.10.1.4 arg</A></H4>
+
+<P>
+<A NAME="IDX23"></A>
+<A NAME="IDX24"></A>
+
+
+<P>
+The `arg(x)` function returns the phase of a complex number in radians or
+degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC29" HREF="gnuplot_toc.html#TOC29">1.10.1.5 asin</A></H4>
+
+<P>
+<A NAME="IDX25"></A>
+<A NAME="IDX26"></A>
+
+
+<P>
+The `asin(x)` function returns the arc sin (inverse sin) of its argument.
+`asin` returns its argument in radians or degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC30" HREF="gnuplot_toc.html#TOC30">1.10.1.6 asinh</A></H4>
+
+<P>
+<A NAME="IDX27"></A>
+<A NAME="IDX28"></A>
+
+
+<P>
+The `asinh(x)` function returns the inverse hyperbolic sin of its argument in
+radians.
+
+
+
+
+<H4><A NAME="SEC31" HREF="gnuplot_toc.html#TOC31">1.10.1.7 atan</A></H4>
+
+<P>
+<A NAME="IDX29"></A>
+<A NAME="IDX30"></A>
+
+
+<P>
+The `atan(x)` function returns the arc tangent (inverse tangent) of its
+argument.  `atan` returns its argument in radians or degrees, as selected by
+section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC32" HREF="gnuplot_toc.html#TOC32">1.10.1.8 atan2</A></H4>
+
+<P>
+<A NAME="IDX31"></A>
+<A NAME="IDX32"></A>
+
+
+<P>
+The `atan2(y,x)` function returns the arc tangent (inverse tangent) of the
+ratio of the real parts of its arguments.  section <A HREF="gnuplot_1.html#SEC32">1.10.1.8 atan2</A> returns its argument in
+radians or degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>, in the correct quadrant.
+
+
+
+
+<H4><A NAME="SEC33" HREF="gnuplot_toc.html#TOC33">1.10.1.9 atanh</A></H4>
+
+<P>
+<A NAME="IDX33"></A>
+<A NAME="IDX34"></A>
+
+
+<P>
+The `atanh(x)` function returns the inverse hyperbolic tangent of its
+argument in radians.
+
+
+
+
+<H4><A NAME="SEC34" HREF="gnuplot_toc.html#TOC34">1.10.1.10 besj0</A></H4>
+
+<P>
+<A NAME="IDX35"></A>
+<A NAME="IDX36"></A>
+
+
+<P>
+The `besj0(x)` function returns the j0th Bessel function of its argument.
+section <A HREF="gnuplot_1.html#SEC34">1.10.1.10 besj0</A> expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC35" HREF="gnuplot_toc.html#TOC35">1.10.1.11 besj1</A></H4>
+
+<P>
+<A NAME="IDX37"></A>
+<A NAME="IDX38"></A>
+
+
+<P>
+The `besj1(x)` function returns the j1st Bessel function of its argument.
+section <A HREF="gnuplot_1.html#SEC35">1.10.1.11 besj1</A> expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC36" HREF="gnuplot_toc.html#TOC36">1.10.1.12 besy0</A></H4>
+
+<P>
+<A NAME="IDX39"></A>
+<A NAME="IDX40"></A>
+
+
+<P>
+The `besy0(x)` function returns the y0th Bessel function of its argument.
+section <A HREF="gnuplot_1.html#SEC36">1.10.1.12 besy0</A> expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC37" HREF="gnuplot_toc.html#TOC37">1.10.1.13 besy1</A></H4>
+
+<P>
+<A NAME="IDX41"></A>
+<A NAME="IDX42"></A>
+
+
+<P>
+The `besy1(x)` function returns the y1st Bessel function of its argument.
+section <A HREF="gnuplot_1.html#SEC37">1.10.1.13 besy1</A> expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC38" HREF="gnuplot_toc.html#TOC38">1.10.1.14 ceil</A></H4>
+
+<P>
+<A NAME="IDX43"></A>
+<A NAME="IDX44"></A>
+
+
+<P>
+The `ceil(x)` function returns the smallest integer that is not less than its
+argument.  For complex numbers, section <A HREF="gnuplot_1.html#SEC38">1.10.1.14 ceil</A> returns the smallest integer not less
+than the real part of its argument.
+
+
+
+
+<H4><A NAME="SEC39" HREF="gnuplot_toc.html#TOC39">1.10.1.15 cos</A></H4>
+
+<P>
+<A NAME="IDX45"></A>
+<A NAME="IDX46"></A>
+
+
+<P>
+The `cos(x)` function returns the cosine of its argument.  `cos` accepts its
+argument in radians or degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC40" HREF="gnuplot_toc.html#TOC40">1.10.1.16 cosh</A></H4>
+
+<P>
+<A NAME="IDX47"></A>
+<A NAME="IDX48"></A>
+
+
+<P>
+The `cosh(x)` function returns the hyperbolic cosine of its argument.  section <A HREF="gnuplot_1.html#SEC40">1.10.1.16 cosh</A>
+expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC41" HREF="gnuplot_toc.html#TOC41">1.10.1.17 erf</A></H4>
+
+<P>
+<A NAME="IDX49"></A>
+<A NAME="IDX50"></A>
+
+
+<P>
+The `erf(x)` function returns the error function of the real part of its
+argument.  If the argument is a complex value, the imaginary component is
+ignored.  See section <A HREF="gnuplot_1.html#SEC42">1.10.1.18 erfc</A>, section <A HREF="gnuplot_1.html#SEC47">1.10.1.23 inverf</A>, and section <A HREF="gnuplot_1.html#SEC56">1.10.1.32 norm</A>.
+
+
+
+
+<H4><A NAME="SEC42" HREF="gnuplot_toc.html#TOC42">1.10.1.18 erfc</A></H4>
+
+<P>
+<A NAME="IDX51"></A>
+<A NAME="IDX52"></A>
+
+
+<P>
+The `erfc(x)` function returns 1.0 - the error function of the real part of
+its argument.  If the argument is a complex value, the imaginary component is
+ignored.  See `erf`, section <A HREF="gnuplot_1.html#SEC47">1.10.1.23 inverf</A>, and section <A HREF="gnuplot_1.html#SEC56">1.10.1.32 norm</A>.
+
+
+
+
+<H4><A NAME="SEC43" HREF="gnuplot_toc.html#TOC43">1.10.1.19 exp</A></H4>
+
+<P>
+<A NAME="IDX53"></A>
+<A NAME="IDX54"></A>
+
+
+<P>
+The `exp(x)` function returns the exponential function of its argument (`e`
+raised to the power of its argument).  On some implementations (notably
+suns), exp(-x) returns undefined for very large x.  A user-defined function
+like safe(x) = x&#60;-100 ? 0 : exp(x) might prove useful in these cases.
+
+
+
+
+<H4><A NAME="SEC44" HREF="gnuplot_toc.html#TOC44">1.10.1.20 floor</A></H4>
+
+<P>
+<A NAME="IDX55"></A>
+<A NAME="IDX56"></A>
+
+
+<P>
+The `floor(x)` function returns the largest integer not greater than its
+argument.  For complex numbers, section <A HREF="gnuplot_1.html#SEC44">1.10.1.20 floor</A> returns the largest integer not
+greater than the real part of its argument.
+
+
+
+
+<H4><A NAME="SEC45" HREF="gnuplot_toc.html#TOC45">1.10.1.21 gamma</A></H4>
+
+<P>
+<A NAME="IDX57"></A>
+<A NAME="IDX58"></A>
+
+
+<P>
+The `gamma(x)` function returns the gamma function of the real part of its
+argument.  For integer n, gamma(n+1) = n!.  If the argument is a complex
+value, the imaginary component is ignored.
+
+
+
+
+<H4><A NAME="SEC46" HREF="gnuplot_toc.html#TOC46">1.10.1.22 ibeta</A></H4>
+
+<P>
+<A NAME="IDX59"></A>
+<A NAME="IDX60"></A>
+
+
+<P>
+The `ibeta(p,q,x)` function returns the incomplete beta function of the real
+parts of its arguments. p, q &#62; 0 and x in [0:1].  If the arguments are
+complex, the imaginary components are ignored.
+
+
+
+
+<H4><A NAME="SEC47" HREF="gnuplot_toc.html#TOC47">1.10.1.23 inverf</A></H4>
+
+<P>
+<A NAME="IDX61"></A>
+<A NAME="IDX62"></A>
+
+
+<P>
+The `inverf(x)` function returns the inverse error function of the real part
+of its argument.   See `erf` and section <A HREF="gnuplot_1.html#SEC50">1.10.1.26 invnorm</A>.
+
+
+
+
+<H4><A NAME="SEC48" HREF="gnuplot_toc.html#TOC48">1.10.1.24 igamma</A></H4>
+
+<P>
+<A NAME="IDX63"></A>
+<A NAME="IDX64"></A>
+
+
+<P>
+The `igamma(a,x)` function returns the incomplete gamma function of the real
+parts of its arguments.  a &#62; 0 and x &#62;= 0.  If the arguments are complex,
+the imaginary components are ignored.
+
+
+
+
+<H4><A NAME="SEC49" HREF="gnuplot_toc.html#TOC49">1.10.1.25 imag</A></H4>
+
+<P>
+<A NAME="IDX65"></A>
+<A NAME="IDX66"></A>
+
+
+<P>
+The `imag(x)` function returns the imaginary part of its argument as a real
+number.
+
+
+
+
+<H4><A NAME="SEC50" HREF="gnuplot_toc.html#TOC50">1.10.1.26 invnorm</A></H4>
+
+<P>
+<A NAME="IDX67"></A>
+<A NAME="IDX68"></A>
+
+
+<P>
+The `invnorm(x)` function returns the inverse normal distribution function of
+the real part of its argument.  See section <A HREF="gnuplot_1.html#SEC56">1.10.1.32 norm</A>.
+
+
+
+
+<H4><A NAME="SEC51" HREF="gnuplot_toc.html#TOC51">1.10.1.27 int</A></H4>
+
+<P>
+<A NAME="IDX69"></A>
+<A NAME="IDX70"></A>
+
+
+<P>
+The `int(x)` function returns the integer part of its argument, truncated
+toward zero.
+
+
+
+
+<H4><A NAME="SEC52" HREF="gnuplot_toc.html#TOC52">1.10.1.28 lambertw</A></H4>
+
+<P>
+<A NAME="IDX71"></A>
+<A NAME="IDX72"></A>
+
+
+<P>
+The lambertw function returns the value of the principal branch of
+Lambert's W function, which is defined by the equation (W(z)*exp(W(z))=z.
+z must be a real number with z &#62;= -exp(-1).
+
+
+
+
+<H4><A NAME="SEC53" HREF="gnuplot_toc.html#TOC53">1.10.1.29 lgamma</A></H4>
+
+<P>
+<A NAME="IDX73"></A>
+<A NAME="IDX74"></A>
+
+
+<P>
+The `lgamma(x)` function returns the natural logarithm of the gamma function
+of the real part of its argument.  If the argument is a complex value, the
+imaginary component is ignored.
+
+
+
+
+<H4><A NAME="SEC54" HREF="gnuplot_toc.html#TOC54">1.10.1.30 log</A></H4>
+
+<P>
+<A NAME="IDX75"></A>
+<A NAME="IDX76"></A>
+
+
+<P>
+The `log(x)` function returns the natural logarithm (base `e`) of its
+argument.  See section <A HREF="gnuplot_1.html#SEC55">1.10.1.31 log10</A>.
+
+
+
+
+<H4><A NAME="SEC55" HREF="gnuplot_toc.html#TOC55">1.10.1.31 log10</A></H4>
+
+<P>
+<A NAME="IDX77"></A>
+<A NAME="IDX78"></A>
+
+
+<P>
+The `log10(x)` function returns the logarithm (base 10) of its argument.
+
+
+
+
+<H4><A NAME="SEC56" HREF="gnuplot_toc.html#TOC56">1.10.1.32 norm</A></H4>
+
+<P>
+<A NAME="IDX79"></A>
+<A NAME="IDX80"></A>
+
+
+<P>
+The `norm(x)` function returns the normal distribution function (or Gaussian)
+of the real part of its argument.   See section <A HREF="gnuplot_1.html#SEC50">1.10.1.26 invnorm</A>, `erf` and section <A HREF="gnuplot_1.html#SEC42">1.10.1.18 erfc</A>.
+
+
+
+
+<H4><A NAME="SEC57" HREF="gnuplot_toc.html#TOC57">1.10.1.33 rand</A></H4>
+
+<P>
+<A NAME="IDX81"></A>
+<A NAME="IDX82"></A>
+
+
+<P>
+`rand(0)`  returns a pseudo random number in the interval [0:1] generated
+
+<PRE>
+           from the current value of two internal 32-bit seeds. 
+</PRE>
+
+<P>
+`rand(-1)` resets both seeds to a standard value. 
+`rand(x)`  for x&#62;0 sets both seeds to a value based on the value of x.
+`rand({x,y})` for x&#62;0 sets seed1 to x and seed2 to y.
+Note: This behavior has changed starting with gnuplot version 3.8l. Older
+scripts that expected rand(x&#62;0) to produce sequential pseudo-random numbers
+from the same seeded sequence must be changed to call rand(0) instead.
+
+
+
+
+<H4><A NAME="SEC58" HREF="gnuplot_toc.html#TOC58">1.10.1.34 real</A></H4>
+
+<P>
+<A NAME="IDX83"></A>
+<A NAME="IDX84"></A>
+
+
+<P>
+The `real(x)` function returns the real part of its argument.
+
+
+
+
+<H4><A NAME="SEC59" HREF="gnuplot_toc.html#TOC59">1.10.1.35 sgn</A></H4>
+
+<P>
+<A NAME="IDX85"></A>
+<A NAME="IDX86"></A>
+
+
+<P>
+The `sgn(x)` function returns 1 if its argument is positive, -1 if its
+argument is negative, and 0 if its argument is 0.  If the argument is a
+complex value, the imaginary component is ignored.
+
+
+
+
+<H4><A NAME="SEC60" HREF="gnuplot_toc.html#TOC60">1.10.1.36 sin</A></H4>
+
+<P>
+<A NAME="IDX87"></A>
+<A NAME="IDX88"></A>
+
+
+<P>
+The `sin(x)` function returns the sine of its argument.  `sin` expects its
+argument to be in radians or degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC61" HREF="gnuplot_toc.html#TOC61">1.10.1.37 sinh</A></H4>
+
+<P>
+<A NAME="IDX89"></A>
+<A NAME="IDX90"></A>
+
+
+<P>
+The `sinh(x)` function returns the hyperbolic sine of its argument.  section <A HREF="gnuplot_1.html#SEC61">1.10.1.37 sinh</A>
+expects its argument to be in radians.
+
+
+
+
+<H4><A NAME="SEC62" HREF="gnuplot_toc.html#TOC62">1.10.1.38 sqrt</A></H4>
+
+<P>
+<A NAME="IDX91"></A>
+<A NAME="IDX92"></A>
+
+
+<P>
+The `sqrt(x)` function returns the square root of its argument.
+
+
+
+
+<H4><A NAME="SEC63" HREF="gnuplot_toc.html#TOC63">1.10.1.39 tan</A></H4>
+
+<P>
+<A NAME="IDX93"></A>
+<A NAME="IDX94"></A>
+
+
+<P>
+The `tan(x)` function returns the tangent of its argument.  `tan` expects
+its argument to be in radians or degrees, as selected by section <A HREF="gnuplot_2.html#SEC136">2.19.1 angles</A>.
+
+
+
+
+<H4><A NAME="SEC64" HREF="gnuplot_toc.html#TOC64">1.10.1.40 tanh</A></H4>
+
+<P>
+<A NAME="IDX95"></A>
+<A NAME="IDX96"></A>
+
+
+<P>
+The `tanh(x)` function returns the hyperbolic tangent of its argument.  section <A HREF="gnuplot_1.html#SEC64">1.10.1.40 tanh</A>
+expects its argument to be in radians.
+
+
+<P>
+A few additional functions are also available.
+
+
+
+
+<H4><A NAME="SEC65" HREF="gnuplot_toc.html#TOC65">1.10.1.41 column</A></H4>
+
+<P>
+<A NAME="IDX97"></A>
+<A NAME="IDX98"></A>
+
+
+<P>
+`column(x)` may be used only in expressions as part of section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> manipulations
+to fits or datafile plots.  See section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A>.
+
+
+
+
+<H4><A NAME="SEC66" HREF="gnuplot_toc.html#TOC66">1.10.1.42 defined</A></H4>
+
+<P>
+`defined(X)` returns 1 if a variable named X has been defined, otherwise 
+it returns 0.
+
+
+
+
+<H4><A NAME="SEC67" HREF="gnuplot_toc.html#TOC67">1.10.1.43 tm_hour</A></H4>
+
+<P>
+<A NAME="IDX99"></A>
+The section <A HREF="gnuplot_1.html#SEC67">1.10.1.43 tm_hour</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the hour (an integer in the range 0--23) as a real.
+
+
+
+
+<H4><A NAME="SEC68" HREF="gnuplot_toc.html#TOC68">1.10.1.44 tm_mday</A></H4>
+
+<P>
+<A NAME="IDX100"></A>
+The section <A HREF="gnuplot_1.html#SEC68">1.10.1.44 tm_mday</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the day of the month (an integer in the range 1--31)
+as a real.
+
+
+
+
+<H4><A NAME="SEC69" HREF="gnuplot_toc.html#TOC69">1.10.1.45 tm_min</A></H4>
+
+<P>
+<A NAME="IDX101"></A>
+The section <A HREF="gnuplot_1.html#SEC69">1.10.1.45 tm_min</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the minute (an integer in the range 0--59) as a real.
+
+
+
+
+<H4><A NAME="SEC70" HREF="gnuplot_toc.html#TOC70">1.10.1.46 tm_mon</A></H4>
+
+<P>
+<A NAME="IDX102"></A>
+The section <A HREF="gnuplot_1.html#SEC70">1.10.1.46 tm_mon</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the month (an integer in the range 0--11) as a real.
+
+
+
+
+<H4><A NAME="SEC71" HREF="gnuplot_toc.html#TOC71">1.10.1.47 tm_sec</A></H4>
+
+<P>
+<A NAME="IDX103"></A>
+The section <A HREF="gnuplot_1.html#SEC71">1.10.1.47 tm_sec</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the second (an integer in the range 0--59) as a real.
+
+
+
+
+<H4><A NAME="SEC72" HREF="gnuplot_toc.html#TOC72">1.10.1.48 tm_wday</A></H4>
+
+<P>
+<A NAME="IDX104"></A>
+The section <A HREF="gnuplot_1.html#SEC72">1.10.1.48 tm_wday</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the day of the week (an integer in the range 0--6) as
+a real.
+
+
+
+
+<H4><A NAME="SEC73" HREF="gnuplot_toc.html#TOC73">1.10.1.49 tm_yday</A></H4>
+
+<P>
+<A NAME="IDX105"></A>
+The section <A HREF="gnuplot_1.html#SEC73">1.10.1.49 tm_yday</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the day of the year (an integer in the range 1--366)
+as a real.
+
+
+
+
+<H4><A NAME="SEC74" HREF="gnuplot_toc.html#TOC74">1.10.1.50 tm_year</A></H4>
+
+<P>
+<A NAME="IDX106"></A>
+The section <A HREF="gnuplot_1.html#SEC74">1.10.1.50 tm_year</A> function interprets its argument as a time, in seconds from
+1 Jan 2000.  It returns the year (an integer) as a real.
+
+
+
+
+<H4><A NAME="SEC75" HREF="gnuplot_toc.html#TOC75">1.10.1.51 valid</A></H4>
+
+<P>
+<A NAME="IDX107"></A>
+<A NAME="IDX108"></A>
+
+
+<P>
+`valid(x)` may be used only in expressions as part of section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> manipulations
+to fits or datafile plots.  See section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A>.
+
+
+<P>
+See also 
+<A HREF="http://www.gnuplot.info/demo/airfoil.html">airfoil.dem: use of functions and complex variables for airfoils demo.
+</A>
+
+
+
+
+<H4><A NAME="SEC76" HREF="gnuplot_toc.html#TOC76">1.10.1.52 Random number generator</A></H4>
+
+<P>
+<A NAME="IDX109"></A>
+
+
+<P>
+The behavior of the built-in function `rand(x)` has changed as of version 3.8l.
+Older scripts that expected rand(x&#62;0) to produce sequential pseudo-random
+numbers from the same seeded sequence must be changed to call rand(0) instead.
+The current behavior is as follows:
+
+<PRE>
+ `rand(0)`  returns a pseudo random number in the interval [0:1] generated
+            from the current value of two internal 32-bit seeds. 
+ `rand(-1)` resets both seeds to a standard value. 
+ `rand(x)`  for x&#62;0 sets both seeds to a value based on the value of x.
+ `rand({x,y})` for x&#62;0 sets seed1 to x and seed2 to y.
+
+</PRE>
+
+
+
+<H3><A NAME="SEC77" HREF="gnuplot_toc.html#TOC77">1.10.2 Operators</A></H3>
+
+<P>
+<A NAME="IDX110"></A>
+
+
+<P>
+The operators in `gnuplot` are the same as the corresponding operators in the
+C programming language, except that all operators accept integer, real, and
+complex arguments, unless otherwise noted.  The ** operator (exponentiation)
+is supported, as in FORTRAN.
+
+
+<P>
+Parentheses may be used to change order of evaluation.
+
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC78">Unary</A>
+<LI><A HREF="gnuplot_1.html#SEC79">Binary</A>
+<LI><A HREF="gnuplot_1.html#SEC80">Ternary</A>
+</UL>
+
+
+
+<H4><A NAME="SEC78" HREF="gnuplot_toc.html#TOC78">1.10.2.1 Unary</A></H4>
+
+<P>
+<A NAME="IDX111"></A>
+
+
+<P>
+The following is a list of all the unary operators and their usages:
+
+
+
+<PRE>
+    Symbol      Example    Explanation
+      -           -a          unary minus
+      +           +a          unary plus (no-operation)
+      ~           ~a        * one's complement
+      !           !a        * logical negation
+      !           a!        * factorial
+      $           $3        * call arg/column during section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> manipulation
+
+</PRE>
+
+<P>
+(*) Starred explanations indicate that the operator requires an integer
+argument.
+
+
+<P>
+Operator precedence is the same as in Fortran and C.  As in those languages,
+parentheses may be used to change the order of operation.  Thus -2**2 = -4,
+but (-2)**2 = 4.
+
+
+<P>
+The factorial operator returns a real number to allow a greater range.
+
+
+
+
+<H4><A NAME="SEC79" HREF="gnuplot_toc.html#TOC79">1.10.2.2 Binary</A></H4>
+
+<P>
+The following is a list of all the binary operators and their usages:
+
+
+
+<PRE>
+    Symbol       Example      Explanation
+      **          a**b          exponentiation
+      *           a*b           multiplication
+      /           a/b           division
+      %           a%b         * modulo
+      +           a+b           addition
+      -           a-b           subtraction
+      ==          a==b          equality
+      !=          a!=b          inequality
+      &#60;           a&#60;b           less than
+      &#60;=          a&#60;=b          less than or equal to
+      &#62;           a&#62;b           greater than
+      &#62;=          a&#62;=b          greater than or equal to
+      &#38;           a&#38;b         * bitwise AND
+      ^           a^b         * bitwise exclusive OR
+      |           a|b         * bitwise inclusive OR
+      &#38;&#38;          a&#38;&#38;b        * logical AND
+      ||          a||b        * logical OR
+
+</PRE>
+
+<P>
+(*) Starred explanations indicate that the operator requires integer
+arguments.
+
+
+<P>
+Logical AND (&#38;&#38;) and OR (||) short-circuit the way they do in C.  That is,
+the second `&#38;&#38;` operand is not evaluated if the first is false; the second
+`||` operand is not evaluated if the first is true.
+
+
+
+
+<H4><A NAME="SEC80" HREF="gnuplot_toc.html#TOC80">1.10.2.3 Ternary</A></H4>
+
+<P>
+<A NAME="IDX112"></A>
+
+
+<P>
+There is a single ternary operator:
+
+
+
+<PRE>
+    Symbol       Example      Explanation
+      ?:          a?b:c     ternary operation
+
+</PRE>
+
+<P>
+The ternary operator behaves as it does in C.  The first argument (a), which
+must be an integer, is evaluated.  If it is true (non-zero), the second
+argument (b) is evaluated and returned; otherwise the third argument (c) is
+evaluated and returned.
+
+
+<P>
+The ternary operator is very useful both in constructing piecewise functions
+and in plotting points only when certain conditions are met.
+
+
+<P>
+Examples:
+
+
+<P>
+Plot a function that is to equal sin(x) for 0 &#60;= x &#60; 1, 1/x for 1 &#60;= x &#60; 2,
+and undefined elsewhere:
+
+<PRE>
+      f(x) = 0&#60;=x &#38;&#38; x&#60;1 ? sin(x) : 1&#60;=x &#38;&#38; x&#60;2 ? 1/x : 1/0
+      plot f(x)
+</PRE>
+
+<P>
+Note that `gnuplot` quietly ignores undefined values, so the final branch of
+the function (1/0) will produce no plottable points.  Note also that f(x)
+will be plotted as a continuous function across the discontinuity if a line
+style is used.  To plot it discontinuously, create separate functions for the
+two pieces.  (Parametric functions are also useful for this purpose.)
+
+
+<P>
+For data in a file, plot the average of the data in columns 2 and 3 against
+the datum in column 1, but only if the datum in column 4 is non-negative:
+
+
+
+<PRE>
+      plot 'file' using 1:( $4&#60;0 ? 1/0 : ($2+$3)/2 )
+
+</PRE>
+
+<P>
+Please see section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> for an explanation of the section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> syntax.
+
+
+
+
+<H3><A NAME="SEC81" HREF="gnuplot_toc.html#TOC81">1.10.3 User-defined</A></H3>
+
+<P>
+<A NAME="IDX113"></A>
+
+
+<P>
+<A NAME="IDX114"></A>
+<A NAME="IDX115"></A>
+
+
+<P>
+New user-defined variables and functions of one through five variables may
+be declared and used anywhere, including on the `plot` command itself.
+
+
+<P>
+User-defined function syntax:
+
+<PRE>
+      &#60;func-name&#62;( &#60;dummy1&#62; {,&#60;dummy2&#62;} ... {,&#60;dummy5&#62;} ) = &#60;expression&#62;
+
+</PRE>
+
+<P>
+where &#60;expression&#62; is defined in terms of &#60;dummy1&#62; through &#60;dummy5&#62;.
+
+
+<P>
+User-defined variable syntax:
+
+<PRE>
+      &#60;variable-name&#62; = &#60;constant-expression&#62;
+
+</PRE>
+
+<P>
+Examples:
+
+<PRE>
+      w = 2
+      q = floor(tan(pi/2 - 0.1))
+      f(x) = sin(w*x)
+      sinc(x) = sin(pi*x)/(pi*x)
+      delta(t) = (t == 0)
+      ramp(t) = (t &#62; 0) ? t : 0
+      min(a,b) = (a &#60; b) ? a : b
+      comb(n,k) = n!/(k!*(n-k)!)
+      len3d(x,y,z) = sqrt(x*x+y*y+z*z)
+      plot f(x) = sin(x*a), a = 0.2, f(x), a = 0.4, f(x)
+
+</PRE>
+
+<P>
+Note that the variable `pi` is already defined.  But it is in no way magic;
+you may redefine it to be whatever you like.
+
+
+<P>
+Valid names are the same as in most programming languages: they must begin
+with a letter, but subsequent characters may be letters, digits, "$", or "_".
+Note, however, that the `fit` mechanism uses several variables with names
+that begin "FIT_".  It is safest to avoid using such names.  "FIT_LIMIT",
+however, is one that you may wish to redefine. See the documentation
+on `fit` for details.
+
+
+<P>
+See `show functions`, section <A HREF="gnuplot_2.html#SEC308">2.19.69 variables</A>, and `fit`.
+
+
+
+
+<H2><A NAME="SEC82" HREF="gnuplot_toc.html#TOC82">1.11 Glossary</A></H2>
+
+<P>
+<A NAME="IDX116"></A>
+
+
+<P>
+Throughout this document an attempt has been made to maintain consistency of
+nomenclature.  This cannot be wholly successful because as `gnuplot` has
+evolved over time, certain command and keyword names have been adopted that
+preclude such perfection.  This section contains explanations of the way
+some of these terms are used.
+
+
+<P>
+A "page" or "screen" is the entire area addressable by `gnuplot`.  On a
+monitor, it is the full screen; on a plotter, it is a single sheet of paper.
+
+
+<P>
+A screen may contain one or more "plots".  A plot is defined by an abscissa
+and an ordinate, although these need not actually appear on it, as well as
+the margins and any text written therein.
+
+
+<P>
+A plot contains one "graph".  A graph is defined by an abscissa and an
+ordinate, although these need not actually appear on it.
+
+
+<P>
+A graph may contain one or more "lines".  A line is a single function or
+data set.  "Line" is also a plotting style.  The word will also be used in
+sense "a line of text".  Presumably the context will remove any ambiguity.
+
+
+<P>
+The lines on a graph may have individual names.  These may be listed
+together with a sample of the plotting style used to represent them in
+the "key", sometimes also called the "legend".
+
+
+<P>
+The word "title" occurs with multiple meanings in `gnuplot`.  In this
+document, it will always be preceded by the adjective "plot", "line", or
+"key" to differentiate among them.
+
+
+<P>
+A 2-d graph may have up to four labelled axes.  The names of the four axes
+for these usages are "x" for the axis along the bottom border of the plot,
+"y" for the left border, "x2" for the top border, and "y2" for the right
+border.
+
+
+<P>
+A 3-d graph may have up to three labelled axes -- "x", "y" and "z".  It is
+not possible to say where on the graph any particular axis will fall because
+you can change the direction from which the graph is seen with section <A HREF="gnuplot_2.html#SEC310">2.19.71 view</A>.
+
+
+<P>
+When discussing data files, the term "record" will be resurrected and used
+to denote a single line of text in the file, that is, the characters between
+newline or end-of-record characters.  A "point" is the datum extracted from
+a single record.  A "datablock" is a set of points from consecutive records,
+delimited by blank records.  A line, when referred to in the context of a
+data file, is a subset of a datablock.
+
+
+
+
+<H2><A NAME="SEC83" HREF="gnuplot_toc.html#TOC83">1.12 mouse input</A></H2>
+
+<P>
+The `x11`, `pm`, `windows`, and `ggi` terminals allow interaction with the
+current plot using the mouse. They also support the definition of hotkeys
+to activate pre-defined functions by hitting a single key while the mouse
+focus is in the active plot window.  It is even possible to combine mouse
+input with `batch` command scripts, by invoking the command `pause mouse`
+and then using the mouse variables returned by mouse clicking as parameters
+for subsequent scripted actions. See section <A HREF="gnuplot_1.html#SEC84">1.12.1 bind</A> and section <A HREF="gnuplot_2.html#SEC308">2.19.69 variables</A>.  
+See also the command `set mouse`.
+
+
+
+<UL>
+<LI><A HREF="gnuplot_1.html#SEC84">bind</A>
+<LI><A HREF="gnuplot_1.html#SEC85">mouse_variables</A>
+</UL>
+
+
+
+<H3><A NAME="SEC84" HREF="gnuplot_toc.html#TOC84">1.12.1 bind</A></H3>
+
+<P>
+<A NAME="IDX117"></A>
+
+
+<P>
+The section <A HREF="gnuplot_1.html#SEC84">1.12.1 bind</A> allows defining or redefining a hotkey, i.e. a sequence of gnuplot
+commands which will be executed when a certain key or key sequence is pressed
+while the driver's window has the input focus. Note that section <A HREF="gnuplot_1.html#SEC84">1.12.1 bind</A> is only
+available if gnuplot was compiled with `mouse` support and it is used by all
+mouse-capable terminals. Bindings overwrite the builtin bindings (like in
+every real editor), except &#60;space&#62; and 'q' which cannot be rebound. Mouse
+buttons cannot be rebound.
+
+
+<P>
+Note that multikey-bindings with modifiers have to be quoted.
+
+
+<P>
+Syntax:
+
+<PRE>
+      bind [&#60;key-sequence&#62;] ["&#60;gnuplot commands&#62;"]
+      bind!
+
+</PRE>
+
+<P>
+Examples:
+
+
+<P>
+- set bindings:
+
+
+
+<PRE>
+    bind a "replot"
+    bind "ctrl-a" "plot x*x"
+    bind "ctrl-alt-a" 'print "great"'
+    bind Home "set view 60,30; replot"
+
+</PRE>
+
+<P>
+- show bindings:
+
+<PRE>
+    bind "ctrl-a"          # shows the binding for ctrl-a
+    bind                   # shows all bindings
+
+</PRE>
+
+<P>
+- remove bindings:
+
+<PRE>
+    bind "ctrl-alt-a" ""   # removes binding for ctrl-alt-a
+                             (note that builtins cannot be removed)
+    bind!                  # installs default (builtin) bindings
+
+</PRE>
+
+<P>
+- bind a key to toggle something:
+
+<PRE>
+  v=0
+  bind "ctrl-r" "v=v+1;if(v%2)set term x11 noraise; else set term x11 raise"
+
+</PRE>
+
+<P>
+Modifiers (ctrl / alt) are case insensitive, keys not:
+
+<PRE>
+    ctrl-alt-a == CtRl-alT-a
+    ctrl-alt-a != ctrl-alt-A
+
+</PRE>
+
+<P>
+List of modifiers (alt == meta):
+
+<PRE>
+    ctrl, alt
+
+</PRE>
+
+<P>
+List of supported special keys:
+
+
+
+<PRE>
+   "BackSpace", "Tab", "Linefeed", "Clear", "Return", "Pause", "Scroll_Lock",
+   "Sys_Req", "Escape", "Delete", "Home", "Left", "Up", "Right", "Down",
+   "PageUp", "PageDown", "End", "Begin",
+
+</PRE>
+
+
+<PRE>
+   "KP_Space", "KP_Tab", "KP_Enter", "KP_F1", "KP_F2", "KP_F3", "KP_F4",
+   "KP_Home", "KP_Left", "KP_Up", "KP_Right", "KP_Down", "KP_PageUp",
+   "KP_PageDown", "KP_End", "KP_Begin", "KP_Insert", "KP_Delete", "KP_Equal",
+   "KP_Multiply", "KP_Add", "KP_Separator", "KP_Subtract", "KP_Decimal",
+   "KP_Divide",
+
+</PRE>
+
+
+<PRE>
+   "KP_1" - "KP_9", "F1" - "F12"
+
+</PRE>
+
+<P>
+See also help for `mouse` and section <A HREF="gnuplot_2.html#SEC110">2.8 if</A>.
+
+
+
+
+<H3><A NAME="SEC85" HREF="gnuplot_toc.html#TOC85">1.12.2 mouse_variables</A></H3>
+
+<P>
+When mousing is active, clicking in the active window will set several user
+variables that can be accessed from the gnuplot command line. The coordinates
+of the mouse at the time of the click are stored in MOUSE_X MOUSE_Y MOUSE_X2
+and MOUSE_Y2. The mouse button clicked, and any meta-keys active at that time,
+are stored in MOUSE_BUTTON MOUSE_SHIFT MOUSE_ALT and MOUSE_CTRL.  These 
+variables are set to undefined at the start of every plot, and only become 
+defined in the event of a mouse click in the active plot window. To determine
+from a script if the mouse has been clicked in the active plot window, it is
+sufficient to test for any one of these variables being defined.
+
+
+
+<PRE>
+      plot 'something'
+      set pause mouse
+      if (defined(MOUSE_BUTTON)) call 'something_else'; \
+      else print "No mouse click." 
+
+</PRE>
+
+
+
+<H2><A NAME="SEC86" HREF="gnuplot_toc.html#TOC86">1.13 Plotting</A></H2>
+
+<P>
+<A NAME="IDX118"></A>
+
+
+<P>
+There are three `gnuplot` commands which actually create a plot: `plot`,
+`splot` and section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A>.  `plot` generates 2-d plots, `splot` generates 3-d
+plots (actually 2-d projections, of course), and section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A> appends its
+arguments to the previous `plot` or `splot` and executes the modified
+command.
+
+
+<P>
+Much of the general information about plotting can be found in the discussion
+of `plot`; information specific to 3-d can be found in the `splot` section.
+
+
+<P>
+`plot` operates in either rectangular or polar coordinates -- see `set polar`
+for details of the latter.  `splot` operates only in rectangular coordinates,
+but the section <A HREF="gnuplot_2.html#SEC176">2.19.34 mapping</A> command allows for a few other coordinate systems to be
+treated.  In addition, the section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> option allows both `plot` and `splot` to
+treat almost any coordinate system you'd care to define.
+
+
+<P>
+`plot` also lets you use each of the four borders -- x (bottom), x2 (top), y
+(left) and y2 (right) -- as an independent axis.  The `axes` option lets you
+choose which pair of axes a given function or data set is plotted against.  A
+full complement of `set` commands exists to give you complete control over
+the scales and labelling of each axis.  Some commands have the name of an
+axis built into their names, such as section <A HREF="gnuplot_2.html#SEC321">2.19.82 xlabel</A>.  Other commands have one
+or more axis names as options, such as `set logscale xy`.  Commands and
+options controlling the z axis have no effect on 2-d graphs.
+
+
+<P>
+`splot` can plot surfaces and contours in addition to points and/or lines.
+In addition to `splot`, see section <A HREF="gnuplot_2.html#SEC169">2.19.27 isosamples</A> for information about defining
+the grid for a 3-d function;  `splot datafile` for information about the
+requisite file structure for 3-d data values; and section <A HREF="gnuplot_2.html#SEC149">2.19.12 contour</A> and
+section <A HREF="gnuplot_2.html#SEC147">2.19.10 cntrparam</A> for information about contours.
+
+
+<P>
+In `splot`, control over the scales and labels of the axes are the same as
+with `plot`, except that commands and options controlling the x2 and y2 axes
+have no effect whereas of course those controlling the z axis do take effect.
+
+
+<P>
+`splot` allows plotting of binary and matrix data, but only for specific
+data formats.  See `splot` for details.
+
+
+
+
+<H2><A NAME="SEC87" HREF="gnuplot_toc.html#TOC87">1.14 Start-up</A></H2>
+
+<P>
+^ &#60;a name="start-up"&#62;&#60;/a&#62;
+<A NAME="IDX119"></A>
+
+
+<P>
+<A NAME="IDX120"></A>
+
+
+<P>
+<A NAME="IDX121"></A>
+
+
+<P>
+When `gnuplot` is run, it looks for an initialization file to load.
+This file is called `.gnuplot` on Unix and AmigaOS systems, and
+`GNUPLOT.INI` on other systems.  If this file is not found in the
+current directory, the program will look for it in the HOME directory
+(under AmigaOS, Atari(single)TOS, MS-DOS, Windows and OS/2, the
+environment variable `GNUPLOT` should contain the name of this
+directory; on Windows NT, it will use `USERPROFILE` if GNUPLOT isn't
+defined).  Note: if NOCWDRC is defined during the installation,
+`gnuplot` will not read from the current directory.
+
+
+<P>
+If the initialization file is found, `gnuplot` executes the commands in it.
+These may be any legal `gnuplot` commands, but typically they are limited to
+setting the terminal and defining frequently-used functions or variables.
+
+
+
+
+<H2><A NAME="SEC88" HREF="gnuplot_toc.html#TOC88">1.15 Substitution</A></H2>
+
+<P>
+<A NAME="IDX122"></A>
+
+
+<P>
+Command-line substitution is specified by a system command enclosed in
+backquotes.  This command is spawned and the output it produces replaces
+the name of the command (and backquotes) on the command line.  Some
+implementations also support pipes;  see section <A HREF="gnuplot_2.html#SEC119">2.11.1.5 special-filenames</A>.
+
+
+<P>
+Command-line substitution can be used anywhere on the `gnuplot` command
+line, except inside strings delimited by single quotes.
+
+
+<P>
+Example:
+
+
+<P>
+This will run the program `leastsq` and replace `leastsq` (including
+backquotes) on the command line with its output:
+
+<PRE>
+      f(x) = `leastsq`
+
+</PRE>
+
+<P>
+or, in VMS
+
+<PRE>
+      f(x) = `run leastsq`
+
+</PRE>
+
+<P>
+These will generate labels with the current time and userid:
+
+<PRE>
+      set label "generated on `date +%Y-%m-%d`by `whoami`" at 1,1
+      set timestamp "generated on %Y-%m-%d by `whoami`"
+
+</PRE>
+
+
+
+<H2><A NAME="SEC89" HREF="gnuplot_toc.html#TOC89">1.16 Syntax</A></H2>
+
+<P>
+<A NAME="IDX123"></A>
+
+
+<P>
+<A NAME="IDX124"></A>
+
+
+<P>
+<A NAME="IDX125"></A>
+
+
+<P>
+The general rules of syntax and punctuation in `gnuplot` are that keywords
+and options are order-dependent.  Options and any accompanying parameters are
+separated by spaces whereas lists and coordinates are separated by commas.
+Ranges are separated by colons and enclosed in brackets [], text and file
+names are enclosed in quotes, and a few miscellaneous things are enclosed
+in parentheses.  Braces {} are used for a few special purposes.
+
+
+<P>
+Commas are used to separate coordinates on the `set` commands section <A HREF="gnuplot_2.html#SEC137">2.19.2 arrow</A>,
+section <A HREF="gnuplot_2.html#SEC170">2.19.28 key</A>, and section <A HREF="gnuplot_2.html#SEC171">2.19.29 label</A>; the list of variables being fitted (the list after the
+`via` keyword on the `fit` command); lists of discrete contours or the loop
+parameters which specify them on the section <A HREF="gnuplot_2.html#SEC147">2.19.10 cntrparam</A> command; the arguments
+of the `set` commands section <A HREF="gnuplot_2.html#SEC156">2.19.16 dgrid3d</A>, section <A HREF="gnuplot_2.html#SEC157">2.19.17 dummy</A>, section <A HREF="gnuplot_2.html#SEC169">2.19.27 isosamples</A>, section <A HREF="gnuplot_2.html#SEC186">2.19.43 offsets</A>, section <A HREF="gnuplot_2.html#SEC187">2.19.44 origin</A>,
+section <A HREF="gnuplot_2.html#SEC204">2.19.55 samples</A>, section <A HREF="gnuplot_2.html#SEC205">2.19.56 size</A>, `time`, and section <A HREF="gnuplot_2.html#SEC310">2.19.71 view</A>; lists of tics or the loop parameters
+which specify them; the offsets for titles and axis labels; parametric
+functions to be used to calculate the x, y, and z coordinates on the `plot`,
+section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A> and `splot` commands; and the complete sets of keywords specifying
+individual plots (data sets or functions) on the `plot`, section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A> and `splot`
+commands.
+
+
+<P>
+Parentheses are used to delimit sets of explicit tics (as opposed to loop
+parameters) and to indicate computations in the section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> filter of the `fit`,
+`plot`, section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A> and `splot` commands.
+
+
+<P>
+(Parentheses and commas are also used as usual in function notation.)
+
+
+<P>
+Brackets are used to delimit ranges, whether they are given on `set`, `plot`
+or `splot` commands.
+
+
+<P>
+Colons are used to separate extrema in `range` specifications (whether they
+are given on `set`, `plot` or `splot` commands) and to separate entries in
+the section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> filter of the `plot`, section <A HREF="gnuplot_2.html#SEC131">2.15 replot</A>, `splot` and `fit` commands.
+
+
+<P>
+Semicolons are used to separate commands given on a single command line.
+
+
+<P>
+Braces are used in text to be specially processed by some terminals, like
+section <A HREF="gnuplot_2.html#SEC198">2.19.49.6 postscript</A>.  They are also used to denote complex numbers: {3,2} = 3 + 2i.
+
+
+<P>
+Text may be enclosed in single- or double-quotes.  Backslash processing of
+sequences like \n (newline) and \345 (octal character code) is performed for
+double-quoted strings, but not for single-quoted strings.
+
+
+<P>
+The justification is the same for each line of a multi-line string.  Thus the
+center-justified string
+
+<PRE>
+      "This is the first line of text.\nThis is the second line."
+</PRE>
+
+<P>
+will produce
+
+<PRE>
+                       This is the first line of text.
+                          This is the second line.
+</PRE>
+
+<P>
+but
+
+<PRE>
+      'This is the first line of text.\nThis is the second line.'
+</PRE>
+
+<P>
+will produce
+
+<PRE>
+          This is the first line of text.\nThis is the second line.
+
+</PRE>
+
+<P>
+Filenames may be entered with either single- or double-quotes.  In this
+manual the command examples generally single-quote filenames and double-quote
+other string tokens for clarity.
+
+
+<P>
+At present you should not embed \n inside {} when using the section <A HREF="gnuplot_2.html#SEC198">2.19.49.6 postscript</A>
+terminal.
+
+
+<P>
+The EEPIC, Imagen, Uniplex, LaTeX, and TPIC drivers allow a newline to be
+specified by \\ in a single-quoted string or \\\\ in a double-quoted string.
+
+
+<P>
+Back-quotes are used to enclose system commands for substitution.
+
+
+
+
+<H2><A NAME="SEC90" HREF="gnuplot_toc.html#TOC90">1.17 Time/Date data</A></H2>
+
+<P>
+^ &#60;a name="Time/Date data"&#62;&#60;/a&#62;
+^ &#60;a name="Time/date"&#62;&#60;/a&#62;
+<A NAME="IDX126"></A>
+
+
+<P>
+`gnuplot` supports the use of time and/or date information as input data.
+This feature is activated by the commands `set xdata time`, `set ydata time`,
+etc.
+
+
+<P>
+Internally all times and dates are converted to the number of seconds from
+the year 2000.  The command section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A> defines the format for all inputs:
+data files, ranges, tics, label positions--in short, anything that accepts a
+data value must receive it in this format.  Since only one input format can
+be in force at a given time, all time/date quantities being input at the same
+time must be presented in the same format.  Thus if both x and y data in a
+file are time/date, they must be in the same format.
+
+
+<P>
+The conversion to and from seconds assumes Universal Time (which is the same
+as Greenwich Standard Time).  There is no provision for changing the time
+zone or for daylight savings.  If all your data refer to the same time zone
+(and are all either daylight or standard) you don't need to worry about these
+things.  But if the absolute time is crucial for your application, you'll
+need to convert to UT yourself.
+
+
+<P>
+Commands like section <A HREF="gnuplot_2.html#SEC323">2.19.84 xrange</A> will re-interpret the integer according to
+section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A>.  If you change section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A>, and then `show` the quantity again, it
+will be displayed in the new section <A HREF="gnuplot_2.html#SEC303">2.19.64 timefmt</A>.  For that matter, if you give the
+deactivation command (like section <A HREF="gnuplot_2.html#SEC319">2.19.80 xdata</A>), the quantity will be shown in its
+numerical form.
+
+
+<P>
+The command `set format` defines the format that will be used for tic labels,
+whether or not the specified axis is time/date.
+
+
+<P>
+If time/date information is to be plotted from a file, the section <A HREF="gnuplot_2.html#SEC121">2.11.1.7 using</A> option
+_must_ be used on the `plot` or `splot` command.  These commands simply use
+white space to separate columns, but white space may be embedded within the
+time/date string.  If you use tabs as a separator, some trial-and-error may
+be necessary to discover how your system treats them.
+
+
+<P>
+The following example demonstrates time/date plotting.
+
+
+<P>
+Suppose the file "data" contains records like
+
+
+
+<PRE>
+      03/21/95 10:00  6.02e23
+
+</PRE>
+
+<P>
+This file can be plotted by
+
+
+
+<PRE>
+      set xdata time
+      set timefmt "%m/%d/%y"
+      set xrange ["03/21/95":"03/22/95"]
+      set format x "%m/%d"
+      set timefmt "%m/%d/%y %H:%M"
+      plot "data" using 1:3
+
+</PRE>
+
+<P>
+which will produce xtic labels that look like "03/21".
+
+
+<P>
+See the descriptions of each command for more details.
+
+
+<P><HR><P>
+Go to the first, previous, <A HREF="gnuplot_2.html">next</A>, <A HREF="gnuplot_9.html">last</A> section, <A HREF="gnuplot_toc.html">table of contents</A>.
+</BODY>
+</HTML>

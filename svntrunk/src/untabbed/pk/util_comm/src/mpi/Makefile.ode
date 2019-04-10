@@ -1,0 +1,22 @@
+VPATH = ..
+
+CFLAGS += $(MPICFLAGS) $(SMPCFLAGS)
+CCTYPE = mpcppr
+
+OFILES  = \
+  mpi$(OBJ_SUFF) \
+
+
+OBJECTS = $(OFILES)
+
+
+LIBRARIES = $(LIB_PREF)pkmpi_mpi$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/util_comm/src/mpi/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

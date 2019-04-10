@@ -1,0 +1,26 @@
+
+VPATH = ..
+
+CFLAGS += $(SPICFLAGS) ${SMPCFLAGS}
+
+LDFLAGS += -Wl,--allow-multiple-definition
+
+.if ${BG_USE_BLADE} == 1
+LIBS =  ${PKSPILIBS}
+.else
+LIBS =  ${PKMPILIBS}
+.endif
+
+# No 'thread-create' on blade, so no iv02
+PROGRAMS = \
+    	iv00${PROG_SUFF} \
+
+OBJECTS = \
+	iv00${OBJ_SUFF} \
+	iv00_dup${OBJ_SUFF} \
+
+iv00${PROG_SUFF}_OFILES = iv00_dup${OBJ_SUFF} iv00${OBJ_SUFF}
+
+.include <${RULES_MK}>
+
+

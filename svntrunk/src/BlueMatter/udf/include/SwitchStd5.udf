@@ -1,0 +1,62 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ struct SwitchStd5_Params
+{
+  double r;
+};
+struct SwitchStd5_OutputParams
+{
+  double S;
+  double dSdR;
+};
+void SwitchStd5(
+        MDVM &aMDVM,
+	const SwitchStd5_Params &A,
+	SwitchStd5_OutputParams &B
+        )
+  {
+      const double TreatSwitchAsOff = 1.0E99;
+
+      if (A.r <= UDF_State::SwitchStd5.Rl || UDF_State::SwitchStd5.Rl > TreatSwitchAsOff ) {
+	  B.S = 1;
+	  B.dSdR = 0;
+	  return;
+      } else if (A.r >= UDF_State::SwitchStd5.Ru) {
+	  B.S = 0;
+	  B.dSdR = 0;
+	  return;
+      }
+
+      const double dr  = A.r - UDF_State::SwitchStd5.Rl; 
+      const double dr2 = dr  * dr;
+      const double dr3 = dr2 * dr;
+      const double dr4 = dr2 * dr2;
+
+      B.S = UDF_State::SwitchStd5.A * dr2 * dr3 +
+	    UDF_State::SwitchStd5.B * dr4       +
+	    UDF_State::SwitchStd5.C * dr3       +
+	    1.0;
+
+      // The derivative was reversed below to make energy conserve
+      // due to minus signs in the udf force assignments
+      B.dSdR = -UDF_State::SwitchStd5.AA * dr4 -
+	        UDF_State::SwitchStd5.BB * dr3 -
+	        UDF_State::SwitchStd5.CC * dr2;
+  }

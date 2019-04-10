@@ -1,0 +1,33 @@
+[ActiveConfig]
+../../blrudp.vpj=,Debug
+[ProjectDates]
+=20030123113147000
+blrudpfork.vpj=20030210072224000
+../../blrudp.vpj=20030210072126000
+[Global]
+CurrentProject=blrudpfork.vpj
+[TreeExpansion]
+blrudpfork.vpj 1 0 0 0 0 0
+[State]
+SCREEN: 1024 768 0 0 1016 717 0 0 N 0 0 0 0 793 487
+CWD: ../../../blrudp
+BUFFER: BN="../../blrudp_io.c"
+BI: MA=1 74 1  TABS=1 5  WWS=1 IWT=0 ST=0 IN=1 BW=0 US=32000 RO=1 SE=1 SN=0 BIN=0 MN=C	HM=0 MF=96 TL=0 MLL=0 ASE=0 LNL=6 LCF=0 CAPS=0 E=0 ESBU2=-1
+VIEW: LN=.10320 CL=8 LE=0 CX=7 CY=21 WI=5 BI=26 HT=0 HN=0 HF=0 HC=4
+WINDOW: 0 0 535 329 0 0 M  WF=0 WT=2 "misc-fixed,12,0,1"
+BUFFER: BN="../../blrudp_io.c"
+VIEW: LN=.10320 CL=8 LE=0 CX=7 CY=21 WI=171 BI=26 HT=0 HN=0 HF=0 HC=4
+FILEHIST: 9
+../StressTest/BlRasTransport.cpp
+../TestFileIo/blfileiotst.h
+../TcpStream/tcpstreambase.h
+Makefile
+blrudpfork.vpj
+main.cpp
+../../../../control/tests/minihello/Makefile.mini
+../../../../control/tests/minihello/Makefile
+../../blrudp_io.c
+DEBUG: 0 0 0 0 3
+printf
+strcpy
+std::*

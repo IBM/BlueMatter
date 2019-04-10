@@ -1,0 +1,191 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void Water3SiteRattleHalfStep(
+    MDVM &aMDVM
+    )
+{
+/*
+/* JWP August 2001
+/*
+/* does SECOND velocity halfstep update w/ RATTLE for rigid water
+/* adds dt/2 * f(t+dt)/m to v(t+dt/2)
+/* calling routine is responsible to make sure f(t+dt) is correct
+/* velocity update is followed by RATTLE which adjusts the 
+/* velocities v(t+dt) so they have no components along the constraints
+/*
+    const double tolerance = 0.00000001;
+    const integer max_iterations = 1000;
+/*
+/* really conservative default SHAKE tolerance
+/* 10^-6 can be OK but timestep dependent, no warranties, etc.
+/*
+/* this routine assumes OHH ordering, i.e. O=Site A, H1=Site B, H2=Site C
+/*
+    XYZ    vA = aMDVM.GetVelocity( MDVM::SiteA );  
+    XYZ    vB = aMDVM.GetVelocity( MDVM::SiteB );
+    XYZ    vC = aMDVM.GetVelocity( MDVM::SiteC );
+    
+    XYZ    fA = aMDVM.GetForce( MDVM::SiteA );  
+    XYZ    fB = aMDVM.GetForce( MDVM::SiteB );  
+    XYZ    fC = aMDVM.GetForce( MDVM::SiteC );  
+
+    XYZ    mA = aMDVM.GetHalfInverseMass( MDVM::SiteA );
+    XYZ    mB = aMDVM.GetHalfInverseMass( MDVM::SiteB );
+    XYZ    mC = aMDVM.GetHalfInverseMass( MDVM::SiteC );
+
+    double dt = a.MDVM.GetDeltaT;
+/*
+/* factor of 1/2 is implicit in GetHalfInverseMass, which returns 1/2m
+/*
+/* FRANK: delete these if the halfstep happens before this routine
+    vA += dt * fA * mA;
+    vB += dt * fB * mB;
+    vC += dt * fC * mC;
+
+/* done with normal UpdateVelocityHalfStep, on to RATTLE
+/* pretty much direct from Bill Swope's little water code, JWP
+
+/* convert tolerance to velocities. . .
+
+    double veloc_tolerance = tolerance/dt;
+
+/* current position vectors at t+dt
+
+    XYZ    vecAB = aMDVM.GetVector( MDVM::SiteB, MDVM::SiteA );
+    XYZ    vecAC = aMDVM.GetVector( MDVM::SiteC, MDVM::SiteA );
+    XYZ    vecBC = aMDVM.GetVector( MDVM::SiteC, MDVM::SiteB );
+
+/* start with forces of constraint set to zero
+
+    XYZ    fconA = 0.0;
+    XYZ    fconB = 0.0;
+    XYZ    fconC = 0.0;
+
+/* get the relative velocities along each constraint
+
+    XYZ    velAB = vA - vB;
+    XYZ    velAC = vA - vC;
+    XYZ    velBC = vB - vC;
+
+/* initially assume all 3 constraints are violated,
+/* ensuring at least one pass through the loop
+/*
+/* it's traditional to keep track of the number of iterations and 
+/* vomit if it passes the maximum. . .
+/* 
+/* since the 3 constraints are coupled, if we make adjustments
+/* to fix any one constraint, we have to check them all again
+
+    integer rattle_iterations = 0;
+    integer violations = 3;
+
+    while ((violations) > 0)&&(rattle_iterations < max_iterations)) {
+
+/* project the current values of the interparticle velocities
+/* (includes contributions from any force of constraint we have generated
+/*  so far)
+
+    XYZ    proAB = velAB + dt * (fconA - fconB);
+    XYZ    proAC = velAC + dt * (fconA - fconC);
+    XYZ    proBC = velBC + dt * (fconB - fconC);
+
+/* get the dot product of each velocity on the corresponding
+/* constraint to check against veloc_tolerance
+
+    double devproAB = proAB*vecAB;
+    double devproAC = proAC*vecAC;
+    double devproBC = proBC*vecBC;
+
+    integer testAB = 1;
+    integer testAC = 1;
+    integer testBC = 1;
+
+/* check each vector against the corresponding constraint
+/* if it is violated, calculate the additional "forces of constraint"
+/* necessary to fix it
+/*
+/* FRANK:
+/* I wasn't sure of the sign of the vecAB, etc. vectors
+/* the following is all coded with the assumption that vecAB is the
+/* vector from A to B, and so on
+/*
+/* O - H1 vector
+
+    if (abs(devproAB) > vector_tolerance*rOH) { 
+      double G = devproAB / (rOHsq * (mA + mB));
+      fconA -= G * mA * vecAB;
+      fconB += G * mB * vecAB;
+    } else { 
+      testAB = 0;
+    }
+
+/* O - H2 vector
+
+    if (abs(devproAC) > vector_tolerance*rOH) {
+      double G = devproAC / (rOHsq * (mA + mC));
+      fconA -= G * mA * vecAC;
+      fconC += G * mC * vecAC;
+    } else { 
+      testAC = 0;
+    }
+
+/* H1 - H2 vector
+/* note that since both particles have the same mass we don't
+/* have to mass-weight the force of constraint, just divide it by 2
+
+    if (abs(devproBC) > vector_tolerance*rHH) { 
+      double G = devproBC / rHHsq;
+      fconB -= G * vecBC;
+      fconC += G * vecBC;
+    } else { 
+      testBC = 0;
+    }
+
+    violations = testAB + testAC + testBC;
+    rattle_iterations++;
+
+    }
+/*
+/* check if we hit max_iterations
+/*
+    if (rattle_iterations >= max_iterations) {
+/* FRANK:
+/* some sort of error throw/exception goes here 
+    } else {
+/*
+/* done with RATTLE iterations, converged before the iteration limit
+/* now place influence of force of constraint in velocity arrays
+/* remember fcon[A,B,C] are not real forces but f/m * dt/2
+/*
+/* note we are not including a virial contribution from the force of
+/* constraint. . .
+/*
+    vA += fconA;
+    vB += fconB;
+    vC += fconC;
+/*
+    aMDVM.ReportVelocity( MDVM::SiteA, vA );
+    aMDVM.ReportVelocity( MDVM::SiteB, vB );
+    aMDVM.ReportVelocity( MDVM::SiteC, vC );
+    }
+/*
+    return;
+}
+

@@ -1,0 +1,42 @@
+
+#################################################
+
+GEN_STRUCTS_OUTPUT = $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/generated_inmemdb_structs.hpp \
+
+ERL_FILES = \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/TimeStep.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/VelVerletIntegrator.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/ForceModels.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/InMemMDVM.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/RDG_IF.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/MDSystemData.erl \
+  $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/NSQInteractionSimpleUni.erl \
+
+ERL_HPP_FILES = \
+  TimeStep.hpp \
+  VelVerletIntegrator.hpp \
+  ForceModels.hpp \
+  InMemMDVM.hpp \
+  RDG_IF.hpp \
+  MDSystemData.hpp \
+  NSQInteractionSimpleUni.hpp \
+
+USE_FILEFIND ?= 1
+
+.BEGIN:  
+      cp ${DIR_CONTENTS} $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/ 
+      $(EXPORTBASE)/usr/include/inmemdb/expand_inmem_tags.pl \
+        .hpp \
+        $(GEN_STRUCTS_OUTPUT) \
+        $(ERL_FILES) 
+      cp $(ERL_HPP_FILES) $(EXPORTBASE)/usr/include/BlueMatter/concept_dbalg/
+
+#################################################
+
+INCLUDES += \
+	RuntimeParams.hpp \
+
+
+EXPINCDIR = /usr/include/BlueMatter/concept_dbalg/
+
+.include <$(RULES_MK)>

@@ -1,0 +1,28 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  Makefile \
+  P3MEassign.cpp \
+  P3MEfield.cpp \
+  P3MEgreenFunc.cpp \
+  P3MEimpl.hpp \
+  P3MElib.hpp \
+  P3MEmain.cpp \
+  P3MEmultiDimArray.hpp \
+  P3MEutils.cpp \
+  P3MEutils.hpp \
+  mytest.cpp \
+  Makefile.ode
+Makefile_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEassign.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEfield.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEgreenFunc.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEimpl.hpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MElib.hpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEmain.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEmultiDimArray.hpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEutils.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+P3MEutils.hpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+mytest.cpp_IDIR = $(BG_SRC)/BlueMatter/p3me/src/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/p3me/src/source_ship/
+.include <$(RULES_MK)>

@@ -1,0 +1,58 @@
+# Statistics for grouped trace points from trace_group_id 120
+# column 1: trace set id
+# column 2: node count
+# column 3: average
+# column 4: std. dev
+# column 5: min()
+# column 6: max()
+# column 7: minDev (deviation from average value computed for each ts)
+# column 8: maxDev (deviation from average value computed for each ts)
+# column 9: count()
+
+
+# Index 0: Results for GlobalizePositions_Cntl
+1033 	32 	6.05973e+06 	1.94236e+06 	5.379e+06 	1.5177e+07 	-1.03059e+06 	300375 	25600
+
+
+# Index 1: Results for P2_InitialBarrier
+1033 	32 	0 	0 	0 	0 	0 	0 	25600
+
+
+# Index 2: Results for P2_KSpace_Control
+1033 	32 	1.28449e+08 	1.38997e+06 	1.26482e+08 	1.34122e+08 	-1.29526e+07 	2.99959e+06 	25600
+
+
+# Index 3: Results for P2_Simtick_Loop_Control
+1033 	32 	2.04371e+08 	9.92558e+07 	1.76979e+08 	6.55271e+08 	-1.07125e+06 	1.05125e+06 	25600
+
+
+# Index 4: Results for P3ME_ForwardFFT_Control
+1033 	32 	4.0818e+07 	751023 	3.8818e+07 	4.2454e+07 	-2.42066e+06 	1.28275e+06 	25600
+
+
+# Index 5: Results for P3ME_Rev_FFT
+1033 	32 	4.54996e+07 	746345 	4.3412e+07 	4.7567e+07 	-1.13678e+06 	2.06313e+06 	25600
+
+
+# Index 6: Results for RealSpaceAddForces
+1033 	32 	4.11237e+06 	1.84192e+06 	3.262e+06 	1.2634e+07 	-425938 	249000 	25600
+
+
+# Index 7: Results for RealSpaceDualCore
+1033 	32 	4.1333e+07 	8.32278e+07 	1.7006e+07 	4.66367e+08 	-6.96018e+07 	5.06361e+07 	25600
+
+
+# Index 8: Results for ReduceForces_Cntl
+1033 	32 	1.3349e+07 	1.11265e+07 	3.809e+06 	1.2041e+08 	-4.97516e+07 	6.21375e+07 	25600
+
+
+# Index 9: Results for _remd_allreduce_energies_
+1033 	32 	456.913 	4557.4 	0 	48001 	-1.75551e+10 	2.75451e+11 	25600
+
+
+# Index 10: Results for _remd_copy_energies_
+1033 	32 	69.6879 	693.786 	0 	8000 	-1.08115e+17 	3.35149e+18 	25600
+
+
+# Index 11: Results for _remd_swapping_step
+1033 	32 	73.8284 	736.203 	0 	8000 	-594.656 	843.406 	25600

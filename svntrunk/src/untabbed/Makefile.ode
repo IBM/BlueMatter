@@ -1,0 +1,72 @@
+
+PKG_CMF_FILE = $(EXPORTBASE)/cmf_files/cmf.pp	
+# INCLUDES=product_file
+EXPDIR = /cmf_files/
+PKG_CMF_PRODUCT_FILE = $(EXPORTBASE)/cmf_files/product_file
+
+
+ALL_SUBDIRS        = \
+    Pk \
+    BonB \
+    pk \
+    ParaFrames \
+    
+    
+.if !empty(CONTEXT:Mppc_linux_*)
+ALL_SUBDIRS += \
+    inmemdb \
+
+.endif    
+
+.if !empty(CONTEXT:Mx86_linux_*)
+ALL_SUBDIRS += \
+    pktools \
+    BlueMatter \
+
+.endif    
+
+.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || defined(TRY_LINUX_BUILD_ANYWAY)
+ALL_SUBDIRS += \
+        db2 \
+  pktools \
+  BlueMatter \
+
+.endif
+
+.if !empty(CONTEXT:Mbgl_cnk_*)
+ALL_SUBDIRS += \
+    gpl \
+    tools \
+    inmemdb \
+    Flash \
+    PkTest \
+    
+.endif
+
+#.if defined(BUILD_PK_TESTS)
+#ALL_SUBDIRS += PkTest
+#.endif
+
+.if defined(DO_MDTEST)
+ALL_SUBDIRS += \
+        mdtest \
+
+.endif
+
+EXPINC_SUBDIRS     = $(ALL_SUBDIRS)
+.if !empty(CONTEXT:Mbgl_cnk_*)
+EXPINC_SUBDIRS += BlueMatter
+.endif
+
+OBJECTS_SUBDIRS    = $(ALL_SUBDIRS)
+EXPLIB_SUBDIRS     = $(ALL_SUBDIRS)
+SUBDIRS            = $(ALL_SUBDIRS)
+CMFPARSE_SUBDIRS   = $(ALL_SUBDIRS)
+RUNPKGTOOL_SUBDIRS = $(ALL_SUBDIRS)
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

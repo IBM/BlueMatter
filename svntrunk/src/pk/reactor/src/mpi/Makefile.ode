@@ -1,0 +1,25 @@
+VPATH = ..
+CCTYPE = mpcppr
+
+#CFLAGS += $(SMPCFLAGS) $(MPICFLAGS)
+CFLAGS +=  $(MPICFLAGS)
+
+OFILES  = \
+	mpi_reactor$(OBJ_SUFF) \
+
+OBJECTS = $(OFILES)
+
+LIBRARIES = $(LIB_PREF)pkmpi_reactor$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+ILIST = $(LIBRARIES) \
+
+IDIR = $(BG_LIB)/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/reactor/src/mpi/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

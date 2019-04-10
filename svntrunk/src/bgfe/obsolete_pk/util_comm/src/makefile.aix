@@ -1,0 +1,33 @@
+#
+#
+CMSCMPDIRVALUE=foxfm/pk
+
+include $(BASE)/makedef.aix
+
+all: objs
+
+
+# These object files go into the relevant libraries.
+# We have single-source-multiple-object, for 'single-thread', 'multi-thread',
+# and 'multi-machine' implementations of the framework.
+
+
+COBJECTS_MPI=$(CMSCMPBLDDIR)/mp/mpi.o
+
+
+$(COBJECTS_MPI): $(*F).cpp
+	$(MPCPPR) $(CCFLAGS) -I $(CMSPRDBLDINCDIR) -I /usr/lpp/ppe.poe/include -D MPI -o $@ $?
+
+
+hdrs:
+
+libs:
+
+bins:
+
+objs: $(COBJECTS_MPI)
+
+
+clean:
+	rm -f $(COBJECTS_MPI)
+

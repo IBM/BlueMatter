@@ -1,0 +1,86 @@
+
+ *** Application Performance Counter Library:
+
+    questions, problems, comments to sextonjc@us.ibm.com
+ 
+
+ *** Files
+
+    bglusr/bin/apc_scan
+        post_process program required to analyse the binary files 
+        which contain raw counter data dumped by the running application.
+
+    bglusr/include/apc.h
+        header file which defines the api (both fortran and C)
+
+    bglusr/lib/libapc.rts.a
+	library providing the apc functions
+
+    bglusr/docs/README.apc
+	this file
+
+
+ *** Usage:
+
+    Fortran Usage:
+  
+    c insert a call to initialise the counter support
+    c this initialisation also automatically starts 
+    c counter set 0 running
+
+        call apc_init()  
+
+    c insert a call to start counting with a new set (set 1) here
+    c this allows one to wrap specific code segments
+
+        call apc_start(1)
+
+    c insert a call to stop counting with set 1
+
+        call apc_stop(1)
+
+    c insert a call in code to shutdown all counters
+    c and dump the counter data to binary files
+
+        call apc_finalize()
+
+    C Usage:
+
+        #include <apc.h>
+
+        ApcInit();
+        ApcStart(1);
+	ApcStop(1);
+	ApcFinalize
+
+    Linking:
+
+	one library is required:  
+            libapc.rts.a 
+
+	-Lpath_to_bglusr/bglusr/lib -lapc.rts 
+
+    Running:
+
+        By default the performance counters are not enabled even when linked in.
+        To enable you must specify the following environment variables:
+
+            APC_ENABLE=yes       required, causes the counters to be enabled
+                                 and generates 
+            APC_SIZE=32          sets counters running on 32 processors
+                                 each processor on which counters are running
+                                 generates a separate file on program completion
+                                 so its helpful to be able to generate counter
+                                 data on only a few processes
+
+    Output:
+
+      On program completion a binary file is generated from each active core
+      for which counters were enabled in the working directory the program
+      was running in.
+
+      These binary files have names like "apc.00000.0" "apc.00001.0", etc
+      and are created in the directory "apcdata"
+
+      To analyse these files, execute the program:  bglusr/bin/apc_scan
+      apc_scan looks for the directory "apcdata" and reads the files there.

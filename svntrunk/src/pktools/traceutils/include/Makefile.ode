@@ -1,0 +1,19 @@
+INCLUDES = \
+        selecttrace.hpp \
+        trcutil.hpp \
+        trcmetadata.hpp \
+	traceaggregate.hpp \
+	thing2hex.hpp \
+
+
+EXPINCDIR = /usr/include/pktools/
+
+IDIR = $(BG_INCLUDE)/pktools/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./pktools/traceutils/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

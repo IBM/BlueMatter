@@ -1,0 +1,13 @@
+OBJECTS = \
+    call_fft1dfr_128$(OBJ_SUFF) \
+
+OFILES = $(OBJECTS)
+
+PROGRAMS = call_fft1dfr$(PROG_SUFF) \
+
+CFLAGS += $(SMPCFLAGS)
+
+EXPLIBDIR = /usr/lib/
+EXPLIBS = $(LIBRARIES)
+
+.include <$(RULES_MK)>

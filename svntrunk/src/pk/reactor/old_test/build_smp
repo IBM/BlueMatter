@@ -1,0 +1,12 @@
+$GFESOURCEROOT/bgfe/build.ksh
+xlC_r \
+-g \
+-DDATAGRAM_SIZE=1024 \
+-DPKFXLOG -DPKFXLOG_ALL \
+-lpthread -DPK_XLC -DPK_AIX -DPK_SMP \
+-I$GFEBUILDROOT/include \
+$1.cpp  \
+$GFESOURCEROOT/bgfe/pk/platform/src/platform.cpp \
+$GFESOURCEROOT/bgfe/pk/fxlogger/src/fxlogger.cpp \
+$GFESOURCEROOT/bgfe/pk/reactor/src/smp_reactor.cpp \
+-o $1.exe

@@ -1,0 +1,18 @@
+EXPINC_SUBDIRS = \
+ include \
+
+OBJECTS_SUBDIRS = \
+ src \
+
+STANDARD_SUBDIRS = $(EXPINC_SUBDIRS) $(OBJECTS_SUBDIRS)
+SUBDIRS = $(EXPINC_SUBDIRS) $(OBJECTS_SUBDIRS)
+
+# the subdirs to traverse for the EXPLIB pass
+EXPLIB_SUBDIRS = $(OBJECTS_SUBDIRS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/regression/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

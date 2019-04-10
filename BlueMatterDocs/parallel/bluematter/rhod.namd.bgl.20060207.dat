@@ -1,0 +1,14 @@
+# NAMD benchmark taken by Maria Eleftheriou using code supplied by Sameer Kumar
+# The NAMD executable is from the release to SDSC and only scales to 4K
+# Environment parameters were not used.  Sameer made the suggestion after the
+# benchmarks were already finished
+# NAMD input file was created with assistance from Alex Balaeff, ctp id 45009
+# rhodopsin 43k system on BG/L
+# column 1: node count
+# column 2: benchmark time/ts (seconds)
+512 	0.0191
+1024 	0.0145
+2048 	0.0137
+4096 	0.01386
+8192 	0.01467
+16384 	0.01443

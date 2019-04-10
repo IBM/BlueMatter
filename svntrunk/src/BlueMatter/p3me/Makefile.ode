@@ -1,0 +1,13 @@
+SUBDIRS = \
+ include \
+ lib \
+ src \
+
+EXPINC_SUBDIRS = include
+EXPLIB_SUBDIRS = lib
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/p3me/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

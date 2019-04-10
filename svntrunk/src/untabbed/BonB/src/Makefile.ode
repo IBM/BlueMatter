@@ -1,0 +1,99 @@
+ILIST = \
+BGLGi.c \
+BGLTreeBcast.c \
+BGLTreeConfigureClass.c \
+BGLTreeGetStatus.c \
+BGLTreeInjCsum.c \
+BGLTreeMakeHdr.c \
+BGLTreeRawReceive.c \
+BGLTreeRawSend.c \
+BGLTreeReceive.c \
+BGLTreeSend.c \
+BGLTreeSetPtpAddress.c \
+bl_cache.S \
+bl_lockbox.S \
+bl_torus_pkt.S \
+blade_on_blrts.c \
+spi_partition.c \
+spi_ts_buffers.c \
+spi_ts_debug.c \
+spi_ts_hints.c \
+spi_ts_mk_hdr.c \
+spi_ts_mk_hdr_class.c \
+spi_ts_recv.c \
+spi_ts_send.c \
+spi_ts_status.c \
+spi_ts_updt_hdr.c \
+fen_makefile \
+fen_makefile.xlc \
+$(LIB_PREF)bonb.rts.a \
+
+IDIR = $(BG_SRC)/pk/bonb/
+
+# If we're cross-compiling, build it !
+.if !empty(CONTEXT:Mbgl_cnk_*)
+
+OBJECTS = \
+blade_on_blrts$(OBJ_SUFF) \
+bl_lockbox$(OBJ_SUFF) \
+bl_cache$(OBJ_SUFF) \
+spi_partition$(OBJ_SUFF) \
+BGLTreeGetStatus$(OBJ_SUFF) \
+BGLTreeInjCsum$(OBJ_SUFF) \
+BGLTreeConfigureClass$(OBJ_SUFF) \
+BGLTreeSetPtpAddress$(OBJ_SUFF) \
+BGLTreeMakeHdr$(OBJ_SUFF) \
+BGLTreeSend$(OBJ_SUFF) \
+BGLTreeReceive$(OBJ_SUFF) \
+BGLTreeBcast$(OBJ_SUFF) \
+bl_torus_pkt$(OBJ_SUFF) \
+bl_light_context_swap$(OBJ_SUFF) \
+spi_ts_buffers$(OBJ_SUFF) \
+spi_ts_status$(OBJ_SUFF) \
+spi_ts_hints$(OBJ_SUFF) \
+spi_ts_mk_hdr$(OBJ_SUFF) \
+spi_ts_mk_hdr_class$(OBJ_SUFF) \
+spi_ts_updt_hdr$(OBJ_SUFF) \
+spi_ts_debug$(OBJ_SUFF) \
+BGLTreeInjCsum$(OBJ_SUFF) \
+spi_ts_recv$(OBJ_SUFF) \
+spi_ts_send$(OBJ_SUFF) \
+BGLTreeRawSend$(OBJ_SUFF) \
+BGLTreeRawReceive$(OBJ_SUFF) \
+
+OFILES = $(OBJECTS)
+
+LIBRARIES = $(LIB_PREF)BonB$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+
+EXPLIBDIR = /usr/lib/
+
+CFLAGS += -+
+
+AFLAGS = -D__ASSEMBLY__
+
+
+.endif
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter//hoodcomms/libblade/spi/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+
+.SUFFIXES: .S
+
+#.S${OBJ_SUFF}:
+#	gcc -E $(_CCFLAGS_) $(AFLAGS) ${.IMPSRC} >${.PREFIX}.s
+#	${_CC_} -c ${_CCFLAGS_} -o ${.TARGET} ${.PREFIX}.s
+#	rm ${.PREFIX}.s
+  
+#CCFAMILY=gnu
+#CFLAGS += -g
+  
+.S.o:
+  echo "$<"
+  $(_CC_) $(_CCFLAGS_) $(AFLAGS) -c -o ${.TARGET} ${.IMPSRC}
+

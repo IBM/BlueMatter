@@ -1,0 +1,137 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void OPLSTorsionForce(
+                        MDVM &aMDVM,
+                        double k,
+                        double sinDelta,
+                        double cosDelta,
+                        int n
+                        )
+  {
+#if !defined(OMIT_BOND_VECTOR_TABLE)
+      XYZ dVec43 = aMDVM.GetVectorN( 2 ) ; 
+      XYZ dVec23 = aMDVM.GetVectorN( 1 ) ; 
+      XYZ dVec12 = aMDVM.GetVectorN( 0 ) ; 
+      
+#else
+  XYZ aSitePosition1 = aMDVM.GetPosition( MDVM::SiteA );
+  XYZ aSitePosition2 = aMDVM.GetPosition( MDVM::SiteB );
+  XYZ aSitePosition3 = aMDVM.GetPosition( MDVM::SiteC );
+  XYZ aSitePosition4 = aMDVM.GetPosition( MDVM::SiteD );
+
+
+  XYZ dVec43 = aSitePosition4 - aSitePosition3,
+    dVec23 = aSitePosition2 - aSitePosition3,
+    dVec12 = aSitePosition1 - aSitePosition2;
+#endif
+    
+  XYZ dVecT = dVec43.crossProduct(dVec23),
+    dVecU = dVec12.crossProduct(dVec23);
+    
+//  double dVecTMag = dVecT.Length(),
+//    dVecUMag = dVecU.Length();
+    double dVecTMag2 = dVecT.LengthSquared() ;
+    double dVecUMag2 = dVecU.LengthSquared() ;
+    double dVec23Mag2 = dVec23.LengthSquared() ;
+    double dVecTMagR = 1.0 / sqrt(dVecTMag2) ;
+    double dVecUMagR = 1.0 / sqrt(dVecUMag2) ;
+    double dVec23MagR = 1.0 / sqrt(dVec23Mag2) ;
+
+  // collinear situation
+  // if (Heuristics::IsVectorLengthZero(dVecTMag) || Heuristics::IsVectorLengthZero(dVecUMag))
+  //  return;
+  if (Heuristics::IsVectorSquareLengthZero(dVecTMag2)
+    || Heuristics::IsVectorSquareLengthZero(dVecUMag2))
+    return;
+
+// XYZ dVec23Unit = dVec23/sqrt(sqr(dVec23)),
+//   dVecTUnit = dVecT/dVecTMag,
+//   dVecUUnit = dVecU/dVecUMag;
+// XYZ gradientPhiOverdVecT =
+//   1.0/sqr(dVecT)*(dVecT.crossProduct(dVec23Unit)),
+//   gradientPhiOverdVecU =
+//   -1.0/sqr(dVecU)*(dVecU.crossProduct(dVec23Unit));
+
+  XYZ dVec23Unit = dVec23*dVec23MagR,
+    dVecTUnit = dVecT*dVecTMagR,
+    dVecUUnit = dVecU*dVecUMagR;
+  XYZ gradientPhiOverdVecT =
+    dVecTMagR*dVecTMagR*(dVecT.crossProduct(dVec23Unit)),
+    gradientPhiOverdVecU =
+    -1.0*dVecUMagR*dVecUMagR*(dVecU.crossProduct(dVec23Unit));
+
+  XYZ gradientPhiOverAP4 =
+    -gradientPhiOverdVecT.crossProduct(dVec23),
+
+    gradientPhiOverAP3 =
+    gradientPhiOverdVecT.crossProduct(dVec23 - dVec43) -
+    gradientPhiOverdVecU.crossProduct(dVec12),
+
+    gradientPhiOverAP2 =
+    gradientPhiOverdVecT.crossProduct(dVec43) +
+    gradientPhiOverdVecU.crossProduct(dVec23 + dVec12),
+
+    gradientPhiOverAP1 = -(gradientPhiOverAP4 + gradientPhiOverAP3
+                           + gradientPhiOverAP2);
+
+    double cosPhi = dVecTUnit*dVecUUnit,
+      sinPhi = -dVec23Unit*(dVecUUnit.crossProduct(dVecTUnit));
+    double DEnergyOverDPhi;
+        double aTorsionEnergy = 0.0;
+    // split the following part into different functions. get rid of the switch block...
+    switch (n)
+      {
+      case 0:
+        aTorsionEnergy = k;
+        DEnergyOverDPhi = 0.0;
+                break;
+      case 1:
+        aTorsionEnergy = (0.50*k)*(1 + cosDelta*cosPhi + sinDelta*sinPhi);
+        DEnergyOverDPhi = (0.50*k)*(-cosDelta*sinPhi + sinDelta*cosPhi);
+        break;
+      case 2:
+        aTorsionEnergy = (0.50*k)*(1 + cosDelta*(2.0*sqr(cosPhi)-1) + 2.0*sinDelta*sinPhi*cosPhi);
+        DEnergyOverDPhi = 2.0*(0.50*k)*(-2.0*cosDelta*cosPhi*sinPhi + sinDelta*(2.0*sqr(cosPhi)-1));
+        break;
+      case 3:
+        aTorsionEnergy = (0.50*k)*(1 + cosDelta*(4.0*cube(cosPhi) - 3.0*cosPhi) + sinDelta*(4.0*sqr(cosPhi)-1)*sinPhi);
+        DEnergyOverDPhi = 3.0*(0.50*k)*(-cosDelta*(4.0*sqr(cosPhi)-1)*sinPhi + 4.0*sinDelta*cosPhi*(cosPhi-1));
+        break;
+      case 4:
+        aTorsionEnergy = (0.50*k)*(1 + cosDelta*(8.0*sqr(sqr(cosPhi))-8.0*sqr(cosPhi)+1) + sinDelta*4.0*(2.0*cube(cosPhi)-cosPhi)*sinPhi);
+        DEnergyOverDPhi = 4.0*(0.50*k)*(-cosDelta*(8.0*cube(cosPhi)-4.0*cosPhi)*sinPhi - sinDelta*(8.0*sqr(cosPhi)-8.0*sqr(sqr(cosPhi))-1));
+        break;
+      case 6:
+        aTorsionEnergy = (0.50*k)*(1+cosDelta*(32*sqr(cube(cosPhi)) - 48*sqr(sqr(cosPhi)) + 18*sqr(cosPhi) -1) + sinDelta*(32*sinPhi*sqr(cosPhi)*cube(cosPhi) - 32*cube(cosPhi)*sinPhi + 6*cosPhi*sinPhi));
+        DEnergyOverDPhi = 6.0*(0.50*k)*(cosDelta*(-32*sqr(cosPhi)*cube(cosPhi)*sinPhi + 32*cube(cosPhi)*sinPhi - 6*cosPhi*sinPhi) + sinDelta*(32*sqr(cube(cosPhi)) - 48*sqr(sqr(cosPhi)) + 18*sqr(cosPhi) - 1));
+        break;
+
+      default:
+        assert(0);
+        break;
+      }
+
+      aMDVM.ReportEnergy( aTorsionEnergy );
+
+      aMDVM.ReportForce( MDVM::SiteA ,  -DEnergyOverDPhi*gradientPhiOverAP1 ) ;
+      aMDVM.ReportForce( MDVM::SiteB ,  -DEnergyOverDPhi*gradientPhiOverAP2 ) ;
+      aMDVM.ReportForce( MDVM::SiteC ,  -DEnergyOverDPhi*gradientPhiOverAP3 ) ;
+      aMDVM.ReportForce( MDVM::SiteD ,  -DEnergyOverDPhi*gradientPhiOverAP4 ) ;
+}

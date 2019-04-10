@@ -1,0 +1,40 @@
+VPATH = ..
+
+CFLAGS += $(MPICFLAGS) $(SMPCFLAGS)
+#CFLAGS = -qnolm \
+#	-O3 \
+#	-qsource \
+#	-qarch=ppcgr \
+#	-qtune=pwr3 \
+#	-qlist \
+#	-DNDEBUG \
+#	-DPK_XLC -DPK_AIX -DPK_MPI -DPK_SMP \
+#	-qmaxmem=-1 
+
+CCTYPE = mpcppr
+
+OFILES  = \
+	platform$(OBJ_SUFF) \
+	sqrt_wrap$(OBJ_SUFF) \
+
+
+OBJECTS = $(OFILES)
+# This way we get an inlined version, but only runs on ppc-type machines
+sqrt_wrap.o_CFLAGS =  -O3 -qarch=ppcgr
+
+
+LIBRARIES = $(LIB_PREF)pkmpi_platform$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+ILIST = $(LIBRARIES) \
+
+IDIR = $(BG_LIB)/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/platform/src/mpi/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

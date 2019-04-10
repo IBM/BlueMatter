@@ -1,0 +1,88 @@
+#
+# Build the sample kernels in ODE context
+#
+#
+VPATH = ..:../../kerngen:../../kerngen/1aml:../../kerngen/hiv
+
+OBJECTS = enkp.respa$(OBJ_SUFF)               \
+#         1aml_nowat$(OBJ_SUFF)               \
+	  hiv.opls$(OBJ_SUFF)                 \
+	  hairpin_water.opls$(OBJ_SUFF)  \
+	  hairpin_38a.spc.opls$(OBJ_SUFF)  \
+	  id10482$(OBJ_SUFF)                   \
+	  mikelipid(OBJ_SUFF)                   \
+	  wat_2.tip3.charmm$(OBJ_SUFF) \
+
+PROGRAMS = enkp.respa$(PROG_SUFF)             \
+#          1aml_nowat$(PROG_SUFF)             \
+	   hiv.opls$(PROG_SUFF)               \
+	  hairpin_water.opls$(PROG_SUFF)  \
+	  id10482$(PROG_SUFF)                   \
+	  hairpin_38a.spc.opls$(PROG_SUFF)  \
+	  wat_2.tip3.charmm$(PROG_SUFF) \
+
+
+CFLAGS += \
+-DBLAKE \
+-DIFP_HAND_UNROLL_LOOP \
+-DIFP_USE_ALT_EXECUTE \
+-DNDEBUG \
+-DNSQ_SINGLE_COMPUTE \
+-DPERFORMANCE_BETTER_VECTOR \
+-DPERFORMANCE_ERFC_VIA_ESTIMATE \
+-DPERFORMANCE_EXCLUSION_SCALE \
+-DPERFORMANCE_EXCLUSION_SCALE_INIT \
+-DPERFORMANCE_EXCLUSION_SCALE_PREP \
+-DPERFORMANCE_EXPLOIT_FULLY_ON \
+-DPERFORMANCE_LOWER_CUTOFF \
+-DPERFORMANCE_NO_NBVM_SIMTICK \
+-DPERFORMANCE_PERIODIC_IMAGE \
+-DPERFORMANCE_PRECOMPUTE_RANGE \
+-DPERFORMANCE_PRECOMPUTE_RANGE_I \
+-DPERFORMANCE_RECORD_A_ONLY \
+-DPERFORMANCE_SUPPRESS_NBVM_SITES \
+-DPERFORMANCE_SWITCH \
+-DPERFORMANCE_UPPER_CUTOFF \
+-DPERFORMANCE_VECTOR_NBVM \
+-DPERFORMANCE_VECTOR_PRIME \
+-DPERFORMANCE_WATER_WATER \
+-DSITE_SITE_CUTOFF \
+-DWATER_WATER_CUTOFF \
+-qdebug=ebbpass1:ebbpass2 \
+-qdebug=ebbsch1:ebbsch2 \
+-qdebug=except \
+-qdebug=fileid \
+-qdebug=inl:inl24 \
+-qdebug=maxgridiculous:sqrtextra:regpres \
+-qdebug=modcst2 \
+-qdebug=modcst5 \
+-qdebug=modcst10 \
+-qdebug=modcst25 \
+-qdebug=modcst99 \
+-qdebug=newsched1:newsched2 \
+-qdebug=nhwspilmv \
+-qdebug=plst3:cycles \
+-qdebug=plst3:cycles \
+-qdebug=traceinline:instats \
+-qlist -qdebug=fileid \
+-qnounwind \
+-qshowinc \
+-qsource \
+-qstaticinline \
+-qxflag=fileid \
+$(SMPCFLAGS) \
+
+
+#-qsource \
+#-qshowinc \
+
+#-qdebug=inldiff \
+#-qdebug=inlbigger \
+#-DPERFORMANCE_EXCLUSION_SCALE \
+#-DIFP_STATIC_STORAGE_FOR_VECTOR \
+#-DIFP_USE_NEW_EXECUTE \
+
+
+LIBS = $(MDLIBS) $(PKSMPLIBS)
+
+.include <$(RULES_MK)>

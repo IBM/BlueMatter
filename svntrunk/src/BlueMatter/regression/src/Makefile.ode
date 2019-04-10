@@ -1,0 +1,110 @@
+#
+#
+BG_AUXILIARY=REGRESSION
+# the object files (as targets)
+.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || defined(TRY_LINUX_BUILD_ANYWAY)
+
+   REGUTIL_OBJ = \
+        regressionutils${OBJ_SUFF} \
+	tolerance${OBJ_SUFF} \
+
+   FORCEREG_OBJ = \
+	forceregression${OBJ_SUFF} \
+
+   TRC2REG_OBJ = \
+	trc2regression${OBJ_SUFF} \
+
+   REGDUMP_OBJ = \
+	regDump${OBJ_SUFF} \
+
+   SUMSTATS_OBJ = \
+	sumstats${OBJ_SUFF} \
+
+
+.else
+
+   REGUTIL_OBJ = 
+
+   FORCEREG_OBJ = 
+
+   TRC2REG_OBJ = 
+
+   REGDUMP_OBJ =
+
+   SUMSTATS_OBJ = 
+
+.endif
+
+trc2regression${PROG_SUFF}_LDFLAGS += \
+	-L/usr/local/lib${OBJECT_MODE} -lbz2 -lz -lxstream \
+
+regDump${PROG_SUFF}_LDFLAGS += \
+	-L/usr/local/lib${OBJECT_MODE} -lbz2 -lz -lxstream \
+
+forceregression${PROG_SUFF}_LDFLAGS += \
+	-L/usr/local/lib${OBJECT_MODE} -lbz2 -lz -lxstream \
+
+sumstats${PROG_SUFF}_LDFLAGS += \
+	-L/usr/local/lib${OBJECT_MODE} \
+
+
+OFILES += \
+	$(REGUTIL_OBJ) \
+	$(FORCEREG_OBJ) \
+	$(TRC2REG_OBJ) \
+	$(REGDUMP_OBJ) \
+	${SUMSTATS_OBJ} \
+
+
+EXPINCDIR = /usr/include/BlueMatter/
+
+OBJECTS = $(OFILES)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+CFLAGS += $(SMPCFLAGS)
+
+CFLAGS += -I/usr/local/include
+
+#.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || defined(TRY_LINUX_BUILD_ANYWAY)
+
+forceregression${PROG_SUFF}_OFILES = \
+	$(FORCEREG_OBJ) \
+	$(REGUTIL_OBJ) \
+
+trc2regression${PROG_SUFF}_OFILES = \
+	$(TRC2REG_OBJ) \
+	$(REGUTIL_OBJ) \
+
+regDump${PROG_SUFF}_OFILES = \
+	$(REGDUMP_OBJ) \
+	$(REGUTIL_OBJ) \
+
+sumstats${PROG_SUFF}_OFILES = \
+	${SUMSTATS_OBJ} \
+
+
+PROGRAMS = \
+	forceregression${PROG_SUFF} \
+	trc2regression$(PROG_SUFF) \
+	regDump$(PROG_SUFF) \
+	sumstats${PROG_SUFF} \
+
+
+ILIST += forceregression${PROG_SUFF} \
+
+ILIST += trc2regression${PROG_SUFF} \
+
+ILIST += regDump$(PROG_SUFF) \
+
+ILIST += sumstats${PROG_SUFF} \
+
+
+forceregression${PROG_SUFF}_IDIR = $(BG_BIN)/analysis/
+trc2regression${PROG_SUFF}_IDIR = $(BG_BIN)/analysis/
+regDump$(PROG_SUFF)_IDIR = $(BG_BIN)/analysis/
+sumstats$(PROG_SUFF)_IDIR = $(BG_BIN)/analysis/
+#.endif
+
+.include <$(RULES_MK)>

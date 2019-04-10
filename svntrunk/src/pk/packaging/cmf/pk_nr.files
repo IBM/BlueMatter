@@ -1,0 +1,2 @@
+PACKAGE_FILE(include/pk,sincos.hpp) /* Numerical Recipies */
+PACKAGE_FILE(src/pk,platform.cpp) /* Numerical Recipies */

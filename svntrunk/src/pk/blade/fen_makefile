@@ -1,0 +1,117 @@
+
+# ------------------------------------------------------------- #
+# Product(s):                                                   #
+# 5733-BG1                                                      #
+#                                                               #
+# (C)Copyright IBM Corp. 2004, 2004                             #
+# All rights reserved.                                          #
+# US Government Users Restricted Rights -                       #
+# Use, duplication or disclosure restricted                     #
+# by GSA ADP Schedule Contract with IBM Corp.                   #
+#                                                               #
+# Licensed Materials-Property of IBM                            #
+# ------------------------------------------------------------- #
+
+BL_FLOOR = /bgl/BlueLight/ppcfloor
+BL_INSTALL = /bgl/BlueLight/ppcfloor
+
+BGL_HOME_DIR = /bgwhome1/bgf/bonb
+
+#BGLDEVICES=/bgl/giampap/bglsw_20050317/src/bglsw/devices
+BGLDEVICES=/bgl/BlueLight/ppcfloor/bglsys/include
+
+#
+# The following variables, if non-blank, must end in a '/'.
+#
+BLADE_SRCDIR=./
+BLADE_OBJDIR=./
+BLADE_SPIDIR=./spi/
+
+COPY    = /bin/cp -p
+RM      = /bin/rm -f
+#CC      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-gcc
+CC      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-g++
+AR      = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ar
+RANLIB  = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-ranlib
+OBJDUMP = $(BL_FLOOR)/blrts-gnu/bin/powerpc-bgl-blrts-gnu-objdump -D -f -h -l
+
+CFLAGS = -Wall -O2 -g -I./include -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES) -I../../../../export/rios_aix_5/usr/include/
+#CFLAGS = -Wall -O3 -DNDEBUG -I./include -I$(BL_INSTALL)/bglsys/include -I$(BGLDEVICES)
+AFLAGS = -D__ASSEMBLY__
+
+LIBS_RTS = -L$(BL_INSTALL)/bglsys/lib -L$(BLADE_SPIDIR) -lblade_spi.rts -ldevices.rts -lrts.rts -ldevices.rts -lrts.rts
+
+
+.SUFFIXES: .S .c .cpp .o .a
+
+.S.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $(AFLAGS) $< -o $*.o
+
+.c.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $< -o $*.o
+
+.cpp.o:
+	@echo "$<"
+	@$(CC) $(CFLAGS) $< -o $*.o
+
+
+
+#
+# Default Target for this Makefile is to build the SPI Library.
+#
+#all:	treehood.rts ThrobbinHood.rts
+
+all:	ThrobbinHood.rts
+
+
+treehood.rts:	treehood.cpp
+		$(CC) $(CFLAGS) treehood.cpp -o treehood.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) treehood.rts > treehood.objdump
+
+packetalltoall_driver.rts:	packetalltoall_driver.cpp
+		$(CC) $(CFLAGS) packetalltoall_driver.cpp -o packetalltoall_driver.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) packetalltoall_driver.rts > packetalltoall_driver.objdump
+
+fft_comm_alltoallv.rts:	fft_comm_alltoallv.cpp
+		$(CC) $(CFLAGS) fft_comm_alltoallv.cpp -o fft_comm_alltoallv.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) fft_comm_alltoallv.rts > fft_comm_alltoallv.objdump
+
+coprocessor_on_vnm.rts:	coprocessor_on_vnm.cpp
+		$(CC) $(CFLAGS) coprocessor_on_vnm.cpp -o coprocessor_on_vnm.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) coprocessor_on_vnm.rts > coprocessor_on_vnm.objdump
+
+tree_reduce.rts:	tree_reduce.cpp
+		$(CC) $(CFLAGS) tree_reduce.cpp -o tree_reduce.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) tree_reduce.rts > tree_reduce.objdump
+
+ThrobbinHood.rts:	ThrobbinHood.cpp
+		$(CC) $(CFLAGS) ThrobbinHood.cpp -o ThrobbinHood.rts -lc $(LIBS_RTS)
+		$(OBJDUMP) ThrobbinHood.rts > ThrobbinHood.objdump
+
+clean::
+	@echo "Cleaning `basename $$PWD`"
+	@-$(RM) *.rts *.o *.listing
+
+
+distclean:	clean
+	@echo "Dist-cleaning `basename $$PWD`"
+	@-$(RM) ./Make.depend
+
+
+depend::
+	@echo "Making dependencies for `basename $$PWD`"
+	@-$(RM) ./Make.depend
+	@$(CC) -M $(CFLAGS) treehood.cpp ThrobbinHood.cpp > ./Make.depend
+
+
+fresh::	distclean all
+
+install::
+	@echo "Copying files to $(BGL_HOME_DIR)"
+	@$(COPY) ThrobbinHood.rts $(BGL_HOME_DIR)
+
+
+-include ./Make.depend
+

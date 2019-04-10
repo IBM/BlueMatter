@@ -1,0 +1,4 @@
+OFILES		= <program_name>${OBJ_SUFF}
+PROGRAMS	= <program_name>${PROG_SUFF}
+.include <${RULES_MK}>
+

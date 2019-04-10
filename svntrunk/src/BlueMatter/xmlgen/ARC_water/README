@@ -1,0 +1,11 @@
+
+Files to generate xml, dvs for a match to the ARC water fortran code
+
+uses standard ARC water code TIP3P params
+
+lwc2xml_dev.pl <numwat> <xmlfile>
+
+lwc2dvs.pl <prtfile> <dvsfile>
+
+works, imports OK.
+

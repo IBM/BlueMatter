@@ -1,0 +1,16 @@
+SUBDIRS = \
+ include \
+ src \
+
+EXPINC_SUBDIRS = \
+        include \
+
+OBJECTS_SUBDIRS = \
+	src
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/util_test/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

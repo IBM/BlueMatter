@@ -1,0 +1,20 @@
+LIBS    =       $(PKMPILIBS)
+
+CFLAGS += $(MPICFLAGS) $(SMPCFLAGS)
+
+OFILES         = \
+	hello$(OBJ_SUFF)
+
+PROGRAMS        = \
+	hello$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/kernels/twocore/
+
+ILIST   =       $(PROGRAMS)
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/ivt/twocore/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

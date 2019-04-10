@@ -1,0 +1,22 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  blinuxmp \
+  blinuxsmp \
+  dgchan.cpp \
+  dgchan.hpp \
+  dglink.cpp \
+  dglink.hpp \
+  dgq.hpp \
+  qmpi.cpp \
+  Makefile.ode
+blinuxmp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+blinuxsmp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+dgchan.cpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+dgchan.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+dglink.cpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+dglink.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+dgq.hpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+qmpi.cpp_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/queues/dev/source_ship/
+.include <$(RULES_MK)>

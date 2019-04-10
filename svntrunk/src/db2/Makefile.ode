@@ -1,0 +1,23 @@
+BG_AUXILIARY = 1
+
+EXPINC_SUBDIRS = \
+ include \
+
+EXPLIB_SUBDIRS = \
+ src \
+
+OBJECTS_SUBDIRS = \
+ src \
+ 
+CMFPARSE_SUBDIRS = packaging
+
+SUBDIRS = \
+     $(EXPINC_SUBDIRS) \
+     $(OBJECTS_SUBDIRS) \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./db2/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

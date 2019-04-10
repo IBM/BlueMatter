@@ -1,0 +1,36 @@
+cd control
+build -a -k -j4
+cd ../dynvarmgr
+build -a -k -j4
+cd ../fpexploit
+build -a -k -j4
+cd ../fragment
+build -a -k -j4
+cd ../geometry
+build -a -k -j4
+cd ../io
+build -a -k -j4
+cd ../monitor
+build -a -k -j4
+cd ../random
+build -a -k -j4
+cd ../udf
+build -a -k -j4
+cd ../p3me
+build -a -k -j4
+cd ../util
+build -a -k -j4
+cd ../plimpton
+build -a -k -j4
+cd ../mdvm
+build -a -k -j4
+cd ../analysis
+build -a -k -j4
+cd ../probspecdb2
+build build_all -k
+cd ../molsysdef
+build -a -k -j4
+cd ../kerngen
+build
+cd ../..
+build install_all -k

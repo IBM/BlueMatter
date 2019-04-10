@@ -1,0 +1,73 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UpdatePositionNPT( 
+        MDVM &aMDVM
+        )
+{
+    //
+    // again, operates on all sites of a fragment thisFragment
+    // updates particle positions to T+dT
+    //
+    // first update COM position of the fragment
+
+    const double dt   = aMDVM.GetDeltaT();
+    const XYZ    vCOM = aMDVM.GetCenterOfMassVelocity();
+    const XYZ    pCOM = aMDVM.GetCenterOfMassPosition();
+
+#ifndef NOT_TIME_REVERSIBLE
+
+    const double expfactor = aMDVM.GetExpVolumeVelocityRatio();
+
+    XYZ new_pCOM;
+
+    new_pCOM = expfactor * pCOM + 0.5 * dt * ( expfactor + 1.0 ) * vCOM;
+
+#else
+
+    const XYZ length_ratio   = aMDVM.GetVolumeRatio();
+
+    XYZ new_pCOM;
+    // new_pCOM.mX = length_ratio.mX * pCOM.mX + dt * vCOM.mX;
+    // new_pCOM.mY = length_ratio.mY * pCOM.mY + dt * vCOM.mY;
+    // new_pCOM.mZ = length_ratio.mZ * pCOM.mZ + dt * vCOM.mZ;
+
+    // for now scale equally by x-dimension ratio
+    new_pCOM = length_ratio.mX * pCOM + dt * vCOM;
+
+#endif
+
+    aMDVM.ReportCenterOfMassPosition( new_pCOM );
+
+    //
+    // loop over sites in this irreducible fragment
+    //
+
+    for( int SiteIndex = 0; SiteIndex < aMDVM.GetFragmentSiteCount(); SiteIndex++ )
+    {
+        XYZ vSite  = aMDVM.GetVelocity( SiteIndex );
+        XYZ pSite  = aMDVM.GetPosition( SiteIndex );
+
+        XYZ new_pSite = (pSite - pCOM) + new_pCOM + dt * vSite;
+
+        aMDVM.ReportPosition( SiteIndex, new_pSite );
+    }
+
+    return;
+}

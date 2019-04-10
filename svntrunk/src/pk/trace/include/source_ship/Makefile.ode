@@ -1,0 +1,16 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  makefile.aix \
+  pktrace.hpp \
+  pktrace_aix_ras.hpp \
+  pktrace_pk.hpp \
+  trace_control.hpp \
+  Makefile.ode
+makefile.aix_IDIR = $(BG_SRC)/bgfe/pk/trace/include/
+pktrace.hpp_IDIR = $(BG_SRC)/bgfe/pk/trace/include/
+pktrace_aix_ras.hpp_IDIR = $(BG_SRC)/bgfe/pk/trace/include/
+pktrace_pk.hpp_IDIR = $(BG_SRC)/bgfe/pk/trace/include/
+trace_control.hpp_IDIR = $(BG_SRC)/bgfe/pk/trace/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/trace/include/source_ship/
+.include <$(RULES_MK)>

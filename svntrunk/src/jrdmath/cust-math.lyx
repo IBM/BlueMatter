@@ -1,0 +1,9540 @@
+#LyX 1.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 221
+\textclass report
+\language english
+\inputencoding auto
+\fontscheme default
+\graphics default
+\paperfontsize default
+\spacing single 
+\papersize Default
+\paperpackage a4
+\use_geometry 0
+\use_amsmath 0
+\use_natbib 0
+\use_numerical_citations 0
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\quotes_times 2
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+
+\layout Standard
+
+
+\begin_inset FormulaMacro 
+\newcommand{\erfc}{\mathop{\mathrm{{erfc}}}}
+\end_inset 
+
+
+\layout Title
+
+Custom Math Functions for Molecular Dynamics
+\layout Author
+
+Robert Enenkel 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ Blake Fitch 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ Bob Germain 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+Fred Gustavson 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+Allan Martin 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+Mark Mendell 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+Jed Pitera 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ Mike Pitman 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ Alex Rayshubski 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+Frank Suits 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ Bill Swope 
+\begin_inset ERT
+status Collapsed
+
+\layout Standard
+
+\backslash 
+and 
+\end_inset 
+
+ T J Chris Ward
+\layout Standard
+
+IBM T J Watson Research Centre, Yorktown Heights, New York
+\layout Standard
+
+(c) Copyright IBM Corp.
+ 2006.
+ CPL
+\layout Abstract
+
+While developing the protein folding application for IBM's BlueGene/L supercompu
+ter, some frequently-executed computational kernels were encountered.
+ These were significantly more complex than the linear algebra kernels that
+ are normally provided as tuned libraries with modern machines.
+ Using regular library functions for these would have resulted in an application
+ which exploited only 5-10% of the potential floating-point throughput of
+ the machine.
+\layout Abstract
+
+This is a tour of the functions encountered; they have been expressed in
+ C++ (and could be expressed in other languages such as Fortran or C); with
+ the help of a good optimising compiler, floating-point efficiency is much
+ closer to 100%.
+\layout Abstract
+
+The implementations are offered in the hope that they may help in other
+ implementations of Molecular Dynamics; in other fields of endeavour; and
+ in the hope that others may adapt the ideas presented here to deliver additiona
+l mathematical functions at high throughput.
+\layout Standard
+
+
+\begin_inset LatexCommand \tableofcontents{}
+
+\end_inset 
+
+
+\layout Section
+
+Custom Math Functions
+\layout Subsection
+
+Vectorisable Math Functions
+\layout Standard
+
+The IBM XLC compiler can schedule instructions flexibly within a basic block,
+ that is, a sequence of code with no conditional branches.
+\layout Standard
+
+This document explains how to exploit this for functions commonly used in
+ Molecular Dynamics; if you can enable the compiler to see enough independent
+ work, it will schedule instructions to avoid stalls in the floating-point
+ execution pipeline; and the hardware will run at a high fraction of peak
+ throughput.
+\layout Standard
+
+To exploit this, it is generally necessary to avoid special cases and error
+ handling; all of these math functions will return a scalar result, will
+ not set errno, and will not signal a NaN in any useful way.
+ They can be wrapped to produce conventional results for out-of-domain cases;
+ for example to produce NaN for 
+\begin_inset Formula $\log(-1)$
+\end_inset 
+
+; but for Molecular Dynamics we are generally confident that they will not
+ be asked to process out-of-domain cases, and so the extra computation involved
+ in getting conventional answers might best be skipped.
+\layout Standard
+
+One way to let the compiler see independent work is to write it explicitly
+ in the source code.
+ Another way is to enclose the basic block in a counted loop and verify
+ that the compiler can see that loop iterations are independent; then the
+ compiler will apply loop transformation optimisations such as unrolling
+ and modulo scheduling to construct the appropriate work itself.
+\layout Subsection
+
+Vectorisable log
+\layout Standard
+
+log is vectorised by appreciating that a floating-point number is represented
+ as an exponent and a mantissa; i.e.
+ as 
+\begin_inset Formula $m\times2^{k}$
+\end_inset 
+
+, for some 
+\begin_inset Formula $m$
+\end_inset 
+
+ in 
+\begin_inset Formula $[1.0,2.0)$
+\end_inset 
+
+ and for integer 
+\begin_inset Formula $k$
+\end_inset 
+
+,
+\layout Standard
+
+
+\begin_inset Formula \[
+\ln(m\times2^{k})=\ln(m)+\ln(2^{k})\]
+
+\end_inset 
+
+
+\layout Standard
+
+The approximation is produced as three terms, which are added together to
+ give the result.
+\layout Standard
+
+
+\begin_inset Formula $k$
+\end_inset 
+
+ is extracted as the exponent part of the argument, giving the first term
+ of the result as 
+\begin_inset Formula $k\times\ln(2)$
+\end_inset 
+
+
+\layout Standard
+
+m is expressed as 
+\begin_inset Formula $m0\times m1$
+\end_inset 
+
+, where 
+\begin_inset Formula $m0$
+\end_inset 
+
+ is 
+\begin_inset Formula $1+\frac{a}{16}$
+\end_inset 
+
+ for integer 
+\begin_inset Formula $a$
+\end_inset 
+
+ in 
+\begin_inset Formula $(0,15)$
+\end_inset 
+
+, and 
+\begin_inset Formula $m1$
+\end_inset 
+
+ is 
+\begin_inset Formula $\frac{m}{1+\frac{a}{16}}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula $a$
+\end_inset 
+
+ is determined by extracting the first 4 bits after the binary point from
+ 
+\begin_inset Formula $m$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula $\frac{1}{1+\frac{a}{16}}$
+\end_inset 
+
+ is looked up in a 16-element table; and this gives a value for 
+\begin_inset Formula $m1$
+\end_inset 
+
+ roughly between 
+\begin_inset Formula $1$
+\end_inset 
+
+ and 
+\begin_inset Formula $1+\frac{1}{16}$
+\end_inset 
+
+ .
+\layout Standard
+
+The second term of the result is 
+\begin_inset Formula $\ln(m0)$
+\end_inset 
+
+ , which comes from another 16-element table.
+\layout Standard
+
+The third term of the result comes from a Taylor series for 
+\begin_inset Formula $\ln(1+x)$
+\end_inset 
+
+; this converges quite rapidly for 
+\begin_inset Formula $x<\frac{1}{16}$
+\end_inset 
+
+.
+\layout Standard
+
+The full result is then
+\layout Standard
+
+
+\begin_inset Formula \[
+\ln(a)\simeq k\times\ln(2)+\mathop{\mathrm{{Lookup}}}(a)+\mathop{\mathrm{{TaylorSeries}}}(x)\]
+
+\end_inset 
+
+
+\layout Standard
+
+An improvement comes from a slight modification, where 
+\begin_inset Formula $m1$
+\end_inset 
+
+ is arranged to be in the domain 
+\begin_inset Formula $[1-\frac{1}{32},1+\frac{1}{32})$
+\end_inset 
+
+, and so the Taylor series is used for 
+\begin_inset Formula $|x|<\frac{1}{32}$
+\end_inset 
+
+.
+\layout Subsection
+
+Vectorisable exp
+\layout Standard
+
+
+\begin_inset Formula $\exp$
+\end_inset 
+
+ is vectorised by appreciating that 
+\begin_inset Formula \[
+\exp(a0+a1+a2+a3)=\exp(a0)\times\exp(a1)\times\exp(a2)\times\exp(a3)\]
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Formula $a0$
+\end_inset 
+
+ is extracted as the integer part of the argument.
+ 
+\begin_inset Formula $a1$
+\end_inset 
+
+ is the next 4 bits; 
+\begin_inset Formula $a2$
+\end_inset 
+
+ is the subsequent 4 bits; and 
+\begin_inset Formula $a3$
+\end_inset 
+
+ is the remaining bits.
+ 
+\begin_inset Formula $a3$
+\end_inset 
+
+ is a number between 
+\begin_inset Formula $0$
+\end_inset 
+
+ and 
+\begin_inset Formula $\frac{1}{256}$
+\end_inset 
+
+.
+\layout Standard
+
+
+\begin_inset Formula $a0$
+\end_inset 
+
+ is shifted in to the exponent of the resulting floating-point number.
+ 
+\begin_inset Formula $\exp(a1)$
+\end_inset 
+
+ and 
+\begin_inset Formula $\exp(a2)$
+\end_inset 
+
+ are looked up in 16-element tables.
+ 
+\begin_inset Formula $\exp(a3)$
+\end_inset 
+
+ is estimated by a Taylor series, which converges quite rapidly for 
+\begin_inset Formula $0<a3<\frac{1}{256}$
+\end_inset 
+
+.
+\layout Standard
+
+Again an improvement comes from a slight modification, setting a3 in the
+ domain 
+\begin_inset Formula $[-\frac{1}{512},+\frac{1}{512})$
+\end_inset 
+
+.
+\layout Standard
+
+IBM PowerPC hardware supports a floating-point select instruction, which
+ performs the equivalent of
+\layout LyX-Code
+
+double fsel(double a,double b, double c)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+  if (a>=0.0) return b ; return c
+\layout LyX-Code
+
+}
+\layout Standard
+
+as a single hardware instruction.
+ This can be used to arrange that 
+\begin_inset Formula $\exp(x)$
+\end_inset 
+
+ returns 
+\begin_inset Formula $0$
+\end_inset 
+
+ for a sufficiently-large negative argument,and Inf for a sufficiently-large
+ positive argument, without causing a branch in the generated code.
+\layout Subsection
+
+Vectorisable erf/erfc - Piecewise Chebyshev
+\layout Standard
+
+Traditionally in molecular dynamics codes, erfc(x) has been approximated
+ by the formula in 
+\begin_inset LatexCommand \cite[Abramowitz and Stegun]{key-1}
+
+\end_inset 
+
+
+\layout Standard
+
+
+\begin_inset Graphics
+	filename absteg-erf.png
+	scale 50
+	keepAspectRatio
+
+\end_inset 
+
+
+\layout LyX-Code
+
+\layout Standard
+
+Vectorisable 
+\begin_inset Formula $\exp(x)$
+\end_inset 
+
+ can be used to form vectorisable erfc in the obvious way; but there is
+ an alternative which can be used to form a more accurate result.
+ A more accurate result is desirable in Molecular Dynamics because it should
+ give better energy conservation for a given time-step size; or alternatively
+ will allow a larger time-step size before numerical instability sets in.
+\layout Standard
+
+The reciprocal required above is a special case; for molecular dynamics
+ codes, the dividend will be in the single-precision range, and there is
+ no point returning a result much more accurate than the 1 part in 
+\begin_inset Formula $10^{5}$
+\end_inset 
+
+of the complete approximation.
+ This leads to a faster expression of reciprocal than the hardware double-precis
+ion divide will give; more on this later.
+\layout Standard
+
+For molecular dynamics, we are interested in erfc to support electrostatics,
+ erfc(x) for a limited domain of x, typically 
+\begin_inset Formula $(-4,4)$
+\end_inset 
+
+.
+\layout Standard
+
+We partition the domain into equal-sized sub-domains, say 
+\begin_inset Formula $[-4,-3)$
+\end_inset 
+
+,
+\begin_inset Formula $[-3,-2)$
+\end_inset 
+
+ , ..
+ , 
+\begin_inset Formula $[3,4)$
+\end_inset 
+
+.
+ Represent 
+\begin_inset Formula $x$
+\end_inset 
+
+ as 
+\begin_inset Formula $x0+x1$
+\end_inset 
+
+, where 
+\begin_inset Formula $x1$
+\end_inset 
+
+ is in 
+\begin_inset Formula $[-0.5,0.5)$
+\end_inset 
+
+ and 
+\begin_inset Formula $x0$
+\end_inset 
+
+ is an integer which identifies the sub-domain.
+ Each sub-domain is associated with a polynomial approximator; a set of
+ 8 Chebyshev polynomials works well.
+\layout Standard
+
+Select the appropriate polynomial by using 
+\begin_inset Formula $x0$
+\end_inset 
+
+ to index an array, and erfc(x) follows.
+\layout Standard
+
+It is relatively easy to set the polynomials up to give erfc(x) accurate
+ within 1 machine ulp (least significant bit) over the whole domain.
+ It is desirable to use fsel to avoid travesties in case someone passes
+ in a value of x outside the designed domain.
+\layout Standard
+
+It is possible to exploit the symmetry between erfc(x) and erfc(-x) to halve
+ the number of tables required.
+\layout Standard
+
+The required table for Chebyshev coefficients is machine generated; 
+\begin_inset LatexCommand \cite[Numerical Recipes]{key-2}
+
+\end_inset 
+
+ shows the algorithm.
+ First the Chebyshev coefficients for 
+\begin_inset Formula $\frac{d}{dx}\erfc(x)$
+\end_inset 
+
+are generated using the analytic expression 
+\begin_inset Formula $\frac{-2}{\sqrt{\pi}}\exp(-x^{2})$
+\end_inset 
+
+; then the coefficients for 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+are generated by applying the appropriate transformation on these.
+\layout Subsection
+
+Vectorisable derivative erfc
+\layout Standard
+
+Derivative erfc is 
+\begin_inset Formula $\frac{-2}{\sqrt{\pi}}\exp(-x^{2})$
+\end_inset 
+
+, and may be vectorised using vectorisable 
+\begin_inset Formula $\exp(x)$
+\end_inset 
+
+.
+\layout Standard
+
+However, for molecular dynamics,it is desirable to have derivative erfc
+ and erfc related accurately as derivative and integral of each other; this
+ results in better reported energy conservation, and better accuracy when
+ switch or soft force cutoff is in use.
+\layout Standard
+
+When the Abramowitz and Stegun approximation for 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+ is in use, we can differentiate the expression analytically.
+ The derivative has an exponential term of the same form as the original,
+ i.e.
+ 
+\begin_inset Formula $\exp(-x^{2})$
+\end_inset 
+
+, so a single evaluation of 
+\begin_inset Formula $\exp(X)$
+\end_inset 
+
+ will do duty for both functions when erfc and its derivative are both required
+ in a computation.
+\layout Standard
+
+When the multiple Chebyshev approach is in use, another set of Chebyshev
+ polynomials can be used to deliver derivative erfc; if these are on the
+ same sub-domains, there is a computational economy.
+\layout Subsection
+
+Vectorisable erfc and derivative - Piecewise Cubic Spline
+\layout Standard
+
+In Molecular Dynamics, erfc and its derivative are used in the evaluation
+ of electrostatic forces.
+ Another approximation (particle mesh) means that it is not useful to get
+ 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+ more precise than a relative error of about 
+\begin_inset Formula $10^{-5}$
+\end_inset 
+
+; the imprecision due to the 'particle mesh' approximation dominates.
+\layout Standard
+
+However, it is important for the values returned for 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+and its derivative to be continuous, and an analytic integral/derivative
+ pair.
+\layout Standard
+
+This can be satisfied by approximating 
+\begin_inset Formula $\frac{d}{dx}\erfc(x)$
+\end_inset 
+
+with a set of cubic splines, matching the
+\begin_inset Formula $\frac{-2}{\sqrt{\pi}}\exp(-x^{2})$
+\end_inset 
+
+ function and its derivative at the piecewise endpoints; and integrating
+ these polynomials to give piecewise-quartic approximations for 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+.
+\layout Standard
+
+A set of 64 piecewise cubic polynomials and their integrals, for domains
+ [0,1/16), [1/16-2/16), ..
+ , [63/16,64/16), gives the ability to approximate 
+\begin_inset Formula $\erfc(x)$
+\end_inset 
+
+and its derivative to the required precision in the domain [0-4).
+\layout Subsection
+
+Vectorisable sin/cos
+\layout Standard
+
+It is convenient to use a multiple-Chebyshev-polynomial approach for this,
+ too.
+ Divide 
+\begin_inset Formula $\sin(x)$
+\end_inset 
+
+ into domains 
+\begin_inset Formula $[-45,45)$
+\end_inset 
+
+,
+\begin_inset Formula $[45,135)$
+\end_inset 
+
+,
+\begin_inset Formula $[135,225)$
+\end_inset 
+
+, and 
+\begin_inset Formula $[225,315)$
+\end_inset 
+
+ degrees, and repeat cyclically.
+\layout Standard
+
+In domains 
+\begin_inset Formula $[-45,45)$
+\end_inset 
+
+ degrees and 
+\begin_inset Formula $[135,225)$
+\end_inset 
+
+ degrees, use a Chebyshev polynomial for 
+\begin_inset Formula $\frac{\sin(x)}{x}$
+\end_inset 
+
+, and multiply the result by 
+\begin_inset Formula $x$
+\end_inset 
+
+.
+ This arranges that the result for small 
+\begin_inset Formula $|x|$
+\end_inset 
+
+ can be within an ulp, without requiring an excessive number of terms in
+ the polynomial.
+\layout Standard
+
+In domains 
+\begin_inset Formula $[45,135)$
+\end_inset 
+
+ and 
+\begin_inset Formula $[225,315)$
+\end_inset 
+
+, use a Chebyshev polynomial for 
+\begin_inset Formula $\cos(x)$
+\end_inset 
+
+.
+\layout Standard
+
+The required Chebyshev polynomials are always even, which economises on
+ the computation.
+\layout Standard
+
+After the polynomial evaluation, fix up the result by a suitable multiply
+ and add according to the sub-domain.
+\layout Standard
+
+cos and sin are related since 
+\begin_inset Formula $\cos(x)$
+\end_inset 
+
+= 
+\begin_inset Formula $\sin(x+90)$
+\end_inset 
+
+ with angles in degrees.
+\layout Standard
+
+The tables are machine-generated offline, using extended-precision 
+\begin_inset Formula $\sin$
+\end_inset 
+
+and 
+\begin_inset Formula $\cos$
+\end_inset 
+
+functions and the algorithm in 
+\begin_inset LatexCommand \cite[Numerical Recipes]{key-2}
+
+\end_inset 
+
+.
+\layout Subsection
+
+Vectorisable inverse cos and sin
+\layout Standard
+
+Sometimes an application will know the sin and cos of an angle, and will
+ want to evaluate the angle.
+ Traditional arcsin will involve an ambiguity as to the angle (80 degrees
+ or 120 degrees, for example), is ill-conditioned in ranges near 90 and
+ 270 degrees; and usually involves a conditional branch and a square root.
+\layout Standard
+
+By expressing as
+\layout LyX-Code
+
+double acossin(double cos_angle, double sin_angle) 
+\layout Standard
+
+we can get over these limitations and produce an implementation without
+ branches.
+\layout Standard
+
+First, we take the absolute value of each of the parameters.
+ Next, we use fsel to take whichever is smaller, and whichever is larger;
+ giving a value between 
+\begin_inset Formula $0$
+\end_inset 
+
+ and 
+\begin_inset Formula $\sqrt{0.5}$
+\end_inset 
+
+ representing the sin of an angle between 0 and 45 degrees, and a value
+ between 
+\begin_inset Formula $\sqrt{0.5}$
+\end_inset 
+
+ and 
+\begin_inset Formula $1$
+\end_inset 
+
+, representing the cos of the same angle.
+\layout Standard
+
+Then we use the compound angle formula
+\layout Standard
+
+
+\begin_inset Formula \[
+\sin(a-b)=\sin(a)\cos(b)-\cos(a)\sin(b)\]
+
+\end_inset 
+
+
+\layout Standard
+
+to form the sine of an angle in 
+\begin_inset Formula $[-22.5,22.5)$
+\end_inset 
+
+ degrees, a value in the domain 
+\begin_inset Formula $[-0.38,0.38)$
+\end_inset 
+
+ approximately.
+\layout Standard
+
+Next, we use the Taylor expansion for 
+\begin_inset Formula $\arcsin(x)$
+\end_inset 
+
+ which converges quite rapidly over this domain; and we multiply by and
+ add suitable constants (according as whether the original parameters were
+ negated, and which was smaller) to evaluate the angle called for.
+\layout Subsection
+
+Vectorisable reciprocal square root
+\layout Standard
+
+The natural way to express this is like
+\layout LyX-Code
+
+double a=1.0/sqrt(x);
+\layout Standard
+
+With -qnostrict, the compiler knows about this.
+ There is a hardware reciprocal square root estimate instruction which gives
+ a result accurate to 5 bits (Power3) or 13 bits (BG/L) using lookup tables
+ in the same amount of time that a multiply-add instruction would take;
+ and the compiler generates a suitable number of iterations of Newton's
+ method, or a suitable Taylor correction polynomial, to bring the result
+ to double-precision accuracy.
+\layout Standard
+
+Newton's iteration is expressed in terms of multiplies and adds; the 'divide
+ by 
+\begin_inset Formula $b$
+\end_inset 
+
+' which seems to be required is replaced with 'multiply by estimate of 
+\begin_inset Formula $\frac{1}{b}$
+\end_inset 
+
+'.
+\layout Subsection
+
+Vectorisable square root
+\layout Standard
+
+The compiler knows about 
+\layout LyX-Code
+
+double a=sqrt(x)
+\layout Standard
+
+and can use the hardware instruction for this on Power3, and generate a
+ sequence something like 
+\begin_inset Formula $\frac{x}{\sqrt{x}}$
+\end_inset 
+
+ on BG/L.
+ However, 
+\begin_inset Formula $\frac{x}{\sqrt{x}}$
+\end_inset 
+
+ on its own will give 'not-a-number' for 
+\begin_inset Formula $x=0$
+\end_inset 
+
+; the compiler generates code to fix this up, but it is computationally
+ expensive.
+\layout Standard
+
+If the algorithm doesn't care about the result for 
+\begin_inset Formula $x=0$
+\end_inset 
+
+, then it will run better on both Power3 and BG/L if coded as
+\layout LyX-Code
+
+double a=x/sqrt(x)
+\layout Subsection
+
+Vectorisable NearestImageInPeriodicVolume
+\layout Standard
+
+Molecular dynamics is frequently run with 'periodic boundary conditions';
+ i.e.
+ where we imagine that the simulation volume is surrounded by a never-ending
+ sequence of matching simulation volumes; and the interaction force between
+ a pair of atoms is calculated as if one of the atoms is influenced by the
+ nearest of the 27 images of the other atom.
+\layout Standard
+
+The 'nearest' image of an atom can be calculated without divisions or branches;
+ map the simulation volume to a unit cube, by multiplying coordinates by
+ the reciprocal of the simulation box.
+ Then find the 'nearest integer' in each dimension, and subtract it off.
+ Then multiply back up to the real simulation volume size.
+\layout Subsection
+
+Vectorisable nearest_integer
+\layout Standard
+
+This relies on the IEEE floating-point representation.
+ Double precision takes 64 bits.
+ The top bit is a sign bit; the next 11 bits are a binary exponent; and
+ the remaining 52 bits are a binary mantissa, with an implied leading '1'.
+\layout Standard
+
+IEEE addition, with the hardware in its usual mode, is specified to round
+ to the nearest integer.
+ So if you take a double-precision floating-point number and add 
+\begin_inset Formula $(2^{52}+2^{51})$
+\end_inset 
+
+, the fractional part will be dropped.
+ Then you can subtract the
+\begin_inset Formula $(2^{52}+2^{51})$
+\end_inset 
+
+, and you will get the nearest integer to the number you started with.
+\layout Standard
+
+There is a range around 
+\begin_inset Formula $2^{52}$
+\end_inset 
+
+where you will get the nearest even integer; so this is not applicable in
+ all cases; but is OK for molecular dynamics.
+\layout Standard
+
+The compiler is being asked to generate code for 
+\begin_inset Formula $(x+k)-k$
+\end_inset 
+
+ ; it is important to prevent the optimiser from re-associating this to
+ 
+\begin_inset Formula $x+(k-k)$
+\end_inset 
+
+ and then optimising this to 
+\begin_inset Formula $x+0$
+\end_inset 
+
+, i.e.
+ 
+\begin_inset Formula $x$
+\end_inset 
+
+.
+ 
+\layout Standard
+
+The sample code does this by expressing 
+\begin_inset Formula $(x+k\times k1)\times k1-k$
+\end_inset 
+
+, where 
+\begin_inset Formula $k1$
+\end_inset 
+
+ is 
+\begin_inset Formula $1.0$
+\end_inset 
+
+ but the compiler is unable to tell that 
+\begin_inset Formula $k1$
+\end_inset 
+
+ is a constant.
+ IBM POWER family architectures support a 'multiply-add' instruction, so
+ this does not cause any extra processing cycles.
+\layout Subsection
+
+Vectorisable 'Fragment In Range'
+\layout Standard
+
+Molecular Dynamics is generally concerned with forces between atoms in an
+ imagined simulation box with periodic boundary conditions.
+ Computation of the force between a pair of atoms is skipped if the atoms
+ are more than a threshold distance apart.
+\layout Standard
+
+For computational convenience, the atoms are grouped into fragments; typically
+ a water molecule, or a covalently-bonded set of atoms within a larger molecule.
+ The question arises, 'given fragment 
+\begin_inset Formula $a$
+\end_inset 
+
+, what is the set of fragments 
+\begin_inset Formula $\{ b_{0},b_{1},...\}$
+\end_inset 
+
+such that an atom in 
+\begin_inset Formula $a$
+\end_inset 
+
+ is in range of an atom in each 
+\begin_inset Formula $b_{i}$
+\end_inset 
+
+, accounting for the periodic boundary'.
+ The simulation will be functionally correct if extra fragments 
+\begin_inset Formula $b$
+\end_inset 
+
+ are in the set; the forces involved will evaluate to zero; but the simulation
+ is more efficient with fewer extra fragments.
+\layout Standard
+
+There is an algorithm for this which makes 100% use of the floating-point
+ units, successively slicing for slab, cylinder, and sphere.
+ 
+\layout Standard
+
+There is another algorithm which doesn't use the floating-point units; instead
+ it uses the integer units with wrap at 
+\begin_inset Formula $2^{32}$
+\end_inset 
+
+, successively slicing for slab, square prism, and cube; then uses the floating-
+point units to slice for sphere.
+ 
+\layout Standard
+
+On Power3 and BG/L, the integer algorithm is faster; and either algorithm
+ is sufficiently fast that the BlueMatter code does not need to maintain
+ lists of fragments found to be in range in previous simulation time steps
+ (known as Verlet lists) of fragments previously known to be in range, for
+ system sizes of interest.
+\layout Standard
+
+These algorithms show how to do 'vector compress'; i.e.
+ producing a vector which is a subset of a starting vector, including only
+ those elements matching a selection criterion, without requiring a conditional
+ branch.
+\layout Section
+
+A practical example - reciprocal square roots
+\layout Standard
+
+The function presented evaluates 'reciprocal square root' for each of 9
+ values, as would be needed to support the calculation of distances between
+ atoms in a pair of 3-site water molecules.
+\layout Standard
+
+Source code is given, then compiler intermediate code with cycle counts,
+ then compiler assembly listing, for Power3 and BG/L machine architectures.
+\layout Standard
+
+Values are copied into local variables, to make it clear to the compiler
+ what is intended if the function is called with source and target overlapping
+ in memory.
+\layout Standard
+
+Power3 requires a vector of length at least 6 to keep the floating-point
+ units fully busy on this algorithm; BG/L requires a vector of length 10.
+ The compiler finds an optimal instruction sequence in each case; 100% floating-
+point utilisation for Power3, and 90% utilisation (4 'parallel' ops then
+ a 'primary' op) for BG/L.
+\layout Standard
+
+The 'reciprocal square root estimate' instruction of Power3 gives 5 bits
+ of precision; that of BG/L gives 13 bits of precision.
+ BG/L requires fewer follow-on instructions to converge the estimate to
+ double precision.
+ Power3 uses a Newton-Raphson algorithm for convergence; BG/L uses a Taylor
+ expansion.
+\layout Standard
+
+The theoretical peak rate for BG/L hardware is 10 double-precision square
+ roots per 40 clock cycles; by enclosing similar code in a 'for' loop, it
+ is possible to get the IBM VisualAge compiler to generate code which achieves
+ within a few cycles of this rate.
+\layout Subsection
+
+Power3
+\layout LyX-Code
+
+VisualAge C++ for AIX Compiler (DEVELOPMENT/BETA) Version 6.0 --- 
+\layout LyX-Code
+
+>>>>> OPTIONS SECTION <<<<<
+\layout LyX-Code
+
+IGNERRNO        THREADED        ARCH=PWR3       OPT=3           ALIAS=ANSI
+      
+\layout LyX-Code
+
+ALIGN=NATURAL   NOROPTR         NODIRECTSTORAGE PREFETCH        
+\layout LyX-Code
+
+FLOAT=NOHSFLT:NORNDSNGL:NOHSSNGL:MAF:NORRM:FOLD:NONANS:RSQRT:FLTINT:NOEMULATE
+   
+\layout LyX-Code
+
+MAXMEM=-1       NOSTRICT        NOSTRICT_INDUCTION   TBTABLE=SMALL   LIST
+            
+\layout LyX-Code
+
+SHOWINC=NOSYS:NOUSR             SOURCE          STATICINLINE    TMPLPARSE=NO
+    
+\layout LyX-Code
+
+NOEH            
+\layout LyX-Code
+
+>>>>> SOURCE SECTION <<<<<
+\layout LyX-Code
+
+ 
+\layout LyX-Code
+
+            1 | #include <math.h>
+\layout LyX-Code
+
+            2 | void nineroot(double* f, const double* x)
+\layout LyX-Code
+
+            3 | {
+\layout LyX-Code
+
+            4 |    double x0 = x[0] ;
+\layout LyX-Code
+
+            5 |    double x1 = x[1] ;
+\layout LyX-Code
+
+            6 |    double x2 = x[2] ;
+\layout LyX-Code
+
+            7 |    double x3 = x[3] ;
+\layout LyX-Code
+
+            8 |    double x4 = x[4] ;
+\layout LyX-Code
+
+            9 |    double x5 = x[5] ;
+\layout LyX-Code
+
+           10 |    double x6 = x[6] ;
+\layout LyX-Code
+
+           11 |    double x7 = x[7] ;
+\layout LyX-Code
+
+           12 |    double x8 = x[8] ;
+\layout LyX-Code
+
+           13 |    double r0 = 1.0/sqrt(x0) ;
+\layout LyX-Code
+
+           14 |    double r1 = 1.0/sqrt(x1) ;
+\layout LyX-Code
+
+           15 |    double r2 = 1.0/sqrt(x2) ;
+\layout LyX-Code
+
+           16 |    double r3 = 1.0/sqrt(x3) ;
+\layout LyX-Code
+
+           17 |    double r4 = 1.0/sqrt(x4) ;
+\layout LyX-Code
+
+           18 |    double r5 = 1.0/sqrt(x5) ;
+\layout LyX-Code
+
+           19 |    double r6 = 1.0/sqrt(x6) ;
+\layout LyX-Code
+
+           20 |    double r7 = 1.0/sqrt(x7) ;
+\layout LyX-Code
+
+           21 |    double r8 = 1.0/sqrt(x8) ;
+\layout LyX-Code
+
+           22 |    f[0] = r0 ;
+\layout LyX-Code
+
+           23 |    f[1] = r1 ;
+\layout LyX-Code
+
+           24 |    f[2] = r2 ;
+\layout LyX-Code
+
+           25 |    f[3] = r3 ;
+\layout LyX-Code
+
+           26 |    f[4] = r4 ;
+\layout LyX-Code
+
+           27 |    f[5] = r5 ;
+\layout LyX-Code
+
+           28 |    f[6] = r6 ;
+\layout LyX-Code
+
+           29 |    f[7] = r7 ;
+\layout LyX-Code
+
+           30 |    f[8] = r8 ;
+\layout LyX-Code
+
+           31 | }
+\layout LyX-Code
+
+\layout LyX-Code
+
+>>>>> OBJECT SECTION, OPTIMIZATION <<<<<
+\layout LyX-Code
+
+** Procedure List for Proc #   1: nineroot__FPdPCd End of Phase 3 **
+\layout LyX-Code
+
+    0:      HDR      
+\layout LyX-Code
+
+    3:      BB_BEGIN    2 /    0
+\layout LyX-Code
+
+    0:      PROC     f,x,gr3,gr4
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,0
+\layout LyX-Code
+
+    0:      LFLR     gr0=lr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,3
+\layout LyX-Code
+
+    0:      CALLNR   _savef18,gr1,fp18-fp31,lr"
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,4
+\layout LyX-Code
+
+    0:      LLR      lr=gr0
+\layout LyX-Code
+
+    4:      LFL      fp1=(double)(gr4,0)
+\layout LyX-Code
+
+    5:      LFL      fp2=(double)(gr4,8)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,5
+\layout LyX-Code
+
+    6:      LFL      fp3=(double)(gr4,16)
+\layout LyX-Code
+
+    7:      LFL      fp4=(double)(gr4,24)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,6
+\layout LyX-Code
+
+    8:      LFL      fp5=(double)(gr4,32)
+\layout LyX-Code
+
+    9:      LFL      fp6=(double)(gr4,40)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,7
+\layout LyX-Code
+
+   10:      LFL      fp7=(double)(gr4,48)
+\layout LyX-Code
+
+   11:      LFL      fp8=(double)(gr4,56)
+\layout LyX-Code
+
+  645:      FRSQRE   fp9=fp1
+\layout LyX-Code
+
+  645:      FRSQRE   fp10=fp2
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,8
+\layout LyX-Code
+
+   12:      LFL      fp21=(double)(gr4,64)
+\layout LyX-Code
+
+  645:      L4A      gr4=.+CONSTANT_AREA(gr2,0)
+\layout LyX-Code
+
+  645:      FRSQRE   fp11=fp3
+\layout LyX-Code
+
+  645:      FRSQRE   fp12=fp4
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,9
+\layout LyX-Code
+
+  645:      FRSQRE   fp13=fp5
+\layout LyX-Code
+
+  645:      FRSQRE   fp31=fp6
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,10
+\layout LyX-Code
+
+  645:      LFS      fp0=+CONSTANT_AREA(gr4,0)
+\layout LyX-Code
+
+  645:      FRSQRE   fp30=fp7
+\layout LyX-Code
+
+  645:      FRSQRE   fp29=fp8
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,11
+\layout LyX-Code
+
+  645:      MFL      fp20=fp9,fp9,fcr
+\layout LyX-Code
+
+  645:      FRSQRE   fp28=fp21
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,12
+\layout LyX-Code
+
+  645:      MFL      fp27=fp10,fp10,fcr
+\layout LyX-Code
+
+  645:      MFL      fp26=fp11,fp11,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,13
+\layout LyX-Code
+
+  645:      FMS      fp1=fp1,fp1,fp0,fcr
+\layout LyX-Code
+
+  645:      FMS      fp2=fp2,fp2,fp0,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,14
+\layout LyX-Code
+
+  645:      FMS      fp3=fp3,fp3,fp0,fcr
+\layout LyX-Code
+
+  645:      FMS      fp18=fp21,fp21,fp0,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,15
+\layout LyX-Code
+
+  645:      FMS      fp4=fp4,fp4,fp0,fcr
+\layout LyX-Code
+
+  645:      MFL      fp25=fp12,fp12,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,16
+\layout LyX-Code
+
+  645:      FMS      fp5=fp5,fp5,fp0,fcr
+\layout LyX-Code
+
+  645:      MFL      fp24=fp13,fp13,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,17
+\layout LyX-Code
+
+  645:      FMS      fp6=fp6,fp6,fp0,fcr
+\layout LyX-Code
+
+  645:      FMS      fp7=fp7,fp7,fp0,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,18
+\layout LyX-Code
+
+  645:      MFL      fp23=fp31,fp31,fcr
+\layout LyX-Code
+
+  645:      FMS      fp8=fp8,fp8,fp0,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,19
+\layout LyX-Code
+
+  645:      MFL      fp22=fp30,fp30,fcr
+\layout LyX-Code
+
+  645:      MFL      fp21=fp29,fp29,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,20
+\layout LyX-Code
+
+  645:      FNMS     fp20=fp0,fp20,fp1,fcr
+\layout LyX-Code
+
+  645:      MFL      fp19=fp28,fp28,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,21
+\layout LyX-Code
+
+  645:      FNMS     fp27=fp0,fp27,fp2,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp26=fp0,fp26,fp3,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,22
+\layout LyX-Code
+
+  645:      FNMS     fp25=fp0,fp25,fp4,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp24=fp0,fp24,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,23
+\layout LyX-Code
+
+  645:      FNMS     fp23=fp0,fp23,fp6,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp22=fp0,fp22,fp7,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,24
+\layout LyX-Code
+
+  645:      MFL      fp9=fp9,fp20,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp21=fp0,fp21,fp8,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,25
+\layout LyX-Code
+
+  645:      FNMS     fp19=fp0,fp19,fp18,fcr
+\layout LyX-Code
+
+  645:      MFL      fp10=fp10,fp27,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,26
+\layout LyX-Code
+
+  645:      MFL      fp11=fp11,fp26,fcr
+\layout LyX-Code
+
+  645:      MFL      fp12=fp12,fp25,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,27
+\layout LyX-Code
+
+  645:      MFL      fp13=fp13,fp24,fcr
+\layout LyX-Code
+
+  645:      MFL      fp31=fp31,fp23,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,28
+\layout LyX-Code
+
+  645:      MFL      fp30=fp30,fp22,fcr
+\layout LyX-Code
+
+  645:      MFL      fp29=fp29,fp21,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,29
+\layout LyX-Code
+
+  645:      MFL      fp27=fp9,fp9,fcr
+\layout LyX-Code
+
+  645:      MFL      fp28=fp28,fp19,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,30
+\layout LyX-Code
+
+  645:      MFL      fp26=fp10,fp10,fcr
+\layout LyX-Code
+
+  645:      MFL      fp25=fp11,fp11,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,31
+\layout LyX-Code
+
+  645:      MFL      fp24=fp12,fp12,fcr
+\layout LyX-Code
+
+  645:      MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,32
+\layout LyX-Code
+
+  645:      MFL      fp22=fp31,fp31,fcr
+\layout LyX-Code
+
+  645:      MFL      fp21=fp30,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,33
+\layout LyX-Code
+
+  645:      FNMS     fp27=fp0,fp27,fp1,fcr
+\layout LyX-Code
+
+  645:      MFL      fp19=fp29,fp29,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,34
+\layout LyX-Code
+
+  645:      MFL      fp20=fp28,fp28,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp26=fp0,fp26,fp2,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,35
+\layout LyX-Code
+
+  645:      FNMS     fp25=fp0,fp25,fp3,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp24=fp0,fp24,fp4,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,36
+\layout LyX-Code
+
+  645:      FNMS     fp23=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp22=fp0,fp22,fp6,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,37
+\layout LyX-Code
+
+  645:      FNMS     fp21=fp0,fp21,fp7,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp19=fp0,fp19,fp8,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,38
+\layout LyX-Code
+
+  645:      MFL      fp9=fp9,fp27,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp27=fp0,fp20,fp18,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,39
+\layout LyX-Code
+
+  645:      MFL      fp10=fp10,fp26,fcr
+\layout LyX-Code
+
+  645:      MFL      fp11=fp11,fp25,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,40
+\layout LyX-Code
+
+  645:      MFL      fp12=fp12,fp24,fcr
+\layout LyX-Code
+
+  645:      MFL      fp13=fp13,fp23,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,41
+\layout LyX-Code
+
+  645:      MFL      fp31=fp31,fp22,fcr
+\layout LyX-Code
+
+  645:      MFL      fp30=fp30,fp21,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,42
+\layout LyX-Code
+
+  645:      MFL      fp26=fp9,fp9,fcr
+\layout LyX-Code
+
+  645:      MFL      fp29=fp29,fp19,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,43
+\layout LyX-Code
+
+  645:      MFL      fp27=fp28,fp27,fcr
+\layout LyX-Code
+
+  645:      MFL      fp20=fp10,fp10,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,44
+\layout LyX-Code
+
+  645:      MFL      fp21=fp11,fp11,fcr
+\layout LyX-Code
+
+  645:      MFL      fp22=fp12,fp12,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,45
+\layout LyX-Code
+
+  645:      MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+  645:      MFL      fp24=fp31,fp31,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,46
+\layout LyX-Code
+
+  645:      MFL      fp25=fp30,fp30,fcr
+\layout LyX-Code
+
+  645:      MFL      fp28=fp29,fp29,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,47
+\layout LyX-Code
+
+  645:      FNMS     fp19=fp0,fp26,fp1,fcr
+\layout LyX-Code
+
+  645:      MFL      fp26=fp27,fp27,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,48
+\layout LyX-Code
+
+  645:      FNMS     fp20=fp0,fp20,fp2,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp21=fp0,fp21,fp3,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,49
+\layout LyX-Code
+
+  645:      FNMS     fp22=fp0,fp22,fp4,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp23=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,50
+\layout LyX-Code
+
+  645:      FNMS     fp24=fp0,fp24,fp6,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp25=fp0,fp25,fp7,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,51
+\layout LyX-Code
+
+  645:      FNMS     fp26=fp0,fp26,fp18,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp28=fp0,fp28,fp8,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,52
+\layout LyX-Code
+
+  645:      MFL      fp9=fp9,fp19,fcr
+\layout LyX-Code
+
+  645:      MFL      fp10=fp10,fp20,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,53
+\layout LyX-Code
+
+  645:      MFL      fp11=fp11,fp21,fcr
+\layout LyX-Code
+
+  645:      MFL      fp12=fp12,fp22,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,54
+\layout LyX-Code
+
+  645:      MFL      fp13=fp13,fp23,fcr
+\layout LyX-Code
+
+  645:      MFL      fp31=fp31,fp24,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,55
+\layout LyX-Code
+
+  645:      MFL      fp30=fp30,fp25,fcr
+\layout LyX-Code
+
+  645:      MFL      fp29=fp29,fp28,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,56
+\layout LyX-Code
+
+  645:      MFL      fp28=fp9,fp9,fcr
+\layout LyX-Code
+
+  645:      MFL      fp27=fp27,fp26,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,57
+\layout LyX-Code
+
+  645:      MFL      fp26=fp10,fp10,fcr
+\layout LyX-Code
+
+  645:      MFL      fp25=fp11,fp11,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,58
+\layout LyX-Code
+
+  645:      MFL      fp24=fp12,fp12,fcr
+\layout LyX-Code
+
+  645:      MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,59
+\layout LyX-Code
+
+  645:      MFL      fp22=fp31,fp31,fcr
+\layout LyX-Code
+
+  645:      MFL      fp21=fp30,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,60
+\layout LyX-Code
+
+  645:      MFL      fp20=fp27,fp27,fcr
+\layout LyX-Code
+
+  645:      MFL      fp19=fp29,fp29,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,61
+\layout LyX-Code
+
+   31:      CONSUME  gr1,gr2,lr,gr13-gr31,fp14-fp31,cr[234],fsr,fcr,ctr
+\layout LyX-Code
+
+  645:      FNMS     fp1=fp0,fp28,fp1,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp2=fp0,fp26,fp2,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,62
+\layout LyX-Code
+
+  645:      FNMS     fp3=fp0,fp25,fp3,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp4=fp0,fp24,fp4,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,63
+\layout LyX-Code
+
+  645:      FNMS     fp5=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp6=fp0,fp22,fp6,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,64
+\layout LyX-Code
+
+  645:      FNMS     fp7=fp0,fp21,fp7,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp8=fp0,fp19,fp8,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,65
+\layout LyX-Code
+
+  645:      MFL      fp1=fp9,fp1,fcr
+\layout LyX-Code
+
+  645:      FNMS     fp0=fp0,fp20,fp18,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,66
+\layout LyX-Code
+
+  645:      MFL      fp2=fp10,fp2,fcr
+\layout LyX-Code
+
+  645:      MFL      fp3=fp11,fp3,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,67
+\layout LyX-Code
+
+  645:      MFL      fp4=fp12,fp4,fcr
+\layout LyX-Code
+
+  645:      MFL      fp5=fp13,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,68
+\layout LyX-Code
+
+  645:      MFL      fp6=fp31,fp6,fcr
+\layout LyX-Code
+
+  645:      MFL      fp7=fp30,fp7,fcr
+\layout LyX-Code
+
+   22:      STFL     (double)(gr3,0)=fp1
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,69
+\layout LyX-Code
+
+  645:      MFL      fp1=fp29,fp8,fcr
+\layout LyX-Code
+
+  645:      MFL      fp0=fp27,fp0,fcr
+\layout LyX-Code
+
+   23:      STFL     (double)(gr3,8)=fp2
+\layout LyX-Code
+
+   24:      STFL     (double)(gr3,16)=fp3
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,70
+\layout LyX-Code
+
+   25:      STFL     (double)(gr3,24)=fp4
+\layout LyX-Code
+
+   26:      STFL     (double)(gr3,32)=fp5
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,71
+\layout LyX-Code
+
+   27:      STFL     (double)(gr3,40)=fp6
+\layout LyX-Code
+
+   28:      STFL     (double)(gr3,48)=fp7
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,72
+\layout LyX-Code
+
+   29:      STFL     (double)(gr3,56)=fp1
+\layout LyX-Code
+
+   30:      STFL     (double)(gr3,64)=fp0
+\layout LyX-Code
+
+    0:      FENCE    
+\layout LyX-Code
+
+   31:      CALLF    _restf18
+\layout LyX-Code
+
+    3:      BB_END   
+\layout LyX-Code
+
+    4:      BB_BEGIN    3 /    0
+\layout LyX-Code
+
+   31:      PEND     
+\layout LyX-Code
+
+    4:      BB_END   
+\layout LyX-Code
+
+** End of Procedure List for Proc #   1: nineroot__FPdPCd End of Phase 3
+ **
+\layout LyX-Code
+
+-qdebug=PLST3:CYCLES:PLST3:CYCLES:PLSTHUMM:HUMMDBG:RECIPF:MAXGRIDICULOUS:NEWSCHE
+D1:NEWSCHED2:EBBPASS1:EBBPASS2:
+\layout LyX-Code
+
+ GPR's set/used:   s-uu s--- ---- ----  ---- ---- ---- ----
+\layout LyX-Code
+
+ FPR's set/used:   ssss ssss ssss ss--  --ss ssss ssss ssss
+\layout LyX-Code
+
+ CCR's set/used:   ---- ----
+\layout LyX-Code
+
+     | 000000                           PDEF     nineroot(double *, const
+ double *)
+\layout LyX-Code
+
+    0|                                  PROC     f,x,gr3,gr4
+\layout LyX-Code
+
+    0| 000000 mfspr    7C0802A6   1     LFLR     gr0=lr
+\layout LyX-Code
+
+    0| 000004 bl       4BFFFFFD   0     CALLNR   _savef18,gr1,fp18-fp31,lr"
+\layout LyX-Code
+
+    0| 000008 mtspr    7C0803A6   1     LLR      lr=gr0
+\layout LyX-Code
+
+    4| 00000C lfd      C8240000   1     LFL      fp1=(double)(gr4,0)
+\layout LyX-Code
+
+    5| 000010 lfd      C8440008   1     LFL      fp2=(double)(gr4,8)
+\layout LyX-Code
+
+    6| 000014 lfd      C8640010   1     LFL      fp3=(double)(gr4,16)
+\layout LyX-Code
+
+    7| 000018 lfd      C8840018   1     LFL      fp4=(double)(gr4,24)
+\layout LyX-Code
+
+    8| 00001C lfd      C8A40020   1     LFL      fp5=(double)(gr4,32)
+\layout LyX-Code
+
+    9| 000020 lfd      C8C40028   1     LFL      fp6=(double)(gr4,40)
+\layout LyX-Code
+
+   10| 000024 lfd      C8E40030   1     LFL      fp7=(double)(gr4,48)
+\layout LyX-Code
+
+   11| 000028 lfd      C9040038   1     LFL      fp8=(double)(gr4,56)
+\layout LyX-Code
+
+  645| 00002C frsqrte  FD200834   1     FRSQRE   fp9=fp1
+\layout LyX-Code
+
+  645| 000030 frsqrte  FD401034   1     FRSQRE   fp10=fp2
+\layout LyX-Code
+
+   12| 000034 lfd      CAA40040   1     LFL      fp21=(double)(gr4,64)
+\layout LyX-Code
+
+  645| 000038 lwz      80820004   1     L4A      gr4=.+CONSTANT_AREA(gr2,0)
+\layout LyX-Code
+
+  645| 00003C frsqrte  FD601834   1     FRSQRE   fp11=fp3
+\layout LyX-Code
+
+  645| 000040 frsqrte  FD802034   1     FRSQRE   fp12=fp4
+\layout LyX-Code
+
+  645| 000044 frsqrte  FDA02834   1     FRSQRE   fp13=fp5
+\layout LyX-Code
+
+  645| 000048 frsqrte  FFE03034   1     FRSQRE   fp31=fp6
+\layout LyX-Code
+
+  645| 00004C lfs      C0040000   1     LFS      fp0=+CONSTANT_AREA(gr4,0)
+\layout LyX-Code
+
+  645| 000050 frsqrte  FFC03834   1     FRSQRE   fp30=fp7
+\layout LyX-Code
+
+  645| 000054 frsqrte  FFA04034   1     FRSQRE   fp29=fp8
+\layout LyX-Code
+
+  645| 000058 fmul     FE890272   1     MFL      fp20=fp9,fp9,fcr
+\layout LyX-Code
+
+  645| 00005C frsqrte  FF80A834   1     FRSQRE   fp28=fp21
+\layout LyX-Code
+
+  645| 000060 fmul     FF6A02B2   1     MFL      fp27=fp10,fp10,fcr
+\layout LyX-Code
+
+  645| 000064 fmul     FF4B02F2   1     MFL      fp26=fp11,fp11,fcr
+\layout LyX-Code
+
+  645| 000068 fmsub    FC210838   1     FMS      fp1=fp1,fp1,fp0,fcr
+\layout LyX-Code
+
+  645| 00006C fmsub    FC421038   1     FMS      fp2=fp2,fp2,fp0,fcr
+\layout LyX-Code
+
+  645| 000070 fmsub    FC631838   1     FMS      fp3=fp3,fp3,fp0,fcr
+\layout LyX-Code
+
+  645| 000074 fmsub    FE55A838   1     FMS      fp18=fp21,fp21,fp0,fcr
+\layout LyX-Code
+
+  645| 000078 fmsub    FC842038   1     FMS      fp4=fp4,fp4,fp0,fcr
+\layout LyX-Code
+
+  645| 00007C fmul     FF2C0332   1     MFL      fp25=fp12,fp12,fcr
+\layout LyX-Code
+
+  645| 000080 fmsub    FCA52838   1     FMS      fp5=fp5,fp5,fp0,fcr
+\layout LyX-Code
+
+  645| 000084 fmul     FF0D0372   1     MFL      fp24=fp13,fp13,fcr
+\layout LyX-Code
+
+  645| 000088 fmsub    FCC63038   1     FMS      fp6=fp6,fp6,fp0,fcr
+\layout LyX-Code
+
+  645| 00008C fmsub    FCE73838   1     FMS      fp7=fp7,fp7,fp0,fcr
+\layout LyX-Code
+
+  645| 000090 fmul     FEFF07F2   1     MFL      fp23=fp31,fp31,fcr
+\layout LyX-Code
+
+  645| 000094 fmsub    FD084038   1     FMS      fp8=fp8,fp8,fp0,fcr
+\layout LyX-Code
+
+  645| 000098 fmul     FEDE07B2   1     MFL      fp22=fp30,fp30,fcr
+\layout LyX-Code
+
+  645| 00009C fmul     FEBD0772   1     MFL      fp21=fp29,fp29,fcr
+\layout LyX-Code
+
+  645| 0000A0 fnmsub   FE94007C   1     FNMS     fp20=fp0,fp20,fp1,fcr
+\layout LyX-Code
+
+  645| 0000A4 fmul     FE7C0732   1     MFL      fp19=fp28,fp28,fcr
+\layout LyX-Code
+
+  645| 0000A8 fnmsub   FF7B00BC   1     FNMS     fp27=fp0,fp27,fp2,fcr
+\layout LyX-Code
+
+  645| 0000AC fnmsub   FF5A00FC   1     FNMS     fp26=fp0,fp26,fp3,fcr
+\layout LyX-Code
+
+  645| 0000B0 fnmsub   FF39013C   1     FNMS     fp25=fp0,fp25,fp4,fcr
+\layout LyX-Code
+
+  645| 0000B4 fnmsub   FF18017C   1     FNMS     fp24=fp0,fp24,fp5,fcr
+\layout LyX-Code
+
+  645| 0000B8 fnmsub   FEF701BC   1     FNMS     fp23=fp0,fp23,fp6,fcr
+\layout LyX-Code
+
+  645| 0000BC fnmsub   FED601FC   1     FNMS     fp22=fp0,fp22,fp7,fcr
+\layout LyX-Code
+
+  645| 0000C0 fmul     FD290532   1     MFL      fp9=fp9,fp20,fcr
+\layout LyX-Code
+
+  645| 0000C4 fnmsub   FEB5023C   1     FNMS     fp21=fp0,fp21,fp8,fcr
+\layout LyX-Code
+
+  645| 0000C8 fnmsub   FE7304BC   1     FNMS     fp19=fp0,fp19,fp18,fcr
+\layout LyX-Code
+
+  645| 0000CC fmul     FD4A06F2   1     MFL      fp10=fp10,fp27,fcr
+\layout LyX-Code
+
+  645| 0000D0 fmul     FD6B06B2   1     MFL      fp11=fp11,fp26,fcr
+\layout LyX-Code
+
+  645| 0000D4 fmul     FD8C0672   1     MFL      fp12=fp12,fp25,fcr
+\layout LyX-Code
+
+  645| 0000D8 fmul     FDAD0632   1     MFL      fp13=fp13,fp24,fcr
+\layout LyX-Code
+
+  645| 0000DC fmul     FFFF05F2   1     MFL      fp31=fp31,fp23,fcr
+\layout LyX-Code
+
+  645| 0000E0 fmul     FFDE05B2   1     MFL      fp30=fp30,fp22,fcr
+\layout LyX-Code
+
+  645| 0000E4 fmul     FFBD0572   1     MFL      fp29=fp29,fp21,fcr
+\layout LyX-Code
+
+  645| 0000E8 fmul     FF690272   1     MFL      fp27=fp9,fp9,fcr
+\layout LyX-Code
+
+  645| 0000EC fmul     FF9C04F2   1     MFL      fp28=fp28,fp19,fcr
+\layout LyX-Code
+
+  645| 0000F0 fmul     FF4A02B2   1     MFL      fp26=fp10,fp10,fcr
+\layout LyX-Code
+
+  645| 0000F4 fmul     FF2B02F2   1     MFL      fp25=fp11,fp11,fcr
+\layout LyX-Code
+
+  645| 0000F8 fmul     FF0C0332   1     MFL      fp24=fp12,fp12,fcr
+\layout LyX-Code
+
+  645| 0000FC fmul     FEED0372   1     MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+  645| 000100 fmul     FEDF07F2   1     MFL      fp22=fp31,fp31,fcr
+\layout LyX-Code
+
+  645| 000104 fmul     FEBE07B2   1     MFL      fp21=fp30,fp30,fcr
+\layout LyX-Code
+
+  645| 000108 fnmsub   FF7B007C   1     FNMS     fp27=fp0,fp27,fp1,fcr
+\layout LyX-Code
+
+  645| 00010C fmul     FE7D0772   1     MFL      fp19=fp29,fp29,fcr
+\layout LyX-Code
+
+  645| 000110 fmul     FE9C0732   1     MFL      fp20=fp28,fp28,fcr
+\layout LyX-Code
+
+  645| 000114 fnmsub   FF5A00BC   1     FNMS     fp26=fp0,fp26,fp2,fcr
+\layout LyX-Code
+
+  645| 000118 fnmsub   FF3900FC   1     FNMS     fp25=fp0,fp25,fp3,fcr
+\layout LyX-Code
+
+  645| 00011C fnmsub   FF18013C   1     FNMS     fp24=fp0,fp24,fp4,fcr
+\layout LyX-Code
+
+  645| 000120 fnmsub   FEF7017C   1     FNMS     fp23=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+  645| 000124 fnmsub   FED601BC   1     FNMS     fp22=fp0,fp22,fp6,fcr
+\layout LyX-Code
+
+  645| 000128 fnmsub   FEB501FC   1     FNMS     fp21=fp0,fp21,fp7,fcr
+\layout LyX-Code
+
+  645| 00012C fnmsub   FE73023C   1     FNMS     fp19=fp0,fp19,fp8,fcr
+\layout LyX-Code
+
+  645| 000130 fmul     FD2906F2   1     MFL      fp9=fp9,fp27,fcr
+\layout LyX-Code
+
+  645| 000134 fnmsub   FF7404BC   1     FNMS     fp27=fp0,fp20,fp18,fcr
+\layout LyX-Code
+
+  645| 000138 fmul     FD4A06B2   1     MFL      fp10=fp10,fp26,fcr
+\layout LyX-Code
+
+  645| 00013C fmul     FD6B0672   1     MFL      fp11=fp11,fp25,fcr
+\layout LyX-Code
+
+  645| 000140 fmul     FD8C0632   1     MFL      fp12=fp12,fp24,fcr
+\layout LyX-Code
+
+  645| 000144 fmul     FDAD05F2   1     MFL      fp13=fp13,fp23,fcr
+\layout LyX-Code
+
+  645| 000148 fmul     FFFF05B2   1     MFL      fp31=fp31,fp22,fcr
+\layout LyX-Code
+
+  645| 00014C fmul     FFDE0572   1     MFL      fp30=fp30,fp21,fcr
+\layout LyX-Code
+
+  645| 000150 fmul     FF490272   1     MFL      fp26=fp9,fp9,fcr
+\layout LyX-Code
+
+  645| 000154 fmul     FFBD04F2   1     MFL      fp29=fp29,fp19,fcr
+\layout LyX-Code
+
+  645| 000158 fmul     FF7C06F2   1     MFL      fp27=fp28,fp27,fcr
+\layout LyX-Code
+
+  645| 00015C fmul     FE8A02B2   1     MFL      fp20=fp10,fp10,fcr
+\layout LyX-Code
+
+  645| 000160 fmul     FEAB02F2   1     MFL      fp21=fp11,fp11,fcr
+\layout LyX-Code
+
+  645| 000164 fmul     FECC0332   1     MFL      fp22=fp12,fp12,fcr
+\layout LyX-Code
+
+  645| 000168 fmul     FEED0372   1     MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+  645| 00016C fmul     FF1F07F2   1     MFL      fp24=fp31,fp31,fcr
+\layout LyX-Code
+
+  645| 000170 fmul     FF3E07B2   1     MFL      fp25=fp30,fp30,fcr
+\layout LyX-Code
+
+  645| 000174 fmul     FF9D0772   1     MFL      fp28=fp29,fp29,fcr
+\layout LyX-Code
+
+  645| 000178 fnmsub   FE7A007C   1     FNMS     fp19=fp0,fp26,fp1,fcr
+\layout LyX-Code
+
+  645| 00017C fmul     FF5B06F2   1     MFL      fp26=fp27,fp27,fcr
+\layout LyX-Code
+
+  645| 000180 fnmsub   FE9400BC   1     FNMS     fp20=fp0,fp20,fp2,fcr
+\layout LyX-Code
+
+  645| 000184 fnmsub   FEB500FC   1     FNMS     fp21=fp0,fp21,fp3,fcr
+\layout LyX-Code
+
+  645| 000188 fnmsub   FED6013C   1     FNMS     fp22=fp0,fp22,fp4,fcr
+\layout LyX-Code
+
+  645| 00018C fnmsub   FEF7017C   1     FNMS     fp23=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+  645| 000190 fnmsub   FF1801BC   1     FNMS     fp24=fp0,fp24,fp6,fcr
+\layout LyX-Code
+
+  645| 000194 fnmsub   FF3901FC   1     FNMS     fp25=fp0,fp25,fp7,fcr
+\layout LyX-Code
+
+  645| 000198 fnmsub   FF5A04BC   1     FNMS     fp26=fp0,fp26,fp18,fcr
+\layout LyX-Code
+
+  645| 00019C fnmsub   FF9C023C   1     FNMS     fp28=fp0,fp28,fp8,fcr
+\layout LyX-Code
+
+  645| 0001A0 fmul     FD2904F2   1     MFL      fp9=fp9,fp19,fcr
+\layout LyX-Code
+
+  645| 0001A4 fmul     FD4A0532   1     MFL      fp10=fp10,fp20,fcr
+\layout LyX-Code
+
+  645| 0001A8 fmul     FD6B0572   1     MFL      fp11=fp11,fp21,fcr
+\layout LyX-Code
+
+  645| 0001AC fmul     FD8C05B2   1     MFL      fp12=fp12,fp22,fcr
+\layout LyX-Code
+
+  645| 0001B0 fmul     FDAD05F2   1     MFL      fp13=fp13,fp23,fcr
+\layout LyX-Code
+
+  645| 0001B4 fmul     FFFF0632   1     MFL      fp31=fp31,fp24,fcr
+\layout LyX-Code
+
+  645| 0001B8 fmul     FFDE0672   1     MFL      fp30=fp30,fp25,fcr
+\layout LyX-Code
+
+  645| 0001BC fmul     FFBD0732   1     MFL      fp29=fp29,fp28,fcr
+\layout LyX-Code
+
+  645| 0001C0 fmul     FF890272   1     MFL      fp28=fp9,fp9,fcr
+\layout LyX-Code
+
+  645| 0001C4 fmul     FF7B06B2   1     MFL      fp27=fp27,fp26,fcr
+\layout LyX-Code
+
+  645| 0001C8 fmul     FF4A02B2   1     MFL      fp26=fp10,fp10,fcr
+\layout LyX-Code
+
+  645| 0001CC fmul     FF2B02F2   1     MFL      fp25=fp11,fp11,fcr
+\layout LyX-Code
+
+  645| 0001D0 fmul     FF0C0332   1     MFL      fp24=fp12,fp12,fcr
+\layout LyX-Code
+
+  645| 0001D4 fmul     FEED0372   1     MFL      fp23=fp13,fp13,fcr
+\layout LyX-Code
+
+  645| 0001D8 fmul     FEDF07F2   1     MFL      fp22=fp31,fp31,fcr
+\layout LyX-Code
+
+  645| 0001DC fmul     FEBE07B2   1     MFL      fp21=fp30,fp30,fcr
+\layout LyX-Code
+
+  645| 0001E0 fmul     FE9B06F2   1     MFL      fp20=fp27,fp27,fcr
+\layout LyX-Code
+
+  645| 0001E4 fmul     FE7D0772   1     MFL      fp19=fp29,fp29,fcr
+\layout LyX-Code
+
+  645| 0001E8 fnmsub   FC3C007C   1     FNMS     fp1=fp0,fp28,fp1,fcr
+\layout LyX-Code
+
+  645| 0001EC fnmsub   FC5A00BC   1     FNMS     fp2=fp0,fp26,fp2,fcr
+\layout LyX-Code
+
+  645| 0001F0 fnmsub   FC7900FC   1     FNMS     fp3=fp0,fp25,fp3,fcr
+\layout LyX-Code
+
+  645| 0001F4 fnmsub   FC98013C   1     FNMS     fp4=fp0,fp24,fp4,fcr
+\layout LyX-Code
+
+  645| 0001F8 fnmsub   FCB7017C   1     FNMS     fp5=fp0,fp23,fp5,fcr
+\layout LyX-Code
+
+  645| 0001FC fnmsub   FCD601BC   1     FNMS     fp6=fp0,fp22,fp6,fcr
+\layout LyX-Code
+
+  645| 000200 fnmsub   FCF501FC   1     FNMS     fp7=fp0,fp21,fp7,fcr
+\layout LyX-Code
+
+  645| 000204 fnmsub   FD13023C   1     FNMS     fp8=fp0,fp19,fp8,fcr
+\layout LyX-Code
+
+  645| 000208 fmul     FC290072   1     MFL      fp1=fp9,fp1,fcr
+\layout LyX-Code
+
+  645| 00020C fnmsub   FC1404BC   1     FNMS     fp0=fp0,fp20,fp18,fcr
+\layout LyX-Code
+
+  645| 000210 fmul     FC4A00B2   1     MFL      fp2=fp10,fp2,fcr
+\layout LyX-Code
+
+  645| 000214 fmul     FC6B00F2   1     MFL      fp3=fp11,fp3,fcr
+\layout LyX-Code
+
+  645| 000218 fmul     FC8C0132   1     MFL      fp4=fp12,fp4,fcr
+\layout LyX-Code
+
+  645| 00021C fmul     FCAD0172   1     MFL      fp5=fp13,fp5,fcr
+\layout LyX-Code
+
+  645| 000220 fmul     FCDF01B2   1     MFL      fp6=fp31,fp6,fcr
+\layout LyX-Code
+
+  645| 000224 fmul     FCFE01F2   1     MFL      fp7=fp30,fp7,fcr
+\layout LyX-Code
+
+   22| 000228 stfd     D8230000   1     STFL     (double)(gr3,0)=fp1
+\layout LyX-Code
+
+  645| 00022C fmul     FC3D0232   1     MFL      fp1=fp29,fp8,fcr
+\layout LyX-Code
+
+  645| 000230 fmul     FC1B0032   1     MFL      fp0=fp27,fp0,fcr
+\layout LyX-Code
+
+   23| 000234 stfd     D8430008   1     STFL     (double)(gr3,8)=fp2
+\layout LyX-Code
+
+   24| 000238 stfd     D8630010   1     STFL     (double)(gr3,16)=fp3
+\layout LyX-Code
+
+   25| 00023C stfd     D8830018   1     STFL     (double)(gr3,24)=fp4
+\layout LyX-Code
+
+   26| 000240 stfd     D8A30020   1     STFL     (double)(gr3,32)=fp5
+\layout LyX-Code
+
+   27| 000244 stfd     D8C30028   1     STFL     (double)(gr3,40)=fp6
+\layout LyX-Code
+
+   28| 000248 stfd     D8E30030   1     STFL     (double)(gr3,48)=fp7
+\layout LyX-Code
+
+   29| 00024C stfd     D8230038   1     STFL     (double)(gr3,56)=fp1
+\layout LyX-Code
+
+   30| 000250 stfd     D8030040   1     STFL     (double)(gr3,64)=fp0
+\layout LyX-Code
+
+   31| 000254 b        4BFFFDAC   0     CALLF    _restf18
+\layout LyX-Code
+
+     |               Tag Table
+\layout LyX-Code
+
+     | 000258        00000000 00092200 0E000000 00000258
+\layout LyX-Code
+
+     |               Instruction count          150
+\layout LyX-Code
+
+     |               Constant Area
+\layout LyX-Code
+
+     | 000000        3FC00000
+\layout LyX-Code
+
+\layout Subsection
+
+BG/L
+\layout LyX-Code
+
+IBM(R) VisualAge C++ Version 6.0.0.3 for Linux on pSeries --- 
+\layout LyX-Code
+
+>>>>> OPTIONS SECTION <<<<<
+\layout LyX-Code
+
+IGNERRNO        ARCH=440D       OPT=3           ALIAS=ANSI      ALIGN=LINUXPPC
+\layout LyX-Code
+
+FLOAT=NOHSFLT:NORNDSNGL:NOHSSNGL:MAF:NORRM:FOLD:NONANS:RSQRT:FLTINT:NOEMULATE
+\layout LyX-Code
+
+MAXMEM=-1       NOSTRICT        NOSTRICT_INDUCTION   TBTABLE=SMALL   LIST
+\layout LyX-Code
+
+SHOWINC=NOSYS:NOUSR             SOURCE          STATICINLINE    TMPLPARSE=NO
+\layout LyX-Code
+
+NOEH
+\layout LyX-Code
+
+>>>>> SOURCE SECTION <<<<<
+\layout LyX-Code
+
+            1 | #include <math.h>
+\layout LyX-Code
+
+            2 | void nineroot(double* f, const double* x)
+\layout LyX-Code
+
+            3 | {
+\layout LyX-Code
+
+            4 |    double x0 = x[0] ;
+\layout LyX-Code
+
+            5 |    double x1 = x[1] ;
+\layout LyX-Code
+
+            6 |    double x2 = x[2] ;
+\layout LyX-Code
+
+            7 |    double x3 = x[3] ;
+\layout LyX-Code
+
+            8 |    double x4 = x[4] ;
+\layout LyX-Code
+
+            9 |    double x5 = x[5] ;
+\layout LyX-Code
+
+           10 |    double x6 = x[6] ;
+\layout LyX-Code
+
+           11 |    double x7 = x[7] ;
+\layout LyX-Code
+
+           12 |    double x8 = x[8] ;
+\layout LyX-Code
+
+           13 |    double r0 = 1.0/sqrt(x0) ;
+\layout LyX-Code
+
+           14 |    double r1 = 1.0/sqrt(x1) ;
+\layout LyX-Code
+
+           15 |    double r2 = 1.0/sqrt(x2) ;
+\layout LyX-Code
+
+           16 |    double r3 = 1.0/sqrt(x3) ;
+\layout LyX-Code
+
+           17 |    double r4 = 1.0/sqrt(x4) ;
+\layout LyX-Code
+
+           18 |    double r5 = 1.0/sqrt(x5) ;
+\layout LyX-Code
+
+           19 |    double r6 = 1.0/sqrt(x6) ;
+\layout LyX-Code
+
+           20 |    double r7 = 1.0/sqrt(x7) ;
+\layout LyX-Code
+
+           21 |    double r8 = 1.0/sqrt(x8) ;
+\layout LyX-Code
+
+           22 |    f[0] = r0 ;
+\layout LyX-Code
+
+           23 |    f[1] = r1 ;
+\layout LyX-Code
+
+           24 |    f[2] = r2 ;
+\layout LyX-Code
+
+           25 |    f[3] = r3 ;
+\layout LyX-Code
+
+           26 |    f[4] = r4 ;
+\layout LyX-Code
+
+           27 |    f[5] = r5 ;
+\layout LyX-Code
+
+           28 |    f[6] = r6 ;
+\layout LyX-Code
+
+           29 |    f[7] = r7 ;
+\layout LyX-Code
+
+           30 |    f[8] = r8 ;
+\layout LyX-Code
+
+           31 | }
+\layout LyX-Code
+
+** Procedure List for Proc #   1: _Z8ninerootPdPKd End of Phase 3 **
+\layout LyX-Code
+
+    0:      HDR
+\layout LyX-Code
+
+    4:      BB_BEGIN    2 /    0
+\layout LyX-Code
+
+    3:      PROC     f,x,gr3,gr4
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,0
+\layout LyX-Code
+
+    0:      LR       gr12=gr1
+\layout LyX-Code
+
+    0:      LI       gr0=-16
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,1
+\layout LyX-Code
+
+    0:      ST4U     gr1,#stack(gr1,-96)=gr1
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,2
+\layout LyX-Code
+
+    0:      SFPLU    gr12,#stack(gr12,gr0,0)=fp31,fp63
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,3
+\layout LyX-Code
+
+    0:      SFPLU    gr12,#stack(gr12,gr0,0)=fp30,fp62
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,4
+\layout LyX-Code
+
+    0:      SFPLU    gr12,#stack(gr12,gr0,0)=fp29,fp61
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,5
+\layout LyX-Code
+
+    0:      SFPLU    gr12,#stack(gr12,gr0,0)=fp28,fp60
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,6
+\layout LyX-Code
+
+    0:      SFPLU    gr12,#stack(gr12,gr0,0)=fp27,fp59
+\layout LyX-Code
+
+    0:      FENCE
+\layout LyX-Code
+
+    0:      DIRCTIV  end_prologue
+\layout LyX-Code
+
+    0:      FENCE
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,0
+\layout LyX-Code
+
+   31:      DIRCTIV  start_epilogue
+\layout LyX-Code
+
+    4:      LFL      fp13=(double)(gr4,0)
+\layout LyX-Code
+
+    5:      LI       gr6=8
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,1
+\layout LyX-Code
+
+    7:      LI       gr5=24
+\layout LyX-Code
+
+    5:      LFL      fp45=(double)(gr4,gr6,0,trap=8)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,2
+\layout LyX-Code
+
+    9:      LI       gr8=40
+\layout LyX-Code
+
+   11:      LI       gr6=56
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,3
+\layout LyX-Code
+
+   13:      LA       gr7=.+CONSTANT_AREA%HI(gr2,0)
+\layout LyX-Code
+
+    6:      LFL      fp11=(double)(gr4,16)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,4
+\layout LyX-Code
+
+   13:      LA       gr7=+CONSTANT_AREA%LO(gr7,0)
+\layout LyX-Code
+
+    7:      LFL      fp43=(double)(gr4,gr5,0,trap=24)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,5
+\layout LyX-Code
+
+    8:      LFL      fp10=(double)(gr4,32)
+\layout LyX-Code
+
+   13:      FPRSQRE  fp9,fp41=fp13,fp45
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,6
+\layout LyX-Code
+
+    9:      LFL      fp42=(double)(gr4,gr8,0,trap=40)
+\layout LyX-Code
+
+   31:      LR       gr12=gr1
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,7
+\layout LyX-Code
+
+   10:      LFL      fp8=(double)(gr4,48)
+\layout LyX-Code
+
+   31:      LI       gr0=16
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,8
+\layout LyX-Code
+
+   11:      LFL      fp40=(double)(gr4,gr6,0,trap=56)
+\layout LyX-Code
+
+   15:      FPRSQRE  fp7,fp39=fp11,fp43
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,9
+\layout LyX-Code
+
+   13:      LI       gr6=32
+\layout LyX-Code
+
+   12:      LFL      fp31=(double)(gr4,64)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,10
+\layout LyX-Code
+
+   13:      LFPS     fp27,fp59=+CONSTANT_AREA(gr7,gr5,0,trap=24)
+\layout LyX-Code
+
+   13:      FPMUL    fp12,fp44=fp9,fp41,fp9,fp41,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,11
+\layout LyX-Code
+
+   17:      FPRSQRE  fp6,fp38=fp10,fp42
+\layout LyX-Code
+
+   13:      LFS      fp30=+CONSTANT_AREA(gr7,4)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,12
+\layout LyX-Code
+
+   19:      FPRSQRE  fp4,fp36=fp8,fp40
+\layout LyX-Code
+
+   13:      LFPS     fp5,fp37=+CONSTANT_AREA(gr7,gr6,0,trap=32)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,13
+\layout LyX-Code
+
+   21:      FRSQRE   fp29=fp31
+\layout LyX-Code
+
+   13:      LFPS     fp3,fp35=+CONSTANT_AREA(gr7,gr8,0,trap=40)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,14
+\layout LyX-Code
+
+   13:      LI       gr4=48
+\layout LyX-Code
+
+   15:      FPMUL    fp1,fp33=fp7,fp39,fp7,fp39,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,15
+\layout LyX-Code
+
+   13:      LFPS     fp2,fp34=+CONSTANT_AREA(gr7,gr4,0,trap=48)
+\layout LyX-Code
+
+   13:      FPMADD   fp13,fp45=fp27,fp59,fp13,fp45,fp12,fp44,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,16
+\layout LyX-Code
+
+   17:      FPMUL    fp0,fp32=fp6,fp38,fp6,fp38,fcr
+\layout LyX-Code
+
+   23:      LI       gr6=8
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,17
+\layout LyX-Code
+
+   19:      FPMUL    fp12,fp44=fp4,fp36,fp4,fp36,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,18
+\layout LyX-Code
+
+   21:      MFL      fp28=fp29,fp29,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,19
+\layout LyX-Code
+
+   15:      FPMADD   fp1,fp33=fp27,fp59,fp11,fp43,fp1,fp33,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,21
+\layout LyX-Code
+
+   17:      FPMADD   fp10,fp42=fp27,fp59,fp10,fp42,fp0,fp32,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,22
+\layout LyX-Code
+
+   19:      FPMADD   fp8,fp40=fp27,fp59,fp8,fp40,fp12,fp44,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,23
+\layout LyX-Code
+
+   21:      FMA      fp31=fp27,fp31,fp28,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,24
+\layout LyX-Code
+
+   13:      FXPMADD  fp0,fp32=fp5,fp37,fp13,fp45,fp30,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,25
+\layout LyX-Code
+
+   15:      FXPMADD  fp12,fp44=fp5,fp37,fp1,fp33,fp30,fp30,fcr
+\layout LyX-Code
+
+   31:      LFPLU    fp27,fp59,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,26
+\layout LyX-Code
+
+   17:      FXPMADD  fp11,fp43=fp5,fp37,fp10,fp42,fp30,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,27
+\layout LyX-Code
+
+   19:      FXPMADD  fp28,fp60=fp5,fp37,fp8,fp40,fp30,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,28
+\layout LyX-Code
+
+   21:      FMA      fp5=fp5,fp31,fp30,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,29
+\layout LyX-Code
+
+   13:      FPMADD   fp0,fp32=fp3,fp35,fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,30
+\layout LyX-Code
+
+   15:      FPMADD   fp12,fp44=fp3,fp35,fp1,fp33,fp12,fp44,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,31
+\layout LyX-Code
+
+   17:      FPMADD   fp11,fp43=fp3,fp35,fp10,fp42,fp11,fp43,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,32
+\layout LyX-Code
+
+   19:      FPMADD   fp30,fp62=fp3,fp35,fp8,fp40,fp28,fp60,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,33
+\layout LyX-Code
+
+   21:      FMA      fp5=fp3,fp31,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,34
+\layout LyX-Code
+
+   13:      FPMADD   fp0,fp32=fp2,fp34,fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+   31:      LFPLU    fp28,fp60,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,35
+\layout LyX-Code
+
+   15:      FPMADD   fp3,fp35=fp2,fp34,fp1,fp33,fp12,fp44,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,36
+\layout LyX-Code
+
+   17:      FPMADD   fp11,fp43=fp2,fp34,fp10,fp42,fp11,fp43,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,37
+\layout LyX-Code
+
+   19:      FPMADD   fp12,fp44=fp2,fp34,fp8,fp40,fp30,fp62,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,38
+\layout LyX-Code
+
+   21:      FMA      fp5=fp2,fp31,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,39
+\layout LyX-Code
+
+   13:      FPMUL    fp0,fp32=fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,40
+\layout LyX-Code
+
+   15:      FPMUL    fp1,fp33=fp1,fp33,fp3,fp35,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,41
+\layout LyX-Code
+
+   17:      FPMUL    fp2,fp34=fp10,fp42,fp11,fp43,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,42
+\layout LyX-Code
+
+   19:      FPMUL    fp3,fp35=fp8,fp40,fp12,fp44,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,43
+\layout LyX-Code
+
+   21:      MFL      fp5=fp31,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,44
+\layout LyX-Code
+
+   13:      FPMADD   fp0,fp32=fp9,fp41,fp9,fp41,fp0,fp32,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,45
+\layout LyX-Code
+
+   15:      FPMADD   fp1,fp33=fp7,fp39,fp7,fp39,fp1,fp33,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,46
+\layout LyX-Code
+
+   17:      FPMADD   fp2,fp34=fp6,fp38,fp6,fp38,fp2,fp34,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,47
+\layout LyX-Code
+
+   19:      FPMADD   fp3,fp35=fp4,fp36,fp4,fp36,fp3,fp35,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,48
+\layout LyX-Code
+
+   21:      FMA      fp4=fp29,fp29,fp5,fcr
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,49
+\layout LyX-Code
+
+   22:      STFL     (double)(gr3,0)=fp0
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,50
+\layout LyX-Code
+
+   23:      STFL     (double)(gr3,gr6,0,trap=8)=fp32
+\layout LyX-Code
+
+   29:      LI       gr6=56
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,51
+\layout LyX-Code
+
+   31:      LFPLU    fp29,fp61,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,52
+\layout LyX-Code
+
+   24:      STFL     (double)(gr3,16)=fp1
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,53
+\layout LyX-Code
+
+   25:      STFL     (double)(gr3,gr5,0,trap=24)=fp33
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,54
+\layout LyX-Code
+
+   31:      LFPLU    fp30,fp62,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,55
+\layout LyX-Code
+
+   26:      STFL     (double)(gr3,32)=fp2
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,56
+\layout LyX-Code
+
+   27:      STFL     (double)(gr3,gr8,0,trap=40)=fp34
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,57
+\layout LyX-Code
+
+   31:      LFPLU    fp31,fp63,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,58
+\layout LyX-Code
+
+   28:      STFL     (double)(gr3,48)=fp3
+\layout LyX-Code
+
+   31:      AI       gr1=gr1,96,gr12
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,59
+\layout LyX-Code
+
+   31:      CONSUME  gr1,gr2,lr,gr14-gr31,fp14-fp31,fp46-fp63,cr[234],fsr,fcr,ct
+r
+\layout LyX-Code
+
+   29:      STFL     (double)(gr3,gr6,0,trap=56)=fp35
+\layout LyX-Code
+
+    0:      DIRCTIV  issue_cycle,60
+\layout LyX-Code
+
+   30:      STFL     (double)(gr3,64)=fp4
+\layout LyX-Code
+
+   31:      BA       lr
+\layout LyX-Code
+
+    4:      BB_END
+\layout LyX-Code
+
+    5:      BB_BEGIN    3 /    0
+\layout LyX-Code
+
+   31:      PEND
+\layout LyX-Code
+
+    5:      BB_END
+\layout LyX-Code
+
+** End of Procedure List for Proc #   1: _Z8ninerootPdPKd End of Phase 3
+ **
+\layout LyX-Code
+
+-qdebug=BGL:PLST3:CYCLES:SHUTUP:HUMMER:LINUX:NEWSCHED1:NEWSCHED2:REGPRES:ADRA:AN
+TIDEP:MAXGRIDICULOUS:HUMSQRT:NOPIC:PLST3:CYCLES:PLSTHUMM:HUMMDBG:RECIPF:
+\layout LyX-Code
+
+ GPR's set/used:   ssuu ssss s--- s---  ---- ---- ---- ----
+\layout LyX-Code
+
+ FPR's set/used:   ssss ssss ssss ss--  ---- ---- ---s ssss
+\layout LyX-Code
+
+                   ssss ssss ssss ss--  ---- ---- ---s s-s-
+\layout LyX-Code
+
+ CCR's set/used:   ---- ----
+\layout LyX-Code
+
+  | 000000                     PDEF     nineroot(double *, const double
+ *)
+\layout LyX-Code
+
+ 3|                            PROC     f,x,gr3,gr4
+\layout LyX-Code
+
+ 0| 000000 ori      602C0000 1 LR       gr12=gr1
+\layout LyX-Code
+
+ 0| 000004 addi     3800FFF0 1 LI       gr0=-16
+\layout LyX-Code
+
+ 0| 000008 stwu     9421FFA0 1 ST4U     gr1,#stack(gr1,-96)=gr1
+\layout LyX-Code
+
+ 0| 00000C stfpdux  7FEC07DC 1 SFPLU    gr12,#stack(gr12,gr0,0)=fp31,fp63
+\layout LyX-Code
+
+ 0| 000010 stfpdux  7FCC07DC 1 SFPLU    gr12,#stack(gr12,gr0,0)=fp30,fp62
+\layout LyX-Code
+
+ 0| 000014 stfpdux  7FAC07DC 1 SFPLU    gr12,#stack(gr12,gr0,0)=fp29,fp61
+\layout LyX-Code
+
+ 0| 000018 stfpdux  7F8C07DC 1 SFPLU    gr12,#stack(gr12,gr0,0)=fp28,fp60
+\layout LyX-Code
+
+ 0| 00001C stfpdux  7F6C07DC 1 SFPLU    gr12,#stack(gr12,gr0,0)=fp27,fp59
+\layout LyX-Code
+
+ 4| 000020 lfd      C9A40000 1 LFL      fp13=(double)(gr4,0)
+\layout LyX-Code
+
+ 5| 000024 addi     38C00008 1 LI       gr6=8
+\layout LyX-Code
+
+ 7| 000028 addi     38A00018 1 LI       gr5=24
+\layout LyX-Code
+
+ 5| 00002C lfsdx    7DA4319C 1 LFL      fp45=(double)(gr4,gr6,0,trap=8)
+\layout LyX-Code
+
+ 9| 000030 addi     39000028 1 LI       gr8=40
+\layout LyX-Code
+
+11| 000034 addi     38C00038 1 LI       gr6=56
+\layout LyX-Code
+
+13| 000038 addis    3CE00000 1 LA       gr7=.+CONSTANT_AREA%HI(gr2,0)
+\layout LyX-Code
+
+ 6| 00003C lfd      C9640010 1 LFL      fp11=(double)(gr4,16)
+\layout LyX-Code
+
+13| 000040 addi     38E70000 1 LA       gr7=+CONSTANT_AREA%LO(gr7,0)
+\layout LyX-Code
+
+ 7| 000044 lfsdx    7D64299C 1 LFL      fp43=(double)(gr4,gr5,0,trap=24)
+\layout LyX-Code
+
+ 8| 000048 lfd      C9440020 1 LFL      fp10=(double)(gr4,32)
+\layout LyX-Code
+
+13| 00004C fprsqrte 0120681E 1 FPRSQRE  fp9,fp41=fp13,fp45
+\layout LyX-Code
+
+ 9| 000050 lfsdx    7D44419C 1 LFL      fp42=(double)(gr4,gr8,0,trap=40)
+\layout LyX-Code
+
+31| 000054 ori      602C0000 1 LR       gr12=gr1
+\layout LyX-Code
+
+10| 000058 lfd      C9040030 1 LFL      fp8=(double)(gr4,48)
+\layout LyX-Code
+
+31| 00005C addi     38000010 1 LI       gr0=16
+\layout LyX-Code
+
+11| 000060 lfsdx    7D04319C 1 LFL      fp40=(double)(gr4,gr6,0,trap=56)
+\layout LyX-Code
+
+15| 000064 fprsqrte 00E0581E 1 FPRSQRE  fp7,fp39=fp11,fp43
+\layout LyX-Code
+
+13| 000068 addi     38C00020 1 LI       gr6=32
+\layout LyX-Code
+
+12| 00006C lfd      CBE40040 1 LFL      fp31=(double)(gr4,64)
+\layout LyX-Code
+
+13| 000070 lfpsx    7F672B1C 1 LFPS     fp27,fp59=+CONSTANT_AREA(gr7,gr5,0,trap=
+24)
+\layout LyX-Code
+
+13| 000074 fpmul    01890250 1 FPMUL    fp12,fp44=fp9,fp41,fp9,fp41,fcr
+\layout LyX-Code
+
+17| 000078 fprsqrte 00C0501E 1 FPRSQRE  fp6,fp38=fp10,fp42
+\layout LyX-Code
+
+13| 00007C lfs      C3C70004 1 LFS      fp30=+CONSTANT_AREA(gr7,4)
+\layout LyX-Code
+
+19| 000080 fprsqrte 0080401E 1 FPRSQRE  fp4,fp36=fp8,fp40
+\layout LyX-Code
+
+13| 000084 lfpsx    7CA7331C 1 LFPS     fp5,fp37=+CONSTANT_AREA(gr7,gr6,0,trap=3
+2)
+\layout LyX-Code
+
+21| 000088 frsqrte  FFA0F834 1 FRSQRE   fp29=fp31
+\layout LyX-Code
+
+13| 00008C lfpsx    7C67431C 1 LFPS     fp3,fp35=+CONSTANT_AREA(gr7,gr8,0,trap=4
+0)
+\layout LyX-Code
+
+13| 000090 addi     38800030 1 LI       gr4=48
+\layout LyX-Code
+
+15| 000094 fpmul    002701D0 1 FPMUL    fp1,fp33=fp7,fp39,fp7,fp39,fcr
+\layout LyX-Code
+
+13| 000098 lfpsx    7C47231C 1 LFPS     fp2,fp34=+CONSTANT_AREA(gr7,gr4,0,trap=4
+8)
+\layout LyX-Code
+
+13| 00009C fpmadd   01ADDB20 1 FPMADD   fp13,fp45=fp27,fp59,fp13,fp45,fp12,fp44,
+fcr
+\layout LyX-Code
+
+17| 0000A0 fpmul    00060190 1 FPMUL    fp0,fp32=fp6,fp38,fp6,fp38,fcr
+\layout LyX-Code
+
+23| 0000A4 addi     38C00008 1 LI       gr6=8
+\layout LyX-Code
+
+19| 0000A8 fpmul    01840110 1 FPMUL    fp12,fp44=fp4,fp36,fp4,fp36,fcr
+\layout LyX-Code
+
+21| 0000AC fmul     FF9D0772 1 MFL      fp28=fp29,fp29,fcr
+\layout LyX-Code
+
+15| 0000B0 fpmadd   002BD860 1 FPMADD   fp1,fp33=fp27,fp59,fp11,fp43,fp1,fp33,fc
+r
+\layout LyX-Code
+
+17| 0000B4 fpmadd   014AD820 1 FPMADD   fp10,fp42=fp27,fp59,fp10,fp42,fp0,fp32,f
+cr
+\layout LyX-Code
+
+19| 0000B8 fpmadd   0108DB20 1 FPMADD   fp8,fp40=fp27,fp59,fp8,fp40,fp12,fp44,fc
+r
+\layout LyX-Code
+
+21| 0000BC fmadd    FFFFDF3A 1 FMA      fp31=fp27,fp31,fp28,fcr
+\layout LyX-Code
+
+13| 0000C0 fxcpmadd 001E2B64 1 FXPMADD  fp0,fp32=fp5,fp37,fp13,fp45,fp30,fp30,fc
+r
+\layout LyX-Code
+
+15| 0000C4 fxcpmadd 019E2864 1 FXPMADD  fp12,fp44=fp5,fp37,fp1,fp33,fp30,fp30,fc
+r
+\layout LyX-Code
+
+31| 0000C8 lfpdux   7F6C03DC 1 LFPLU    fp27,fp59,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+17| 0000CC fxcpmadd 017E2AA4 1 FXPMADD  fp11,fp43=fp5,fp37,fp10,fp42,fp30,fp30,f
+cr
+\layout LyX-Code
+
+19| 0000D0 fxcpmadd 039E2A24 1 FXPMADD  fp28,fp60=fp5,fp37,fp8,fp40,fp30,fp30,fc
+r
+\layout LyX-Code
+
+21| 0000D4 fmadd    FCBF2FBA 1 FMA      fp5=fp5,fp31,fp30,fcr
+\layout LyX-Code
+
+13| 0000D8 fpmadd   000D1820 1 FPMADD   fp0,fp32=fp3,fp35,fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+15| 0000DC fpmadd   01811B20 1 FPMADD   fp12,fp44=fp3,fp35,fp1,fp33,fp12,fp44,fc
+r
+\layout LyX-Code
+
+17| 0000E0 fpmadd   016A1AE0 1 FPMADD   fp11,fp43=fp3,fp35,fp10,fp42,fp11,fp43,f
+cr
+\layout LyX-Code
+
+19| 0000E4 fpmadd   03C81F20 1 FPMADD   fp30,fp62=fp3,fp35,fp8,fp40,fp28,fp60,fc
+r
+\layout LyX-Code
+
+21| 0000E8 fmadd    FCBF197A 1 FMA      fp5=fp3,fp31,fp5,fcr
+\layout LyX-Code
+
+13| 0000EC fpmadd   000D1020 1 FPMADD   fp0,fp32=fp2,fp34,fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+31| 0000F0 lfpdux   7F8C03DC 1 LFPLU    fp28,fp60,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+15| 0000F4 fpmadd   00611320 1 FPMADD   fp3,fp35=fp2,fp34,fp1,fp33,fp12,fp44,fcr
+\layout LyX-Code
+
+17| 0000F8 fpmadd   016A12E0 1 FPMADD   fp11,fp43=fp2,fp34,fp10,fp42,fp11,fp43,f
+cr
+\layout LyX-Code
+
+19| 0000FC fpmadd   018817A0 1 FPMADD   fp12,fp44=fp2,fp34,fp8,fp40,fp30,fp62,fc
+r
+\layout LyX-Code
+
+21| 000100 fmadd    FCBF117A 1 FMA      fp5=fp2,fp31,fp5,fcr
+\layout LyX-Code
+
+13| 000104 fpmul    000D0010 1 FPMUL    fp0,fp32=fp13,fp45,fp0,fp32,fcr
+\layout LyX-Code
+
+15| 000108 fpmul    002100D0 1 FPMUL    fp1,fp33=fp1,fp33,fp3,fp35,fcr
+\layout LyX-Code
+
+17| 00010C fpmul    004A02D0 1 FPMUL    fp2,fp34=fp10,fp42,fp11,fp43,fcr
+\layout LyX-Code
+
+19| 000110 fpmul    00680310 1 FPMUL    fp3,fp35=fp8,fp40,fp12,fp44,fcr
+\layout LyX-Code
+
+21| 000114 fmul     FCBF0172 1 MFL      fp5=fp31,fp5,fcr
+\layout LyX-Code
+
+13| 000118 fpmadd   00094820 1 FPMADD   fp0,fp32=fp9,fp41,fp9,fp41,fp0,fp32,fcr
+\layout LyX-Code
+
+15| 00011C fpmadd   00273860 1 FPMADD   fp1,fp33=fp7,fp39,fp7,fp39,fp1,fp33,fcr
+\layout LyX-Code
+
+17| 000120 fpmadd   004630A0 1 FPMADD   fp2,fp34=fp6,fp38,fp6,fp38,fp2,fp34,fcr
+\layout LyX-Code
+
+19| 000124 fpmadd   006420E0 1 FPMADD   fp3,fp35=fp4,fp36,fp4,fp36,fp3,fp35,fcr
+\layout LyX-Code
+
+21| 000128 fmadd    FC9DE97A 1 FMA      fp4=fp29,fp29,fp5,fcr
+\layout LyX-Code
+
+22| 00012C stfd     D8030000 1 STFL     (double)(gr3,0)=fp0
+\layout LyX-Code
+
+23| 000130 stfsdx   7C03359C 1 STFL     (double)(gr3,gr6,0,trap=8)=fp32
+\layout LyX-Code
+
+29| 000134 addi     38C00038 1 LI       gr6=56
+\layout LyX-Code
+
+31| 000138 lfpdux   7FAC03DC 1 LFPLU    fp29,fp61,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+24| 00013C stfd     D8230010 1 STFL     (double)(gr3,16)=fp1
+\layout LyX-Code
+
+25| 000140 stfsdx   7C232D9C 1 STFL     (double)(gr3,gr5,0,trap=24)=fp33
+\layout LyX-Code
+
+31| 000144 lfpdux   7FCC03DC 1 LFPLU    fp30,fp62,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+26| 000148 stfd     D8430020 1 STFL     (double)(gr3,32)=fp2
+\layout LyX-Code
+
+27| 00014C stfsdx   7C43459C 1 STFL     (double)(gr3,gr8,0,trap=40)=fp34
+\layout LyX-Code
+
+31| 000150 lfpdux   7FEC03DC 1 LFPLU    fp31,fp63,gr12=#stack(gr12,gr0,0)
+\layout LyX-Code
+
+28| 000154 stfd     D8630030 1 STFL     (double)(gr3,48)=fp3
+\layout LyX-Code
+
+31| 000158 addi     38210060 1 AI       gr1=gr1,96,gr12
+\layout LyX-Code
+
+29| 00015C stfsdx   7C63359C 1 STFL     (double)(gr3,gr6,0,trap=56)=fp35
+\layout LyX-Code
+
+30| 000160 stfd     D8830040 1 STFL     (double)(gr3,64)=fp4
+\layout LyX-Code
+
+31| 000164 bclr     4E800020 0 BA       lr
+\layout LyX-Code
+
+  |               Instruction count           90
+\layout LyX-Code
+
+  |               Constant Area
+\layout LyX-Code
+
+  | 000000        BF800000 3E8C0000 BEA00000 3EC00000 BF000000 49424D20
+\layout LyX-Code
+
+  | 000018        BF800000 BF800000 BEA00000 BEA00000 3EC00000 3EC00000
+\layout LyX-Code
+
+  | 000030        BF000000 BF000000
+\layout LyX-Code
+
+ 1500-036: (I) The NOSTRICT option (default at OPT(3)) has the potential
+ to 
+\layout LyX-Code
+
+               alter the semantics of a program.
+  
+\layout LyX-Code
+
+               Please refer to documentation on the STRICT/NOSTRICT option
+ 
+\layout LyX-Code
+
+               for more information.
+\layout LyX-Code
+
+\layout Section
+
+Source code
+\layout Subsection
+
+Utilities
+\layout LyX-Code
+
+// 'fsel' is a built-in instruction on PPCGR and above, 
+\layout LyX-Code
+
+// sometimes we want to force its use
+\layout LyX-Code
+
+#if defined(ARCH_HAS_FSEL)
+\layout LyX-Code
+
+#include <builtins.h>
+\layout LyX-Code
+
+#define fsel(a, x, y) __fsel((a),(x),(y))
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+#define fsel(a, x, y) ( (a) >= 0.0 ? (x) : (y) )
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+/*
+\layout LyX-Code
+
+ * Storage mapping of an IEEE double-precision number, for access to
+\layout LyX-Code
+
+ * parts of it as integers or bits
+\layout LyX-Code
+
+ * This is big-endian specific, for little-endian you have to swap
+\layout LyX-Code
+
+ * m_hi and m_lo, then test it !
+\layout LyX-Code
+
+ * The intended use of this is in calculating exp(x)
+\layout LyX-Code
+
+ */
+\layout LyX-Code
+
+class DoubleMap
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+  public:
+\layout LyX-Code
+
+  class UIntPair
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+     public:
+\layout LyX-Code
+
+    unsigned int m_hi ;
+\layout LyX-Code
+
+    unsigned int m_lo ;
+\layout LyX-Code
+
+  } ;
+\layout LyX-Code
+
+   union {
+\layout LyX-Code
+
+      double m_d ;
+\layout LyX-Code
+
+      UIntPair m_u ;
+\layout LyX-Code
+
+      } m_value ;
+\layout LyX-Code
+
+  DoubleMap(void) { } ;
+\layout LyX-Code
+
+  DoubleMap(double X) { m_value.m_d = X ; } ;
+\layout LyX-Code
+
+  DoubleMap(
+\layout LyX-Code
+
+    unsigned int Xsign ,   // 0 for positive, 1 for negative
+\layout LyX-Code
+
+    unsigned int Xexponent ,
+\layout LyX-Code
+
+    unsigned int Xsignificand_hi ,  // The 0x00100000 bit had 
+\layout LyX-Code
+
+                    // better be set, to get the right answer
+\layout LyX-Code
+
+    unsigned int Xsignificand_lo
+\layout LyX-Code
+
+    ) {
+\layout LyX-Code
+
+       m_value.m_u.m_hi = ( ( Xsign << 31 )
+\layout LyX-Code
+
+                           & 0x80000000 )
+\layout LyX-Code
+
+                        | ( ( (Xexponent + 1023 )  << 20 ) 
+\layout LyX-Code
+
+                           & 0x7ff00000 )
+\layout LyX-Code
+
+                        | ( Xsignificand_hi 
+\layout LyX-Code
+
+                           & 0x000fffff ) ;
+\layout LyX-Code
+
+       m_value.m_u.m_lo = Xsignificand_lo ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+  double GetValue(void) const { return m_value.m_d ; } ;
+\layout LyX-Code
+
+  void SetValue(double X) { m_value.m_d = X ; } ;
+\layout LyX-Code
+
+  void SetValue(
+\layout LyX-Code
+
+    unsigned int Xsign ,   // 0 for positive, 1 for negative
+\layout LyX-Code
+
+    unsigned int Xexponent ,
+\layout LyX-Code
+
+    unsigned int Xsignificand_hi ,  // The 0x00100000 bit had better be
+\layout LyX-Code
+
+                                    // set, to get the right answer
+\layout LyX-Code
+
+    unsigned int Xsignificand_lo
+\layout LyX-Code
+
+    ) {
+\layout LyX-Code
+
+       m_value.m_u.m_hi = ( ( Xsign << 31 )
+\layout LyX-Code
+
+                           & 0x80000000 )
+\layout LyX-Code
+
+                        | ( ( (Xexponent + 1023 )  << 20 ) 
+\layout LyX-Code
+
+                           & 0x7ff00000 )
+\layout LyX-Code
+
+                        | ( Xsignificand_hi   
+\layout LyX-Code
+
+                           & 0x000fffff ) ;
+\layout LyX-Code
+
+       m_value.m_u.m_lo = Xsignificand_lo ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+  unsigned int HiWord(void) const { return m_value.m_u.m_hi ; } ;
+\layout LyX-Code
+
+  unsigned int LoWord(void) const { return m_value.m_u.m_lo ; } ;
+\layout LyX-Code
+
+  unsigned int SignBit(void) const { return HiWord() & 0x80000000 ; } ;
+\layout LyX-Code
+
+  unsigned int ExponentBits(void) const { return HiWord() & 0x7ff00000 ;
+ } ;
+\layout LyX-Code
+
+  unsigned int SignificandHiBits(void) const { return HiWord() & 0x000fffff
+ ; } ;
+\layout LyX-Code
+
+  unsigned int SignificandLoBits(void) const { return LoWord() ; } ;
+\layout LyX-Code
+
+  void SetSignificandHiBits(unsigned int new_hi_bits) { 
+\layout LyX-Code
+
+                  m_value.m_u.m_hi = ( m_value.m_u.m_hi & 0xfff00000 )
+\layout LyX-Code
+
+                                    | ( new_hi_bits & 0x000fffff ) ; }
+\layout LyX-Code
+
+  int Exponent(void) const { return ( ExponentBits() >> 20 ) - 1023 ; }
+ ;
+\layout LyX-Code
+
+  unsigned int SignificandHi(void) const { 
+\layout LyX-Code
+
+               return SignificandHiBits() | 0x00100000 ; } ;
+\layout LyX-Code
+
+  unsigned int SignificandLo(void) const { return SignificandLoBits() ;
+ } ;
+\layout LyX-Code
+
+  bool IsNegative(void) const { return  0 != SignBit() ; } ;
+\layout LyX-Code
+
+} ;
+\layout Subsection
+
+Nearest Integer
+\layout LyX-Code
+
+        static double dk1 ; // The compiler does not know this is
+\layout LyX-Code
+
+          // constant, so should not 'optimise' away the rounding below
+\layout LyX-Code
+
+        static inline double NearestInteger(const double x)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+           const double two10 = 1024.0 ;
+\layout LyX-Code
+
+           const double two50 = two10 * two10 * two10 * two10 * two10 ;
+\layout LyX-Code
+
+           const double two52 = two50 * 4.0 ;
+\layout LyX-Code
+
+           const double two51 = two50 * 2.0 ;
+\layout LyX-Code
+
+           const double offset = two52 + two51 ;
+\layout LyX-Code
+
+           // Force add and subtract of appropriate constant 
+\layout LyX-Code
+
+           // to drop  fractional part
+\layout LyX-Code
+
+           // ..
+ hide it from the compiler so the optimiser won't
+\layout LyX-Code
+
+           // reassociate things ..
+\layout LyX-Code
+
+           const double losebits = (dk1*x) + offset ;
+\layout LyX-Code
+
+           const double result = (dk1*losebits) - offset ;
+\layout LyX-Code
+
+           return result ;
+\layout LyX-Code
+
+        }
+\layout Subsection
+
+Reciprocal
+\layout Standard
+
+This is useful for POWER3; the hardware 'floating-point divide' instruction
+ blocks the floating-point pipeline and causes relatively low througput
+ for code which is vectorisable.
+ However, it only applies where the application is such that 'a' is in the
+ single-precision range; the hardware 'fres' instruction does not give a
+ useful result for double-precision numbers which cause overflow or underflow
+ when converted to single precision.
+ 
+\layout Standard
+
+For BG/L, the hardware 'parallel floating point reciprocal estimate' instruction
+ gives a useful result for the whole double-precision range, and the compiler
+ knows how to use it; this code sequence is therefore relatively less useful.
+\layout LyX-Code
+
+#include <builtins.h>
+\layout LyX-Code
+
+static inline double better_reciprocal(double a, double x0)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   double f0 = a*x0 - 1.0 ;
+\layout LyX-Code
+
+   double x1 = x0 - x0 * f0 ;
+\layout LyX-Code
+
+   return x1 ;
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+static inline double recip(double a)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   double x0 = __fres(a) ; // take it as read that a is in
+\layout LyX-Code
+
+                           // single-precision range
+\layout LyX-Code
+
+   double x1 = better_reciprocal(a,x0) ;
+\layout LyX-Code
+
+   double x2 = better_reciprocal(a,x1) ;
+\layout LyX-Code
+
+   double x3 = better_reciprocal(a,x2) ;
+\layout LyX-Code
+
+   return x3 ;
+\layout LyX-Code
+
+}
+\layout Subsection
+
+Complementary error function and derivative (Chebyshev)
+\layout LyX-Code
+
+class ChebyshevPairEvaluator
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+  public:
+\layout LyX-Code
+
+  enum {
+\layout LyX-Code
+
+     k_Terms = 16
+\layout LyX-Code
+
+     } ;
+\layout LyX-Code
+
+        class DoublePair
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                public:
+\layout LyX-Code
+
+                double pa ;
+\layout LyX-Code
+
+                double pb ;
+\layout LyX-Code
+
+        } ;
+\layout LyX-Code
+
+        class DoublePairArray
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                public:
+\layout LyX-Code
+
+                DoublePair c[k_Terms] ;
+\layout LyX-Code
+
+        } ;
+\layout LyX-Code
+
+  static void RawEvaluatePair(double& f, double& df, double x,
+\layout LyX-Code
+
+                              const DoublePairArray& cp)
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+     double dppa = 0.0 ;
+\layout LyX-Code
+
+     double dpa = 0.0 ;
+\layout LyX-Code
+
+     double dppb = 0.0 ;
+\layout LyX-Code
+
+     double dpb = 0.0 ;
+\layout LyX-Code
+
+     for (int j=0; j<k_Terms-1; j+=1)
+\layout LyX-Code
+
+     {
+\layout LyX-Code
+
+        double da=(2.0*x)*dpa - dppa + cp.c[j].pa ;
+\layout LyX-Code
+
+        double db=(2.0*x)*dpb - dppb + cp.c[j].pb ;
+\layout LyX-Code
+
+        dppa = dpa ;
+\layout LyX-Code
+
+        dppb = dpb ;
+\layout LyX-Code
+
+        dpa = da ;
+\layout LyX-Code
+
+        dpb = db ;
+\layout LyX-Code
+
+     } /* endfor */
+\layout LyX-Code
+
+     // Term 0 is a special case; POWER 'multiply-add' makes 
+\layout LyX-Code
+
+     // this same efficiency as rewriting the table
+\layout LyX-Code
+
+     double resulta = x*dpa - dppa + 0.5*(cp.c[k_Terms-1]).pa ;
+\layout LyX-Code
+
+     double resultb = x*dpb - dppb + 0.5*(cp.c[k_Terms-1]).pb ;
+\layout LyX-Code
+
+     f = resulta ;
+\layout LyX-Code
+
+     df = resultb ;
+\layout LyX-Code
+
+  }
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+class ErfEvaluator: public ChebyshevPairEvaluator
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   public:
+\layout LyX-Code
+
+   enum {
+\layout LyX-Code
+
+      k_Slices = 8 ,
+\layout LyX-Code
+
+      } ;
+\layout LyX-Code
+
+        class CTable {
+\layout LyX-Code
+
+                public:
+\layout LyX-Code
+
+                DoublePairArray SliceTable[k_Slices] ;
+\layout LyX-Code
+
+        } ;
+\layout LyX-Code
+
+        static const CTable ChebyshevTable ;
+\layout LyX-Code
+
+        static double dk1 ; // The compiler does not know this is
+\layout LyX-Code
+
+         // constant, so should not 'optimise' away the rounding below
+\layout LyX-Code
+
+        static inline double NearestInteger(const double x)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+           const double two10 = 1024.0 ;
+\layout LyX-Code
+
+           const double two50 = two10 * two10 * two10 * two10 * two10 ;
+\layout LyX-Code
+
+           const double two52 = two50 * 4.0 ;
+\layout LyX-Code
+
+           const double two51 = two50 * 2.0 ;
+\layout LyX-Code
+
+           const double offset = two52 + two51 ;
+\layout LyX-Code
+
+           // Force add and subtract of appropriate constant to drop
+\layout LyX-Code
+
+           // fractional part
+\layout LyX-Code
+
+           // ..
+ hide it from the compiler so the optimiser won't
+\layout LyX-Code
+
+           // reassociate things ..
+\layout LyX-Code
+
+           const double losebits = (dk1*x) + offset ;
+\layout LyX-Code
+
+           const double result = (dk1*losebits) - offset ;
+\layout LyX-Code
+
+           return result ;
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+        static void Evaluate(const double x, double& f, double& df)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+           double xam = fabs(x) - 0.5 ;
+\layout LyX-Code
+
+           double xi = NearestInteger(xam) ;
+\layout LyX-Code
+
+           double xf = xam-xi ;                 // -0.5 < x < 0.5
+\layout LyX-Code
+
+           int ix = (int) xi ;
+\layout LyX-Code
+
+           int ixmask = ix & 7 ;
+\layout LyX-Code
+
+           double r0 ;
+\layout LyX-Code
+
+           double dr0 ;
+\layout LyX-Code
+
+           RawEvaluatePair(r0, dr0, 2.0*xf,   
+\layout LyX-Code
+
+                           ChebyshevTable.SliceTable[ixmask]) ;
+\layout LyX-Code
+
+           double  r1 = fsel(xi-7.5,-1.0,  r0) ;
+\layout LyX-Code
+
+           double dr1 = fsel(xi-7.5, 0.0, dr0) ;
+\layout LyX-Code
+
+           double   m = fsel(x,1.0, -1.0) ;
+\layout LyX-Code
+
+           double  r2 = 1.0+m*r1 ;
+\layout LyX-Code
+
+           f = r2    ;
+\layout LyX-Code
+
+           df = dr1 ;
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+#ifndef MSD_COMPILE_DATA_ONLY
+\layout LyX-Code
+
+const ErfEvaluator::CTable ErfEvaluator::ChebyshevTable = {
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                {
+\layout LyX-Code
+
+ {  {            -1.9514453114346613e-14 ,
+\layout LyX-Code
+
+                 -4.3962027206143962e-14 }
+\layout LyX-Code
+
+,   {             1.3625665209647924e-13 ,
+\layout LyX-Code
+
+                 -1.1610210709915711e-12 }
+\layout LyX-Code
+
+,   {             2.229902591391045e-12 ,
+\layout LyX-Code
+
+                  7.5864104901966937e-12 }
+\layout LyX-Code
+
+,   {            -2.1427408195614467e-11 ,
+\layout LyX-Code
+
+                  1.1479391368134277e-10 }
+\layout LyX-Code
+
+,   {            -2.0634390485502084e-10 ,
+\layout LyX-Code
+
+                 -1.0209291828992976e-09 }
+\layout LyX-Code
+
+,   {             2.7257129691783295e-09 ,
+\layout LyX-Code
+
+                 -8.9643378999395747e-09 }
+\layout LyX-Code
+
+,   {             1.4115809274810406e-08 ,
+\layout LyX-Code
+
+                  1.0800758958423388e-07 }
+\layout LyX-Code
+
+,   {            -2.7818478883356451e-07 ,
+\layout LyX-Code
+
+                  4.9920479599323502e-07 }
+\layout LyX-Code
+
+,   {            -5.2333748523420065e-07 ,
+\layout LyX-Code
+
+                 -8.7939056530898302e-06 }
+\layout LyX-Code
+
+,   {             2.211114704099522e-05 ,
+\layout LyX-Code
+
+                 -1.4154244790564384e-05 }
+\layout LyX-Code
+
+,   {            -1.8363892921493974e-05 ,
+\layout LyX-Code
+
+                  0.00052187362333079546 }
+\layout LyX-Code
+
+,   {             -0.0012919410465849694 ,
+\layout LyX-Code
+
+                 -0.00038143210322044387 }
+\layout LyX-Code
+
+,   {               0.004492934887683828 ,
+\layout LyX-Code
+
+                   -0.020149183122028715 }
+\layout LyX-Code
+
+,   {               0.049552626796204341 ,
+\layout LyX-Code
+
+                    0.053533786548985489 }
+\layout LyX-Code
+
+,   {              -0.42582445804381047 ,
+\layout LyX-Code
+
+                     0.37627183124760605 }
+\layout LyX-Code
+
+,   {               -0.93926583578230194 ,
+\layout LyX-Code
+
+                     -1.6497640456262563 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {          -5.0317730474937121e-16 ,
+\layout LyX-Code
+
+                 -4.2117485562976088e-14 }
+\layout LyX-Code
+
+,     {           9.4040069643033129e-14 ,
+\layout LyX-Code
+
+                 -2.7959038508193287e-14 }
+\layout LyX-Code
+
+,     {          -5.4676286926192122e-13 ,
+\layout LyX-Code
+
+                  5.2241264144468789e-12 }
+\layout LyX-Code
+
+,     {          -7.8746039930688689e-12 ,
+\layout LyX-Code
+
+                 -2.8459628240128098e-11 }
+\layout LyX-Code
+
+,     {           1.1428281965722648e-10 ,
+\layout LyX-Code
+
+                 -3.7275686525285883e-10 }
+\layout LyX-Code
+
+,     {           7.5247753102189958e-11 ,
+\layout LyX-Code
+
+                   4.999984436677837e-09 }
+\layout LyX-Code
+
+,     {          -1.1752407126361825e-08 ,
+\layout LyX-Code
+
+                  2.6371532588347393e-09 }
+\layout LyX-Code
+
+,     {           7.3301093509556885e-08 ,
+\layout LyX-Code
+
+                 -4.1808667211234786e-07 }
+\layout LyX-Code
+
+,     {           4.6810084713974775e-07 ,
+\layout LyX-Code
+
+                  2.3482721455646551e-06 }
+\layout LyX-Code
+
+,     {          -8.8537423943830358e-06 , 
+\layout LyX-Code
+
+                 1.2688737047800589e-05 }
+\layout LyX-Code
+
+,     {           3.2638635138919629e-05 ,
+\layout LyX-Code
+
+                 -0.00021014154531962822 }
+\layout LyX-Code
+
+,     {           0.00029384471334866456 ,
+\layout LyX-Code
+
+                  0.00066546143982619316 }
+\layout LyX-Code
+
+,     {           -0.0041797192715572768 ,
+\layout LyX-Code
+
+                   0.0044913738682590045 }
+\layout LyX-Code
+
+,     {             0.023555662412541055 ,
+\layout LyX-Code
+
+                   -0.049491169818861133 }
+\layout LyX-Code
+
+,     {            -0.072164111860376176 ,
+\layout LyX-Code
+
+                     0.19293667316858745 }
+\layout LyX-Code
+
+,     {              -1.8857045114727804 ,
+\layout LyX-Code
+
+                    -0.33814761726036585 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {           1.1536030588919383e-15 ,
+\layout LyX-Code
+
+                 -4.5290945318974183e-15 }
+\layout LyX-Code
+
+,     {          -2.5831909518634811e-15 ,
+\layout LyX-Code
+
+                  6.9035600532037278e-14 }
+\layout LyX-Code
+
+,     {          -1.2219969549456367e-13 , 
+\layout LyX-Code
+
+                -1.4918778783625236e-13 }
+\layout LyX-Code
+
+,     {            1.650088654139529e-12 , 
+\layout LyX-Code
+
+                -6.2853485651852727e-12 }
+\layout LyX-Code
+
+,     {          -4.1430599274545238e-12 , 
+\layout LyX-Code
+
+                 7.9055067610861132e-11 }
+\layout LyX-Code
+
+,     {           -1.303276091975957e-10 , 
+\layout LyX-Code
+
+                -1.8857998537318434e-10 }
+\layout LyX-Code
+
+,     {           1.8722149256193656e-09 , 
+\layout LyX-Code
+
+                -5.1340493002929665e-09 }
+\layout LyX-Code
+
+,     {          -9.3478974795511597e-09 , 
+\layout LyX-Code
+
+                  6.721115733692397e-08 }
+\layout LyX-Code
+
+,     {          -4.9199521904598378e-08 , 
+\layout LyX-Code
+
+                -3.0426676864593005e-07 }
+\layout LyX-Code
+
+,     {           1.2964140790298608e-06 ,
+\layout LyX-Code
+
+                 -1.3103754559918305e-06 }
+\layout LyX-Code
+
+,     {          -1.2343188523307585e-05 , 
+\layout LyX-Code
+
+                 3.0809671128070729e-05 }
+\layout LyX-Code
+
+,     {           7.5321057602619065e-05 , 
+\layout LyX-Code
+
+                -0.00024817414592214355 }
+\layout LyX-Code
+
+,     {          -0.00032191106470368769 ,
+\layout LyX-Code
+
+                   0.0012359465927699756 }
+\layout LyX-Code
+
+,     {           0.00097018407704014555 ,
+\layout LyX-Code
+
+                  -0.0041111069223663957 }
+\layout LyX-Code
+
+,     {           -0.0019935206572262573 , 
+\layout LyX-Code
+
+                  0.0089974192090911398 }
+\layout LyX-Code
+
+,     {              -1.9973937586662434 , 
+\layout LyX-Code
+
+                  -0.012085189551271426 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {           2.8811019587551389e-18 ,
+\layout LyX-Code
+
+                   2.684646603916068e-16 }
+\layout LyX-Code
+
+,     {          -6.2333922975783146e-16 ,
+\layout LyX-Code
+
+                  1.4252468434090293e-16 }
+\layout LyX-Code
+
+,     {           9.0877705975533128e-15 ,
+\layout LyX-Code
+
+                 -3.4638532206046957e-14 }
+\layout LyX-Code
+
+,     {          -6.2053772915893235e-14 ,
+\layout LyX-Code
+
+                  4.7270659575711313e-13 }
+\layout LyX-Code
+
+,     {          -9.4369582503557563e-14 , 
+\layout LyX-Code
+
+                -3.0132196321689225e-12 }
+\layout LyX-Code
+
+,     {           8.1568391992615411e-12 ,
+\layout LyX-Code
+
+                 -3.6795550343994194e-12 }
+\layout LyX-Code
+
+,     {          -1.1859203571949966e-10 ,
+\layout LyX-Code
+
+                  3.2326034833829272e-10 }
+\layout LyX-Code
+
+,     {           1.1302927297982895e-09 ,
+\layout LyX-Code
+
+                 -4.2729928409363866e-09 }
+\layout LyX-Code
+
+,     {          -8.1653674229686321e-09 ,
+\layout LyX-Code
+
+                   3.649262770188356e-08 }
+\layout LyX-Code
+
+,     {           4.6711146297670056e-08 , 
+\layout LyX-Code
+
+                -2.3290328068405808e-07 }
+\layout LyX-Code
+
+,     {          -2.1434786976693524e-07 , 
+\layout LyX-Code
+
+                  1.157560138845965e-06 }
+\layout LyX-Code
+
+,     {           7.8712065435992157e-07 , 
+\layout LyX-Code
+
+                -4.5198606760227629e-06 }
+\layout LyX-Code
+
+,     {          -2.2827106290462468e-06 , 
+\layout LyX-Code
+
+                 1.3751490608604711e-05 }
+\layout LyX-Code
+
+,     {            5.108210075437179e-06 , 
+\layout LyX-Code
+
+                -3.1912388224577725e-05 }
+\layout LyX-Code
+
+,     {           -8.532197326791333e-06 , 
+\layout LyX-Code
+
+                 5.4617171212102142e-05 }
+\layout LyX-Code
+
+,     {              -1.9999897804462703 , 
+\layout LyX-Code
+
+               -6.6041177531743063e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {          -7.4993123127081172e-19 , 
+\layout LyX-Code
+
+                -9.2154967085056884e-19 }
+\layout LyX-Code
+
+,     {           1.6453122028975649e-17 ,
+\layout LyX-Code
+
+                 -4.4526109981603194e-17 }
+\layout LyX-Code
+
+,     {          -2.2216971245348065e-16 ,
+\layout LyX-Code
+
+                  9.2045328395178569e-16 }
+\layout LyX-Code
+
+,     {           2.3187986651361246e-15 , 
+\layout LyX-Code
+
+                -1.1597351157562596e-14 }
+\layout LyX-Code
+
+,     {          -1.9966897966189304e-14 , 
+\layout LyX-Code
+
+                 1.1222278921048576e-13 }
+\layout LyX-Code
+
+,     {           1.4567188498750867e-13 ,
+\layout LyX-Code
+
+                 -8.9014086166989192e-13 }
+\layout LyX-Code
+
+,     {          -9.1094290960037775e-13 ,
+\layout LyX-Code
+
+                  5.9390981887108318e-12 }
+\layout LyX-Code
+
+,     {           4.9015331385524046e-12 , 
+\layout LyX-Code
+
+                 -3.3684085607283493e-11 }
+\layout LyX-Code
+
+,     {          -2.2668130864064367e-11 ,
+\layout LyX-Code
+
+                  1.6278815862238778e-10 }
+\layout LyX-Code
+
+,     {           8.9656333841687577e-11 ,
+\layout LyX-Code
+
+                 -6.6839174980108575e-10 }
+\layout LyX-Code
+
+,     {          -3.0070122824813192e-10 ,
+\layout LyX-Code
+
+                  2.3145401708228895e-09 }
+\layout LyX-Code
+
+,     {           8.4494270776318715e-10 ,
+\layout LyX-Code
+
+                 -6.6824163147637241e-09 }
+\layout LyX-Code
+
+,     {          -1.9576794331996479e-09 ,
+\layout LyX-Code
+
+                  1.5833623495033884e-08 }
+\layout LyX-Code
+
+,     {           3.6665887957624338e-09 ,
+\layout LyX-Code
+
+                 -3.0174569513159495e-08 }
+\layout LyX-Code
+
+,     {          -5.4258802952106441e-09 ,
+\layout LyX-Code
+
+                  4.5166333861133352e-08 }
+\layout LyX-Code
+
+,     {              -1.9999999937936801 ,
+\layout LyX-Code
+
+                 -5.1878090694002071e-08 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {          -7.3128123766095007e-21 ,
+\layout LyX-Code
+
+                  5.2783768964163724e-20 }
+\layout LyX-Code
+
+,     {           5.8331678204505884e-20 ,
+\layout LyX-Code
+
+                 -4.4428465693890153e-19 }
+\layout LyX-Code
+
+,     {          -4.1665340361792927e-19 ,
+\layout LyX-Code
+
+                  3.3193577484164931e-18 }
+\layout LyX-Code
+
+,     {           2.6702440438238306e-18 ,
+\layout LyX-Code
+
+                 -2.2110261645071223e-17 }
+\layout LyX-Code
+
+,     {          -1.5352877622533002e-17 ,
+\layout LyX-Code
+
+                  1.3149107185196035e-16 }
+\layout LyX-Code
+
+,     {           7.9054987528274155e-17 ,
+\layout LyX-Code
+
+                 -6.9763687703652322e-16 }
+\layout LyX-Code
+
+,     {          -3.6338645128878323e-16 ,
+\layout LyX-Code
+
+                  3.2936905729829264e-15 }
+\layout LyX-Code
+
+,     {           1.4841921457728194e-15 ,
+\layout LyX-Code
+
+                 -1.3779549123432719e-14 }
+\layout LyX-Code
+
+,     {          -5.3535076599248966e-15 ,
+\layout LyX-Code
+
+                  5.0787839237713144e-14 }
+\layout LyX-Code
+
+,     {           1.6922815522375102e-14 ,
+\layout LyX-Code
+
+                 -1.6367776360132983e-13 }
+\layout LyX-Code
+
+,     {          -4.6440786423613345e-14 ,
+\layout LyX-Code
+
+                  4.5693541177471563e-13 }
+\layout LyX-Code
+
+,     {           1.0939887392901224e-13 ,
+\layout LyX-Code
+
+                 -1.0924934920735968e-12 }
+\layout LyX-Code
+
+,     {          -2.1831634568207554e-13 ,
+\layout LyX-Code
+
+                  2.2073173946389116e-12 }
+\layout LyX-Code
+
+,     {           3.6368947573372969e-13 ,
+\layout LyX-Code
+
+                 -3.7122896402585035e-12 }
+\layout LyX-Code
+
+,     {          -4.9822933420386177e-13 ,
+\layout LyX-Code
+
+                  5.1168332005087491e-12 }
+\layout LyX-Code
+
+,     {              -1.9999999999994464 ,
+\layout LyX-Code
+
+                 -5.7052069770739506e-12 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {          -1.1581263794211803e-24 ,
+\layout LyX-Code
+
+                  1.1756024314709261e-23 }
+\layout LyX-Code
+
+,     {           6.8651109138591869e-24 ,
+\layout LyX-Code
+
+                 -7.1268610401803094e-23 }
+\layout LyX-Code
+
+,     {           -3.738518343124306e-23 ,
+\layout LyX-Code
+
+                  3.9620223549082376e-22 }
+\layout LyX-Code
+
+,     {           1.8656852708023271e-22 ,
+\layout LyX-Code
+
+                 -2.0152981488264423e-21 }
+\layout LyX-Code
+
+,     {          -8.5056522662053255e-22 ,
+\layout LyX-Code
+
+                  9.3514915353419952e-21 }
+\layout LyX-Code
+
+,     {           3.5290018709287991e-21 ,
+\layout LyX-Code
+
+                 -3.9440168120129876e-20 }
+\layout LyX-Code
+
+,     {          -1.3264545171699188e-20 , 
+\layout LyX-Code
+
+                 1.5051156637249394e-19 }
+\layout LyX-Code
+
+,     {           4.4925669595385181e-20 ,
+\layout LyX-Code
+
+                 -5.1696379430130061e-19 }
+\layout LyX-Code
+
+,     {          -1.3624823721052732e-19 ,
+\layout LyX-Code
+
+                  1.5881329934248198e-18 }
+\layout LyX-Code
+
+,     {           3.6731865126752203e-19 ,
+\layout LyX-Code
+
+                 -4.3319144361960655e-18 }
+\layout LyX-Code
+
+,     {          -8.7299974058134151e-19 ,
+\layout LyX-Code
+
+                  1.0403780623845348e-17 }
+\layout LyX-Code
+
+,     {           1.8120620323788916e-18 ,
+\layout LyX-Code
+
+                 -2.1791909247822896e-17 }
+\layout LyX-Code
+
+,     {           -3.251392893971571e-18 ,
+\layout LyX-Code
+
+                 3.9396773141907617e-17 }
+\layout LyX-Code
+
+,     {           4.9898793744105705e-18 ,
+\layout LyX-Code
+
+                 -6.0808623975481749e-17 }
+\layout LyX-Code
+
+,     {          -6.4850528855079053e-18 ,
+\layout LyX-Code
+
+                  7.9315808137192181e-17 }
+\layout LyX-Code
+
+,     {              -2.0000000000000009 ,
+\layout LyX-Code
+
+                 -8.6748835517513367e-17 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {  {           -1.286993020143186e-29 ,
+\layout LyX-Code
+
+                  1.6244908657170241e-28 }
+\layout LyX-Code
+
+,     {           6.2765862086305583e-29 ,
+\layout LyX-Code
+
+                 -8.0275046304822356e-28 }
+\layout LyX-Code
+
+,     {           -2.839692427061988e-28 ,
+\layout LyX-Code
+
+                  3.6773373634048155e-27 }
+\layout LyX-Code
+
+,     {           1.1882092616181199e-27 ,
+\layout LyX-Code
+
+                 -1.5569151083770561e-26 }
+\layout LyX-Code
+
+,     {           -4.582191637967378e-27 ,
+\layout LyX-Code
+
+                  6.0711381921074574e-26 }
+\layout LyX-Code
+
+,     {           1.6221432712231815e-26 ,
+\layout LyX-Code
+
+                 -2.1718558315433516e-25 }
+\layout LyX-Code
+
+,     {           -5.247933806259193e-26 ,
+\layout LyX-Code
+
+                  7.0956869041034713e-25 }
+\layout LyX-Code
+
+,     {           1.5437131529880892e-25 ,
+\layout LyX-Code
+
+                 -2.1064417534076447e-24 }
+\layout LyX-Code
+
+,     {          -4.1053336780396758e-25 ,
+\layout LyX-Code
+
+                  5.6494507799722326e-24 }
+\layout LyX-Code
+
+,     {            9.807876328051367e-25 ,
+\layout LyX-Code
+
+                 -1.3601376051918737e-23 }
+\layout LyX-Code
+
+,     {          -2.0903055414542895e-24 ,
+\layout LyX-Code
+
+                  2.9188353967295514e-23 }
+\layout LyX-Code
+
+,     {           3.9443914370892561e-24 ,
+\layout LyX-Code
+
+                 -5.5407486881004531e-23 }
+\layout LyX-Code
+
+,     {          -6.5385165651342071e-24 ,
+\layout LyX-Code
+
+                  9.2298616960723605e-23 }
+\layout LyX-Code
+
+,     {           9.4486116746898621e-24 ,
+\layout LyX-Code
+
+                 -1.3386968566261501e-22 }
+\layout LyX-Code
+
+,     {          -1.1822408135528828e-23 ,
+\layout LyX-Code
+
+                  1.6788751035824249e-22 }
+\layout LyX-Code
+
+,     {              -2.0000000000000009 ,
+\layout LyX-Code
+
+                 -1.8115931820473034e-22 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+                }
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+ ;
+\layout LyX-Code
+
+\layout Subsection
+
+Complementary error function and derivative (Spline)
+\layout LyX-Code
+
+class ErfEvaluator
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   public:
+\layout LyX-Code
+
+   class doublepair
+\layout LyX-Code
+
+   {
+\layout LyX-Code
+
+           public:
+\layout LyX-Code
+
+           double ca ;
+\layout LyX-Code
+
+           double cb ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+   class polypairlist
+\layout LyX-Code
+
+   {
+\layout LyX-Code
+
+           public:
+\layout LyX-Code
+
+           enum {
+\layout LyX-Code
+
+              k_Terms = 4
+\layout LyX-Code
+
+           } ;
+\layout LyX-Code
+
+           doublepair dp[k_Terms] ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+   enum {
+\layout LyX-Code
+
+           k_Slices = 64
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+   static const polypairlist p[k_Slices] ;
+\layout LyX-Code
+
+   static const float WholeNumbers[k_Slices] ;
+\layout LyX-Code
+
+   static const double IntegrationConstants[k_Slices] ;
+\layout LyX-Code
+
+   static void Evaluate (double xRaw, double& f, double& df)
+\layout LyX-Code
+
+   {
+\layout LyX-Code
+
+      assert(xRaw >= 0.0) ;                // This version only
+\layout LyX-Code
+
+                                   // defined for positive argument
+\layout LyX-Code
+
+      xRaw = fsel(xRaw-3.999,3.999,xRaw) ; // Pinned if out of range
+\layout LyX-Code
+
+      double xScale = xRaw * 16.0 ;
+\layout LyX-Code
+
+      int a = xScale ;
+\layout LyX-Code
+
+      double xWhole = WholeNumbers[a] ;
+\layout LyX-Code
+
+      double xFrac = xScale-xWhole ;
+\layout LyX-Code
+
+      double x = (xFrac*2.0) - 1.0 ;
+\layout LyX-Code
+
+      double rf = 
+\layout LyX-Code
+
+((((p[a].dp[0].ca)*x+p[a].dp[1].ca)*x+p[a].dp[2].ca)*x+p[a].dp[3].ca) ;
+\layout LyX-Code
+
+      double rdf =
+\layout LyX-Code
+
+((((p[a].dp[0].cb)*x+p[a].dp[1].cb)*x+p[a].dp[2].cb)*x+p[a].dp[3].cb) ;
+\layout LyX-Code
+
+      f = rf * x + IntegrationConstants[a];
+\layout LyX-Code
+
+      df = rdf  ;
+\layout LyX-Code
+
+   }
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+#ifndef MSD_COMPILE_DATA_ONLY
+\layout LyX-Code
+
+const float ErfEvaluator::WholeNumbers[ErfEvaluator::k_Slices] =
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+        0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0
+\layout LyX-Code
+
+        ,10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0
+\layout LyX-Code
+
+        ,20.0, 21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0
+\layout LyX-Code
+
+        ,30.0, 31.0, 32.0, 33.0, 34.0, 35.0, 36.0, 37.0, 38.0, 39.0
+\layout LyX-Code
+
+        ,40.0, 41.0, 42.0, 43.0, 44.0, 45.0, 46.0, 47.0, 48.0, 49.0
+\layout LyX-Code
+
+        ,50.0, 51.0, 52.0, 53.0, 54.0, 55.0, 56.0, 57.0, 58.0, 59.0
+\layout LyX-Code
+
+        ,60.0, 61.0, 62.0, 63.0
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+const ErfEvaluator::polypairlist ErfEvaluator::p[ErfEvaluator::k_Slices]
+ = {
+\layout LyX-Code
+
+ { {
+\layout LyX-Code
+
+  { -1.677043705606067e-08,-2.146615943175766e-06 }
+\layout LyX-Code
+
+  ,{ 1.143371616236766e-05,0.001097636751587296 }
+\layout LyX-Code
+
+  ,{ 3.440177110943935e-05,0.002201713351004118 }
+\layout LyX-Code
+
+  ,{ -0.03522741365975122,  -1.127277237112039 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -4.965987042014532e-08,-6.356463413778601e-06 }
+\layout LyX-Code
+
+  ,{ 1.116730250618423e-05,0.001072061040593686 }
+\layout LyX-Code
+
+  ,{ 0.0001024021637152795, 0.00655373847777789 }
+\layout LyX-Code
+
+  ,{ -0.03495327227036313,   -1.11850471265162 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -8.063031663779123e-08,-1.032068052963728e-05 }
+\layout LyX-Code
+
+  ,{ 1.06447944258563e-05,0.001021900264882204 }
+\layout LyX-Code
+
+  ,{ 0.000168024277188707, 0.01075355374007725 }
+\layout LyX-Code
+
+  ,{ -0.03441137302506241,  -1.101163936801997 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.085177767547462e-07,-1.389027542460751e-05 }
+\layout LyX-Code
+
+  ,{ 9.886272248044382e-06,0.0009490821358122607 }
+\layout LyX-Code
+
+  ,{ 0.0002297848019711107, 0.01470622732615109 }
+\layout LyX-Code
+
+  ,{  -0.0336142358925829,  -1.075655548562653 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.323228464452476e-07,-1.693732434499169e-05 }
+\layout LyX-Code
+
+  ,{ 8.920499832118013e-06,0.0008563679838833292 }
+\layout LyX-Code
+
+  ,{ 0.0002863479486297409, 0.01832626871230342 }
+\layout LyX-Code
+
+  ,{ -0.03258003643662622,  -1.042561165972039 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.512604951606179e-07,-1.936134338055909e-05 }
+\layout LyX-Code
+
+  ,{ 7.783401736190406e-06,0.0007472065666742789 }
+\layout LyX-Code
+
+  ,{ 0.0003365732792269584, 0.02154068987052534 }
+\layout LyX-Code
+
+  ,{ -0.03133191701999147,  -1.002621344639727 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.647954146847001e-07,-2.109381307964162e-05 }
+\layout LyX-Code
+
+  ,{ 6.51619848252759e-06,0.0006255550543226487 }
+\layout LyX-Code
+
+  ,{ 0.0003795532894002569, 0.02429141052161644 }
+\layout LyX-Code
+
+  ,{ -0.02989712649661543, -0.9567080478916936 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.726609582696268e-07,-2.210060265851223e-05 }
+\layout LyX-Code
+
+  ,{ 5.163323960181864e-06,0.0004956791001774589 }
+\layout LyX-Code
+
+  ,{ 0.0004146390499898948, 0.02653689919935327 }
+\layout LyX-Code
+
+  ,{ -0.02830603301975991,  -0.905793056632317 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.748610042477048e-07,-2.238220854370622e-05 }
+\layout LyX-Code
+
+  ,{ 3.77025961848157e-06,0.0003619449233742307 }
+\layout LyX-Code
+
+  ,{ 0.0004414530010017535, 0.02825299206411223 }
+\layout LyX-Code
+
+  ,{ -0.02659105981260158, -0.8509139140032504 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.716553961417857e-07,-2.197189070614856e-05 }
+\layout LyX-Code
+
+  ,{ 2.381420131299626e-06,0.0002286163326047641 }
+\layout LyX-Code
+
+  ,{ 0.0004598888066024617, 0.02943288362255755 }
+\layout LyX-Code
+
+  ,{ -0.02478559574453316, -0.7931390638250611 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.63530815350447e-07,-2.093194436485722e-05 }
+\layout LyX-Code
+
+  ,{ 1.03821508918815e-06,9.966864856206237e-05 }
+\layout LyX-Code
+
+  ,{ 0.000470098964779177, 0.03008633374586733 }
+\layout LyX-Code
+
+  ,{ -0.02292293133148951, -0.7335338026076644 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.511599296296717e-07,-1.934847099259798e-05 }
+\layout LyX-Code
+
+  ,{ -2.22607659821702e-07,-2.137033534288339e-05 }
+\layout LyX-Code
+
+  ,{ 0.0004724715617529516,  0.0302381799521889 }
+\layout LyX-Code
+
+  ,{ -0.02103526657315815, -0.6731285303410608 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.353523545145142e-07,-1.732510137785782e-05 }
+\layout LyX-Code
+
+  ,{ -1.370257092802229e-06,-0.000131544680909014 }
+\layout LyX-Code
+
+  ,{ 0.0004675981220443889, 0.02992627981084089 }
+\layout LyX-Code
+
+  ,{ -0.01915283030640111, -0.6128905698048354 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.170013221461676e-07,-1.497616923470946e-05 }
+\layout LyX-Code
+
+  ,{ -2.380782501521628e-06,-0.0002285551201460763 }
+\layout LyX-Code
+
+  ,{ 0.0004562348970672072, 0.02919903341230126 }
+\layout LyX-Code
+
+  ,{ -0.01730314210665839, -0.5537005474130686 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -9.702996492746713e-08,-1.241983551071579e-05 }
+\layout LyX-Code
+
+  ,{ -3.237526760163412e-06,-0.0003108025689756875 }
+\layout LyX-Code
+
+  ,{ 0.0004392601411388399, 0.02811264903288575 }
+\layout LyX-Code
+
+  ,{ -0.01551043792261867, -0.4963340135237975 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -7.634081565236948e-08,-9.771624403503293e-06 }
+\layout LyX-Code
+
+  ,{ -3.931160936497558e-06,-0.0003773914499037656 }
+\layout LyX-Code
+
+  ,{ 0.0004176299431532064, 0.02672831636180521 }
+\layout LyX-Code
+
+  ,{ -0.01379527033462789, -0.4414486507080926 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -5.577155569193423e-08,-7.138759128567582e-06 }
+\layout LyX-Code
+
+  ,{ -4.459338467442303e-06,-0.0004280964928744611 }
+\layout LyX-Code
+
+  ,{ 0.0003923350293816243, 0.02510944188042395 }
+\layout LyX-Code
+
+  ,{ -0.01217428430645078, -0.3895770978064249 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -3.605928292969135e-08,-4.615588215000493e-06 }
+\layout LyX-Code
+
+  ,{ -4.826028411989542e-06,-0.000463298727550996 }
+\layout LyX-Code
+
+  ,{ 0.0003643606551067552, 0.02331908192683234 }
+\layout LyX-Code
+
+  ,{ -0.01066016019099486, -0.3411251261118356 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.781470707992619e-08,-2.280282506230552e-06 }
+\layout LyX-Code
+
+  ,{ -5.040602043929432e-06,-0.0004838977962172255 }
+\layout LyX-Code
+
+  ,{ 0.0003346512962838997, 0.02141768296216958 }
+\layout LyX-Code
+
+  ,{ -0.009261708063277772, -0.2963746580248887 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { -1.506798321843929e-09,-1.928701851960229e-07 }
+\layout LyX-Code
+
+  ,{ -5.116754768286062e-06,-0.0004912084577554619 }
+\layout LyX-Code
+
+  ,{ 0.0003040813783947048, 0.01946120821726111 }
+\layout LyX-Code
+
+  ,{ -0.007984091541769101, -0.2554909293366112 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.254240539445633e-08,1.60542789049041e-06 }
+\layout LyX-Code
+
+  ,{ -5.071346219164424e-06,-0.0004868492370397846 }
+\layout LyX-Code
+
+  ,{ 0.0002734327802100555, 0.01749969793344355 }
+\layout LyX-Code
+
+  ,{ -0.006829155307778654, -0.2185329698489169 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.415382265476675e-08,3.091689299810144e-06 }
+\layout LyX-Code
+
+  ,{ -4.923236176470265e-06,-0.0004726306729411454 }
+\layout LyX-Code
+
+  ,{ 0.0002433793645195896, 0.01557627932925373 }
+\layout LyX-Code
+
+  ,{ -0.00579582856353525,  -0.185466514033128 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.327970129438388e-08,4.259801765681137e-06 }
+\layout LyX-Code
+
+  ,{ -4.692183812243332e-06,-0.0004504496459753599 }
+\layout LyX-Code
+
+  ,{ 0.0002144783492816111, 0.01372661435402311 }
+\layout LyX-Code
+
+  ,{ -0.004880576558929733, -0.1561784498857515 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.998619096881058e-08,5.118232444007755e-06 }
+\layout LyX-Code
+
+  ,{ -4.397864199620254e-06,-0.0004221949631635444 }
+\layout LyX-Code
+
+  ,{ 0.0001871679663079738, 0.01197874984371032 }
+\layout LyX-Code
+
+  ,{ -0.004077873823019379, -0.1304919623366201 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.443210814183816e-08,5.687309842155285e-06 }
+\layout LyX-Code
+
+  ,{ -4.059040540924509e-06,-0.0003896678919287529 }
+\layout LyX-Code
+
+  ,{ 0.0001617705765833013, 0.01035331690133128 }
+\layout LyX-Code
+
+  ,{ -0.003380675535016474, -0.1081816171205272 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.684585000529841e-08,5.996268800678196e-06 }
+\layout LyX-Code
+
+  ,{ -3.692914687568888e-06,-0.0003545198100066132 }
+\layout LyX-Code
+
+  ,{ 0.0001385002284466404,0.008864014620584983 }
+\layout LyX-Code
+
+  ,{ -0.002780867190684069,-0.08898775010189021 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.750223096564192e-08,6.080285563602166e-06 }
+\layout LyX-Code
+
+  ,{ -3.314663535346774e-06,-0.0003182076993932903 }
+\layout LyX-Code
+
+  ,{ 0.0001174735554921313,0.007518307551496402 }
+\layout LyX-Code
+
+  ,{ -0.002269676983939308,-0.07262966348605786 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.670072464852188e-08, 5.9776927550108e-06 }
+\layout LyX-Code
+
+  ,{ -2.937155806094876e-06,-0.0002819669573851081 }
+\layout LyX-Code
+
+  ,{ 9.872290650570907e-05,0.006318266016365381 }
+\layout LyX-Code
+
+  ,{ -0.001838039771308927,-0.05881727268188565 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.474623841270917e-08,5.727518516826773e-06 }
+\layout LyX-Code
+
+  ,{ -2.570833263466638e-06,-0.0002467999932927972 }
+\layout LyX-Code
+
+  ,{ 8.22106662144394e-05,0.005261482637724121 }
+\layout LyX-Code
+
+  ,{ -0.00147690580564427,-0.04726098578061663 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.193316738169349e-08,5.367445424856766e-06 }
+\layout LyX-Code
+
+  ,{ -2.223732912047361e-06,-0.0002134783595565467 }
+\layout LyX-Code
+
+  ,{ 6.784384611408351e-05,0.004342006151301345 }
+\layout LyX-Code
+
+  ,{ -0.001177491364418304,-0.03767972366138573 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.853310716189559e-08,4.932237716722635e-06 }
+\layout LyX-Code
+
+  ,{ -1.901622239253096e-06,-0.0001825557349682972 }
+\layout LyX-Code
+
+  ,{ 5.548818102150092e-05,0.003551243585376059 }
+\layout LyX-Code
+
+  ,{ -0.0009314717770673435,-0.02980709686615499 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.478627717320908e-08,4.452643478170763e-06 }
+\layout LyX-Code
+
+  ,{ -1.608217862833661e-06,-0.0001543889148320314 }
+\layout LyX-Code
+
+  ,{ 4.498114169517277e-05,0.002878793068491057 }
+\layout LyX-Code
+
+  ,{ -0.000731120067225914,-0.02339584215122925 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.089643929408761e-08,3.954744229643214e-06 }
+\layout LyX-Code
+
+  ,{ -1.345458635910959e-06,-0.000129164029047452 }
+\layout LyX-Code
+
+  ,{ 3.614345122621364e-05,0.002313180878477673 }
+\layout LyX-Code
+
+  ,{ -0.0005693964281980402,-0.01822068570233729 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.702889954915076e-08,3.459699142291297e-06 }
+\layout LyX-Code
+
+  ,{ -1.113806810496106e-06,-0.0001069254538076262 }
+\layout LyX-Code
+
+  ,{ 2.878886012546207e-05,0.001842487048029572 }
+\layout LyX-Code
+
+  ,{ -0.0004399950596155604,-0.01407984190769793 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.331105572966068e-08,2.983815133396567e-06 }
+\layout LyX-Code
+
+  ,{ -9.125546956961835e-07,-8.760525078683361e-05 }
+\layout LyX-Code
+
+  ,{ 2.273208266980214e-05,0.001454853290867337 }
+\layout LyX-Code
+
+  ,{ -0.0003373555705483165,-0.01079537825754613 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.983489619315291e-08,2.538866712723572e-06 }
+\layout LyX-Code
+
+  ,{ -7.40118807871303e-07,-7.105140555564509e-05 }
+\layout LyX-Code
+
+  ,{ 1.779491911631872e-05,0.001138874823444398 }
+\layout LyX-Code
+
+  ,{ -0.0002566462908318581,-0.00821268130661946 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.66608547873407e-08,2.13258941277961e-06 }
+\layout LyX-Code
+
+  ,{ -5.943082966062757e-07,-5.705359647420247e-05 }
+\layout LyX-Code
+
+  ,{ 1.381068205132086e-05,0.0008838836512845352 }
+\layout LyX-Code
+
+  ,{ -0.0001937265370264521,-0.006199249184846466 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.382247111915601e-08,1.769276303251969e-06 }
+\layout LyX-Code
+
+  ,{ -4.725590338093643e-07,-4.536566724569897e-05 }
+\layout LyX-Code
+
+  ,{ 1.062711036208305e-05,0.0006801350631733152 }
+\layout LyX-Code
+
+  ,{ -0.000145094266684409,-0.004643016533901087 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.133138043388216e-08,1.450416695536916e-06 }
+\layout LyX-Code
+
+  ,{ -3.721288720513465e-07,-3.572437171692926e-05 }
+\layout LyX-Code
+
+  ,{ 8.107993188612562e-06,0.000518911564071204 }
+\layout LyX-Code
+
+  ,{ -0.0001078247346620797,-0.003450391509186549 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 9.182249868241103e-09,1.175327983134861e-06 }
+\layout LyX-Code
+
+  ,{ -2.902530201337116e-07,-2.786428993283631e-05 }
+\layout LyX-Code
+
+  ,{ 6.133742295451233e-06,0.0003925595069088789 }
+\layout LyX-Code
+
+  ,{ -7.950483672849648e-05,-0.002544154775311887 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 7.357376121771672e-09,9.41744143586774e-07 }
+\layout LyX-Code
+
+  ,{ -2.242611569820876e-07,-2.152907107028042e-05 }
+\layout LyX-Code
+
+  ,{ 4.601149006582652e-06,0.0002944735364212897 }
+\layout LyX-Code
+
+  ,{ -5.816687120992353e-05,-0.001861339878717553 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 5.830754319011006e-09,7.463365528334088e-07 }
+\layout LyX-Code
+
+  ,{ -1.716598017483407e-07,-1.647934096784071e-05 }
+\layout LyX-Code
+
+  ,{ 3.422545861207931e-06,0.0002190429351173076 }
+\layout LyX-Code
+
+  ,{ -4.222453301828047e-05,-0.001351185056584975 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.571512315677453e-09,5.85153576406714e-07 }
+\layout LyX-Code
+
+  ,{ -1.301846350963824e-07,-1.249772496925271e-05 }
+\layout LyX-Code
+
+  ,{ 2.524568002693763e-06,0.0001615723521724008 }
+\layout LyX-Code
+
+  ,{ -3.041312172389421e-05,-0.0009732198951646148 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.546674836120153e-09,4.539743790233795e-07 }
+\layout LyX-Code
+
+  ,{ -9.782802374705724e-08,-9.391490279717495e-06 }
+\layout LyX-Code
+
+  ,{ 1.846679051040788e-06,0.0001181874592666104 }
+\layout LyX-Code
+
+  ,{ -2.173522470186589e-05,-0.0006955271904597086 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.723275825780344e-09,3.48579305699884e-07 }
+\layout LyX-Code
+
+  ,{ -7.284706052621752e-08,-6.993317810516882e-06 }
+\layout LyX-Code
+
+  ,{ 1.339594192283002e-06,8.573402830611214e-05 }
+\layout LyX-Code
+
+  ,{ -1.541254130223323e-05,-0.0004932013216714634 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.069875334693146e-09,2.649440428407226e-07 }
+\layout LyX-Code
+
+  ,{ -5.375712506594504e-08,-5.160684006330723e-06 }
+\layout LyX-Code
+
+  ,{ 9.637020384530377e-07,6.167693046099441e-05 }
+\layout LyX-Code
+
+  ,{ -1.084404604250008e-05,-0.0003470094733600024 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.557560545084242e-09,1.99367749770783e-07 }
+\layout LyX-Code
+
+  ,{ -3.931541933447623e-08,-3.774280256109718e-06 }
+\layout LyX-Code
+
+  ,{ 6.875582939894272e-07,4.400373081532334e-05 }
+\layout LyX-Code
+
+  ,{ -7.570340751290444e-06,-0.0002422509040412942 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.160521497792107e-09,1.485467517173897e-07 }
+\layout LyX-Code
+
+  ,{ -2.849824560521101e-08,-2.735831578100257e-06 }
+\layout LyX-Code
+
+  ,{ 4.864995334541183e-07,3.113597014106357e-05 }
+\layout LyX-Code
+
+  ,{ -5.243804289419642e-06,-0.0001678017372614286 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 8.562933419045533e-10,1.096055477637828e-07 }
+\layout LyX-Code
+
+  ,{ -2.04750605380212e-08,-1.965605811650035e-06 }
+\layout LyX-Code
+
+  ,{ 3.41404983959747e-07,2.184991897342381e-05 }
+\layout LyX-Code
+
+  ,{ -3.603997550434695e-06,-0.0001153279216139102 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 6.25751255928244e-10,8.009616075881524e-08 }
+\layout LyX-Code
+
+  ,{ -1.458162415139377e-08,-1.399835918533802e-06 }
+\layout LyX-Code
+
+  ,{  2.3761818240736e-07,1.520756367407104e-05 }
+\layout LyX-Code
+
+  ,{ -2.457703348469032e-06,-7.864650715100903e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.529340758609023e-10,5.79755617101955e-08 }
+\layout LyX-Code
+
+  ,{ -1.029391197359319e-08,-9.882155494649466e-07 }
+\layout LyX-Code
+
+  ,{ 1.640284771128031e-07,1.04978225352194e-05 }
+\layout LyX-Code
+
+  ,{ -1.662958424634951e-06,-5.321466958831844e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.247602445078765e-10,4.15693112970082e-08 }
+\layout LyX-Code
+
+  ,{ -7.203899323906403e-09,-6.915743350950147e-07 }
+\layout LyX-Code
+
+  ,{ 1.123040862084225e-07,7.187461517339037e-06 }
+\layout LyX-Code
+
+  ,{ -1.116452558660085e-06,-3.572648187712273e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.30686638875616e-10,2.952788977607884e-08 }
+\layout LyX-Code
+
+  ,{ -4.997870017311665e-09,-4.797955216619198e-07 }
+\layout LyX-Code
+
+  ,{ 7.626321981856181e-08,4.880846068387956e-06 }
+\layout LyX-Code
+
+  ,{ -7.43714246992367e-07,-2.379885590375575e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.62348343465352e-10,2.078058796356506e-08 }
+\layout LyX-Code
+
+  ,{ -3.437547837088295e-09,-3.300045923604763e-07 }
+\layout LyX-Code
+
+  ,{ 5.136699602782352e-08,3.287487745780705e-06 }
+\layout LyX-Code
+
+  ,{ -4.915626419109025e-07,-1.573000454114888e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.132062933665611e-10,1.449040555091982e-08 }
+\layout LyX-Code
+
+  ,{ -2.344090013092694e-09,-2.250326412568986e-07 }
+\layout LyX-Code
+
+  ,{ 3.43169347778733e-08,2.196283825783891e-06 }
+\layout LyX-Code
+
+  ,{ -3.223729352241681e-07,-1.031593392717338e-05 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 7.822032766619364e-11,1.001220194127279e-08 }
+\layout LyX-Code
+
+  ,{ -1.5848050842967e-09,-1.521412880924832e-07 }
+\layout LyX-Code
+
+  ,{ 2.274016527990733e-08,1.455370577914069e-06 }
+\layout LyX-Code
+
+  ,{ -2.097708834108638e-07,-6.71266826914764e-06 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 5.355770518520448e-11,6.855386263706173e-09 }
+\layout LyX-Code
+
+  ,{ -1.062348163068451e-09,-1.019854236545713e-07 }
+\layout LyX-Code
+
+  ,{ 1.494668127269781e-08, 9.5658760145266e-07 }
+\layout LyX-Code
+
+  ,{ -1.354374489379326e-07,-4.333998366013844e-06 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 3.634147481032868e-11,4.651708775722071e-09 }
+\layout LyX-Code
+
+  ,{ -7.060897746027254e-10,-6.778461836186165e-08 }
+\layout LyX-Code
+
+  ,{ 9.74466484193354e-09,6.236585498837466e-07 }
+\layout LyX-Code
+
+  ,{ -8.676393515408498e-08,-2.776445924930719e-06 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.443906800145819e-11,3.128200704186648e-09 }
+\layout LyX-Code
+
+  ,{ -4.653362120425529e-10,-4.467227635608508e-08 }
+\layout LyX-Code
+
+  ,{ 6.301801322850928e-09,4.033152846624594e-07 }
+\layout LyX-Code
+
+  ,{ -5.515014134094942e-08,-1.764804522910381e-06 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.628883049763073e-11,2.084970303696734e-09 }
+\layout LyX-Code
+
+  ,{ -3.04087667299206e-10,-2.919241606072378e-08 }
+\layout LyX-Code
+
+  ,{ 4.042431109848616e-09,2.587155910303114e-07 }
+\layout LyX-Code
+
+  ,{ -3.478251051578401e-08,-1.113040336505088e-06 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 1.076065172092256e-11,1.377363420278088e-09 }
+\layout LyX-Code
+
+  ,{ -1.970454032946794e-10,-1.891635871628923e-08 }
+\layout LyX-Code
+
+  ,{ 2.572200970727208e-09,1.646208621265413e-07 }
+\layout LyX-Code
+
+  ,{ -2.176617521777173e-08,-6.965176069686953e-07 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 7.046112666236051e-12,9.019024212782145e-10 }
+\layout LyX-Code
+
+  ,{ -1.266132861125826e-10,-1.215487546680793e-08 }
+\layout LyX-Code
+
+  ,{ 1.623512136833541e-09,1.039047767573466e-07 }
+\layout LyX-Code
+
+  ,{ -1.351481829664788e-08,-4.324741854927323e-07 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 4.573415576263572e-12,5.853971937617372e-10 }
+\layout LyX-Code
+
+  ,{ -8.067651102423245e-11,-7.744945058326315e-09 }
+\layout LyX-Code
+
+  ,{ 1.016478927962931e-09,6.505465138962761e-08 }
+\layout LyX-Code
+
+  ,{ -8.326168379349991e-09,-2.664373881391997e-07 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+,{ {
+\layout LyX-Code
+
+  { 2.942581325108452e-12,3.766504096138819e-10 }
+\layout LyX-Code
+
+  ,{ -5.097751607967133e-11,-4.893841543648448e-09 }
+\layout LyX-Code
+
+  ,{ 6.313018521581508e-10,4.040331853812165e-08 }
+\layout LyX-Code
+
+  ,{ -5.08963981633602e-09,-1.628684741227526e-07 }
+\layout LyX-Code
+
+} }
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+const double  ErfEvaluator::IntegrationConstants[ErfEvaluator::k_Slices]
+\layout LyX-Code
+
+= {
+\layout LyX-Code
+
+  0.9647496350557387
+\layout LyX-Code
+
+ ,0.8945235826411205
+\layout LyX-Code
+
+ ,0.8251151582995999
+\layout LyX-Code
+
+ ,0.7570483478113061
+\layout LyX-Code
+
+ ,0.6908163429125882
+\layout LyX-Code
+
+ ,0.6268708869645903
+\layout LyX-Code
+
+ ,0.5656131765729484
+\layout LyX-Code
+
+ ,0.5073866186839697
+\layout LyX-Code
+
+ ,0.452471647684221
+\layout LyX-Code
+
+ ,0.4010827047956272
+\layout LyX-Code
+
+ ,0.3533673790720676
+\layout LyX-Code
+
+ ,0.3094076118069897
+\layout LyX-Code
+
+ ,0.2692227796948113
+\layout LyX-Code
+
+ ,0.2327744011161023
+\layout LyX-Code
+
+ ,0.1999721575621347
+\layout LyX-Code
+
+ ,0.1706808901260279
+\layout LyX-Code
+
+ ,0.1447282193300569
+\layout LyX-Code
+
+ ,0.1219124441277339
+\layout LyX-Code
+
+ ,0.1020104003572524
+\layout LyX-Code
+
+ ,0.0847849970053737
+\layout LyX-Code
+
+ ,0.06999219660381942
+\layout LyX-Code
+
+ ,0.05738725995438308
+\layout LyX-Code
+
+ ,0.04673013130128872
+\layout LyX-Code
+
+ ,0.03778989454781171
+\layout LyX-Code
+
+ ,0.03034828122884282
+\layout LyX-Code
+
+ ,0.02420225448230857
+\layout LyX-Code
+
+ ,0.01916572874603583
+\layout LyX-Code
+
+ ,0.01507051162193889
+\layout LyX-Code
+
+ ,0.01176657225069364
+\layout LyX-Code
+
+ ,0.00912175014762694
+\layout LyX-Code
+
+ ,0.007021020716142793
+\layout LyX-Code
+
+ ,0.005365429817903765
+\layout LyX-Code
+
+ ,0.004070801226287904
+\layout LyX-Code
+
+ ,0.003066308931668393
+\layout LyX-Code
+
+ ,0.002292992435297803
+\layout LyX-Code
+
+ ,0.001702278540127081
+\layout LyX-Code
+
+ ,0.001254558696270697
+\layout LyX-Code
+
+ ,0.0009178574353023258
+\layout LyX-Code
+
+ ,0.0006666153543141322
+\layout LyX-Code
+
+ ,0.000480599801055098
+\layout LyX-Code
+
+ ,0.0003439479971021772
+\layout LyX-Code
+
+ ,0.0002443408016824203
+\layout LyX-Code
+
+ ,0.0001723005396039184
+\layout LyX-Code
+
+ ,0.0001206030943084474
+\layout LyX-Code
+
+ ,8.379256147784313e-05
+\layout LyX-Code
+
+ ,5.778591550183871e-05
+\layout LyX-Code
+
+ ,3.955511222290099e-05
+\layout LyX-Code
+
+ ,2.687460931683381e-05
+\layout LyX-Code
+
+ ,1.81232329484865e-05
+\layout LyX-Code
+
+ ,1.213049270853172e-05
+\layout LyX-Code
+
+ ,8.058717921777377e-06
+\layout LyX-Code
+
+ ,5.313661691920574e-06
+\layout LyX-Code
+
+ ,3.477428056922396e-06
+\layout LyX-Code
+
+ ,2.258680312250875e-06
+\layout LyX-Code
+
+ ,1.456062300565673e-06
+\layout LyX-Code
+
+ ,9.316013422969179e-07
+\layout LyX-Code
+
+ ,5.915640033304468e-07
+\layout LyX-Code
+
+ ,3.728134139618971e-07
+\layout LyX-Code
+
+ ,2.33182677406109e-07
+\layout LyX-Code
+
+ ,1.447481221205399e-07
+\layout LyX-Code
+
+ ,8.91740616342884e-08
+\layout LyX-Code
+
+ ,5.452181280340989e-08
+\layout LyX-Code
+
+ ,3.308304223623579e-08
+\layout LyX-Code
+
+ ,1.99223879235018e-08
+\layout LyX-Code
+
+} ;
+\layout Subsection
+
+Logarithm
+\layout LyX-Code
+
+const double Math::hlogTable[16] = {
+\layout LyX-Code
+
+  0.0 // ::log(1.0) ,
+\layout LyX-Code
+
+  , 0.06062462181643484 // ::log(1.0 + 1.0/16.0),
+\layout LyX-Code
+
+  , 0.11778303565638346 // ::log(1.0 + 2.0/16.0),
+\layout LyX-Code
+
+  , 0.17185025692665923 // ::log(1.0 + 3.0/16.0),
+\layout LyX-Code
+
+  , 0.22314355131420976 // ::log(1.0 + 4.0/16.0),
+\layout LyX-Code
+
+  , 0.27193371548364176 // ::log(1.0 + 5.0/16.0),
+\layout LyX-Code
+
+  , 0.31845373111853459 // ::log(1.0 + 6.0/16.0),
+\layout LyX-Code
+
+  , 0.36290549368936847 // ::log(1.0 + 7.0/16.0),
+\layout LyX-Code
+
+  , 0.40546510810816438 // ::log(1.0 + 8.0/16.0),
+\layout LyX-Code
+
+  , 0.44628710262841953 // ::log(1.0 + 9.0/16.0),
+\layout LyX-Code
+
+  , 0.48550781578170082 // ::log(1.0 + 10.0/16.0),
+\layout LyX-Code
+
+  , 0.52324814376454787 // ::log(1.0 + 11.0/16.0),
+\layout LyX-Code
+
+  , 0.55961578793542266 // ::log(1.0 + 12.0/16.0),
+\layout LyX-Code
+
+  , 0.59470710774669278 // ::log(1.0 + 13.0/16.0),
+\layout LyX-Code
+
+  , 0.62860865942237409 // ::log(1.0 + 14.0/16.0),
+\layout LyX-Code
+
+  , 0.66139848224536502 // ::log(1.0 + 15.0/16.0)
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+const double Math::hlogComp[16] = {
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 0.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 1.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 2.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 3.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 4.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 5.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 6.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 7.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 8.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 9.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 10.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 11.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 12.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 13.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 14.0/16.0 ) ,
+\layout LyX-Code
+
+  1.0 / ( 1.0 + 15.0/16.0 )
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+ // Log base e, along similar lines
+\layout LyX-Code
+
+ // (actually computes log(abs(x)), gives a large negative number for
+\layout LyX-Code
+
+ // f(0), gives a large positive
+\layout LyX-Code
+
+ //  number if fed Inf or Nan)
+\layout LyX-Code
+
+ static inline double hlog(double x)
+\layout LyX-Code
+
+ {
+\layout LyX-Code
+
+   const DoubleMap m(x) ;
+\layout LyX-Code
+
+   int exponent = m.Exponent() ;
+\layout LyX-Code
+
+   unsigned int sig_hi = m.SignificandHiBits() ;
+\layout LyX-Code
+
+   DoubleMap m1(0,0,sig_hi, m.SignificandLoBits()) ;
+\layout LyX-Code
+
+   unsigned int tableIndex = sig_hi >> 16 ;
+\layout LyX-Code
+
+   double xx=m1.GetValue()*hlogComp[tableIndex] - 1.0 ;
+\layout LyX-Code
+
+   // There should be scope for shortening this polynomial
+\layout LyX-Code
+
+   // (1) rescale for 'xx' to be in (-1/32, 1/32) rather than (0,1/16)
+\layout LyX-Code
+
+   // (2) have a larger table, and take more bits to index it
+\layout LyX-Code
+
+   // (actually, not sure this is large enough for double precision)
+\layout LyX-Code
+
+   double p10 =         (-1.0/10.0) ;
+\layout LyX-Code
+
+   double p9  = p10 * xx + (  1.0 / 9.0 ) ;
+\layout LyX-Code
+
+   double p8  = p9 * xx + ( -1.0 / 8.0 ) ;
+\layout LyX-Code
+
+   double p7  = p8 * xx + (  1.0 / 7.0 ) ;
+\layout LyX-Code
+
+   double p6  = p7 * xx + ( -1.0 / 6.0 ) ;
+\layout LyX-Code
+
+   double p5  = p6 * xx + (  1.0 / 5.0 ) ;
+\layout LyX-Code
+
+   double p4  = p5 * xx + ( -1.0 / 4.0 ) ;
+\layout LyX-Code
+
+   double p3  = p4 * xx + (  1.0 / 3.0 ) ;
+\layout LyX-Code
+
+   double p2  = p3 * xx + ( -1.0 / 2.0 ) ;
+\layout LyX-Code
+
+   double p1  = p2 * xx + (  1.0 )  ;
+\layout LyX-Code
+
+   double p0  = p1 * xx ;
+\layout LyX-Code
+
+   double result= exponent*M_LN2 + hlogTable[tableIndex] + p0 ;
+\layout LyX-Code
+
+/*
+\layout LyX-Code
+
+ * BegLogLine(1)
+\layout LyX-Code
+
+ *   << "hlog x=" << x
+\layout LyX-Code
+
+ *   << " exponent=" << exponent
+\layout LyX-Code
+
+ *   << " tableIndex=" << tableIndex
+\layout LyX-Code
+
+ *   << " xx=" << xx
+\layout LyX-Code
+
+ *   << " p0=" << p0
+\layout LyX-Code
+
+ *   << " result=" << result
+\layout LyX-Code
+
+ *   << EndLogLine ;
+\layout LyX-Code
+
+ */
+\layout LyX-Code
+
+   return result ;
+\layout LyX-Code
+
+ }
+\layout Subsection
+
+Exponential
+\layout LyX-Code
+
+#ifdef DBL_MAX
+\layout LyX-Code
+
+const double Math::Infinity = DBL_MAX * 2.0 ;  // Intended to overflow;
+\layout LyX-Code
+
+                        // will be used as result of hexp(x) for x > 709
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+#if defined(PK_BGL)
+\layout LyX-Code
+
+// BG/L compiler doesn't support HUGE_VAL quite the way we want ...
+\layout LyX-Code
+
+const double Math::Infinity = (1e200*1e200) ; // Intended to overflow
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+const double Math::Infinity = HUGE_VAL * HUGE_VAL ;
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+const double ExpK1 = M_LN2/16.0 ;
+\layout LyX-Code
+
+const double ExpK2 = M_LN2/256.0 ;
+\layout LyX-Code
+
+const double Math::ExpTable1[16] = {
+\layout LyX-Code
+
+//      ::exp( 0.0*ExpK1) ,       ::exp( 1.0*ExpK1) ,
+\layout LyX-Code
+
+//      ::exp( 2.0*ExpK1) ,       ::exp( 3.0*ExpK1) ,
+\layout LyX-Code
+
+        1.00000000000000000000 ,  1.04427378242741383881 , 
+\layout LyX-Code
+
+        1.09050773266525765605 ,  1.13878863475669164875
+\layout LyX-Code
+
+//      ::exp( 4.0*ExpK1) ,       ::exp( 5.0*ExpK1) ,
+\layout LyX-Code
+
+//      ::exp( 6.0*ExpK1) ,       ::exp( 7.0*ExpK1) ,
+\layout LyX-Code
+
+     ,  1.18920711500272105982 ,  1.24185781207348403959 , 
+\layout LyX-Code
+
+        1.29683955465100965466 ,  1.35425554693689271456
+\layout LyX-Code
+
+//      ::exp( 8.0*ExpK1) ,       ::exp( 9.0*ExpK1) ,      
+\layout LyX-Code
+
+//      ::exp(10.0*ExpK1) ,       ::exp(11.0*ExpK1) ,
+\layout LyX-Code
+
+     ,  1.41421356237309503240 ,  1.47682614593949929212 , 
+\layout LyX-Code
+
+        1.54221082540794080126 ,  1.61049033194925428250
+\layout LyX-Code
+
+//      ::exp(12.0*ExpK1) ,       ::exp(13.0*ExpK1) ,      
+\layout LyX-Code
+
+//      ::exp(14.0*ExpK1) ,       ::exp(15.0*ExpK1) ,
+\layout LyX-Code
+
+     ,  1.68179283050742905681 ,  1.75625216037329945002 , 
+\layout LyX-Code
+
+        1.83400808640934242627 ,  1.91520656139714725223
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+const double Math::ExpTable2[16] = {
+\layout LyX-Code
+
+//      ::exp( 0.0*ExpK2) ,       ::exp( 1.0*ExpK2) ,
+\layout LyX-Code
+
+//      ::exp( 2.0*ExpK2) ,       ::exp( 3.0*ExpK2) ,
+\layout LyX-Code
+
+        1.00000000000000000000 ,  1.00271127505020248534 , 
+\layout LyX-Code
+
+        1.00542990111280282117 ,  1.00815589811841751551
+\layout LyX-Code
+
+//      ::exp( 4.0*ExpK2) ,       ::exp( 5.0*ExpK2) ,
+\layout LyX-Code
+
+//      ::exp( 6.0*ExpK2) ,       ::exp( 7.0*ExpK2) ,
+\layout LyX-Code
+
+     ,  1.01088928605170045965 ,  1.01363008495148943838 , 
+\layout LyX-Code
+
+        1.01637831491095303739 ,  1.01913399607773794904
+\layout LyX-Code
+
+//      ::exp( 8.0*ExpK2) ,       ::exp( 9.0*ExpK2) ,
+\layout LyX-Code
+
+//      ::exp(10.0*ExpK2) ,       ::exp(11.0*ExpK2) ,
+\layout LyX-Code
+
+     ,  1.02189714865411667749 ,  1.02466779289713564431 , 
+\layout LyX-Code
+
+        1.02744594911876369561 ,  1.03023163768604101185
+\layout LyX-Code
+
+//      ::exp(12.0*ExpK2) ,       ::exp(13.0*ExpK2) ,
+\layout LyX-Code
+
+//      ::exp(14.0*ExpK2) ,       ::exp(15.0*ExpK2) ,
+\layout LyX-Code
+
+     ,  1.03302487902122842138 ,  1.03582569360195711881 , 
+\layout LyX-Code
+
+        1.03863410196137878930 ,  1.04145012468831613985
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+  /*
+\layout LyX-Code
+
+   * Branchless exp(x), with a view to vectorising on Double Hummer
+\layout LyX-Code
+
+   */
+\layout LyX-Code
+
+  static inline double hexp(double x)
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+    const double tp10 = 1024.0 ;
+\layout LyX-Code
+
+    const double tp20 = tp10*tp10 ;
+\layout LyX-Code
+
+    const double tp40 = tp20*tp20 ;
+\layout LyX-Code
+
+     // Dividing by ln(2) gives a value such that we can put the 
+\layout LyX-Code
+
+     // integer part into an exponent.
+\layout LyX-Code
+
+     // Adding (2**44+2**43) aligns and rounds this so that
+\layout LyX-Code
+
+     // bottom 8 bits can be used for lookup
+\layout LyX-Code
+
+     // higher bits can be stuffed into exponent
+\layout LyX-Code
+
+     // truncated bits (recovered by subtraction) can be fed to 
+\layout LyX-Code
+
+     // power series
+\layout LyX-Code
+
+    const double x1 = x * ( 1.0 / M_LN2 ) + ( tp40 * ( 16.0 + 8.0 ) ) ;
+\layout LyX-Code
+
+    const DoubleMap m1(x1) ;
+\layout LyX-Code
+
+    // Figure the appropriate power of 2 from the significand high bits
+\layout LyX-Code
+
+    const unsigned int sig_lo = m1.SignificandLoBits() ;
+\layout LyX-Code
+
+    const DoubleMap m2(0,sig_lo >> 8, 0, 0) ;
+\layout LyX-Code
+
+    // Recover the number that we will have 'exponentiated' by the bit
+\layout LyX-Code
+
+    // twiddling
+\layout LyX-Code
+
+    const double xl2 =  x1 - ( tp40 * ( 16.0 + 8.0 ) ) ;
+\layout LyX-Code
+
+    // Can range-check xl2 to see if sig_lo put a sensible value in m2
+\layout LyX-Code
+
+    const double xx4 = xl2 * M_LN2 ;
+\layout LyX-Code
+
+    // Look up the next several bits (4) in a multiplication table
+\layout LyX-Code
+
+    const unsigned int tabits =(sig_lo >> 4) & 0x0f ;
+\layout LyX-Code
+
+    const double x31 = ExpTable1[tabits] ;
+\layout LyX-Code
+
+    // And the next 4 bits in another table
+\layout LyX-Code
+
+    const unsigned int tabits2=sig_lo & 0x0f ;
+\layout LyX-Code
+
+    const double x32 = ExpTable2[tabits2] ;
+\layout LyX-Code
+
+    const double x3 = x31*x32 ;
+\layout LyX-Code
+
+    // Figure the remaining part of the original number
+\layout LyX-Code
+
+    const double z = x - xx4 ;
+\layout LyX-Code
+
+    // z should be between +- (2**-8); feed in to polynomial for exp(z)
+\layout LyX-Code
+
+    const double f5 =          1.0/(2.0*3.0*4.0*5.0) ;
+\layout LyX-Code
+
+    const double f4 = z * f5 + 1.0/(2.0*3.0*4.0) ;
+\layout LyX-Code
+
+    const double f3 = z * f4 + 1.0/(2.0*3.0) ;
+\layout LyX-Code
+
+    const double f2 = z * f3 + 1.0/2.0 ;
+\layout LyX-Code
+
+    const double f1 = z * f2 + 1.0 ;
+\layout LyX-Code
+
+    const double f0 = z * f1 + 1.0 ;
+\layout LyX-Code
+
+    const double p0 = f0 * x3 ;
+\layout LyX-Code
+
+    const double x2=m2.GetValue() ;
+\layout LyX-Code
+
+    const double r0 = p0 * x2 ;
+\layout LyX-Code
+
+    // Fixup for out-of-range parameter
+\layout LyX-Code
+
+    const double resultl = fsel(x+709.0, r0, 0.0) ;
+\layout LyX-Code
+
+    const double resulth = fsel(x-709.0, Infinity, resultl) ;
+\layout LyX-Code
+
+    return resulth ;
+\layout LyX-Code
+
+  }
+\layout Subsection
+
+'acossin' (inverse sin/cos)
+\layout LyX-Code
+
+  template <class T> static inline T asin_small(T x)
+\layout LyX-Code
+
+    {
+\layout LyX-Code
+
+       const double ap0 = 1.0           , aq0 = 1.0       ;
+\layout LyX-Code
+
+       const double ap1 = ap0 * 1.0     , aq1 = aq0 * 2.0 ;
+\layout LyX-Code
+
+       const double ap2 = ap1 * 3.0     , aq2 = aq1 * 4.0 ;
+\layout LyX-Code
+
+       const double ap3 = ap2 * 5.0     , aq3 = aq2 * 6.0 ;
+\layout LyX-Code
+
+       const double ap4 = ap3 * 7.0     , aq4 = aq3 * 8.0 ;
+\layout LyX-Code
+
+       const double ap5 = ap4 * 9.0     , aq5 = aq4 * 10.0 ;
+\layout LyX-Code
+
+       const double ap6 = ap5 * 11.0    , aq6 = aq5 * 12.0 ;
+\layout LyX-Code
+
+       const double ap7 = ap6 * 13.0    , aq7 = aq6 * 14.0 ;
+\layout LyX-Code
+
+       const double ap8 = ap7 * 15.0    , aq8 = aq7 * 16.0 ;
+\layout LyX-Code
+
+       const double ap9 = ap8 * 17.0    , aq9 = aq8 * 18.0 ;
+\layout LyX-Code
+
+       const double apa = ap9 * 19.0    , aqa = aq9 * 20.0 ;
+\layout LyX-Code
+
+       const double apb = apa * 21.0    , aqb = aqa * 22.0 ;
+\layout LyX-Code
+
+       const double apc = apb * 23.0    , aqc = aqb * 24.0 ;
+\layout LyX-Code
+
+       const double apd = apc * 25.0    , aqd = aqc * 26.0 ;
+\layout LyX-Code
+
+       const double ape = apd * 27.0    , aqe = aqd * 28.0 ;
+\layout LyX-Code
+
+       const double apf = ape * 29.0    , aqf = aqe * 30.0 ;
+\layout LyX-Code
+
+       const double a14 =  apf / ( aqf * 31.0 ) ;
+\layout LyX-Code
+
+       const double a13 =  ape / ( aqe * 29.0 ) ;
+\layout LyX-Code
+
+       const double a12 =  apd / ( aqd * 27.0 ) ;
+\layout LyX-Code
+
+       const double a11 =  apc / ( aqc * 25.0 ) ;      ;
+\layout LyX-Code
+
+       const double a10 =  apb / ( aqb * 23.0 ) ;
+\layout LyX-Code
+
+       const double a9  =  apa / ( aqa * 21.0 ) ;
+\layout LyX-Code
+
+       const double a8  =  ap9 / ( aq9 * 19.0 ) ;
+\layout LyX-Code
+
+       const double a7  =  ap8 / ( aq8 * 17.0 ) ;
+\layout LyX-Code
+
+       const double a6  =  ap7 / ( aq7 * 15.0 ) ;
+\layout LyX-Code
+
+       const double a5  =  ap6 / ( aq6 * 13.0 ) ;
+\layout LyX-Code
+
+       const double a4  =  ap5 / ( aq5 * 11.0 ) ;
+\layout LyX-Code
+
+       const double a3  =  ap4 / ( aq4 * 9.0 ) ;
+\layout LyX-Code
+
+       const double a2  =  ap3 / ( aq3 * 7.0 ) ;
+\layout LyX-Code
+
+       const double a1  =  ap2 / ( aq2 * 5.0 ) ;
+\layout LyX-Code
+
+       const double a0  =  ap1 / ( aq1 * 3.0 ) ;
+\layout LyX-Code
+
+      double b, s, t1, t0;
+\layout LyX-Code
+
+      s =  a14 + a13 ;
+\layout LyX-Code
+
+      b = x*x;
+\layout LyX-Code
+
+      t0 = a14 * b + a13;
+\layout LyX-Code
+
+      s = b * b;
+\layout LyX-Code
+
+      t0 = (((((t0*s + a11)*s + a9)*s + a7)*s + a5)*s +a3)*s
+\layout LyX-Code
+
+        + a1;
+\layout LyX-Code
+
+      t1 = (((((a12*s + a10)*s + a8)*s + a6)*s + a4)*s + a2);
+\layout LyX-Code
+
+      return ( x + (x*b)*(a0 + b*(t0 + b*t1)));
+\layout LyX-Code
+
+    }
+\layout LyX-Code
+
+    // Given the sin and cos of an angle, return the angle.
+\layout LyX-Code
+
+    // Returns an angle in (-PI, PI)
+\layout LyX-Code
+
+    inline static double acossin ( double sinang, double cosang )
+\layout LyX-Code
+
+    {
+\layout LyX-Code
+
+      const double piby8 = M_PI / 8.0 ; // 22.5 degrees, in radians;
+\layout LyX-Code
+
+      const double pi3by8 = M_PI * ( 3.0 / 8.0 ) ; // 3*22.5 degrees, 
+\layout LyX-Code
+
+                                                   // in radians;
+\layout LyX-Code
+
+      const double pi5by8 = M_PI * ( 5.0 / 8.0 ) ; // 5*22.5 degrees,
+\layout LyX-Code
+
+                                                   // in radians;
+\layout LyX-Code
+
+      const double pi7by8 = M_PI * ( 7.0 / 8.0 ) ; // 7*22.5 degrees, 
+\layout LyX-Code
+
+                                                   // in radians;
+\layout LyX-Code
+
+      const double cospiby4 = sqrt(2.0) * 0.5 ;
+\layout LyX-Code
+
+      const double cospiby8 = sqrt((1+cospiby4) * 0.5) ;
+\layout LyX-Code
+
+      const double sinpiby8 = sqrt(1-cospiby8*cospiby8) ;
+\layout LyX-Code
+
+      double abscos = fabs(cosang) ; // abscos in (0,1)
+\layout LyX-Code
+
+      double abssin = fabs(sinang) ; // abssin in (0,1)
+\layout LyX-Code
+
+      double coslarge = abscos - abssin ;
+\layout LyX-Code
+
+      // Now we have the sin and cos of an angle between 0 and 90 degrees
+\layout LyX-Code
+
+      double sincand1 = abssin * cospiby8 - abscos * sinpiby8 ; 
+\layout LyX-Code
+
+                             // sin of an angle in (-22.5,+67.5 degrees)
+\layout LyX-Code
+
+      double coscand2 = abscos * cospiby8 - abssin * sinpiby8 ; 
+\layout LyX-Code
+
+                             // cos of an angle in (+22.5, 112.5 degrees)
+\layout LyX-Code
+
+                    // which is sin of an angle in (+67.5, -22.5 degrees)
+\layout LyX-Code
+
+      double trigang = fsel( coslarge , sincand1 , coscand2 ); 
+\layout LyX-Code
+
+                            // reduced-range item ready for 'arcsin'
+\layout LyX-Code
+
+      double ang = asin_small(trigang) ;
+\layout LyX-Code
+
+      // Now we have an angle which is piecewise-linear related to 
+\layout LyX-Code
+
+      // the wanted one, over the whole circle
+\layout LyX-Code
+
+      // Compute the multiplier and addend to stitch the angle back
+\layout LyX-Code
+
+      // together
+\layout LyX-Code
+
+      // according as which octant we are in; this computation is
+\layout LyX-Code
+
+      // interleavable
+\layout LyX-Code
+
+      // since both are branchless
+\layout LyX-Code
+
+      double km0 = fsel( sinang, 1.0, -1.0 ) ;
+\layout LyX-Code
+
+      double km1 = fsel( sinang, -1.0, 1.0 ) ;
+\layout LyX-Code
+
+      double kma = fsel(  coslarge , km0 , km1  ) ;
+\layout LyX-Code
+
+      double kmb = fsel(  coslarge , km1 , km0 ) ;
+\layout LyX-Code
+
+      double km  = fsel( cosang , kma , kmb ) ;
+\layout LyX-Code
+
+      double kaa = fsel( coslarge , piby8, pi3by8 ) ;
+\layout LyX-Code
+
+      double kab = fsel( coslarge , pi7by8, pi5by8 ) ;
+\layout LyX-Code
+
+      double ka  = fsel( cosang , kaa , kab ) * km0 ;
+\layout LyX-Code
+
+      // And stitch the angle back together
+\layout LyX-Code
+
+      return (ang*km) + ka ;
+\layout LyX-Code
+
+    }
+\layout Subsection
+
+Sin and Cos
+\layout LyX-Code
+
+#if !defined(INCLUDE_SINCOS_HPP)
+\layout LyX-Code
+
+#define INCLUDE_SINCOS_HPP
+\layout LyX-Code
+
+/*
+\layout LyX-Code
+
+ * This evaluates 'sin' or 'cos' of an angle, as a single basic block 
+\layout LyX-Code
+
+ * (no branches)
+\layout LyX-Code
+
+ * so the compiler can schedule the evaluation interleaved with other
+\layout LyX-Code
+
+ * work.
+\layout LyX-Code
+
+ *
+\layout LyX-Code
+
+ * The angle range is split into 
+\layout LyX-Code
+
+ * (-45, 45), (45, 135), (135, 225), (225, 315) degrees
+\layout LyX-Code
+
+ * and repeating.
+ According as the range and whether we want 
+\layout LyX-Code
+
+ * 'sin' or 'cos', a
+\layout LyX-Code
+
+ * suitable even function (sin(x)/x or cos(x)) is evaluated as a
+\layout LyX-Code
+
+ * Chebyshev polynomial.
+ 
+\layout LyX-Code
+
+ * This is then compensated by multiplication by the
+\layout LyX-Code
+
+ * appropriate one of
+\layout LyX-Code
+
+ * +1, +x, -1, or -x, giving the required result
+\layout LyX-Code
+
+ *
+\layout LyX-Code
+
+ * As convenional, the argument is taken in radians.
+\layout LyX-Code
+
+ *
+\layout LyX-Code
+
+ * The tables for the coefficients of the Chebyshev polynomials
+\layout LyX-Code
+
+ * are set up separately
+\layout LyX-Code
+
+ *
+\layout LyX-Code
+
+ * These tables are good for 8 coefficients, but only the first 7 
+\layout LyX-Code
+
+ * are used to get to
+\layout LyX-Code
+
+ * double precision
+\layout LyX-Code
+
+ */
+\layout LyX-Code
+
+#define A_PI 3.14159265358979323846264338327950288
+\layout LyX-Code
+
+class TrigConstants
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   public:
+\layout LyX-Code
+
+        enum {
+\layout LyX-Code
+
+                k_Diagnose = 0 ,
+\layout LyX-Code
+
+                k_ChebSize = 7
+\layout LyX-Code
+
+        } ;
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+#if defined(UNINIT_SINCOSTABLE)
+\layout LyX-Code
+
+static long double SinCosChebTable [2][TrigConstants::k_ChebSize+1] ;
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+static const double SinCosChebTable [2][TrigConstants::k_ChebSize+1] = {
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+  -0.0789004058803453350315181615833139406341584620305671897936151525
+\layout LyX-Code
+
+ ,-0.0391445675270819570174285389007398988869386583741731420316625604
+\layout LyX-Code
+
+ ,+0.0003045094206789444055815695590884452454366695761311146250488983
+\layout LyX-Code
+
+ ,-0.0000011235749767964159582142036241454977987906529477530843654213
+\layout LyX-Code
+
+ ,+0.0000000024140399724137496071057892543727134506131049276895890590
+\layout LyX-Code
+
+ ,-0.0000000000033916367050375354740011828074494768576077765801943509
+\layout LyX-Code
+
+ ,+0.0000000000000033580876185142034466964844195879864668971641022093
+\layout LyX-Code
+
+ ,-0.0000000000000000024689833209931834105086652046149581936814955209
+\layout LyX-Code
+
+} , {
+\layout LyX-Code
+
+  -0.2967361725903839745991879698781526954590354296709458772475200482
+\layout LyX-Code
+
+ ,-0.1464366443908368633207963601399962102709746936143883813474659270
+\layout LyX-Code
+
+ ,+0.0019214493118146467969071454374523876476540840033801859035372729
+\layout LyX-Code
+
+ ,-0.0000099649684898293000686691061850349099578334955892601473193098
+\layout LyX-Code
+
+ ,+0.0000000275765956071873951864383928564160302546849325446961470666
+\layout LyX-Code
+
+ ,-0.0000000000473994980816484403744256516400929203293229935948172038
+\layout LyX-Code
+
+ ,+0.0000000000000554954854148518274108762542315929735058906972782761
+\layout LyX-Code
+
+ ,-0.0000000000000000470970490651755595726933928753403549933019035260
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+;
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+#if defined(EXTERN_DK1)
+\layout LyX-Code
+
+extern double dk1 ;
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+double dk1 = 1.0 ;
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+static const double TrigK0table[4] = { 0.0, 1.0, 0.0, -1.0 } ;
+\layout LyX-Code
+
+static const double TrigK1table[4] = { 1.0, 0.0, -1.0, 0.0 } ;
+\layout LyX-Code
+
+class Trig: public TrigConstants
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+        public:
+\layout LyX-Code
+
+        /*
+\layout LyX-Code
+
+         * ChebyshevEvaluate is based on 'CSEVL' from the freely-redistributable
+ SLATEC library http://www.netlib.org/slatec
+\layout LyX-Code
+
+         * Further references are in 'Numerical Recipes' http://www.nr.com/
+ and 'gsl_cheb_eval' from the
+\layout LyX-Code
+
+         * GNU Scientific Library at http://www.gnu.org/software/gsl/
+\layout LyX-Code
+
+         * The compiler unrolls the loop fully, for reasonable 'm'
+\layout LyX-Code
+
+         */
+\layout LyX-Code
+
+        template <int m>
+\layout LyX-Code
+
+        static inline double ChebyshevEvaluate(
+\layout LyX-Code
+
+#if defined(UNINIT_SINCOSTABLE)
+\layout LyX-Code
+
+                                 long double c[m]
+\layout LyX-Code
+
+#else
+\layout LyX-Code
+
+                                 const double c[m]
+\layout LyX-Code
+
+#endif
+\layout LyX-Code
+
+                                ,double x)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                double d=0.0 ;
+\layout LyX-Code
+
+                double dd=0.0 ;
+\layout LyX-Code
+
+                double x2=2.0*x;
+\layout LyX-Code
+
+                for (int j=m-1;j>=1;j -= 1) {
+\layout LyX-Code
+
+                        double sv=d;
+\layout LyX-Code
+
+                        d=x2*d-dd+c[j];
+\layout LyX-Code
+
+                        dd=sv;
+\layout LyX-Code
+
+                }
+\layout LyX-Code
+
+                return x*d-dd+0.5*c[0];
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+        static inline double NearestInteger(const double x)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+           const double two10 = 1024.0 ;
+\layout LyX-Code
+
+           const double two50 = two10 * two10 * two10 * two10 * two10 ;
+\layout LyX-Code
+
+           const double two52 = two50 * 4.0 ;
+\layout LyX-Code
+
+           const double two51 = two50 * 2.0 ;
+\layout LyX-Code
+
+           const double offset = two52 + two51 ;
+\layout LyX-Code
+
+           // Force add and subtract of appropriate constant to drop 
+\layout LyX-Code
+
+           // fractional part
+\layout LyX-Code
+
+           // ..
+ hide it from the compiler so the optimiser won't
+\layout LyX-Code
+
+           // reassociate things ..
+\layout LyX-Code
+
+           const double losebits = (dk1*x) + offset ;
+\layout LyX-Code
+
+           const double result = (dk1*losebits) - offset ;
+\layout LyX-Code
+
+           return result ;
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+        static double Sin(double Angle)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                /* Separate domain into
+\layout LyX-Code
+
+                 * -0.5 ..
+ 0.5 : -45 degree to +45 degrees
+\layout LyX-Code
+
+                 * 0.5 ..
+ 1.5 : 45 degrees to 135 degrees
+\layout LyX-Code
+
+                 * and so on
+\layout LyX-Code
+
+                 */
+\layout LyX-Code
+
+                double Quadrant = Angle * (2.0/A_PI) ;
+\layout LyX-Code
+
+                double NearestInt = NearestInteger(Quadrant) ;
+\layout LyX-Code
+
+                int iQuadrant = NearestInt;
+\layout LyX-Code
+
+                double Remainder = Quadrant - NearestInt ;
+\layout LyX-Code
+
+                int iTable = (iQuadrant & 1) ;
+\layout LyX-Code
+
+                double ChebVariable = Remainder * 2.0 ;
+\layout LyX-Code
+
+                double f = ChebyshevEvaluate<k_ChebSize>
+\layout LyX-Code
+
+             (SinCosChebTable[iTable],2.0*ChebVariable*ChebVariable-1.0);
+\layout LyX-Code
+
+                double k0te = TrigK0table[iQuadrant & 3] ;
+\layout LyX-Code
+
+                double k1te = TrigK1table[iQuadrant & 3] ;
+\layout LyX-Code
+
+                double pt = k0te + ChebVariable * k1te ;               
+ 
+\layout LyX-Code
+
+                double st = k0te + ( Angle - NearestInt*(A_PI/2.0) ) 
+\layout LyX-Code
+
+                                   * k1te ;             
+\layout LyX-Code
+
+                double result = f*pt +  st ;
+\layout LyX-Code
+
+//              if ( k_Diagnose )
+\layout LyX-Code
+
+//              {
+\layout LyX-Code
+
+//                      cout << "Trig::Sin(" << Angle << ") "
+\layout LyX-Code
+
+//                           << "Remainder=" << Remainder
+\layout LyX-Code
+
+//                       << " iTable=" << iTable
+\layout LyX-Code
+
+//                       <<     " iSign=" << iSign
+\layout LyX-Code
+
+//                           << " ChebVariable=" << ChebVariable
+\layout LyX-Code
+
+//                           << " f=" << f
+\layout LyX-Code
+
+//                       << " result=" << result
+\layout LyX-Code
+
+//                       << endl ;
+\layout LyX-Code
+
+//              }
+\layout LyX-Code
+
+                return result ;
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+        static double Cos(double Angle)
+\layout LyX-Code
+
+        {
+\layout LyX-Code
+
+                /* Separate domain into
+\layout LyX-Code
+
+                 * -0.5 ..
+ 0.5 : -45 degree to +45 degrees
+\layout LyX-Code
+
+                 * 0.5 ..
+ 1.5 : 45 degrees to 135 degrees
+\layout LyX-Code
+
+                 * and so on
+\layout LyX-Code
+
+                 */
+\layout LyX-Code
+
+                double Quadrant = Angle * (2.0/A_PI) ;
+\layout LyX-Code
+
+                double NearestInt = NearestInteger(Quadrant) ;
+\layout LyX-Code
+
+                int iQuadrant = NearestInt;
+\layout LyX-Code
+
+                double Remainder = Quadrant - NearestInt ;
+\layout LyX-Code
+
+                int iTable = (iQuadrant & 1) ;
+\layout LyX-Code
+
+                double ChebVariable = Remainder * 2.0 ;
+\layout LyX-Code
+
+                double f = ChebyshevEvaluate<k_ChebSize>
+\layout LyX-Code
+
+           (SinCosChebTable[1-iTable],2.0*ChebVariable*ChebVariable-1.0);
+\layout LyX-Code
+
+                double k0te = TrigK0table[iQuadrant & 3] ;
+\layout LyX-Code
+
+                double k1te = TrigK1table[iQuadrant & 3] ;
+\layout LyX-Code
+
+                double pt = k1te - ChebVariable * k0te ;
+\layout LyX-Code
+
+                double st = k1te - (  Angle - NearestInt*(A_PI/2.0) ) 
+\layout LyX-Code
+
+                                    *  k0te ;            
+\layout LyX-Code
+
+                double result = f*pt + st ;
+\layout LyX-Code
+
+//              if ( k_Diagnose )
+\layout LyX-Code
+
+//              {
+\layout LyX-Code
+
+//                      cout << "Trig::Cos(" << Angle << ") "
+\layout LyX-Code
+
+//                           << "Remainder=" << Remainder
+\layout LyX-Code
+
+//                           << " iTable=" << iTable
+\layout LyX-Code
+
+//                           << " iSign=" << iSign
+\layout LyX-Code
+
+//                           << " ChebVariable=" << ChebVariable
+\layout LyX-Code
+
+//                           << " f=" << f
+\layout LyX-Code
+
+//                           << " result=" << result
+\layout LyX-Code
+
+//                           << endl ;
+\layout LyX-Code
+
+//              }
+\layout LyX-Code
+
+                return result ;
+\layout LyX-Code
+
+        }
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+#endif
+\layout Subsection
+
+Nearest image in periodic volume
+\layout LyX-Code
+
+double dk1 = 1.0 ; // The compiler does not know this is 
+\layout LyX-Code
+
+  // constant, so should not 'optimise' away the rounding below
+\layout LyX-Code
+
+static inline double NearestInteger(const double x)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   const double two10 = 1024.0 ;
+\layout LyX-Code
+
+   const double two50 = two10 * two10 * two10 * two10 * two10 ;
+\layout LyX-Code
+
+   const double two52 = two50 * 4.0 ;
+\layout LyX-Code
+
+   const double two51 = two50 * 2.0 ;
+\layout LyX-Code
+
+   const double offset = two52 + two51 ;
+\layout LyX-Code
+
+   // Force add and subtract of appropriate constant to drop 
+\layout LyX-Code
+
+   // fractional part
+\layout LyX-Code
+
+   // ..
+ hide it from the compiler so the optimiser won't 
+\backslash 
+
+\layout LyX-Code
+
+   // reassociate things ..
+\layout LyX-Code
+
+   const double losebits = (dk1*x) + offset ;
+\layout LyX-Code
+
+   const double result = (dk1*losebits) - offset ;
+\layout LyX-Code
+
+   return result ;
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+static inline double NearestImageInFullyPeriodicLine(
+\layout LyX-Code
+
+  const double a
+\layout LyX-Code
+
+  , const double b
+\layout LyX-Code
+
+  , const double Period
+\layout LyX-Code
+
+  , const double ReciprocalPeriod
+\layout LyX-Code
+
+  )
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   const double d = b-a ; // 'Regular' distance between them, 
+\layout LyX-Code
+
+                      // if small enough the result will be 'b'
+\layout LyX-Code
+
+   const double d_unit = d * ReciprocalPeriod ; // express with respect
+\layout LyX-Code
+
+                                                 // to unit periodicity,
+\layout LyX-Code
+
+                            // for -0.5 < d_unit < 0.5 result will be 'b'
+\layout LyX-Code
+
+   const double d_unit_rounded = NearestInteger( d_unit ) ;
+\layout LyX-Code
+
+   const double result = b - d_unit_rounded * Period ;
+\layout LyX-Code
+
+   return result ;
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+static inline double NearestDistanceInFullyPeriodicLine(
+\layout LyX-Code
+
+  const double a
+\layout LyX-Code
+
+  , const double b
+\layout LyX-Code
+
+  , const double Period
+\layout LyX-Code
+
+  , const double ReciprocalPeriod
+\layout LyX-Code
+
+  )
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+      const double d = b-a ; // 'Regular' distance between them, 
+\layout LyX-Code
+
+                             // if small enough the result will be 'b'
+\layout LyX-Code
+
+   const double d_unit = d * ReciprocalPeriod ; // express with respect
+\layout LyX-Code
+
+                                                // to unit periodicity,
+\layout LyX-Code
+
+                            // for -0.5 < d_unit < 0.5 result will be 'b'
+\layout LyX-Code
+
+   const double d_unit_rounded = NearestInteger(d_unit) ;
+\layout LyX-Code
+
+   const double result = d - d_unit_rounded * Period ;
+\layout LyX-Code
+
+   return result ;
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+static inline double NearestVectorInFullyPeriodicLine(
+\layout LyX-Code
+
+  const double a
+\layout LyX-Code
+
+  , const double b
+\layout LyX-Code
+
+  , const double Period
+\layout LyX-Code
+
+  , const double ReciprocalPeriod
+\layout LyX-Code
+
+  )
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   return a-NearestImageInFullyPeriodicLine(a,b,Period,ReciprocalPeriod);
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+inline
+\layout LyX-Code
+
+void
+\layout LyX-Code
+
+NearestImageInPeriodicVolume(const XYZ &PositionA, const XYZ &PositionB,
+\layout LyX-Code
+
+                                   XYZ &Nearest)
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+  double mX = NearestImageInFullyPeriodicLine(PositionA.mX, 
+\layout LyX-Code
+
+                PositionB.mX, DynVarMgrIF.mDynamicBoxDimensionVector.mX, 
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mX ) ;
+\layout LyX-Code
+
+  double mY = NearestImageInFullyPeriodicLine(PositionA.mY, 
+\layout LyX-Code
+
+                PositionB.mY, DynVarMgrIF.mDynamicBoxDimensionVector.mY, 
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mY ) ;
+\layout LyX-Code
+
+  double mZ = NearestImageInFullyPeriodicLine(PositionA.mZ, 
+\layout LyX-Code
+
+                PositionB.mZ, DynVarMgrIF.mDynamicBoxDimensionVector.mZ, 
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mZ ) ;
+\layout LyX-Code
+
+  Nearest.mX = mX ;
+\layout LyX-Code
+
+  Nearest.mY = mY ;
+\layout LyX-Code
+
+  Nearest.mZ = mZ ;
+\layout LyX-Code
+
+  }
+\layout LyX-Code
+
+inline
+\layout LyX-Code
+
+void
+\layout LyX-Code
+
+NearestVectorInPeriodicVolume(const XYZ &PositionA, const XYZ &PositionB,
+\layout LyX-Code
+
+                                    XYZ &Nearest)
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+  double mX = NearestVectorInFullyPeriodicLine(PositionA.mX,
+\layout LyX-Code
+
+                PositionB.mX, DynVarMgrIF.mDynamicBoxDimensionVector.mX,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mX ) ;
+\layout LyX-Code
+
+  double mY = NearestVectorInFullyPeriodicLine(PositionA.mY,
+\layout LyX-Code
+
+                PositionB.mY, DynVarMgrIF.mDynamicBoxDimensionVector.mY,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mY ) ;
+\layout LyX-Code
+
+  double mZ = NearestVectorInFullyPeriodicLine(PositionA.mZ,
+\layout LyX-Code
+
+                PositionB.mZ, DynVarMgrIF.mDynamicBoxDimensionVector.mZ,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mZ ) ;
+\layout LyX-Code
+
+  Nearest.mX = mX ;
+\layout LyX-Code
+
+  Nearest.mY = mY ;
+\layout LyX-Code
+
+  Nearest.mZ = mZ ;
+\layout LyX-Code
+
+  }
+\layout LyX-Code
+
+inline
+\layout LyX-Code
+
+double
+\layout LyX-Code
+
+NearestSquareDistanceInPeriodicVolume(const XYZ &PositionA, const XYZ &PositionB
+)
+\layout LyX-Code
+
+  {
+\layout LyX-Code
+
+  double mX = NearestVectorInFullyPeriodicLine(PositionA.mX,
+\layout LyX-Code
+
+                PositionB.mX, DynVarMgrIF.mDynamicBoxDimensionVector.mX,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mX ) ;
+\layout LyX-Code
+
+  double mY = NearestVectorInFullyPeriodicLine(PositionA.mY,
+\layout LyX-Code
+
+                PositionB.mY, DynVarMgrIF.mDynamicBoxDimensionVector.mY,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mY ) ;
+\layout LyX-Code
+
+  double mZ = NearestVectorInFullyPeriodicLine(PositionA.mZ,
+\layout LyX-Code
+
+                PositionB.mZ, DynVarMgrIF.mDynamicBoxDimensionVector.mZ,
+\layout LyX-Code
+
+                DynVarMgrIF.mDynamicBoxInverseDimensionVector.mZ ) ;
+\layout LyX-Code
+
+  return  mX*mX + mY*mY + mZ*mZ ;
+\layout LyX-Code
+
+  }
+\layout LyX-Code
+
+\layout Subsection
+
+Fragment in range
+\layout LyX-Code
+
+double dk1 = 1.0 ; // The compiler does not know this is 
+\layout LyX-Code
+
+  // constant, so should not 'optimise' away the rounding below
+\layout LyX-Code
+
+static inline double NearestInteger(const double x)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   const double two10 = 1024.0 ;
+\layout LyX-Code
+
+   const double two50 = two10 * two10 * two10 * two10 * two10 ;
+\layout LyX-Code
+
+   const double two52 = two50 * 4.0 ;
+\layout LyX-Code
+
+   const double two51 = two50 * 2.0 ;
+\layout LyX-Code
+
+   const double offset = two52 + two51 ;
+\layout LyX-Code
+
+   // Force add and subtract of appropriate constant to drop 
+\layout LyX-Code
+
+   // fractional part
+\layout LyX-Code
+
+   // ..
+ hide it from the compiler so the optimiser won't 
+\layout LyX-Code
+
+   // reassociate things ..
+\layout LyX-Code
+
+   const double losebits = (dk1*x) + offset ;
+\layout LyX-Code
+
+   const double result = (dk1*losebits) - offset ;
+\layout LyX-Code
+
+   return result ;
+\layout LyX-Code
+
+}
+\layout LyX-Code
+
+// note ...
+ 'FracScale' returns unsigned
+\layout LyX-Code
+
+static inline unsigned int FracScale(double n, double rd)
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   double t = n*rd ;
+\layout LyX-Code
+
+   double ti = NearestInteger(t) ;
+\layout LyX-Code
+
+   double tr = t-ti ;                  // tr should be in (-0.5, 0.5)
+\layout LyX-Code
+
+   const double two10 = 1024.0 ;
+\layout LyX-Code
+
+   const double two32 = two10 * two10 * two10 * 4.0 ;
+\layout LyX-Code
+
+   double tri = tr*two32 ;
+\layout LyX-Code
+
+   int itri=tri ;
+\layout LyX-Code
+
+   unsigned int utri = itri ;
+\layout LyX-Code
+
+   return utri ;             // should be a 32-bit integer 
+\layout LyX-Code
+
+                             // representing the fractional position
+\layout LyX-Code
+
+ }
+\layout LyX-Code
+
+class NeighbourList
+\layout LyX-Code
+
+{
+\layout LyX-Code
+
+   public:
+\layout LyX-Code
+
+   class remainder
+\layout LyX-Code
+
+   {
+\layout LyX-Code
+
+      public:
+\layout LyX-Code
+
+       double e2 ;
+\layout LyX-Code
+
+       int    a  ;
+\layout LyX-Code
+
+       int dummy ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+   enum {
+\layout LyX-Code
+
+      k_FragCount = NUMBER_OF_FRAGMENTS
+\layout LyX-Code
+
+      } ;
+\layout LyX-Code
+
+   enum {
+\layout LyX-Code
+
+      k_ScaleShift = 8
+\layout LyX-Code
+
+      } ;
+\layout LyX-Code
+
+   const XYZ p ;
+\layout LyX-Code
+
+   const XYZ k ;
+\layout LyX-Code
+
+   double x[k_FragCount] ;
+\layout LyX-Code
+
+   double y[k_FragCount] ;
+\layout LyX-Code
+
+   double z[k_FragCount] ;
+\layout LyX-Code
+
+   double e[k_FragCount] ;
+\layout LyX-Code
+
+   double ex[k_FragCount] ;
+\layout LyX-Code
+
+   double ey[k_FragCount] ;
+\layout LyX-Code
+
+   double ez[k_FragCount] ;
+\layout LyX-Code
+
+   int ix[k_FragCount] ;
+\layout LyX-Code
+
+   int iy[k_FragCount] ;
+\layout LyX-Code
+
+   int iz[k_FragCount] ;
+\layout LyX-Code
+
+   int iex[k_FragCount] ;
+\layout LyX-Code
+
+   int iey[k_FragCount] ;
+\layout LyX-Code
+
+   int iez[k_FragCount] ;
+\layout LyX-Code
+
+   int result[k_FragCount] ;
+\layout LyX-Code
+
+   NeighbourList(const XYZ& ap, const XYZ& ak): p(ap), k(ak) {
+\layout LyX-Code
+
+      BegLogLine(PKFXLOG_NSQSOURCEFRAG_SUMMARY)
+\layout LyX-Code
+
+         << "NeighbourList( p=" << p
+\layout LyX-Code
+
+         << " k=" << k
+\layout LyX-Code
+
+         << EndLogLine ;
+\layout LyX-Code
+
+   } ;
+\layout LyX-Code
+
+   int ProduceAll(
+\layout LyX-Code
+
+     const XYZ& aXYZ
+\layout LyX-Code
+
+     , const XYZ& eXYZ
+\layout LyX-Code
+
+     , double e0
+\layout LyX-Code
+
+     , int qstart
+\layout LyX-Code
+
+     , int qend
+\layout LyX-Code
+
+   ) {
+\layout LyX-Code
+
+      int q0 = 0 ;
+\layout LyX-Code
+
+      for (int a0=qstart; a0<qend; a0+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         result[q0] = a0 ;
+\layout LyX-Code
+
+         q0 += 1 ;
+\layout LyX-Code
+
+      }
+\layout LyX-Code
+
+      return q0 ;
+\layout LyX-Code
+
+     }
+\layout LyX-Code
+
+   int Produce(
+\layout LyX-Code
+
+     const XYZ& aXYZ
+\layout LyX-Code
+
+     , const XYZ& eXYZ
+\layout LyX-Code
+
+     , double e0
+\layout LyX-Code
+
+     , int qstart
+\layout LyX-Code
+
+     , int qend
+\layout LyX-Code
+
+   ) {
+\layout LyX-Code
+
+       double x0 = aXYZ.mX ;
+\layout LyX-Code
+
+       double px = p.mX ;
+\layout LyX-Code
+
+       double kx = k.mX ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for slab
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      remainder xr[k_FragCount] ;
+\layout LyX-Code
+
+      remainder yr[k_FragCount] ;
+\layout LyX-Code
+
+      int q1 = 0 ;
+\layout LyX-Code
+
+      for (int a0=qstart; a0<qend; a0+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         double dx = NearestDistanceInFullyPeriodicLine(x0,x[a0],px,kx)
+ ;
+\layout LyX-Code
+
+         double em = e0 + e[a0] ;
+\layout LyX-Code
+
+         double ex2 = em*em - dx*dx ;
+\layout LyX-Code
+
+         xr[q1].e2 = ex2 ;
+\layout LyX-Code
+
+         xr[q1].a = a0 ;
+\layout LyX-Code
+
+         double FragmentIndexAdd = fsel(ex2,1.0,0.0) ;
+\layout LyX-Code
+
+         int IndexAdd = FragmentIndexAdd ;
+\layout LyX-Code
+
+         q1 += IndexAdd ;
+\layout LyX-Code
+
+         BegLogLine( PKFXLOG_NSQSOURCEFRAG )
+\layout LyX-Code
+
+           << "NeighbourList::Produce X"
+\layout LyX-Code
+
+           << " IndexAdd " << IndexAdd
+\layout LyX-Code
+
+           << " a0 " << a0
+\layout LyX-Code
+
+           << " x0 " << x0
+\layout LyX-Code
+
+           << " x " << x[a0]
+\layout LyX-Code
+
+           << " dx " << dx
+\layout LyX-Code
+
+           << " e0 " << e0
+\layout LyX-Code
+
+           << " ex2 " << ex2
+\layout LyX-Code
+
+           << " q1 " << q1
+\layout LyX-Code
+
+           << EndLogLine;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY1 )
+\layout LyX-Code
+
+        << "NeighbourList::Produce X Summary"
+\layout LyX-Code
+
+        << " q1 " << q1
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+     double y0 = aXYZ.mY ;
+\layout LyX-Code
+
+       double py = p.mY ;
+\layout LyX-Code
+
+       double ky = k.mY ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for cylinder
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int q2 = 0 ;
+\layout LyX-Code
+
+      for (int b1=0; b1<q1; b1+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a1 = xr[b1].a ;
+\layout LyX-Code
+
+         double dy = NearestDistanceInFullyPeriodicLine(y0,y[a1],py,ky)
+ ;
+\layout LyX-Code
+
+         double ey2 = xr[b1].e2 - dy*dy ;
+\layout LyX-Code
+
+         yr[q2].e2 = ey2 ;
+\layout LyX-Code
+
+         yr[q2].a = a1 ;
+\layout LyX-Code
+
+         double FragmentIndexAdd = fsel(ey2,1.0,0.0) ;
+\layout LyX-Code
+
+         int IndexAdd = FragmentIndexAdd ;
+\layout LyX-Code
+
+         q2 += IndexAdd ;
+\layout LyX-Code
+
+         BegLogLine( PKFXLOG_NSQSOURCEFRAG )
+\layout LyX-Code
+
+           << "NeighbourList::Produce Y"
+\layout LyX-Code
+
+           << " IndexAdd " << IndexAdd
+\layout LyX-Code
+
+           << " a1 " << a1
+\layout LyX-Code
+
+           << " y0 " << y0
+\layout LyX-Code
+
+           << " y " << y[a1]
+\layout LyX-Code
+
+           << " dy " << dy
+\layout LyX-Code
+
+           << " e2 " << xr[b1].e2
+\layout LyX-Code
+
+           << " ey2 " << ey2
+\layout LyX-Code
+
+           << " q2 " << q2
+\layout LyX-Code
+
+           << EndLogLine;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+//    BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY )
+\layout LyX-Code
+
+//      << "NeighbourList::Produce Y Summary"
+\layout LyX-Code
+
+//      << " q2 " << q2
+\layout LyX-Code
+
+//      << EndLogLine ;
+\layout LyX-Code
+
+     double z0 = aXYZ.mZ ;
+\layout LyX-Code
+
+       double pz = p.mZ ;
+\layout LyX-Code
+
+       double kz = k.mZ ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for sphere
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int q3 = 0 ;
+\layout LyX-Code
+
+      for (int b2=0; b2<q2; b2+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a2 = yr[b2].a ;
+\layout LyX-Code
+
+         double dz = NearestDistanceInFullyPeriodicLine(z0,z[a2],pz,kz)
+ ;
+\layout LyX-Code
+
+         double ez2 = yr[b2].e2 - dz*dz ;
+\layout LyX-Code
+
+         result[q3] = a2 ;
+\layout LyX-Code
+
+         double FragmentIndexAdd = fsel(ez2,1.0,0.0) ;
+\layout LyX-Code
+
+         int IndexAdd = FragmentIndexAdd ;
+\layout LyX-Code
+
+         q3 += IndexAdd ;
+\layout LyX-Code
+
+         BegLogLine( PKFXLOG_NSQSOURCEFRAG )
+\layout LyX-Code
+
+           << "NeighbourList::Produce Z"
+\layout LyX-Code
+
+           << " IndexAdd " << IndexAdd
+\layout LyX-Code
+
+           << " a2 " << a2
+\layout LyX-Code
+
+           << " z0 " << z0
+\layout LyX-Code
+
+           << " z " << z[a2]
+\layout LyX-Code
+
+           << " dz " << dz
+\layout LyX-Code
+
+           << " e2 " << xr[b2].e2
+\layout LyX-Code
+
+           << " ez2 " << ez2
+\layout LyX-Code
+
+           << " q3 " << q3
+\layout LyX-Code
+
+           << EndLogLine;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY1 )
+\layout LyX-Code
+
+        << "NeighbourList::Produce Z Summary"
+\layout LyX-Code
+
+        << " q3 " << q3
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+      return q3 ;
+\layout LyX-Code
+
+      } ;
+\layout LyX-Code
+
+   int iProduce(
+\layout LyX-Code
+
+     const XYZ& aXYZ
+\layout LyX-Code
+
+     , const XYZ& eXYZ
+\layout LyX-Code
+
+     , double e0
+\layout LyX-Code
+
+     , int qstart
+\layout LyX-Code
+
+     , int qend
+\layout LyX-Code
+
+   ) {
+\layout LyX-Code
+
+      const double tp32 = 1024.0*1024.0*1024.0*4.0 ;
+\layout LyX-Code
+
+      int aix = FracScale(aXYZ.mX,k.mX) ;
+\layout LyX-Code
+
+      int aiy = FracScale(aXYZ.mY,k.mY) ;
+\layout LyX-Code
+
+      int aiz = FracScale(aXYZ.mZ,k.mZ) ;
+\layout LyX-Code
+
+      int aiex = FracScale(eXYZ.mX,k.mX/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      int aiey = FracScale(eXYZ.mY,k.mY/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      int aiez = FracScale(eXYZ.mZ,k.mZ/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for slab
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int xr[k_FragCount] ;
+\layout LyX-Code
+
+      int q1 = 0 ;
+\layout LyX-Code
+
+      for (int a0=qstart; a0<qend; a0+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int idx = aix - ix[a0] ;    // Difference in 'x' coordinate,
+\layout LyX-Code
+
+                                     // scaled on full integer range
+\layout LyX-Code
+
+         int idxq = idx >> k_ScaleShift ; // Difference in 'x'
+\layout LyX-Code
+
+                   // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiex) - iex[a0] ; // Max difference for things to be
+\layout LyX-Code
+
+                                     // worth computing, scaled like idxq
+\layout LyX-Code
+
+         int nexp = iem + idxq  ;
+\layout LyX-Code
+
+         int nexn = iem - idxq  ;
+\layout LyX-Code
+
+         unsigned int nex = nexp & nexn ;  // Negative if both of the
+\layout LyX-Code
+
+                                   // above are negative, i.e.
+ in range
+\layout LyX-Code
+
+         int IndexAdd = nex >> 31 ;
+\layout LyX-Code
+
+         xr[q1] = a0 ;
+\layout LyX-Code
+
+         q1 += IndexAdd ;
+\layout LyX-Code
+
+      }
+\layout LyX-Code
+
+      BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY1 )
+\layout LyX-Code
+
+        << "NeighbourList::Produce X Summary"
+\layout LyX-Code
+
+        << " q1 " << q1
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for square prism
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int yr[k_FragCount] ;
+\layout LyX-Code
+
+      int q2 = 0 ;
+\layout LyX-Code
+
+      for (int b1=0; b1<q1; b1+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a1 = xr[b1] ;
+\layout LyX-Code
+
+         int idy = aiy - iy[a1] ;
+\layout LyX-Code
+
+         int idyq = idy >> k_ScaleShift ; // Difference in 'y'
+\layout LyX-Code
+
+                   // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiey) - iey[a1] ;
+\layout LyX-Code
+
+         int neyp = iem - idyq ;
+\layout LyX-Code
+
+         int neyn = iem + idyq ;
+\layout LyX-Code
+
+         unsigned int ney = neyp & neyn ;
+\layout LyX-Code
+
+         int IndexAdd = ney >> 31 ;
+\layout LyX-Code
+
+         yr[q2] = a1 ;
+\layout LyX-Code
+
+         q2 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for cube
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int zr[k_FragCount] ;
+\layout LyX-Code
+
+      int q3 = 0 ;
+\layout LyX-Code
+
+      for (int b2=0; b2<q2; b2+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a2 = yr[b2] ;
+\layout LyX-Code
+
+         int idz = aiz - iz[a2] ;
+\layout LyX-Code
+
+         int idzq = idz >> k_ScaleShift ; // Difference in 'z'
+\layout LyX-Code
+
+                   // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiez) - iez[a2] ;
+\layout LyX-Code
+
+         int nezp = iem - idzq ;
+\layout LyX-Code
+
+         int nezn = iem + idzq ;
+\layout LyX-Code
+
+         unsigned int nez = nezp & nezn ;
+\layout LyX-Code
+
+         int IndexAdd = nez >> 31 ;
+\layout LyX-Code
+
+         zr[q3] = a2 ;
+\layout LyX-Code
+
+         q3 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Examine cuboid for sphere
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int q4 = 0 ;
+\layout LyX-Code
+
+      double x0=aXYZ.mX ;
+\layout LyX-Code
+
+      double y0=aXYZ.mY ;
+\layout LyX-Code
+
+      double z0=aXYZ.mZ ;
+\layout LyX-Code
+
+      double px = p.mX ;
+\layout LyX-Code
+
+      double py = p.mY ;
+\layout LyX-Code
+
+      double pz = p.mZ ;
+\layout LyX-Code
+
+      double kx = k.mX ;
+\layout LyX-Code
+
+      double ky = k.mY ;
+\layout LyX-Code
+
+      double kz = k.mZ ;
+\layout LyX-Code
+
+      for (int b3=0; b3<q3 ; b3+=1)
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a3 = zr[b3] ;
+\layout LyX-Code
+
+         double dx = NearestDistanceInFullyPeriodicLine(x0,x[a3],px,kx)
+ ;
+\layout LyX-Code
+
+         double dy = NearestDistanceInFullyPeriodicLine(y0,y[a3],py,ky)
+ ;
+\layout LyX-Code
+
+         double dz = NearestDistanceInFullyPeriodicLine(z0,z[a3],pz,kz)
+ ;
+\layout LyX-Code
+
+         double em = e0 + e[a3] ;
+\layout LyX-Code
+
+         double ex2 = em*em - dx*dx - dy*dy - dz*dz ;
+\layout LyX-Code
+
+         result[q4] = a3 ;
+\layout LyX-Code
+
+         double FragmentIndexAdd = fsel(ex2,1.0,0.0) ;
+\layout LyX-Code
+
+         int IndexAdd = FragmentIndexAdd ;
+\layout LyX-Code
+
+         q4 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY1 )
+\layout LyX-Code
+
+        << "NeighbourList::Produce S Summary"
+\layout LyX-Code
+
+        << " q4 " << q4
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+      return q4 ;
+\layout LyX-Code
+
+     } ;
+\layout LyX-Code
+
+   int iProduce_logged(
+\layout LyX-Code
+
+     const XYZ& aXYZ
+\layout LyX-Code
+
+     , const XYZ& eXYZ
+\layout LyX-Code
+
+     , double e0
+\layout LyX-Code
+
+     , int qstart
+\layout LyX-Code
+
+     , int qend
+\layout LyX-Code
+
+   ) {
+\layout LyX-Code
+
+      const double tp32 = 1024.0*1024.0*1024.0*4.0 ;
+\layout LyX-Code
+
+      int aix = FracScale_logged(aXYZ.mX,k.mX) ;
+\layout LyX-Code
+
+      int aiy = FracScale_logged(aXYZ.mY,k.mY) ;
+\layout LyX-Code
+
+      int aiz = FracScale_logged(aXYZ.mZ,k.mZ) ;
+\layout LyX-Code
+
+      int aiex = FracScale_logged(eXYZ.mX,k.mX/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      int aiey = FracScale_logged(eXYZ.mY,k.mY/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      int aiez = FracScale_logged(eXYZ.mZ,k.mZ/(1<<k_ScaleShift))  ;
+\layout LyX-Code
+
+      BegLogLine( 1 )
+\layout LyX-Code
+
+        << "iProduce aXYZ=" << aXYZ
+\layout LyX-Code
+
+        << " k=" << k
+\layout LyX-Code
+
+        << " eXYZ=" << eXYZ
+\layout LyX-Code
+
+        << " aix=" << hex << aix
+\layout LyX-Code
+
+        << " aiy=" << hex << aiy
+\layout LyX-Code
+
+        << " aiz=" << hex << aiz
+\layout LyX-Code
+
+        << " aiex=" << hex << aiex
+\layout LyX-Code
+
+        << " aiey=" << hex << aiey
+\layout LyX-Code
+
+        << " aiez=" << hex << aiez
+\layout LyX-Code
+
+        << dec
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for slab
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int xr[k_FragCount] ;
+\layout LyX-Code
+
+      int q1 = 0 ;
+\layout LyX-Code
+
+      for (int a0=qstart; a0<qend; a0+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int idx = aix - ix[a0] ;    // Difference in 'x' coordinate,
+\layout LyX-Code
+
+                                     // scaled on full integer range
+\layout LyX-Code
+
+         int idxq = idx >> k_ScaleShift ; // Difference in 'x'
+\layout LyX-Code
+
+              // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiex) - iex[a0] ; // Max difference for things to be
+\layout LyX-Code
+
+                                    // worth computing, scaled like idxq
+\layout LyX-Code
+
+         int nexp = iem + idxq  ;
+\layout LyX-Code
+
+         int nexn = iem - idxq  ;
+\layout LyX-Code
+
+         unsigned int nex = nexp & nexn ;  // Negative if both of the
+\layout LyX-Code
+
+                                     // above are negative, i.e.
+ in range
+\layout LyX-Code
+
+         int IndexAdd = nex >> 31 ;
+\layout LyX-Code
+
+         xr[q1] = a0 ;
+\layout LyX-Code
+
+         q1 += IndexAdd ;
+\layout LyX-Code
+
+      }
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for square prism
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int yr[k_FragCount] ;
+\layout LyX-Code
+
+      int q2 = 0 ;
+\layout LyX-Code
+
+      for (int b1=0; b1<q1; b1+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a1 = xr[b1] ;
+\layout LyX-Code
+
+         int idy = aiy - iy[a1] ;
+\layout LyX-Code
+
+         int idyq = idy >> k_ScaleShift ; // Difference in 'y'
+\layout LyX-Code
+
+                   // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiey) - iey[a1] ;
+\layout LyX-Code
+
+         int neyp = iem - idyq ;
+\layout LyX-Code
+
+         int neyn = iem + idyq ;
+\layout LyX-Code
+
+         unsigned int ney = neyp & neyn ;
+\layout LyX-Code
+
+         int IndexAdd = ney >> 31 ;
+\layout LyX-Code
+
+         yr[q2] = a1 ;
+\layout LyX-Code
+
+         q2 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Slice for cube
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int zr[k_FragCount] ;
+\layout LyX-Code
+
+      int q3 = 0 ;
+\layout LyX-Code
+
+      for (int b2=0; b2<q2; b2+=1 )
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a2 = yr[b2] ;
+\layout LyX-Code
+
+         int idz = aiz - iz[a2] ;
+\layout LyX-Code
+
+         int idzq = idz >> k_ScaleShift ; // Difference in 'z'
+\layout LyX-Code
+
+                   // coordinate, scaled down to keep away from overflows
+\layout LyX-Code
+
+         int iem = (-aiez) - iez[a2] ;
+\layout LyX-Code
+
+         int nezp = iem - idzq ;
+\layout LyX-Code
+
+         int nezn = iem + idzq ;
+\layout LyX-Code
+
+         unsigned int nez = nezp & nezn ;
+\layout LyX-Code
+
+         int IndexAdd = nez >> 31 ;
+\layout LyX-Code
+
+         zr[q3] = a2 ;
+\layout LyX-Code
+
+         q3 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      /*
+\layout LyX-Code
+
+       * Examine cuboid for sphere
+\layout LyX-Code
+
+       */
+\layout LyX-Code
+
+      int q4 = 0 ;
+\layout LyX-Code
+
+      double x0=aXYZ.mX ;
+\layout LyX-Code
+
+      double y0=aXYZ.mY ;
+\layout LyX-Code
+
+      double z0=aXYZ.mZ ;
+\layout LyX-Code
+
+      double px = p.mX ;
+\layout LyX-Code
+
+      double py = p.mY ;
+\layout LyX-Code
+
+      double pz = p.mZ ;
+\layout LyX-Code
+
+      double kx = k.mX ;
+\layout LyX-Code
+
+      double ky = k.mY ;
+\layout LyX-Code
+
+      double kz = k.mZ ;
+\layout LyX-Code
+
+      for (int b3=0; b3<q3 ; b3+=1)
+\layout LyX-Code
+
+      {
+\layout LyX-Code
+
+         int a3 = zr[b3] ;
+\layout LyX-Code
+
+         double dx = NearestDistanceInFullyPeriodicLine(x0,x[a3],px,kx)
+ ;
+\layout LyX-Code
+
+         double dy = NearestDistanceInFullyPeriodicLine(y0,y[a3],py,ky)
+ ;
+\layout LyX-Code
+
+         double dz = NearestDistanceInFullyPeriodicLine(z0,z[a3],pz,kz)
+ ;
+\layout LyX-Code
+
+         double em = e0 + e[a3] ;
+\layout LyX-Code
+
+         double ex2 = em*em - dx*dx - dy*dy - dz*dz ;
+\layout LyX-Code
+
+         result[q4] = a3 ;
+\layout LyX-Code
+
+         double FragmentIndexAdd = fsel(ex2,1.0,0.0) ;
+\layout LyX-Code
+
+         int IndexAdd = FragmentIndexAdd ;
+\layout LyX-Code
+
+         q4 += IndexAdd ;
+\layout LyX-Code
+
+      } /* endfor */
+\layout LyX-Code
+
+      BegLogLine( 1 )
+\layout LyX-Code
+
+        << "NeighbourList::Produce S Summary"
+\layout LyX-Code
+
+        << " q4 " << q4
+\layout LyX-Code
+
+        << EndLogLine ;
+\layout LyX-Code
+
+      return q4 ;
+\layout LyX-Code
+
+     } ;
+\layout LyX-Code
+
+   void SetXYZE(
+\layout LyX-Code
+
+       int q
+\layout LyX-Code
+
+     , const XYZ& aXYZ
+\layout LyX-Code
+
+     , double ae
+\layout LyX-Code
+
+     , const XYZ& eXYZ
+\layout LyX-Code
+
+   ) {
+\layout LyX-Code
+
+        x[q] = aXYZ.mX ;
+\layout LyX-Code
+
+        y[q] = aXYZ.mY ;
+\layout LyX-Code
+
+        z[q] = aXYZ.mZ ;
+\layout LyX-Code
+
+        ex[q] = eXYZ.mX ;
+\layout LyX-Code
+
+        ey[q] = eXYZ.mY ;
+\layout LyX-Code
+
+        ez[q] = eXYZ.mZ ;
+\layout LyX-Code
+
+        e[q] = ae;
+\layout LyX-Code
+
+        ix[q] = FracScale(aXYZ.mX,k.mX) ;
+\layout LyX-Code
+
+        iy[q] = FracScale(aXYZ.mY,k.mY) ;
+\layout LyX-Code
+
+        iz[q] = FracScale(aXYZ.mZ,k.mZ) ;
+\layout LyX-Code
+
+        iex[q] = FracScale(eXYZ.mX,k.mX/(1<<k_ScaleShift)) ;
+\layout LyX-Code
+
+        iey[q] = FracScale(eXYZ.mY,k.mY/(1<<k_ScaleShift)) ;
+\layout LyX-Code
+
+        iez[q] = FracScale(eXYZ.mZ,k.mZ/(1<<k_ScaleShift)) ;
+\layout LyX-Code
+
+        BegLogLine( PKFXLOG_NSQSOURCEFRAG_SUMMARY )
+\layout LyX-Code
+
+          << "NeighbourList::SetXYZE q=" << q
+\layout LyX-Code
+
+          << " aXYZ=" << aXYZ
+\layout LyX-Code
+
+          << " ae=" << ae
+\layout LyX-Code
+
+          << " eXYZ=" << eXYZ
+\layout LyX-Code
+
+          << EndLogLine ;
+\layout LyX-Code
+
+      } ;
+\layout LyX-Code
+
+    double GetFragmentExtent(int q) const
+\layout LyX-Code
+
+    {
+\layout LyX-Code
+
+       return e[q] ;
+\layout LyX-Code
+
+    } ;
+\layout LyX-Code
+
+    XYZ GetCorner(int q) const
+\layout LyX-Code
+
+    {
+\layout LyX-Code
+
+       XYZ r ;
+\layout LyX-Code
+
+       r.mX = ex[q] ;
+\layout LyX-Code
+
+       r.mY = ey[q] ;
+\layout LyX-Code
+
+       r.mZ = ez[q] ;
+\layout LyX-Code
+
+       return r ;
+\layout LyX-Code
+
+    } ;
+\layout LyX-Code
+
+    XYZ GetFragmentCentre(int q) const
+\layout LyX-Code
+
+    {
+\layout LyX-Code
+
+       XYZ r ;
+\layout LyX-Code
+
+       r.mX = x[q] ;
+\layout LyX-Code
+
+       r.mY = y[q] ;
+\layout LyX-Code
+
+       r.mZ = z[q] ;
+\layout LyX-Code
+
+       return r ;
+\layout LyX-Code
+
+    } ;
+\layout LyX-Code
+
+int Get(int q) const { return result[q] ; } ;
+\layout LyX-Code
+
+} ;
+\layout LyX-Code
+
+\layout Bibliography
+\bibitem [1]{key-1}
+
+Handbook of Mathematical Functions (with Formulas, Graphs, and Mathematical
+ Tables), M.
+ Abramowitz and I.A.
+ Stegun, US Government 1972 , http://dlmf.nist.gov/
+\layout Bibliography
+\bibitem [2]{key-2}
+
+Numerical Recipes in C, Press Teukolsky Vetterling and Flannery, Cambridge
+ University Press 1992, http://www.nr.com/
+\begin_inset LatexCommand \printindex{}
+
+\end_inset 
+
+
+\the_end

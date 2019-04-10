@@ -1,0 +1,17 @@
+VPATH = ..
+# Source reship list
+ILIST += \
+  Buildconf \
+  Buildconf.exp \
+  Makeconf \
+  sb.conf \
+
+Buildconf_IDIR = $(BG_SRC)/
+Buildconf.exp_IDIR = $(BG_SRC)/
+Makeconf_IDIR = $(BG_SRC)/
+sb.conf_IDIR = $(BG_DIR)/rc_files/
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/tgtbuild/tgtconf/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

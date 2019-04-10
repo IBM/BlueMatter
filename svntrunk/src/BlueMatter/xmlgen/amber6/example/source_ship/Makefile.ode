@@ -1,0 +1,18 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  ala.amber.dvs \
+  ala.amber.hpp \
+  ala.amber.xml \
+  ala.crd \
+  ala.top \
+  run.sh \
+  Makefile.ode
+ala.amber.dvs_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+ala.amber.hpp_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+ala.amber.xml_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+ala.crd_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+ala.top_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+run.sh_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/xmlgen/amber6/example/source_ship/
+.include <$(RULES_MK)>

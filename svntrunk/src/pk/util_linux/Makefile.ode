@@ -1,0 +1,10 @@
+EXPINC_SUBDIRS = include
+OBJECTS_SUBDIRS = 
+SUBDIRS = $(EXPINC_SUBDIRS) $(OBJECTS_SUBDIRS)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/util_aix/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

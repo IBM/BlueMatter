@@ -1,0 +1,87 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UpdateVirialForce(
+        MDVM &aMDVM
+        )
+{
+    //
+    // routine to calculate the internal pressure of the system and thus the
+    // force on the simulation box
+    //2
+    // big reductions would happen in GetMolecularVirial and GetCOMKineticEnergy
+    //
+/////////    const  XYZ virial                      = aMDVM.GetMolecularVirial();
+    const double dt                        = aMDVM.GetDeltaT();
+    const  double ekecom                   = aMDVM.GetCenterOfMassKineticEnergy(); /// desision to make: whether want to XYZ comp OR alternatively replace with 1/2 kT
+    const  XYZ volume_inverseposition      = aMDVM.GetVolumeInversePosition();
+    const  double external_pressurescalar  = aMDVM.GetPressureRTP();
+    XYZ    external_pressure;
+
+    external_pressure.mX = external_pressure.mY = external_pressure.mZ =
+        external_pressurescalar;
+
+    //
+    // note that there can be a sign flip based on the accumulation of the
+    // virial. . . we assume virial has been accumulated as - dU/dr dot r
+    //
+
+ 
+    XYZ internal_pressure;
+    XYZ VolumeImpulse;
+    // here in principle KE_mu should be used, for now use KE/3.0 instead
+    // this actually is better from the analysis point of view, at least in the
+    // case when the scaling is isotropic - this reduces fluctuations between the components
+    // of pressure coming from fluctuations in kinetic energy components that should average to the same value
+
+    internal_pressure.mX = internal_pressure.mY = internal_pressure.mZ = 2.0 * (ekecom/3.0) * volume_inverseposition.mX;
+    VolumeImpulse.mX = VolumeImpulse.mY = VolumeImpulse.mZ = 2.0 * (ekecom/3.0) * dt * volume_inverseposition.mX;
+
+    XYZ virialSum     = aMDVM.GetVirialSum();    
+    XYZ virialImpulse = aMDVM.GetVirialImpulse();        
+
+/////    for( int il = 0; il <= mIntegratorLevel; il++ )
+/////    {
+/////       internal_pressure += virial[rl];
+/////       VolumeImpulse += virial[rl] * TimeStepPerRespaLevel[il];
+/////    }
+
+    internal_pressure += virialSum * volume_inverseposition.mX ;
+    VolumeImpulse += virialImpulse * volume_inverseposition.mX;
+
+    // report components separately...
+    ////// internal_pressure.mX = internal_pressure.mY = internal_pressure.mZ = 1/3.0*(internal_pressure.mX + internal_pressure.mY + internal_pressure.mZ);
+
+    // ... but keep the dynamics isotropic
+    VolumeImpulse.mX = VolumeImpulse.mY = VolumeImpulse.mZ = 1/3.0*( VolumeImpulse.mX + VolumeImpulse.mY + VolumeImpulse.mZ );
+
+    /////////////// suits - for now, just use x-component
+    ///////////////internal_pressure.mX = internal_pressure.mY = internal_pressure.mZ =
+    ///////////////    volume_inverseposition.mX / 3.0 * (2.0 * ekecom + (virial.mX+virial.mY+virial.mZ) );
+
+    aMDVM.ReportInternalPressure( internal_pressure );
+
+    VolumeImpulse.mX -= external_pressure.mX * dt;
+    VolumeImpulse.mY -= external_pressure.mY * dt;
+    VolumeImpulse.mZ -= external_pressure.mZ * dt;
+    aMDVM.ReportVolumeImpulse( VolumeImpulse );
+
+    return;
+}
+

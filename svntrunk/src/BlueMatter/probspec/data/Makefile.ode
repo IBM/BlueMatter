@@ -1,0 +1,12 @@
+IDIR                = $(BG_DIR)/forcefield/charmm/charmm22/
+
+ILIST   =  \
+	par_all22_prot.inp \
+	top_all22_prot.inp
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspec/data/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

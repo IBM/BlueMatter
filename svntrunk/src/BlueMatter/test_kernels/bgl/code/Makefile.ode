@@ -1,0 +1,67 @@
+#
+# Build the sample kernels in ODE context
+#
+#
+VPATH = ..:../..
+
+OBJECTS = \
+#         enkp_20a.tip3.charmm$(OBJ_SUFF)               \
+	  wat_2.tip3.charmm$(OBJ_SUFF) \
+#         wat_2.tip3.charmm.i$(OBJ_SUFF)
+
+PROGRAMS = \
+#          enkp_20a.tip3.charmm$(PROG_SUFF) \
+#          wat_2.tip3.charmm$(PROG_SUFF)
+
+
+CFLAGS += \
+-DPERFORMANCE_VECTOR_NBVM \
+-DPERFORMANCE_VECTOR_PRIME \
+-DIFP_HAND_UNROLL_LOOP \
+-DBLAKE \
+-DWATER_WATER_CUTOFF \
+-DPERFORMANCE_PERIODIC_IMAGE \
+-DPERFORMANCE_SWITCH \
+-DNSQ_SINGLE_COMPUTE \
+-DIFP_USE_ALT_EXECUTE \
+-DPERFORMANCE_SUPPRESS_NBVM_SITES \
+-DPERFORMANCE_ERFC_VIA_ESTIMATE \
+-DPERFORMANCE_RECORD_A_ONLY \
+-DPERFORMANCE_BETTER_VECTOR \
+-DPERFORMANCE_NO_NBVM_SIMTICK \
+-DSITE_SITE_CUTOFF \
+-DMSD_COMPILE_CODE_ONLY \
+-DPERFORMANCE_EXCLUSION_SCALE_PREP \
+-DPERFORMANCE_EXCLUSION_SCALE_INIT \
+-DPERFORMANCE_EXCLUSION_SCALE \
+-DPERFORMANCE_EXPLOIT_FULLY_ON \
+-DPERFORMANCE_WATER_WATER \
+-DPERFORMANCE_LOWER_CUTOFF \
+-DPERFORMANCE_UPPER_CUTOFF \
+-DPERFORMANCE_PRECOMPUTE_RANGE \
+-DPERFORMANCE_PRECOMPUTE_RANGE_I \
+-qnounwind \
+-qsource \
+-qshowinc \
+-qlist \
+-qxflag=fileid \
+-qdebug=fileid \
+-qdebug=inl:inl24 \
+-qdebug=plst3:cycles \
+-qdebug=nhwspilmv \
+-qdebug=ebbpass1:ebbpass2 \
+-qspill=1000000 \
+$(SMPCFLAGS) \
+
+
+#-qdebug=traceinline:instats \
+#-qdebug=inlbigger \
+#-DPERFORMANCE_EXCLUSION_SCALE \
+#-DIFP_STATIC_STORAGE_FOR_VECTOR \
+#-DIFP_USE_NEW_EXECUTE \
+
+
+
+LIBS = $(MDLIBS) $(PKSMPLIBS)
+
+.include <$(RULES_MK)>

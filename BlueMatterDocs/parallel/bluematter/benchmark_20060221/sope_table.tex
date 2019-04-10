@@ -1,0 +1,31 @@
+
+  %node_count P_X P_Y P_Z MPI_TOT SPI_TOT MPI_FFT SPI_FFT MPI_BCAST SPI_BCAST MPI_REDUCE SPI_REDUCE ATOMS/NODE
+  \subfloat[SOPE (13,758 atoms)]{\begin{tabular}{|r|r|r|r|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{2}{2}|
+        n{3}{1}|}
+      \hline
+      \multicolumn{4}{|c|}{\hfill} & \multicolumn{8}{c|}{\bf Time/time-step
+        (milliseconds)} & \\ \cline{5-12}
+      \multicolumn{4}{|c|}{\bf Nodes} & \multicolumn{2}{c|}{\bf Total} & \multicolumn{2}{c|}{\bf FFT}
+      & \multicolumn{2}{c|}{\bf Bcast} & \multicolumn{2}{c|}{\bf Reduce} & {\bf Atoms/} \\ \cline{1-12}
+      {\bf Total} & {\bf $P_x$} & {\bf $P_y$} & {\bf $P_z$} & {\bf MPI} & {\bf SPI} & {\bf MPI} 
+      & {\bf SPI} & {\bf MPI} & {\bf SPI} & {\bf MPI} & {\bf SPI} & {\bf Node} \\ \hline
+      512 & 8 & 8 & 8 & 7.46 & 6.81 & 2.17 & 1.88 & 0.55 & 0.35 & 0.44 & 0.35 & 26.8 \\ \hline
+      1024 & 8 & 8 & 16 & 5.24 & 4.29 & 1.33 & 1.21 & 0.63 & 0.30 & 0.52 & 0.29 & 13.4 \\ \hline
+      2048 & 8 & 16 & 16 & 4.66 & 2.80 & 0.93 & 0.77 & 0.87 & 0.24 & 0.85 & 0.22 & 6.7 \\ \hline
+      2048 & 16 & 8 & 16 & 4.55 & 2.81 & 0.91 & 0.70 & 0.87 & 0.24 & 0.77 & 0.23 & 6.7 \\ \hline
+      4096 & 16 & 16 & 16 & 5.07 & 1.94 & 0.71 & 0.46 & 1.39 & 0.22 & 1.30 & 0.21 & 3.3 \\ \hline
+      4096 & 8 & 32 & 16 & 5.61 & 2.56 & 1.00 & 0.78 & 1.38 & 0.24 & 1.32 & 0.23 & 3.3 \\ \hline
+      8192 & 16 & 32 & 16 & 7.31 & 1.88 & 0.84 & 0.52 & 2.48 & 0.22 & 2.20 & 0.20 & 1.6 \\ \hline
+      16384 & 32 & 32 & 16 & 12.51 & 1.84 & 0.95 & 0.50 & 4.88 & 0.22 & 4.29 & 0.20 & 0.8 \\ \hline
+    \end{tabular}
+
+
+

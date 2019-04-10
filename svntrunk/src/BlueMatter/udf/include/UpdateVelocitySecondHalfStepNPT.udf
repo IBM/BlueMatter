@@ -1,0 +1,66 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void UpdateVelocitySecondHalfStepNPT(
+        MDVM &aMDVM
+        )
+{
+    const double dt                  = aMDVM.GetDeltaT();
+    const XYZ    vCOM                = aMDVM.GetCenterOfMassVelocity();
+    const double mCOMHalfInverseMass = aMDVM.GetCenterOfMassHalfInverseMass();
+////////    const XYZ    fCOM                = aMDVM.GetCenterOfMassForce();
+    const XYZ    impulseCOM                = aMDVM.GetCenterOfMassImpulse();
+
+#ifndef NOT_TIME_REVERSIBLE
+    const double expvelrat           = aMDVM.GetExpVolumeVelocityRatio();
+#else
+    const XYZ velocity_ratio         = aMDVM.GetVolumeVelocityRatio();
+#endif
+
+    XYZ new_vCOM;
+
+    // here using only X component of velocity ratio
+///    new_vCOM = ( vCOM + dt * fCOM * mCOMHalfInverseMass ) /
+///               ( 1.0 + dt / 3.0 * velocity_ratio.mX );
+
+#ifndef NOT_TIME_REVERSIBLE
+    new_vCOM = expvelrat * vCOM + impulseCOM * mCOMHalfInverseMass;
+#else
+    new_vCOM = ( vCOM + impulseCOM * mCOMHalfInverseMass ) /
+               ( 1.0 + dt / 3.0 * velocity_ratio.mX );
+#endif
+
+    aMDVM.ReportCenterOfMassVelocity( new_vCOM );
+
+    for( int SiteIndex = 0; SiteIndex < aMDVM.GetFragmentSiteCount(); SiteIndex++ )
+    {
+        double mSiteHalfInverseMass = aMDVM.GetHalfInverseMass( SiteIndex );
+        XYZ    vSite                = aMDVM.GetVelocity( SiteIndex );
+////        XYZ    fSite                = aMDVM.GetForce( SiteIndex );
+        XYZ    impulseSite                = aMDVM.GetImpulse( SiteIndex );
+
+///        XYZ new_vSite =  new_vCOM + vSite
+///            + dt * (fSite * mSiteHalfInverseMass - fCOM * mCOMHalfInverseMass);
+        XYZ new_vSite =  new_vCOM + vSite + (impulseSite * mSiteHalfInverseMass - impulseCOM * mCOMHalfInverseMass);
+
+        aMDVM.ReportVelocity( SiteIndex , new_vSite );
+    }
+
+    return;
+}

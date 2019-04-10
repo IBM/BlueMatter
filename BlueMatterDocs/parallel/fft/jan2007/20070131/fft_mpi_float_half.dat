@@ -1,0 +1,81 @@
+# Statistics for grouped trace points from trace_group_id 520
+# TraceSetId:Name:Value
+# 3201:fft_x:0
+# 3201:fft_y:0
+# 3201:fft_z:0
+# 3201:p_x:0
+# 3201:p_y:0
+# 3201:p_z:0
+# 3201:source_id:0
+# 3201:vox_x:0
+# 3201:vox_y:0
+# 3201:vox_z:0
+# 3203:fft_x:0
+# 3203:fft_y:0
+# 3203:fft_z:0
+# 3203:p_x:0
+# 3203:p_y:0
+# 3203:p_z:0
+# 3203:source_id:0
+# 3203:vox_x:0
+# 3203:vox_y:0
+# 3203:vox_z:0
+#
+# All times are in nanoseconds
+# 64^3 FFT benchmark, MPI, single precision, executing on half of available nodes, taken on 1/31/2007
+# column 1: trace set id
+# column 2: node count
+# column 3: average
+# column 4: std. dev.
+# column 5: min()
+# column 6: max()
+# column 7: min_dev (from avg, computed for each ts)
+# column 8: max_dev (from avg, computed for each ts)
+#
+#
+# column 9: count()
+# index = 0 for label Sync:TIME:0:0 
+3201 	4096 	283665.0 	350574.0 	241.0 	1018490.0 	-798.128 	501.872 	73728
+3203 	8192 	300834.0 	371845.0 	241.0 	1082140.0 	-1172.92 	637.08 	147456
+
+
+# index = 1 for label TR_BGL3DFFT_:TIME:0:0 
+3201 	4096 	366924.0 	8381.09 	348910.0 	388857.0 	-28812.1 	34121.9 	401408
+3203 	8192 	480008.0 	7226.56 	437305.0 	512506.0 	-46927.0 	62130.0 	802816
+
+
+# index = 2 for label TR_BGL3DFFT_FW_A2A_X_:TIME:0:0 
+3201 	4096 	136412.0 	17531.0 	100276.0 	167819.0 	-36511.7 	30831.5 	401408
+3203 	8192 	197231.0 	9971.81 	160431.0 	235398.0 	-37168.4 	36181.3 	802816
+
+
+# index = 3 for label TR_BGL3DFFT_FW_A2A_Y_:TIME:0:0 
+3201 	4096 	130101.0 	12941.6 	108375.0 	167964.0 	-22504.8 	37130.5 	401408
+3203 	8192 	169598.0 	18861.5 	135008.0 	229916.0 	-35172.4 	59880.7 	802816
+
+
+# index = 4 for label TR_BGL3DFFT_FW_A2A_Z_:TIME:0:0 
+3201 	4096 	84079.2 	17610.6 	56996.0 	120445.0 	-31491.7 	39799.3 	401408
+3203 	8192 	100683.0 	35053.9 	54327.0 	170690.0 	-50831.4 	66985.6 	802816
+
+
+# index = 5 for label TR_BGL3DFFT_FW_COMP_X_:TIME:0:0 
+3201 	4096 	8630.21 	7812.84 	774.0 	17557.0 	-11622.4 	12526.6 	401408
+3203 	8192 	6812.95 	5880.73 	841.0 	14213.0 	-9331.79 	11133.2 	802816
+
+
+# index = 6 for label TR_BGL3DFFT_FW_COMP_Y_:TIME:0:0 
+3201 	4096 	7169.57 	6349.14 	794.0 	14957.0 	-9212.74 	9193.26 	401408
+3203 	8192 	5515.47 	4372.6 	1024.0 	10541.0 	-6202.28 	7877.72 	802816
+
+
+# index = 7 for label TR_BGL3DFFT_FW_COMP_Z_:TIME:0:0 
+3201 	4096 	7033.84 	6223.21 	785.0 	14040.0 	-10661.4 	12845.6 	401408
+3203 	8192 	4568.55 	3732.47 	794.0 	9223.0 	-9061.31 	10178.7 	802816
+
+
+# index = 8 for label TR_FFT_1D_:TIME:0:0 
+3201 	4096 	6977.41 	6773.33 	252.0 	21064.0 	-9817.54 	12090.1 	1220610
+3203 	8192 	4925.12 	4791.42 	254.0 	17611.0 	-8165.74 	9197.26 	2441220
+
+

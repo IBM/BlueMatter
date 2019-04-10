@@ -1,0 +1,2 @@
+PACKAGE_DIRECTORY(lib/)
+PACKAGE_FILE(lib,libdb2cli.a)

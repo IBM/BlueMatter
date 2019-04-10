@@ -1,0 +1,439 @@
+Storage 
+{
+	{ Format 1.33 }
+	{ GeneratedFrom TESD-version-2.20 }
+	{ WrittenBy rgermain }
+	{ WrittenOn "" }
+}
+
+Document 
+{
+	{ Type "Entity Relationship Diagram" }
+	{ Name experiment_data.esd }
+	{ Author germain }
+	{ CreatedOn "Sat Nov  3 21:20:36 2001" }
+	{ Annotation "" }
+	{ Hierarchy False }
+}
+
+Page 
+{
+	{ PageOrientation Landscape }
+	{ PageSize A4 }
+	{ ShowHeaders False }
+	{ ShowFooters False }
+	{ ShowNumbers False }
+}
+
+Scale 
+{
+	{ ScaleValue 1 }
+}
+
+# GRAPH NODES
+
+SSDClassNode 62
+{
+	{ Name "executable" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 10 }
+	{ Attribute "int executable_id*" }
+	{ Attribute "varchar builder" }
+	{ Attribute "timestamp build_begin" }
+	{ Attribute "timestamp build_end" }
+	{ Attribute "int probspec_version" }
+	{ Attribute "int source_id" }
+	{ Attribute "int platform_id" }
+	{ Attribute "int impl_id" }
+	{ Attribute "varchar install_image_tag" }
+	{ Attribute "varchar install_image_path" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 63
+{
+	{ Name "coords_table" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 4 }
+	{ Attribute "int  coord_id*" }
+	{ Attribute "int sys_id" }
+	{ Attribute "char solvent_model" }
+	{ Attribute "BLOB coords" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 138
+{
+	{ Name "run_params" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 3 }
+	{ Attribute "int run_id" }
+	{ Attribute "varchar name" }
+	{ Attribute "varchar value" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 139
+{
+	{ Name "experiment" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 8 }
+	{ Attribute "int exp_id*" }
+	{ Attribute "CLOB pdb" }
+	{ Attribute "int solvent_mol_count" }
+	{ Attribute "int nonsolv_atom_count" }
+	{ Attribute "varchar desc" }
+	{ Attribute "varchar working_dir" }
+	{ Attribute "varchar seed_name" }
+	{ Attribute "varchar dvs_start" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 140
+{
+	{ Name "exp_params" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 3 }
+	{ Attribute "int exp_id" }
+	{ Attribute "varchar name" }
+	{ Attribute "varchar value" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+SSDClassNode 22
+{
+	{ Name "run" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Index "" }
+	{ Attributes 11 }
+	{ Attribute "int exp_id*" }
+	{ Attribute "int seq_id*" }
+	{ Attribute "int srdg_count" }
+	{ Attribute "int node_count" }
+	{ Attribute "int split_size" }
+	{ Attribute "varchar rdg_base" }
+	{ Attribute "int executable_id" }
+	{ Attribute "varchar dvs_start" }
+	{ Attribute "varchar dvs_stop" }
+	{ Attribute "timestamp run_begin" }
+	{ Attribute "timestamp run_end" }
+	{ Operations 0 }
+	{ Stereotype "<< - >>" }
+	{ Properties "{ - }" }
+}
+
+# GRAPH EDGES
+
+SSDBinaryAssociationEdge 142
+{
+	{ Name "" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Subject1 140 }
+	{ Subject2 139 }
+	{ Constraint1 "" }
+	{ Constraint2 "1" }
+	{ RoleName1 "" }
+	{ RoleName2 "" }
+}
+
+SSDBinaryAssociationEdge 75
+{
+	{ Name "" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Subject1 62 }
+	{ Subject2 22 }
+	{ Constraint1 "1" }
+	{ Constraint2 "" }
+	{ RoleName1 "" }
+	{ RoleName2 "" }
+}
+
+SSDBinaryAssociationEdge 141
+{
+	{ Name "" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Subject1 22 }
+	{ Subject2 138 }
+	{ Constraint1 "1" }
+	{ Constraint2 "" }
+	{ RoleName1 "" }
+	{ RoleName2 "" }
+}
+
+SSDBinaryAssociationEdge 143
+{
+	{ Name "" }
+	{ Annotation "" }
+	{ Parent 0 }
+	{ Subject1 139 }
+	{ Subject2 22 }
+	{ Constraint1 "1" }
+	{ Constraint2 "" }
+	{ RoleName1 "" }
+	{ RoleName2 "" }
+}
+
+# VIEWS AND GRAPHICAL SHAPES
+
+View 10
+{
+	{ Index "0" }
+	{ Parent 0 }
+}
+
+SSDDoubleClassBox 67
+{
+	{ View 10 }
+	{ Subject 62 }
+	{ Position 360 100 }
+	{ Size 168 156 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "red" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 71
+{
+	{ View 10 }
+	{ Subject 63 }
+	{ Position 130 130 }
+	{ Size 124 105 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "orange" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 144
+{
+	{ View 10 }
+	{ Subject 138 }
+	{ Position 110 560 }
+	{ Size 90 90 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "cadet blue" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 146
+{
+	{ View 10 }
+	{ Subject 139 }
+	{ Position 620 120 }
+	{ Size 150 165 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "alice blue" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+SSDDoubleClassBox 147
+{
+	{ View 10 }
+	{ Subject 140 }
+	{ Position 830 250 }
+	{ Size 90 90 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "bisque" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+C2R2Line 148
+{
+	{ View 10 }
+	{ Subject 142 }
+	{ FromShape 147 }
+	{ ToShape 146 }
+	{ Curved False }
+	{ End1 Empty }
+	{ End2 Empty }
+	{ Points 2 }
+	{ Point 785 222 }
+	{ Point 695 166 }
+	{ NamePosition 747 186 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ T1Position 767 223 }
+	{ T2Position 699 181 }
+	{ T3Position 781 207 }
+	{ T4Position 713 165 }
+	{ NameDirection None }
+}
+
+SSDDoubleClassBox 27
+{
+	{ View 10 }
+	{ Subject 22 }
+	{ Position 190 360 }
+	{ Size 148 210 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FillStyle Filled }
+	{ FillColor "cyan" }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-bold-r-normal--12*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ ShowStereotype False }
+	{ ShowProperties False }
+}
+
+C2R2Line 79
+{
+	{ View 10 }
+	{ Subject 75 }
+	{ FromShape 67 }
+	{ ToShape 27 }
+	{ Curved False }
+	{ End1 Empty }
+	{ End2 Empty }
+	{ Points 2 }
+	{ Point 309 178 }
+	{ Point 259 255 }
+	{ NamePosition 273 211 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ T1Position 314 192 }
+	{ T2Position 276 251 }
+	{ T3Position 292 182 }
+	{ T4Position 254 241 }
+	{ NameDirection None }
+}
+
+C2R2Line 145
+{
+	{ View 10 }
+	{ Subject 141 }
+	{ FromShape 27 }
+	{ ToShape 144 }
+	{ Curved False }
+	{ End1 Empty }
+	{ End2 Empty }
+	{ Points 2 }
+	{ Point 148 465 }
+	{ Point 128 515 }
+	{ NamePosition 126 487 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ T1Position 158 478 }
+	{ T2Position 150 512 }
+	{ T3Position 134 472 }
+	{ T4Position 126 506 }
+	{ NameDirection None }
+}
+
+C2R2Line 149
+{
+	{ View 10 }
+	{ Subject 143 }
+	{ FromShape 146 }
+	{ ToShape 27 }
+	{ Curved False }
+	{ End1 Empty }
+	{ End2 Empty }
+	{ Points 2 }
+	{ Point 545 162 }
+	{ Point 264 319 }
+	{ NamePosition 398 232 }
+	{ Color "black" }
+	{ LineWidth 1 }
+	{ LineStyle Solid }
+	{ FixedName False }
+	{ Font "-Adobe-helvetica-medium-r-normal--10*" }
+	{ TextAlignment Center }
+	{ TextColor "black" }
+	{ NameUnderlined False }
+	{ T1Position 516 189 }
+	{ T2Position 305 308 }
+	{ T3Position 504 173 }
+	{ T4Position 293 292 }
+	{ NameDirection None }
+}
+

@@ -1,0 +1,22 @@
+BG_AUXILIARY = 1
+INCLUDES = \
+  connhandle.hpp \
+  db2defs.hpp \
+  envhandle.hpp \
+  exception.hpp \
+  handle.hpp \
+  handleexception.hpp \
+  stmthandle.hpp \
+  dbname.hpp \
+
+IDIR = $(BG_INCLUDE)/db2/
+ILIST = $(INCLUDES)
+
+
+EXPINCDIR = /usr/include/db2/
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./db2/include/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

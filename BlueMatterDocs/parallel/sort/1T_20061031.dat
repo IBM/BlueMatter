@@ -1,0 +1,4 @@
+# strong scaling data from Alex Rayshubskiy on an in-memory 
+# parallel implementation of Jim Gray's sort benchmark:
+# http://research.microsoft.com/barc/SortBenchmark/
+# Index = 0: Strong scaling for 1TB sort

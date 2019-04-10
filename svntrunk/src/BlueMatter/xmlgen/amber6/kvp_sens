@@ -1,0 +1,11 @@
+TEMP	Temp		-10
+Etot	TotalE		-6
+EKtot	KE	    	-10	
+EPtot   PE		-6
+BOND	StdHarmBond     -10 
+ANGLE	StdHarmAngle    -10
+DIHED	OPLSTorsion	-10
+1-4NB   LJ14		-7
+1-4EEL  Coulomb14	-7
+EELEC   NSQCoulomb	-8
+VDWAALS NSQLJ		-7

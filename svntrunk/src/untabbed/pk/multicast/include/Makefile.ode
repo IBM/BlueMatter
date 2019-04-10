@@ -1,0 +1,15 @@
+INCLUDES = \
+  ActorMulticast.hpp \
+  multicast.hpp \
+  plimptontarget.hpp \
+
+EXPINCDIR = /usr/include/pk/
+
+IDIR = $(BG_INCLUDE)/pk/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/multicast/include/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

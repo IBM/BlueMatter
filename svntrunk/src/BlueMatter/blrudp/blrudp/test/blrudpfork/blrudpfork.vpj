@@ -1,0 +1,54 @@
+[CONFIGURATIONS]
+config=linux,Debug
+config=,Release
+[GLOBAL]
+packtype=gnuc
+DebugCallbackName=gdb
+workingdir=.
+version=7.0
+packname=GNU C/C++ Wizard
+MACRO=\n
+vcsproject=BLCVS:
+[COMPILER.Debug]
+compile=copts: concur|capture|dialog:_gnuc_options_form:Compile|savecurrent|menu: Compile:&Compilecmd: g++ -c %xup -g -o "%bd%n%oe" %i "%f"otheropts: outputext: .o
+link=copts: concur|capture|dialog:_gnuc_options_form:Link|savecurrent|nevershow|menu: Link:&Linkcmd: g++ %xup -g -o "%bd%o" %f %libsotheropts: 
+make=copts: concur|capture|saveworkspacefiles|menu: Build:&Buildcmd: make DEBUG=1otheropts: 
+rebuild=copts: concur|capture|menu: Rebuild:&Rebuildcmd: otheropts: 
+debug=copts: concur|capture|dialog:_gnuc_options_form:Run/Debug|buildfirst|menu: Debug:&Debugcmd: vsdebugio -prog %bd%ootheropts: 
+execute=copts: concur|capture|dialog:_gnuc_options_form:Run/Debug|buildfirst|saveworkspacefiles|menu: Execute:E&xecutecmd: %bd%ootheropts: 
+usertool_dash=copts: |savenone|menu: dash:-cmd: otheropts: 
+usertool_gnu_c_options=copts: |readonly|disablecapoutput|savenone|hide|nochangedir|menu: GNU C Options:GNU C &Options...cmd: gnucoptionsotheropts: 
+includedirs=
+sysincludedirs=
+reffile=
+libs=
+outputfile=blrudpfork
+prebuildcmds=
+postbuildcmds=
+stoponprebuilderrors=0
+stoponpostbuilderrors=0
+[COMPILER.Release]
+compile=copts: concur|capture|dialog:_gnuc_options_form:Compile|savecurrent|menu: Compile:&Compilecmd: g++ -c %xup -o "%bd%n%oe" %i "%f"otheropts: outputext: .o
+link=copts: concur|capture|dialog:_gnuc_options_form:Link|savecurrent|nevershow|menu: Link:&Linkcmd: g++ %xup -o "%bd%o" %f %libsotheropts: 
+make=copts: concur|capture|saveworkspacefiles|menu: Build:&Buildcmd: make DEBUG=0otheropts: 
+rebuild=copts: concur|capture|menu: Rebuild:&Rebuildcmd: otheropts: 
+debug=copts: concur|capture|dialog:_gnuc_options_form:Run/Debug|buildfirst|menu: Debug:&Debugcmd: vsdebugio -prog %bd%ootheropts: 
+execute=copts: concur|capture|dialog:_gnuc_options_form:Run/Debug|buildfirst|saveworkspacefiles|menu: Execute:E&xecutecmd: %bd%ootheropts: 
+usertool_dash=copts: |savenone|menu: dash:-cmd: otheropts: 
+usertool_gnu_c_options=copts: |readonly|disablecapoutput|savenone|hide|nochangedir|menu: GNU C Options:GNU C &Options...cmd: gnucoptionsotheropts: 
+includedirs=
+sysincludedirs=
+reffile=
+libs=
+outputfile=blrudpfork
+prebuildcmds=
+postbuildcmds=
+stoponprebuilderrors=0
+stoponpostbuilderrors=0
+[FILES]
+Makefile
+main.cpp
+../../blrudp.h
+../../../include/BlErrors.h
+../../../include/hostcfg.h
+[ASSOCIATION]

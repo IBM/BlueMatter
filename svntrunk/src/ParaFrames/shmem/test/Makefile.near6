@@ -1,0 +1,19 @@
+ENV_TOP=../../../
+include $(ENV_TOP)/sysbringup/Make.sys
+
+TEST_BLNIE     = near6.shmem.tree.blnie
+C_SRC          = near6.cpp    ####tr_fpreduce.c treereduce.cpp
+
+DEBUG = 1
+
+CFLAGS +=  -DBGL_TORUS_SEND_LOCAL_ACTORS -DFFT3D_SPINWAIT -DNO_PK_PLATFORM -DPK_AIX -DPK_BLADE -DPKFXLOG -DPKFXLOG_USE_WALL_CLOCK_TIME -DPKFXLOG_GATHER_Z=0 -DPKFXLOG_PACKET_ACTOR_FX_Z=0 -DPKFXLOG_DEBUG_DATA=0 -DBUILD_FOR_BLNIE -DDIRECT_BLNIE_BUILD -Wno-deprecated  -g
+
+LOCAL_INCLUDES = -I. -I$(SYSBRINGUP_TOP)/tree/include -I$(SYSBRINGUP_TOP)/generic/include
+LOCAL_LIBS     = -L$(SYSBRINGUP_TOP)/tree/lib/$(SB_TARGET) -L$(SYSBRINGUP_TOP)/generic/lib/$(SB_TARGET) -lbgl_tr -ldiag_tr -lsysbringup  -L/usr/gnu/lib -lstdc++
+SB_OBJ_DIR     = ../$(SB_TARGET)/$(TEST)
+PRECOMPILED_OBJ = ../../tree/tests/AIX_power_NIE/treereduce.o \
+                 ../../tree/tests/AIX_power_NIE/treebroadcast.o \
+                 ../../tree/lib/AIX_power_NIE/use/BGL_TreeRoute.o \
+                 ../../tree/lib/AIX_power_NIE/use/BGL_TreeDeriveRoute.o \
+
+include $(SYSBRINGUP_TOP)/Make.test

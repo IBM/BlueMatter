@@ -1,0 +1,158 @@
+<?xml version="1.0" ?>
+<!-- version: ODE5.0 (Build 20041004.0550, 04-Oct-2004) -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <xsd:element name="fileMetadata" type="metadataType">
+  <xsd:unique name="unique1">
+   <xsd:selector xpath="fileStanza"/>
+   <xsd:field xpath="@sourceDir"/>
+   <xsd:field xpath="@sourceFile"/>
+  </xsd:unique>
+ </xsd:element>
+ <xsd:complexType name="partInfoType">
+  <xsd:all>
+   <xsd:element name="pdssyslib" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="hfssyslib" type="xsd:string" minOccurs="0" />
+   <xsd:element name="symlink" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="sympath" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="alias" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="assem" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="binary" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="calllibs" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="csect" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="dalias" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="distlib" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="distmod" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="distname" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="distsrc" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="leparm" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="lmod" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="link" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="malias" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="parm" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="prefix" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="shscript" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="syslib" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="talias" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="text" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="version" type="xsd:string" minOccurs="0"/>
+  </xsd:all>  
+  <xsd:attribute name="cmfType" default="listOfReqTypes"/> 
+ </xsd:complexType>	
+ <xsd:simpleType name="validShipTypes">
+  <xsd:restriction base="xsd:string">
+   <xsd:enumeration value="ipp"/>
+   <xsd:enumeration value="ptf"/>
+   <xsd:enumeration value="vpl"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:simpleType name="listOfShipTypes">
+  <xsd:list itemType="validShipTypes"/>
+ </xsd:simpleType>
+ <xsd:complexType name="shipType">
+  <xsd:simpleContent>
+   <xsd:extension base="listOfShipTypes">
+    <xsd:attribute name="cmfType" default="listOfConstants"/>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+ <xsd:simpleType name="validLkedTos">
+  <xsd:restriction base="xsd:string">
+   <xsd:enumeration value="hfs"/>
+   <xsd:enumeration value="HFS"/>
+   <xsd:enumeration value="pds"/>
+   <xsd:enumeration value="PDS"/>
+   <xsd:enumeration value="both"/>
+   <xsd:enumeration value="BOTH"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:complexType name="lkedToType">
+  <xsd:simpleContent>
+   <xsd:extension base="validLkedTos">
+    <xsd:attribute name="cmfType" default="constant"/>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+ <xsd:simpleType name="validHfsCopyTypes">
+  <xsd:restriction base="xsd:string">
+   <xsd:enumeration value="binary"/>
+   <xsd:enumeration value="text"/>
+  </xsd:restriction>
+ </xsd:simpleType>
+ <xsd:complexType name="hfsCopyType">
+  <xsd:simpleContent>
+   <xsd:extension base="validHfsCopyTypes">
+    <xsd:attribute name="cmfType" default="constant"/>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+ <xsd:complexType name="constant">
+  <xsd:simpleContent>
+   <xsd:extension base="xsd:string">
+    <xsd:attribute name="cmfType" default="constant"/>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+ <xsd:simpleType name="strings">
+  <xsd:list itemType="xsd:string"/>
+ </xsd:simpleType>
+ <xsd:complexType name="listOfStrings">
+  <xsd:simpleContent>
+   <xsd:extension base="strings">
+    <xsd:attribute name="cmfType" default="listOfStrings"/>
+   </xsd:extension>
+  </xsd:simpleContent>
+ </xsd:complexType>
+ <xsd:complexType name="packageDataType">
+  <xsd:all>
+   <xsd:element name="targetFile" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="targetDir" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="distLib" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="fileType" type="constant" minOccurs="0"/>
+   <xsd:element name="userId" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="groupId" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="permissions" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="flags" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="partNum" type="constant" minOccurs="0"/>
+   <xsd:element name="majorDevNum" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="minorDevNum" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="fileDirectives" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="lkedTo" type="lkedToType" minOccurs="0"/>
+   <xsd:element name="lkedParms" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="lkedRc" type="constant" default="0" minOccurs="0"/>
+   <xsd:element name="lkedCond" type="constant" default="4" minOccurs="0"/>
+   <xsd:element name="hfsCopyType" type="hfsCopyType" default="binary" minOccurs="0"/>
+   <xsd:element name="hfsLkedName" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="pdsLkedName" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="setCode" type="xsd:string" minOccurs="0"/>  
+   <xsd:element name="entry" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="extAttr" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="order" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="jclinMode" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="jclinLkedParms" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="libraryDD" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="sideDeckAppendDD" type="xsd:string" minOccurs="0"/>
+   <xsd:element name="hfsAlias" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="pdsAlias" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="sysLibsLibraryDD" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="sysLibs" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="include" type="listOfStrings" minOccurs="0"/>
+   <xsd:element name="shipType" type="shipType" minOccurs="0"/>
+   <xsd:element name="vplSecurity" type="constant" minOccurs="0"/>
+   <xsd:element name="vplPartqual" type="constant" minOccurs="0"/>
+   <xsd:element name="partInfo" type="partInfoType" minOccurs="0"/>
+  </xsd:all>
+ </xsd:complexType>
+ <xsd:complexType name="fileStanzaType">
+  <xsd:sequence>
+   <xsd:element name="packageData" type="packageDataType" minOccurs="1" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute name="sourceFile" type="xsd:string" use="optional" default=""/>
+  <xsd:attribute name="sourceDir" type="xsd:string"/>
+  <xsd:attribute name="parent" type="xsd:string"/>
+ </xsd:complexType>
+ <xsd:complexType name="metadataType">
+  <xsd:sequence>
+   <xsd:element name="fileStanza" type="fileStanzaType" maxOccurs="unbounded"/>
+  </xsd:sequence>
+ </xsd:complexType>
+</xsd:schema>

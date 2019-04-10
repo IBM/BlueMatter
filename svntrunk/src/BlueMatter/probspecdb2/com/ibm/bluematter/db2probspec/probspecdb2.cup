@@ -1,0 +1,562 @@
+package com.ibm.bluematter.db2probspec.parser;
+
+import java.io.InputStream; 
+import java.util.*; 
+import java_cup.runtime.Symbol; 
+//****TODO**** : Add the necessary AST imports there
+
+import com.ibm.bluematter.db2probspec.*;
+import com.ibm.bluematter.db2probspec.lexer.*;
+
+//****TODO**** : This parser code can be modified to your liking
+parser code {: 
+    private Lexer lexer;           
+   // private static RunTimeParameters rtp;	
+    private boolean isModule; 
+    private boolean firsttime; 
+
+    private static String filename; 
+    public static String getFilename () { return filename; } 
+//    public static RunTimeParameters getRTP() { return rtp; }
+
+    public Parser (String fname, Lexer lex) { 
+	this (); 
+        filename = fname; 
+        if (!filename.endsWith (".rtp")) { 
+            throw new IllegalArgumentException 
+                ("File \"" + filename + 
+                 "\" does not have .rtp extension"); 
+        } 
+
+	//rtp = new RunTimeParameters( fname );
+	RunTimeParameters.init( fname );
+
+        lexer = lex;
+        firsttime = true; 
+    } 
+
+    public void syntax_error (Symbol cur_token) { 
+        Token tok = (Token) cur_token.value; 
+        report_error ("Syntax error at line " + tok.getLineno () + 
+                      ": \"" + tok.getValue () + "\" (" + tok.getID () + ")", 
+                      null);  
+        System.exit(1);
+    } 
+
+    public void report_fatal_error (String message, Object info) { 
+        // stop parsing 
+        done_parsing(); 
+
+        // use the normal error message reporting to put out the message 
+        report_error (message, info); 
+        System.exit(1);
+        
+    } 
+
+//TODO : Modify these methods to work with your AST Nodes
+    private static Object program; 
+    public static Object getProgramNode () { return program; } 
+    public static void setProgramNode (Object n) { program = n; } 
+:}; 
+
+scan with {: 
+    if (firsttime) { 
+        firsttime = false; 
+        return new Token (Constant.RTPFILE, getFilename (), 0, 0, 0, null).getSymbol(); 
+    } 
+    return lexer.getToken().getSymbol(); 
+:}; 
+
+// Probspec tokens 
+terminal Token RTPFILE; 
+
+// Constraints Tokens
+terminal Token CONSTRAINTS, ON, OFF, NUMBEROFCOMCONSTRAINTS;
+
+// Free Energy Pertubations Tokens
+terminal Token FEP;
+terminal Token LAMBDA;
+
+// Integrator Tokens
+terminal Token VERLET, RESPA; 
+terminal Token INNERTIMESTEPINPICOSECONDS, NUMBEROFINNERTIMESTEPS;
+terminal Token OUTERTIMESTEPINPICOSECONDS, NUMBEROFOUTERTIMESTEPS;
+terminal Token DEFINERESPALEVEL, DEFINERESPALEVELFORFORCECATEGORY;
+terminal Token HARMONIC, TORSION, NONBONDED;
+
+// Long Range Forces
+terminal Token FINITERANGECUTOFFS, EWALD, P3ME, STDCOULOMB;
+terminal Token BOUNDINGBOX, SWITCHLOWERCUTOFF, SWITCHDELTA;
+
+// Ewald
+terminal Token EWALDALPHA, EWALDKMAX;
+
+// P3ME
+terminal Token P3MEINITSPACING, P3MECHARGEASSIGNMENT, P3MEDIFFORDER;
+terminal Token ANALYTICAL, GRADIENT;
+terminal Token FINITE_2PT, FINITE_4PT, FINITE_6PT, FINITE_8PT, FINITE_10PT, FINITE_12PT;
+
+
+// Enseble Tokens
+terminal Token NVT, NPT, NVE;
+terminal Token EXTERNALPRESSURE;
+terminal Token PRESSURECONTROLPISTONMASS, PRESSURECONTROLTARGET;
+terminal Token PRESSURECONTROLPISTONINITIALVELOCITY;
+terminal Token VELOCITYRESAMPLEPERIODINOTS;
+terminal Token VELOCITYRESAMPLETARGETTEMPERATURE;
+
+// Water Tokens 
+terminal Token TIP3P, SPC, SPCE, TIP3PFLOPPY, SPCFLOPPY, SPCEFLOPPY;
+terminal Token SHAKETOLERANCE, RATTLETOLERANCE;
+terminal Token NUMBEROFSHAKEITERATIONS, NUMBEROFRATTLEITERATIONS;	
+
+// Misc. Tokens
+terminal Token SNAPSHOTPERIODINOTS;
+terminal Token EMITENERGYTIMESTEPMODULO;
+terminal Token RANDOMNUMBERSEED;
+terminal Token DOUBLE_VAL, INT_VAL;
+terminal Token ALL_SITES_IN_ONE_FRAGMENT, ALL_MOLECULES_IN_ONE_FRAGMENT;
+terminal Token ALL_SITES_IN_THEIR_OWN_FRAGMENT, ALL_MOLECULES_IN_THEIR_OWN_FRAGMENT;
+
+// ****TODO**** : Give types to all of these non-terminals
+non terminal program; 
+non terminal RunTimeParameters rtpfile; 
+non terminal Object water;
+non terminal Object water_opt;
+non terminal Object tip3p_opt;
+non terminal Object spc_opt;
+non terminal Object spce_opt;
+non terminal Object shake_rattle_opt;
+non terminal Object shake_opt;
+non terminal Object rattle_opt;
+
+non terminal Object ensemble;
+non terminal Object integrator;
+non terminal Object lrf;
+non terminal Object constraints;
+non terminal Object fep;
+non terminal Object misc;
+
+non terminal Object nvt;
+non terminal Object npt;
+non terminal Object nve;
+non terminal Object bounding_box;
+non terminal Object velocity_opt;
+non terminal Object velocityresampleperiod;
+non terminal Object pressure_opt;
+non terminal Object verlet;
+non terminal Object respa;
+non terminal Object innertime_opt;
+non terminal Object outertime_opt;
+non terminal Object define_respa_level;
+non terminal Object define_respa_level_for_category;
+non terminal Object ewald;
+non terminal Object stdcharge;
+non terminal Object p3me;
+non terminal Object frc;
+non terminal Object switch_params;
+non terminal Object ewald_params;
+non terminal Object p3me_params;
+non terminal Object p3me_difforder;
+non terminal Object constraints_on;
+non terminal Object randomseed;
+non terminal Object snapshotperiod;
+non terminal String integer;
+non terminal String double;
+non terminal Object p3me_initspacing;
+non terminal Object fragmentation;
+non terminal Object emitemergyperiod;
+start with program; 
+
+// ****TODO**** : Fill in the necessary parser actions corresponding
+//                to your AST nodes and type-checking structure
+
+program ::= RTPFILE rtpfile:a {: 
+Parser.setProgramNode(a);
+RESULT = a;
+   	:}     
+	; 
+
+rtpfile ::= water ensemble integrator lrf constraints fep misc  {: 
+//RunTimeParameters localRTP = new RunTimeParameters(Parser.getFilename());
+//Parser.setRTP(localRTP);
+	RESULT = null;
+    :} 
+    ; 
+
+water ::= water_opt {: RESULT=null; :} 
+	| {::}
+	; 
+
+water_opt ::= tip3p_opt {: RESULT=null; :} 
+	| spc_opt  {: :}  
+	| spce_opt {: :} 	
+    	; 	
+
+
+tip3p_opt ::= TIP3P shake_rattle_opt {:
+		RunTimeParameters.setEnumParam("DoShakeRattle", "1"); 
+		RunTimeParameters.setProbspecParam("WaterMethod", "TIP3P"); 
+		RESULT = null;
+
+	 :} 
+	| TIP3PFLOPPY {: 
+		RunTimeParameters.setProbspecParam("WaterMethod", "TIP3PFLOPPY"); 
+		RESULT = null;
+	:} 
+	;
+
+spc_opt ::= SPC shake_rattle_opt {: 
+		RunTimeParameters.setEnumParam("DoShakeRattle", "1"); 
+		RunTimeParameters.setProbspecParam("WaterMethod", "SPC"); 
+		RESULT = null;
+
+	:} 
+	| SPCFLOPPY {:
+		RunTimeParameters.setProbspecParam("WaterMethod", "SPCFLOPPY"); 
+		RESULT = null;
+
+	 :} 
+	;
+
+spce_opt ::= SPCE shake_rattle_opt {: 
+		RunTimeParameters.setEnumParam("DoShakeRattle", "1"); 	
+		RunTimeParameters.setProbspecParam("WaterMethod", "SPCE"); 
+		RESULT = null;
+	:} 
+	| SPCEFLOPPY {:
+		RunTimeParameters.setProbspecParam("WaterMethod", "SPCEFLOPPY"); 
+		RESULT = null;
+	 :} 
+	;
+
+shake_rattle_opt ::= shake_opt rattle_opt {: RESULT=null; :};
+
+shake_opt ::= SHAKETOLERANCE:a double:b NUMBEROFSHAKEITERATIONS:c integer:d {:
+		RunTimeParameters.setParam( (String) a.getValue(), b);
+		RunTimeParameters.setParam( (String) c.getValue(), d);
+		RESULT = null;
+	:}
+	;
+
+rattle_opt ::= RATTLETOLERANCE:a double:b NUMBEROFRATTLEITERATIONS:c integer:d {:
+		RunTimeParameters.setParam( (String) a.getValue(), b);
+		RunTimeParameters.setParam( (String) c.getValue(), d);
+		RESULT = null;
+	:}
+	;
+
+ensemble ::= nvt {: RESULT=null; :}
+	| npt {: RESULT=null; :}
+	| nve {: RESULT=null; :}	
+	;
+
+nvt ::= NVT bounding_box velocity_opt {: 
+	RunTimeParameters.setEnumParam("DoVelocityResample", "1"); 	
+	RunTimeParameters.setEnumParam("DoNVT", "1");	
+	RESULT=null; 
+:};	
+
+npt ::= NPT bounding_box velocity_opt pressure_opt {: 
+	RunTimeParameters.setEnumParam("DoVelocityResample", "1"); 	
+	RunTimeParameters.setEnumParam("DoPressureControl", "1");
+	RESULT=null; 
+:};	
+
+nve ::= NVE bounding_box {: RESULT=null; :};	
+
+bounding_box ::= BOUNDINGBOX:a double:b double:c double:d double:e double:f double:g {:
+	
+	String bVal = (String) b.toString();
+	int bColon = bVal.lastIndexOf(":");	
+	bVal = bVal.substring(0, bColon);
+
+	String cVal = (String) c.toString();
+	int cColon = cVal.lastIndexOf(":");	
+	cVal = cVal.substring(0, cColon);
+
+	String dVal = (String) d.toString();
+	int dColon = dVal.lastIndexOf(":");	
+	dVal = dVal.substring(0, dColon);
+
+	String eVal = (String) e.toString();
+	int eColon = eVal.lastIndexOf(":");	
+	eVal = eVal.substring(0, eColon);
+
+	String fVal = (String) f.toString();
+	int fColon = fVal.lastIndexOf(":");	
+	fVal = fVal.substring(0, fColon);
+
+	String gVal = (String) g.toString();
+	int gColon = gVal.lastIndexOf(":");		
+	gVal = gVal.substring(0, gColon);
+
+	String boundingBox = new String("{ " + bVal
+			              + ","  + cVal 
+			              + ","  + dVal 
+			              + ","  + eVal 
+			              + ","  + fVal 
+			              + ","  + gVal + " }:BoundingBox");
+
+
+	RunTimeParameters.setParam( "BoundingBoxDef", boundingBox ); 		
+	RESULT=null;
+:} ; 
+
+velocity_opt ::= velocityresampleperiod VELOCITYRESAMPLETARGETTEMPERATURE:c double:d {:
+	RunTimeParameters.setParam( (String) c.getValue(), d);
+	RESULT=null;
+:} ;
+
+velocityresampleperiod ::= VELOCITYRESAMPLEPERIODINOTS:a integer:b {:
+	RunTimeParameters.setParam( (String) a.getValue(), b);
+	RESULT=null;
+
+:}
+;
+
+pressure_opt ::= PRESSURECONTROLPISTONMASS:a double:b PRESSURECONTROLTARGET:c double:d PRESSURECONTROLPISTONINITIALVELOCITY:e double:f EXTERNALPRESSURE:g double:h{:
+	RunTimeParameters.setParam( (String) a.getValue(), b);
+	RunTimeParameters.setParam( (String) c.getValue(), d);
+	RunTimeParameters.setParam( (String) e.getValue(), f);
+	RunTimeParameters.setParam( (String) g.getValue(), h);	
+	RESULT=null;
+:}
+;
+
+integrator ::= respa {: :}
+	| verlet {: :}	
+	;
+
+verlet ::= VERLET innertime_opt {: :}
+	| VERLET outertime_opt {: :}
+	;
+
+innertime_opt ::= INNERTIMESTEPINPICOSECONDS:a double:b NUMBEROFINNERTIMESTEPS:c integer:d {:
+	RunTimeParameters.setParam( "DoOuter", "0:int");
+	RunTimeParameters.setParam( (String) a.getValue(), b);
+	RunTimeParameters.setParam( (String) c.getValue(), d);
+	RESULT=null;	
+:}
+;
+	
+outertime_opt ::= OUTERTIMESTEPINPICOSECONDS:a double:b NUMBEROFOUTERTIMESTEPS:c integer:d {:
+	RunTimeParameters.setParam( "DoOuter", "1:int");
+	RunTimeParameters.doOuter();	
+	RunTimeParameters.setParam( (String) a.getValue(), b);
+	RunTimeParameters.setParam( (String) c.getValue(), d);
+	RESULT=null;	
+:}
+;
+
+respa ::= RESPA outertime_opt define_respa_level define_respa_level_for_category {:
+	RunTimeParameters.doRespaFlag();	
+:};
+
+define_respa_level ::= DEFINERESPALEVEL:a INT_VAL:b INT_VAL:c define_respa_level {:
+
+	int numberOfRespaLevels = RunTimeParameters.getNumberOfRespaLevels();
+	RunTimeParameters.incRespaLevels();
+
+	String defineRespaLevelKey = (String) a.getValue() + numberOfRespaLevels;
+	String respaLevelSimTicks = new String ((String) b.getValue()+":"+(String) c.getValue());
+	RunTimeParameters.setRespaParam( defineRespaLevelKey, respaLevelSimTicks ); 	
+:}
+| {::}
+;
+
+
+define_respa_level_for_category ::= DEFINERESPALEVELFORFORCECATEGORY:a HARMONIC:b INT_VAL:c define_respa_level_for_category {:
+	int defCount = RunTimeParameters.getRespaForCategoryCount();
+	String key = new String((String) a.getValue() + defCount);
+
+	String respaCategory = new String ((String) b.getValue()+":"+(String) c.getValue());
+	
+	RunTimeParameters.incRespaForCategoryCount();
+	RunTimeParameters.setRespaParam( key, respaCategory ); 	
+			
+:} 
+| DEFINERESPALEVELFORFORCECATEGORY:a TORSION:b INT_VAL:c define_respa_level_for_category {:
+	int defCount = RunTimeParameters.getRespaForCategoryCount();
+	String key = new String((String) a.getValue() + defCount);
+
+	String respaCategory = new String ((String) b.getValue()+":"+(String) c.getValue());
+	
+	RunTimeParameters.incRespaForCategoryCount();
+	RunTimeParameters.setRespaParam( key, respaCategory ); 	
+	
+:}
+| DEFINERESPALEVELFORFORCECATEGORY:a NONBONDED:b INT_VAL:c define_respa_level_for_category {:
+	int defCount = RunTimeParameters.getRespaForCategoryCount();
+	String key = new String((String) a.getValue() + defCount);
+
+	String respaCategory = new String ((String) b.getValue()+":"+(String) c.getValue());
+
+	RunTimeParameters.incRespaForCategoryCount();	
+	RunTimeParameters.setRespaParam( key, respaCategory ); 	
+
+:}
+| {::}
+;
+
+
+lrf ::= stdcharge {: :}
+| frc {: :}
+| p3me {: :}
+| ewald {: :}
+| 
+;
+
+stdcharge ::= STDCOULOMB {:
+	RunTimeParameters.setEnumParam("LongRangeForceMethod", "STDCOULOMB"); 
+	RESULT = null;
+:};
+
+frc ::= FINITERANGECUTOFFS switch_params {: 
+	RunTimeParameters.setEnumParam("LongRangeForceMethod", "FRC"); 
+	RESULT = null;
+:};
+
+ewald ::= EWALD ewald_params switch_params {:
+	RunTimeParameters.setEnumParam("LongRangeForceMethod", "EWALD"); 
+	RESULT = null;
+:};
+
+p3me ::= P3ME p3me_params switch_params {:
+	RunTimeParameters.setEnumParam("LongRangeForceMethod", "P3ME"); 
+	RESULT = null;
+:};
+
+switch_params ::= SWITCHLOWERCUTOFF:a double:b SWITCHDELTA:c double:d {: 
+	RunTimeParameters.setParam((String) a.getValue(), b);
+	RunTimeParameters.setParam((String) c.getValue(), d);
+	RESULT = null;
+:};
+
+ewald_params ::= EWALDALPHA:a double:b EWALDKMAX:c integer:d {:
+	RunTimeParameters.setParam((String) a.getValue(), b);
+	RunTimeParameters.setParam((String) c.getValue(), d);
+	RESULT=null;
+:};
+	
+p3me_params ::= p3me_initspacing:a P3MECHARGEASSIGNMENT:c integer:d  p3me_difforder EWALDALPHA:e double:f {:
+	RunTimeParameters.setParam((String) c.getValue(), d);
+	RunTimeParameters.setParam((String) e.getValue(), f);
+	RESULT=null;
+:};
+
+p3me_initspacing ::= P3MEINITSPACING:a double:b {:
+	
+	String bVal = (String) b.toString();
+	int bColon = bVal.lastIndexOf(":");	
+	b = bVal.substring(0, bColon);
+
+	String p3meXYZ = new String("{ " + b + "," + b + "," + b +" }:XYZ");
+	RunTimeParameters.setParam((String) a.getValue(), p3meXYZ);
+:}
+| P3MEINITSPACING:a double:b double:c double:d {:
+	
+	String bVal = (String) b.toString();
+	int bColon = bVal.lastIndexOf(":");	
+	b = bVal.substring(0, bColon);
+
+	String cVal = (String) c.toString();
+	int cColon = cVal.lastIndexOf(":");	
+	c = cVal.substring(0, cColon);
+
+	String dVal = (String) d.toString();
+	int dColon = bVal.lastIndexOf(":");	
+	d = dVal.substring(0, dColon);
+
+	String p3meXYZ = new String("{ " + b + "," + c + "," + d +" }:XYZ");
+	RunTimeParameters.setParam((String) a.getValue(), p3meXYZ);
+:};
+
+p3me_difforder ::= P3MEDIFFORDER:a GRADIENT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a ANALYTICAL:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_2PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_4PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_6PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_8PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_10PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+| P3MEDIFFORDER:a FINITE_12PT:b {:
+	RunTimeParameters.setParam((String) a.getValue(), new String("PreMSD::" + (String) b.getValue())+ ":int"); 
+:}
+; 
+
+
+constraints ::= constraints_on {: :}
+| {: :}
+;
+
+constraints_on ::= CONSTRAINTS ON NUMBEROFCOMCONSTRAINTS:a integer:b {:
+	RunTimeParameters.setParam((String) a.getValue(), b);
+	RunTimeParameters.constraintsOn();
+:};
+
+fep ::= FEP ON LAMBDA:a double:b {:
+	RunTimeParameters.setEnumParam("DoFreeEnergy", "1");	
+	RunTimeParameters.fepOn();	
+	RunTimeParameters.setParam((String) a.getValue(), b);
+:}
+| {: :} 
+;
+
+
+misc ::= randomseed snapshotperiod emitemergyperiod fragmentation {: :};
+
+fragmentation ::= ALL_SITES_IN_ONE_FRAGMENT:a {:
+	RunTimeParameters.setProbspecParam("Fragmentation", "all_sites_in_one_fragment");		
+:}
+| ALL_MOLECULES_IN_ONE_FRAGMENT:a {:
+	RunTimeParameters.setProbspecParam("Fragmentation", "all_molecules_in_one_fragment");		
+:}
+| ALL_SITES_IN_THEIR_OWN_FRAGMENT:a {:
+	RunTimeParameters.setProbspecParam("Fragmentation", "all_sites_in_their_own_fragment");		
+:}
+| ALL_MOLECULES_IN_THEIR_OWN_FRAGMENT:a {:
+	RunTimeParameters.setProbspecParam("Fragmentation", "all_molecules_in_their_own_fragment");		
+:}
+| {::}
+;
+
+randomseed ::= RANDOMNUMBERSEED:a integer:b {:
+	RunTimeParameters.setParam((String) a.getValue(), b);
+:}
+| {::}
+;
+
+snapshotperiod ::= SNAPSHOTPERIODINOTS:a integer:b {:
+	RunTimeParameters.setParam((String) a.getValue(), b);
+:}
+| {::}
+;
+
+emitemergyperiod ::= EMITENERGYTIMESTEPMODULO:a integer:b {:
+	RunTimeParameters.setParam((String) a.getValue(), b);
+:}
+| {::}
+;
+
+double ::= DOUBLE_VAL:a {:
+	RESULT = new String((String) a.getValue() + ":" + "double");
+:};
+
+integer ::= INT_VAL:a {:
+	RESULT = new String((String) a.getValue() + ":" + "int");
+:};
+

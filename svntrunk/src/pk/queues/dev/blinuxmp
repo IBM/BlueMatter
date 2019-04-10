@@ -1,0 +1,20 @@
+../../../pk/build
+/home/blake/mpich-1.2.0/bin/mpig++ \
+-D DATAGRAM_SIZE=1024 \
+-D BLUEGENE \
+-D PKFXLOG \
+-lpthread -DA98_TYPENAME=typename -DLINUX -D _THREAD_SAFE \
+-D MPI -D MPICH \
+-I $GFEBUILDROOT/include \
+-I ./ \
+-I $HOME/mpich-1.2.0/include/       \
+../../../pk/pkmain/src/main.cpp \
+../../../pk/pthread/src/pthread.cpp \
+../../../pk/fxlogger/src/fxlogger.cpp \
+../../../pk/exception/src/exception.cpp \
+../../../pk/reactor/src/reactor.cpp \
+../../../pk/trace/src/pktrace_pk.cpp \
+../../../pk/util_comm/src/mpi.cpp \
+$1.cpp  \
+-o $1.exe 2>$1.out
+vs $1.out &

@@ -1,0 +1,1 @@
+fft.exe -procs 8  -fftsize 2 2 2 -procmesh 2 2 2 

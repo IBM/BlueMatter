@@ -1,0 +1,18 @@
+SUBDIRS = \
+ hello \
+
+#PROGRAMS = \
+#	BOOT_MIDPLANE \
+#	run_ssw \
+  
+IDIR                = $(BG_BIN)/scripts/
+
+ILIST   =       $(PROGRAMS)
+
+  
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/ivt/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

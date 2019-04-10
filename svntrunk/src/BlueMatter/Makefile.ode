@@ -1,0 +1,84 @@
+EXPINC_SUBDIRS = \
+ fpexploit \
+ build_params \
+ kerngen \
+ remd \
+# control    \
+ geometry   \
+# hoodcomms \
+ io         \
+ mdvm       \
+ molsysdef  \
+ monitor    \
+ plimpton   \
+ random     \
+ udf \
+ util \
+ p3me \
+# fft_packet \
+
+.if empty(CONTEXT:Mx86_linux_*) || defined(TRY_LINUX_BUILD_ANYWAY)
+# Skip compiles and libs on PCs
+
+EXPINC_SUBDIRS += packaging
+
+EXPLIB_SUBDIRS = \
+  molsysdef \
+  random \
+  p3me \
+
+OBJECTS_SUBDIRS = \
+  molsysdef \
+  random \
+  p3me \
+
+# kerngen \
+
+.if empty(CONTEXT:Mbgl_cnk_*)
+#.if !empty(CONTEXT:Mrios_aix*) || !empty(CONTEXT:Mrios64_aix*) || defined(TRY_LINUX_BUILD_ANYWAY)
+EXPLIB_SUBDIRS += \
+  probspecdb2 \
+  db2 \
+  analysis \
+  probspectrans \
+
+EXPINC_SUBDIRS += \
+ probspecdb2 \
+ analysis \
+ db2        \
+ probspectrans  \
+ science \
+
+OBJECTS_SUBDIRS += \
+ analysis \
+ util \
+ probspecdb2 \
+ db2 \
+ probspectrans \
+ science \
+
+.endif
+
+.endif
+
+CMFPARSE_SUBDIRS = packaging
+
+RUNPKGTOOL_SUBDIRS = $(CMFPARSE_SUBDIRS)
+
+ILIST += BlueMatter.version
+
+BlueMatter.version_IDIR = $(BG_DIR)/
+
+
+SUBDIRS = $(EXPINC_SUBDIRS) \
+        tgtbuild \
+        xmlgen \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

@@ -1,0 +1,54 @@
+OBJECTS = \
+	regression_relay${OBJ_SUFF} \
+
+regression_relay$(PROG_SUFF)_OFILES = regression_relay$(OBJ_SUFF)
+
+PROGRAMS = \
+	regression_relay$(PROG_SUFF) \
+
+IDIR            = $(BG_BIN)/utils/
+
+regression_relay_IDIR = $(BG_BIN)/utils/
+
+
+ILIST           = \
+	AnisoScaleDvs.py \
+	atlib.py \
+	bgdmmcs \
+	bgwmmcs \
+	bmbuild \
+	charmmcrd2dvs.pl \
+	cleandb2.pl \
+	cleanout \
+	crd2pdb.pl \
+	crd2xyz.pl \
+	crddim.pl \
+	devtest \
+	dvsrange.py \
+	dvsutils.py \
+	gimme_block.py \
+	hpp2msd.py \
+	imprst2dvs.pl \
+	jobcontrol.py \
+	jobstatus.py \
+	mergedvs.py \
+	pdb2dvs.pl \
+	regression_relay \
+	set_debug.tcsh \
+	setenv_ode.ksh \
+	setenv_ode.tcsh \
+	singleimageH2O.py \
+	ssh_mmcs \
+	translatedvs.py \
+	txt2crd.pl \
+	txt2pdb.pl \
+	UpdateRegressionData.pl \
+	veclib.py \
+	xbuildwat \
+	xpdb2crd \
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/util/tools/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

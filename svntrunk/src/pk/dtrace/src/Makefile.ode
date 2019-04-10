@@ -1,0 +1,68 @@
+OBJECTS = \
+pktracefile_api$(OBJ_SUFF) \
+pktracefile_api_test$(OBJ_SUFF) \
+Tapplication_class$(OBJ_SUFF) \
+Tcre_set_dialog_class$(OBJ_SUFF) \
+Texport_data_dialog$(OBJ_SUFF) \
+Texported_file_dialog$(OBJ_SUFF) \
+Tfile_class$(OBJ_SUFF) \
+Tgnuplot_dialog$(OBJ_SUFF) \
+Tgroup_class$(OBJ_SUFF) \
+Tgroup_file_class$(OBJ_SUFF) \
+Tgroup_properties_dialog$(OBJ_SUFF) \
+Tgroup_save_dialog$(OBJ_SUFF) \
+Titem_class$(OBJ_SUFF) \
+Tload_set_dialog$(OBJ_SUFF) \
+Tmessage_dialog$(OBJ_SUFF) \
+Tproperties_dialog$(OBJ_SUFF) \
+tracer_lib$(OBJ_SUFF) \
+tracer_main$(OBJ_SUFF) \
+Tset_scale_dialog$(OBJ_SUFF) \
+Ttime_mark_class$(OBJ_SUFF) \
+Twindow_class$(OBJ_SUFF) \
+
+# Ttimer_class$(OBJ_SUFF) \
+
+CFLAGS += -DTRACE_DEST_PK -DNO_PK_PLATFORM -DPK_SMP
+
+# CFLAGS += -DPKFXLOG -DPKFXLOG_TRACER_MAIN
+
+LIBS += $(LIB_PREF)pktrace$(LIB_SUFF)
+LDFLAGS += -L/usr/X11R6/lib -lXm -lXt -lX11  -lm
+
+# -libmcls  -lpthreads
+
+tracer_OFILES= \
+pktracefile_api$(OBJ_SUFF) \
+Tapplication_class$(OBJ_SUFF) \
+Tcre_set_dialog_class$(OBJ_SUFF) \
+Texport_data_dialog$(OBJ_SUFF) \
+Texported_file_dialog$(OBJ_SUFF) \
+Tfile_class$(OBJ_SUFF) \
+Tgnuplot_dialog$(OBJ_SUFF) \
+Tgroup_class$(OBJ_SUFF) \
+Tgroup_file_class$(OBJ_SUFF) \
+Tgroup_properties_dialog$(OBJ_SUFF) \
+Tgroup_save_dialog$(OBJ_SUFF) \
+Titem_class$(OBJ_SUFF) \
+Tload_set_dialog$(OBJ_SUFF) \
+Tmessage_dialog$(OBJ_SUFF) \
+Tproperties_dialog$(OBJ_SUFF) \
+tracer_lib$(OBJ_SUFF) \
+tracer_main$(OBJ_SUFF) \
+Tset_scale_dialog$(OBJ_SUFF) \
+Ttime_mark_class$(OBJ_SUFF) \
+Twindow_class$(OBJ_SUFF) \
+
+# Ttimer_class$(OBJ_SUFF) \
+
+pktracefile_api_test_OFILES= \
+ pktracefile_api_test$(OBJ_SUFF) \
+ pktracefile_api$(OBJ_SUFF) \
+
+PROGRAMS = tracer$(PROG_SUFF) pktracefile_api_test$(PROG_SUFF)
+
+ILIST = tracer$(PROG_SUFF) tracer.res
+IDIR = $(BG_BIN)/utils/
+
+.include <$(RULES_MK)>

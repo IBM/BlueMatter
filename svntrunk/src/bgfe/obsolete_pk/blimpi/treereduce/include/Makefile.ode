@@ -1,0 +1,15 @@
+INCLUDES = \
+	treereduce.hpp \
+	treereduce.h \
+
+EXPINCDIR = /usr/include/
+
+IDIR = $(BG_INCLUDE)/
+ILIST = $(INCLUDES)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/blimpi/treereduce/include/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

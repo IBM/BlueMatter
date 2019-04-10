@@ -1,0 +1,35 @@
+#!/bin/ksh -x
+# Compile a molecule specification into a program which will write an MSD,
+# then run the program to get the resulting MSD
+if [[ -z "${BLUEMATTERROOT}" ]]
+then
+  BLUEMATTERROOT="/usr/opt/bluegene"
+fi
+print "
+#include <BlueMatter/msdprefix.hpp>
+#include <$1.hpp>
+#include <BlueMatter/msdsuffix.hpp>
+" >$1.cpp
+xlC_r -o $1 \
+    -qfuncsect \
+    -DPK_XLC   \
+    -DPK_AIX   \
+    -DPK_SMP   \
+    -DNO_PK_PLATFORM \
+    -qmaxmem=-1 \
+    -qstaticinline \
+    -qnoeh \
+    -I. \
+    -I${BLUEMATTERROOT}/include \
+    -L${BLUEMATTERROOT}/lib \
+    -lpksmp_reactor \
+    $1.cpp
+rc=$?
+if [[ ${rc} -eq 0 ]]
+then
+  rm -f output.msd
+  ./$1
+  mv output.msd $1.aix.msd
+fi
+
+

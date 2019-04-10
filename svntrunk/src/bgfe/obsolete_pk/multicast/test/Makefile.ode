@@ -1,0 +1,31 @@
+OBJECTS =  \
+  iv00$(OBJ_SUFF) \
+  ivmulticast$(OBJ_SUFF) \
+
+PROGRAMS =  \
+  iv00$(PROG_SUFF) \
+  ivmulticast$(PROG_SUFF) \
+
+ILIST =  \
+  iv00$(PROG_SUFF) \
+  ivmulticast$(PROG_SUFF) \
+
+iv00.o_CCTYPE = mpcppr
+iv00_CCTYPE = mpcppr
+iv00.o_CFLAGS = $(CFLAGS) $(SMPCFLAGS) $(MPICFLAGS)
+iv00_LDFLAGS = $(LDFLAGS) $(SMPCFLAGS) $(MPICFLAGS)
+iv00$(PROG_SUFF)_LIBS = $(MDLIBS) $(PKMPILIBS)
+iv00_OFILES += iv00$(OBJ_SUFF)
+
+ivmulticast.o_CCTYPE = mpcppr
+ivmulticast_CCTYPE = mpcppr
+ivmulticast.o_CFLAGS = $(CFLAGS) $(SMPCFLAGS) $(MPICFLAGS)
+ivmulticast_LDFLAGS = $(LDFLAGS) $(SMPCFLAGS) $(MPICFLAGS)
+ivmulticast$(PROG_SUFF)_LIBS = $(MDLIBS) $(PKMPILIBS)
+ivmulticast_OFILES += ivmulticast$(OBJ_SUFF)
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/multicast/test/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

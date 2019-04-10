@@ -1,0 +1,13 @@
+.if !empty(CONTEXT:Mbluelight_sk*)
+OBJECTS_SUBDIRS = bgl
+.else
+OBJECTS_SUBDIRS = smp
+.endif
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>
+

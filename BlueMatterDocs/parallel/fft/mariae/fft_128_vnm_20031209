@@ -1,0 +1,14 @@
+# vitual node mode
+# fft size is 128
+# Vienna's 1D FFT with double hummer 
+# CCC_FLAGS = -O3 -qarch=440d  -qlist -qsource
+# same px, py, pz as the fftbgmpi_20031116.dat file
+8    6.418221e-01
+16  2.632764e-01
+32  1.279038e-01 
+64  7.659410e-02 
+128 3.864030e-02
+256  1.989250e-02 
+512 1.176570e-02
+
+

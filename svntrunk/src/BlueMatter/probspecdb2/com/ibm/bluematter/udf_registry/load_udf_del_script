@@ -1,0 +1,27 @@
+connect to mdsystem;
+
+IMPORT FROM /tmp/UDF_Record.del OF DEL COMMITCOUNT 100000 INSERT INTO REGISTRY.UDF_Record;
+set integrity for REGISTRY.UDF_RECORD ALL immediate unchecked;
+
+IMPORT FROM /tmp/UDF_Variable.del OF DEL COMMITCOUNT 100000 INSERT INTO REGISTRY.UDF_VARIABLE;
+set integrity for REGISTRY.UDF_VARIABLE ALL immediate unchecked;
+
+IMPORT FROM /tmp/UDF_Category.del OF DEL COMMITCOUNT 100000 INSERT INTO REGISTRY.UDF_CATEGORY;
+set integrity for REGISTRY.UDF_CATEGORY ALL immediate unchecked;
+
+IMPORT FROM /tmp/chem_comp.del OF DEL COMMITCOUNT 100000 INSERT INTO CHEM.chemical_component;
+set integrity for CHEM.chemical_component immediate unchecked;
+
+IMPORT FROM /tmp/mol_type.del OF DEL COMMITCOUNT 100000 INSERT INTO CHEM.molecule_type;
+set integrity for CHEM.molecule_type immediate unchecked;
+
+IMPORT FROM /tmp/elements.del OF DEL COMMITCOUNT 100000 INSERT INTO CHEM.elements;
+set integrity for CHEM.elements immediate unchecked;
+
+IMPORT FROM /tmp/atom_tag.del OF DEL COMMITCOUNT 100000 INSERT INTO CHEM.atom_tag_table;
+set integrity for CHEM.atom_tag_table immediate unchecked;
+
+IMPORT FROM /tmp/site_param_type.del OF DEL COMMITCOUNT 100000 INSERT INTO CHEM.site_param_type;
+set integrity for CHEM.site_param_type immediate unchecked;
+
+disconnect mdsystem;

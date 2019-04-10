@@ -1,0 +1,8 @@
+PACKAGE_DIRECTORY(include/db2)
+PACKAGE_FILE(include/db2,connhandle.hpp)
+PACKAGE_FILE(include/db2,dbname.hpp)
+PACKAGE_FILE(include/db2,envhandle.hpp)
+PACKAGE_FILE(include/db2,exception.hpp)
+PACKAGE_FILE(include/db2,handle.hpp)
+PACKAGE_FILE(include/db2,handleexception.hpp)
+PACKAGE_FILE(include/db2,stmthandle.hpp)

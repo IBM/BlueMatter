@@ -1,0 +1,19 @@
+OBJECTS = atrig_test$(OBJ_SUFF) \
+	  t3dfft$(OBJ_SUFF) \
+	  test_1dfft$(OBJ_SUFF) \
+	  test_1dfft_4$(OBJ_SUFF) \
+	  test_1dfft_64$(OBJ_SUFF) \
+	  1dfft_4$(OBJ_SUFF) \
+
+PROGRAMS = atrig_test$(PROG_SUFF) \
+	   t3dfft$(PROG_SUFF) \
+	   test_1dfft$(PROG_SUFF) \
+	   test_1dfft_4$(PROG_SUFF) \
+	   test_1dfft_64$(PROG_SUFF) \
+
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/util/test/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

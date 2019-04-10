@@ -1,0 +1,155 @@
+#if 0
+InstallEntity
+{
+
+  EntityInfo
+  {
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    entityName  = "bluegene.pk.adt.adt";
+    description = STRING(IBM Blue Gene PicoKernel App Dev Toolkit);
+#endif
+    version     = VERSION;
+    release     = RELEASE;
+    maintLevel  = MAINTLEVEL;
+    fixLevel    = FIXLEVEL;
+    language    = 'en_us';
+    content     = 'USR';
+#if  defined(rios_aix_4) || defined(rios_aix_5)
+    insList     = [ < bluegene.pk.adt.adt.il > ];
+#endif
+  }
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+  ArchitectureInfo
+  {
+    machineType    = "R";
+
+#if defined(rios_aix_4) || defined(rios_aix_5)
+    osName         = [ "rios_aix"];
+#if defined(rios_aix_4)
+    osRelease      = [ "4"    ];
+    osVersion      = [ "3.3"   ];
+#else
+    osRelease      = [ "5"    ];
+    osVersion      = [ "1"   ];
+#endif
+#endif
+  }
+
+  InstallStatesInfo
+  {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+  }
+
+#ifdef rios_aix_4
+  RequisitesInfo
+  {
+    requisites = [
+                   ("P" "bos.rte 4.3.3.0")
+                 ];
+  }
+#endif
+#endif
+InstallEntity /* Representing the Product  */
+{
+
+Common :
+    EntityInfo
+    {
+        entityName      =  "bluegene.pk.adt" ;
+        fullEntityName  =  ["bluegene.pk.adt"] ;
+        description     =  STRING(IBM Blue Gene PicoKernel App Dev Toolkit);
+        imageName       =  "bluegene.pk.adt";
+        version     = VERSION;
+        release     = RELEASE;
+        maintLevel  = MAINTLEVEL;
+        fixLevel    = FIXLEVEL;
+        copyright       =  COPYRIGHT ;
+        category        =  CATEGORY ;
+        copyrightKeys   = ["%%_IBMa" "%%_MITb"] ;
+        copyrightMap    = < /usr/pkgtest/copyright.map >;
+        language        =  'en_us' ;
+        content         =  'USR' ;
+        insList     = [ < bluegene.pk.adt.il > ];
+    }
+
+
+  VendorInfo
+  {
+    vendorName = "IBM";
+    vendorDesc = "xxxx-xxx";
+  }
+
+    ArchitectureInfo
+    {
+        machineType     = MACHINE_TYPE ;
+#ifndef _hp9000_ux_
+        osName          = OS_NAME ;
+        osRelease       = OS_RELEASE ;
+        osVersion       = OS_VERSION ;
+        exclusiveOS     = [ "Linux" ];
+        excludeOS       = [ "NextStep" "BSD_OS" "FreeMiNT" ];
+        excludeArch     = [ "mipsel" "armv4b" "armv4l" ];
+#endif
+    }
+
+    InstallStatesInfo
+    {
+    bootReqmt      = BOOTRQMT;
+    packageFlags   = "-L";
+    installDir     = STRING(INSTALLDIR);
+        maxInst         =  "1";
+        adeInvFlags     =  "-Y" ;
+        mediaId         =  '0606291140';
+        installStates   =  "3";
+        removableStates =  "3";
+        constantList    =  [ PKGCONSTANT1  PKGCONSTANT2 ];
+//        installSpace    =  "data 500  1";
+    }
+
+    RequisitesInfo
+    {
+        requisites    = REQUISITES ;
+    }
+
+    ServiceInfo
+    { 
+        retainComponent     = "xxxxxxxxx";   
+        retainRelease       = "xxx" ;   
+        contactName         = "xxxxx";   
+        contactPhone        = "111-111-1111";   
+        contactNode         = "xxxx";   
+        contactUserId       = "xxxxxxx";   
+        memoToUsers         = "This is a sample memo" ;  
+        labelText1          = "This is labelText1"; 
+        labelText2          = "This is labelText2";  
+        ciaProductIdentification   =  "pid";  
+    }
+
+
+
+  LinkInfo
+  {
+    immChildFiles = [
+#define PACKAGE_DIRECTORY(directory) < MKPATH(INSTALLSRC, directory) >
+#define PACKAGE_FILE(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#define PACKAGE_FILE_EXEC(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#define PACKAGE_FILE_SETUID(directory,file) < MKPATH(INSTALLSRC, directory/file) >
+#include <cmf/pk_adt.files>
+#undef PACKAGE_DIRECTORY
+#undef PACKAGE_FILE
+#undef PACKAGE_FILE_EXEC
+#undef PACKAGE_FILE_SETUID
+                    ];
+    parent = "bluegene.pk";
+  }
+
+
+}

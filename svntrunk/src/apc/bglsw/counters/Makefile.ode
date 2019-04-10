@@ -1,0 +1,3 @@
+EXPINC_SUBDIRS = bgl_perfctr
+
+.include <$(RULES_MK)>

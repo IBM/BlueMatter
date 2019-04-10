@@ -1,0 +1,3 @@
+usage:   opls2xml.pl <jobname.out> <jobname.pdb>
+example: ../opls2xml.pl enkp.out enkp.pdb 
+

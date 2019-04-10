@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  pk_trcfmt \
+  Makefile.ode
+pk_trcfmt_IDIR = $(BG_SRC)/bgfe/pk/trace/etc/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/trace/etc/source_ship/
+.include <$(RULES_MK)>

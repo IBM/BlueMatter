@@ -1,0 +1,1 @@
+fft3d.exe -procs 8 >fft3d.out 2>fft3d.err

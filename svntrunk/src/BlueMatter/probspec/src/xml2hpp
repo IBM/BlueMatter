@@ -1,0 +1,4 @@
+#!/bin/ksh
+# Transform an XML specification to a (compilable) header file
+#
+xmlprobspec DEFAULT <$1.xml >$1.hpp

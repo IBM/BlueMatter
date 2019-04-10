@@ -1,0 +1,24 @@
+# Here are the numbers for the 3D FFT using Chris' 1D FFT.
+# compiler flags -O3 -qarch=440
+# The 3D FFT is regressing on all nodes.
+# column 1: FFT size (N of NxNxN)
+# column 2: px
+# column 3: py
+# column 4: pz
+# column 5: time/FFT (averaged over 10)
+
+64 1 1 1   5.572062e-01
+64 2 2 2   6.221940e-02
+64 4 4 2   1.609630e-02
+64 4 4 4   9.555200e-03
+64 4 4 8   4.827800e-03
+64 4 8 8   2.894200e-03
+64 8 8 8   2.344900e-03
+
+
+128 2 2 2   6.399184e-01
+128 4 4 2   1.370656e-01
+128 4 4 4   7.776060e-02
+128 4 4 8   3.677640e-02
+128 4 8 8   1.899870e-02
+128 8 8 8   1.155560e-02

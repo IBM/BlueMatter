@@ -1,0 +1,70 @@
+# Statistics for grouped trace points from trace_group_id 138
+# column 1: trace set id
+# column 2: node count
+# column 3: average
+# column 4: std. dev
+# column 5: min()
+# column 6: max()
+# column 7: minDev (deviation from average value computed for each ts)
+# column 8: maxDev (deviation from average value computed for each ts)
+# column 9: count()
+
+
+# Index 0: Results for GlobalizePositions_Cntl
+1551 	2048 	1.24076e+06 	224052 	1.02901e+06 	2.35796e+06 	-272231 	292105 	2.0521e+06
+1552 	2048 	1.24072e+06 	223737 	1.02997e+06 	2.35295e+06 	-268817 	265242 	2.0521e+06
+
+
+# Index 1: Results for P2_InitialBarrier
+1551 	2048 	-1.26463e+13 	NaNQ 	-4.30613e+14 	0 	-4.17967e+14 	1.27168e+13 	2.0521e+06
+1552 	2048 	-1.26463e+13 	NaNQ 	-4.30613e+14 	0 	-4.17967e+14 	1.27168e+13 	2.0521e+06
+
+
+# Index 2: Results for P2_KSpace_Control
+1551 	2048 	3.71417e+06 	172928 	3.52001e+06 	4.56691e+06 	-1.16743e+06 	743737 	2.0521e+06
+1552 	2048 	3.71347e+06 	171310 	3.50618e+06 	4.55499e+06 	-1.16796e+06 	736051 	2.0521e+06
+
+
+# Index 3: Results for P2_Simtick_Loop_Control
+1551 	2048 	2.64328e+08 	NaNQ 	7.25698e+06 	3.84621e+11 	-2.55339e+11 	1.29153e+11 	2.0521e+06
+1552 	2048 	2.8971e+08 	NaNQ 	7.27391e+06 	3.89324e+11 	-2.80204e+11 	1.08423e+11 	2.0521e+06
+
+
+# Index 4: Results for P3ME_ForwardFFT_Control
+1551 	2048 	1.46435e+06 	28021.1 	1.32418e+06 	1.63221e+06 	-151097 	153477 	2.0521e+06
+1552 	2048 	1.46432e+06 	28022 	1.31416e+06 	1.616e+06 	-155849 	148447 	2.0521e+06
+
+
+# Index 5: Results for P3ME_Rev_FFT
+1551 	2048 	1.41825e+06 	15491.3 	1.34897e+06 	1.53708e+06 	-91316 	120999 	2.0521e+06
+1552 	2048 	1.41746e+06 	15349.7 	1.35493e+06 	1.544e+06 	-84890.1 	111210 	2.0521e+06
+
+
+# Index 6: Results for RealSpaceAddForces
+1551 	2048 	512737 	111261 	379800 	1.44792e+06 	-225450 	418215 	2.0521e+06
+1552 	2048 	512776 	111248 	379801 	1.44196e+06 	-225474 	412237 	2.0521e+06
+
+
+# Index 7: Results for RealSpaceDualCore
+1551 	2048 	257492 	1.10253e+06 	15020 	9.31406e+06 	-2.71321e+06 	4.0961e+06 	2.0521e+06
+1552 	2048 	257982 	1.10468e+06 	14782 	9.34792e+06 	-2.73822e+06 	4.08489e+06 	2.0521e+06
+
+
+# Index 8: Results for ReduceForces_Cntl
+1551 	2048 	1.27759e+06 	952332 	753880 	8.40306e+06 	-4.29077e+06 	2.74023e+06 	2.0521e+06
+1552 	2048 	1.27777e+06 	952685 	751018 	8.38494e+06 	-4.30412e+06 	2.76324e+06 	2.0521e+06
+
+
+# Index 9: Results for _remd_allreduce_energies_
+1551 	2048 	-1.1295e+12 	NaNQ 	-2.88083e+18 	5.85393e+17 	-7.46316e+18 	7.51751e+18 	2.0521e+06
+1552 	2048 	-1.12947e+12 	NaNQ 	-2.88083e+18 	5.85393e+17 	-7.46316e+18 	7.51751e+18 	2.0521e+06
+
+
+# Index 10: Results for _remd_copy_energies_
+1551 	2048 	78.2337 	743.431 	0 	8107 	-1220.24 	1207.6 	2.0521e+06
+1552 	2048 	78.35 	744.626 	0 	8107 	-1224.35 	1208.09 	2.0521e+06
+
+
+# Index 11: Results for _remd_swapping_step
+1551 	2048 	91.7996 	881.124 	0 	10014 	-1082.76 	1127.97 	2.0521e+06
+1552 	2048 	91.5515 	878.581 	0 	10967 	-1024.03 	1359.97 	2.0521e+06

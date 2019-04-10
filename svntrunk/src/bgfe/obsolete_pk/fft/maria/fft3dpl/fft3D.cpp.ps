@@ -1,0 +1,1879 @@
+%!PS-Adobe-3.0
+%%Title: fft3D.cpp
+%%For: Maria Eleftheriou
+%%Creator: a2ps version 4.10.3
+%%CreationDate: Sun Mar  2 17:59:52 2003
+%%BoundingBox: 24 24 588 768
+%%DocumentData: Clean7Bit
+%%Orientation: Landscape
+%%Pages: 4
+%%PageOrder: Ascend
+%%DocumentMedia: Letter 612 792 0 () ()
+%%DocumentNeededResources: font Courier
+%%+ font Courier-Bold
+%%+ font Courier-BoldOblique
+%%+ font Courier-Oblique
+%%+ font Helvetica
+%%+ font Helvetica-Bold
+%%+ font Symbol
+%%+ font Times-Bold
+%%+ font Times-Roman
+%%DocumentProcessColors: Black 
+%%DocumentSuppliedResources: procset a2ps-a2ps-hdr
+%%+ procset a2ps-black+white-Prolog
+%%+ encoding ISO-8859-1Encoding
+%%EndComments
+/a2psdict 200 dict def
+a2psdict begin
+%%BeginProlog
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Check PostScript language level.
+/languagelevel where {
+  pop /gs_languagelevel languagelevel def
+} {
+  /gs_languagelevel 1 def
+} ifelse
+
+% EPSF import as in the Red Book
+/BeginInclude {
+  /b4_Inc_state save def    		% Save state for cleanup
+  /dict_count countdictstack def	% Count objects on dict stack
+  /op_count count 1 sub def		% Count objects on operand stack 
+  userdict begin
+    0 setgray 0 setlinecap
+    1 setlinewidth 0 setlinejoin
+    10 setmiterlimit [ ] 0 setdash newpath
+    gs_languagelevel 1 ne {
+      false setstrokeadjust false setoverprint 
+    } if
+} bind def
+
+/EndInclude {
+  count op_count sub { pos } repeat	% Clean up stacks
+  countdictstack dict_count sub { end } repeat
+  b4_Inc_state restore
+} bind def
+
+/BeginEPSF {
+  BeginInclude
+  /showpage { } def
+} bind def
+
+/EndEPSF {
+  EndInclude
+} bind def
+
+% Page prefeed
+/page_prefeed {         % bool -> -
+  statusdict /prefeed known {
+    statusdict exch /prefeed exch put
+  } {
+    pop
+  } ifelse
+} bind def
+
+/deffont {
+  findfont exch scalefont def
+} bind def
+
+/reencode_font {
+  findfont reencode 2 copy definefont pop def
+} bind def
+
+% Function c-show (str => -)
+% centers text only according to x axis.
+/c-show { 
+  dup stringwidth pop
+  2 div neg 0 rmoveto
+  show
+} bind def
+
+% Function l-show (str => -)
+% prints texts so that it ends at currentpoint
+/l-show {
+  dup stringwidth pop neg 
+  0 
+  rmoveto show
+} bind def
+
+% center-fit show (str w => -)
+% show centered, and scale currentfont so that the width is less than w
+/cfshow {
+  exch dup stringwidth pop
+  % If the title is too big, try to make it smaller
+  3 2 roll 2 copy
+  gt
+  { % if, i.e. too big
+    exch div
+    currentfont exch scalefont setfont
+  } { % ifelse
+    pop pop 
+  }
+  ifelse
+  c-show			% center title
+} bind def
+
+% Return the y size of the current font
+% - => fontsize
+/currentfontsize {
+  currentfont /FontMatrix get 3 get 1000 mul
+} bind def
+
+% reencode the font
+% <encoding-vector> <fontdict> -> <newfontdict>
+/reencode { %def
+  dup length 5 add dict begin
+    { %forall
+      1 index /FID ne 
+      { def }{ pop pop } ifelse
+    } forall
+    /Encoding exch def
+
+    % Use the font's bounding box to determine the ascent, descent,
+    % and overall height; don't forget that these values have to be
+    % transformed using the font's matrix.
+    % We use `load' because sometimes BBox is executable, sometimes not.
+    % Since we need 4 numbers an not an array avoid BBox from being executed
+    /FontBBox load aload pop
+    FontMatrix transform /Ascent exch def pop
+    FontMatrix transform /Descent exch def pop
+    /FontHeight Ascent Descent sub def
+
+    % Define these in case they're not in the FontInfo (also, here
+    % they're easier to get to.
+    /UnderlinePosition 1 def
+    /UnderlineThickness 1 def
+    
+    % Get the underline position and thickness if they're defined.
+    currentdict /FontInfo known {
+      FontInfo
+      
+      dup /UnderlinePosition known {
+	dup /UnderlinePosition get
+	0 exch FontMatrix transform exch pop
+	/UnderlinePosition exch def
+      } if
+      
+      dup /UnderlineThickness known {
+	/UnderlineThickness get
+	0 exch FontMatrix transform exch pop
+	/UnderlineThickness exch def
+      } if
+      
+    } if
+    currentdict 
+  end 
+} bind def
+
+% Function print line number (<string> # -)
+/# {
+  gsave
+    sx cw mul neg 2 div 0 rmoveto
+    f# setfont
+    c-show
+  grestore
+} bind def
+
+% -------- Some routines to enlight plain b/w printings ---------
+
+% Underline
+% width --
+/dounderline {
+  currentpoint
+  gsave
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    0 rlineto
+    stroke
+  grestore
+} bind def
+
+% Underline a string
+% string --
+/dounderlinestring {
+  stringwidth pop
+  dounderline
+} bind def
+
+/UL {
+  /ul exch store
+} bind def
+
+% Draw a box of WIDTH wrt current font
+% width --
+/dobox {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    stroke
+  grestore
+} bind def
+
+/BX {
+  /bx exch store
+} bind def
+
+% Box a string
+% string --
+/doboxstring {
+  stringwidth pop
+  dobox
+} bind def
+
+%
+% ------------- Color routines ---------------
+%
+/FG /setrgbcolor load def
+
+% Draw the background
+% width --
+/dobackground {
+  currentpoint
+  gsave
+    newpath
+    moveto
+    0 currentfont /Descent get currentfontsize mul rmoveto
+    dup 0 rlineto
+    0 currentfont /FontHeight get currentfontsize mul rlineto
+    neg 0 rlineto
+    closepath
+    bgcolor aload pop setrgbcolor
+    fill
+  grestore
+} bind def
+
+% Draw bg for a string
+% string --
+/dobackgroundstring {
+  stringwidth pop
+  dobackground
+} bind def
+
+
+/BG {
+  dup /bg exch store
+  { mark 4 1 roll ] /bgcolor exch store } if
+} bind def
+
+
+/Show {
+  bg { dup dobackgroundstring } if
+  ul { dup dounderlinestring } if
+  bx { dup doboxstring } if
+  show
+} bind def
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T {
+  cw mul x0 add
+  bg { dup currentpoint pop sub dobackground } if
+  ul { dup currentpoint pop sub dounderline } if
+  bx { dup currentpoint pop sub dobox } if
+  y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n {
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+/S {
+  Show
+} bind def
+
+%%BeginResource: procset a2ps-a2ps-hdr 2.0 2
+%%Copyright: (c) 1988, 89, 90, 91, 92, 93 Miguel Santana
+%%Copyright: (c) 1995, 96, 97, 98 Akim Demaille, Miguel Santana
+% Function title: prints page header.
+% <ct> <rt> <lt> are passed as argument
+/title { 
+  % 1. Draw the background
+  x v get y v get moveto
+  gsave
+    0 th 2 div neg rmoveto 
+    th setlinewidth
+    0.95 setgray
+    pw 0 rlineto stroke
+  grestore
+  % 2. Border it
+  gsave
+    0.7 setlinewidth
+    pw 0 rlineto
+    0 th neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+  % stk: ct rt lt
+  x v get y v get th sub 1 add moveto
+%%IncludeResource: font Helvetica
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  % 3. The left title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    fnfs 0.8 mul hm rmoveto
+    show			% left title
+  grestore
+  exch
+  % stk: ct ltw rt
+  % 4. the right title
+  gsave
+    dup stringwidth pop fnfs 0.8 mul add exch % leave space took on stack
+    dup
+    pw exch stringwidth pop fnfs 0.8 mul add sub
+    hm
+    rmoveto
+    show			% right title
+  grestore
+  % stk: ct ltw rtw
+  % 5. the center title
+  gsave
+    pw 3 1 roll
+    % stk: ct pw ltw rtw
+    3 copy 
+    % Move to the center of the left room
+    sub add 2 div hm rmoveto
+    % What is the available space in here?
+    add sub fnfs 0.8 mul sub fnfs 0.8 mul sub
+    % stk: ct space_left
+%%IncludeResource: font Helvetica-Bold
+  fHelvetica-Bold fnfs scalefont setfont
+    cfshow
+  grestore
+} bind def
+
+% Function border: prints virtual page border
+/border { %def
+  gsave				% print four sides
+    0 setgray
+    x v get y v get moveto
+    0.7 setlinewidth		% of the square
+    pw 0 rlineto
+    0 ph neg rlineto
+    pw neg 0 rlineto
+    closepath stroke
+  grestore
+} bind def
+
+% Function water: prints a water mark in background
+/water { %def
+  gsave
+    scx scy moveto rotate
+%%IncludeResource: font Times-Bold
+  fTimes-Bold 100 scalefont setfont
+    .97 setgray
+    dup stringwidth pop 2 div neg -50 rmoveto
+    show
+  grestore
+} bind def
+
+% Function rhead: prints the right header
+/rhead {  %def
+  lx ly moveto
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  l-show
+} bind def
+
+% Function footer (cf rf lf -> -)
+/footer {
+  fHelvetica fnfs 0.8 mul scalefont setfont
+  dx dy moveto
+  show
+
+  snx sny moveto
+  l-show
+  
+  fnx fny moveto
+  c-show
+} bind def
+%%EndResource
+%%BeginResource: procset a2ps-black+white-Prolog 2.0 1
+
+% Function T(ab), jumps to the n-th tabulation in the current line
+/T { 
+  cw mul x0 add y0 moveto
+} bind def
+
+% Function n: move to the next line
+/n { %def
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+} bind def
+
+% Function N: show and move to the next line
+/N {
+  Show
+  /y0 y0 bfs sub store
+  x0 y0 moveto
+}  bind def
+
+/S {
+  Show
+} bind def
+
+/p {
+  false UL
+  false BX
+  fCourier bfs scalefont setfont
+  Show
+} bind def
+
+/sy {
+  false UL
+  false BX
+  fSymbol bfs scalefont setfont
+  Show
+} bind def
+
+/k {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/K {
+  false UL
+  false BX
+  fCourier-Bold bfs scalefont setfont
+  Show
+} bind def
+
+/c {
+  false UL
+  false BX
+  fCourier-Oblique bfs scalefont setfont
+  Show
+} bind def
+
+/C {
+  false UL
+  false BX
+  fCourier-BoldOblique bfs scalefont setfont
+  Show 
+} bind def
+
+/l {
+  false UL
+  false BX
+  fHelvetica bfs scalefont setfont
+  Show
+} bind def
+
+/L {
+  false UL
+  false BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show 
+} bind def
+
+/str{
+  false UL
+  false BX
+  fTimes-Roman bfs scalefont setfont
+  Show
+} bind def
+
+/e{
+  false UL
+  true BX
+  fHelvetica-Bold bfs scalefont setfont
+  Show
+} bind def
+
+%%EndResource
+%%EndProlog
+%%BeginSetup
+%%IncludeResource: font Courier
+%%IncludeResource: font Courier-Oblique
+%%IncludeResource: font Courier-Bold
+%%IncludeResource: font Times-Roman
+%%IncludeResource: font Symbol
+%%IncludeResource: font Courier-BoldOblique
+%%BeginResource: encoding ISO-8859-1Encoding
+/ISO-8859-1Encoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclam /quotedbl /numbersign /dollar /percent /ampersand /quoteright 
+/parenleft /parenright /asterisk /plus /comma /minus /period /slash 
+/zero /one /two /three /four /five /six /seven 
+/eight /nine /colon /semicolon /less /equal /greater /question 
+/at /A /B /C /D /E /F /G 
+/H /I /J /K /L /M /N /O 
+/P /Q /R /S /T /U /V /W 
+/X /Y /Z /bracketleft /backslash /bracketright /asciicircum /underscore 
+/quoteleft /a /b /c /d /e /f /g 
+/h /i /j /k /l /m /n /o 
+/p /q /r /s /t /u /v /w 
+/x /y /z /braceleft /bar /braceright /asciitilde /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef 
+/space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
+/dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen /registered /macron 
+/degree /plusminus /twosuperior /threesuperior /acute /mu /paragraph /bullet 
+/cedilla /onesuperior /ordmasculine /guillemotright /onequarter /onehalf /threequarters /questiondown 
+/Agrave /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla 
+/Egrave /Eacute /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis 
+/Eth /Ntilde /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply 
+/Oslash /Ugrave /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls 
+/agrave /aacute /acircumflex /atilde /adieresis /aring /ae /ccedilla 
+/egrave /eacute /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis 
+/eth /ntilde /ograve /oacute /ocircumflex /otilde /odieresis /divide 
+/oslash /ugrave /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
+] def
+%%EndResource
+% Initialize page description variables.
+/sh 612 def
+/sw 792 def
+/llx 24 def
+/urx 768 def
+/ury 588 def
+/lly 24 def
+/#copies 1 def
+/th 15.000000 def
+/fnfs 11 def
+/bfs 7.493857 def
+/cw 4.496314 def
+
+% Dictionary for ISO-8859-1 support
+/iso1dict 8 dict begin
+  /fCourier ISO-8859-1Encoding /Courier reencode_font
+  /fCourier-Bold ISO-8859-1Encoding /Courier-Bold reencode_font
+  /fCourier-BoldOblique ISO-8859-1Encoding /Courier-BoldOblique reencode_font
+  /fCourier-Oblique ISO-8859-1Encoding /Courier-Oblique reencode_font
+  /fHelvetica ISO-8859-1Encoding /Helvetica reencode_font
+  /fHelvetica-Bold ISO-8859-1Encoding /Helvetica-Bold reencode_font
+  /fTimes-Bold ISO-8859-1Encoding /Times-Bold reencode_font
+  /fTimes-Roman ISO-8859-1Encoding /Times-Roman reencode_font
+currentdict end def
+/bgcolor [ 0 0 0 ] def
+/bg false def
+/ul false def
+/bx false def
+% The font for line numbering
+/f# /Helvetica findfont bfs .6 mul scalefont def
+/fSymbol /Symbol findfont def
+/hm fnfs 0.25 mul def
+/pw
+   cw 81.400000 mul
+def
+/ph
+   522.321860 th add
+def
+/pmw urx llx sub pw 2 mul sub 1 div def
+/pmh 0 def
+/v 0 def
+/x [
+  0
+  dup pmw add pw add
+] def
+/y [
+  pmh ph add 0 mul ph add
+  dup
+] def
+/scx sw 2 div def
+/scy sh 2 div def
+/snx urx def
+/sny lly 2 add def
+/dx llx def
+/dy sny def
+/fnx scx def
+/fny dy def
+/lx snx def
+/ly ury fnfs 0.8 mul sub def
+/sx 0 def
+/tab 8 def
+/x0 0 def
+/y0 0 def
+%%EndSetup
+
+%%Page: (1-2) 1
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(#include) K
+( <iostream>) p n
+(#include) K
+( ") p
+(fft3D.hpp) str
+(") p n
+(#include) K
+( <mpi.h>) p n
+(#include) K
+( <assert.h>) p n
+(#include) K
+( ") p
+(../fftw/fftw.h) str
+(") p n
+(#include) K
+( ") p
+(math.h) str
+(") p n
+() N
+(template) K
+( ) p
+(class) K
+( FFT3D<FFTOneD, Comm3DLayer>;) p n
+() N
+(#include) K
+( <sys/atomic_op.h>) p n
+() N
+(void) k n
+(ImportFence\(\)) p n
+(  {) N
+(  ) S
+(int) k
+( a = 0 ;) p n
+(  \() S
+(void) k
+(\) _check_lock\(&a, 0, 0\) ;) p n
+(  }) N
+() N
+(void) k n
+(ExportFence\(\)) p n
+(   {) N
+(   ) S
+(int) k
+( a;) p n
+(  _clear_lock\(&a,0\) ;) N
+(  }) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(FFT3D<FFT_T, COMM_T> :: FFT3D\() S
+(unsigned) k
+( ) p
+(int) k
+( localNx,) p n
+(                              ) S
+(unsigned) k
+( ) p
+(int) k
+( localNy,) p n
+(                              ) S
+(unsigned) k
+( ) p
+(int) k
+( localNz,) p n
+(                              ) S
+(unsigned) k
+( ) p
+(int) k
+( pX,) p n
+(                              ) S
+(unsigned) k
+( ) p
+(int) k
+( pY,) p n
+(                              ) S
+(unsigned) k
+( ) p
+(int) k
+( pZ,) p n
+(                              ) S
+(int) k
+( fftDir,) p n
+(                              MPI_Comm comm\):  ) S
+(// TODO: make this general) c n
+(  _localNx\(localNx\), _localNy\(localNy\), _localNz\(localNz\),) p n
+(  _pX\(pX\), _pY\(pY\), _pZ\(pZ\),_fftDir\(fftDir\) {) N
+(  _comm = ) S
+(new) K
+( COMM_T\(_pX, _pY,_pZ, MPI_COMM_WORLD\);) p n
+() N
+(  _barSzX = _localNy/_pX; ) S
+(// size of bars in the y-dim) c n
+(  _barSzY = _localNz/_pY; ) p
+(// size of bars in the z-dim) c n
+(  _barSzZ = _localNx/_pZ; ) p
+(// size of bars in the x-dim) c n
+(  ) p n
+(  _xCompletePacket = \() S
+(int) k
+(*\) malloc\(_barSzX*_localNz*) p
+(sizeof) K
+(\() p
+(int) k
+(\)\);) p n
+(  _yCompletePacket = \() S
+(int) k
+(*\) malloc\(_barSzY*_localNx*) p
+(sizeof) K
+(\() p
+(int) k
+(\)\);) p n
+(  _zCompletePacket = \() S
+(int) k
+(*\) malloc\(_barSzZ*_localNy*) p
+(sizeof) K
+(\() p
+(int) k
+(\)\);) p n
+(   ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<_barSzX*_localNz; i++\) {) p n
+(    _xCompletePacket[i] = 0;) N
+(  }) N
+() N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<_barSzY*_localNx; i++\)) p n
+(    _yCompletePacket[i] = 0;) N
+() N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<_barSzZ*_localNy; i++\){) p n
+(    _zCompletePacket[i]  = 0;) N
+(  }) N
+() N
+(  _xCompleteFFTsInBarCount = 0;) N
+(  _yCompleteFFTsInBarCount = 0;) N
+(  _zCompleteFFTsInBarCount = 0;) N
+(  _bCompleteFFTsInBarCount = 0;) N
+(   ) N
+(  _xPointsPerPacket = min\(_localNx, ELEMENTS_PER_PACKET\);) N
+(  _yPointsPerPacket = min\(_localNy, ELEMENTS_PER_PACKET\);) N
+(  _zPointsPerPacket = min\(_localNz, ELEMENTS_PER_PACKET\);) N
+(  ) N
+(  _xPacketsPerFFT = _pX*ceil\(\() S
+(double) k
+(\)_localNx/\() p
+(double) k
+(\)_xPointsPerPacket\);) p n
+(  _yPacketsPerFFT = _pY*ceil\(\() S
+(double) k
+(\)_localNy/\() p
+(double) k
+(\)_yPointsPerPacket\);) p n
+(  _zPacketsPerFFT = _pZ*ceil\(\() S
+(double) k
+(\)_localNz/\() p
+(double) k
+(\)_zPointsPerPacket\);) p n
+(fft3D.cpp) (Page 1/8) (Mar 02, 03 17:59) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p n
+(  _fftx = ) S
+(new) K
+( FFT_T\(_localNx*_pX, _fftDir\);  ) p
+(// 1D fft in the x-dim) c n
+(  _ffty = ) p
+(new) K
+( FFT_T\(_localNy*_pY, _fftDir\);  ) p
+(// 1D fft in the y-dim) c n
+(  _fftz = ) p
+(new) K
+( FFT_T\(_localNz*_pZ, _fftDir\);  ) p
+(// 1D fft in the z-dim) c n
+() p n
+(  ) S
+(int) k
+( maxBarSz   = max\(max\(_barSzX, _barSzY\), _barSzZ\);) p n
+(  ) S
+(int) k
+( maxLocalN  = max\(max\(_localNx, _localNy\), _localNz\);) p n
+(  ) S
+(int) k
+( maxGlobalN = max\(max\(_localNx*_pX, _localNy*_pY\), _localNz*_pZ\);) p n
+(  ) S
+(int) k
+( maxBarNum  = max\(max\(_pX, _pY\), _pZ\);) p n
+( ) N
+(  ) S
+(if) K
+(\(maxBarSz==0 || maxLocalN==0 || maxGlobalN==0 || maxBarNum==0\){) p n
+(    maxBarSz+=1;) N
+(    cout << ") S
+( Error in the allocation  ) str
+("<<endl;) p n
+(    cout << ") S
+( maxBarSz =    ) str
+(" <<maxBarSz <<endl;) p n
+(    cout << ") S
+( barSzX = ) str
+(" << _barSzX     << ") p
+( barSzY = ) str
+(") p n
+(         << _barSzY     << ") S
+(barSzZ = ) str
+(" << _barSzZ <<endl;) p n
+(    cout << ") S
+( maxLocalN =   ) str
+(" << maxLocalN <<endl;) p n
+(    cout << ") S
+( maxGlobalN =  ) str
+(" << maxGlobalN << endl;) p n
+(    cout << ") S
+( maxBarNum  =  ) str
+(" << maxBarNum <<endl;) p n
+(  }) N
+() N
+(  _globalIn  = \(complex**\) ) S
+(new) K
+( complex[maxLocalN*) p n
+(                                      maxBarSz*) S
+(sizeof) K
+(\(complex\)];) p n
+(  _globalOut = \(complex**\) ) S
+(new) K
+( complex[maxLocalN*) p n
+(                                      maxBarSz*) S
+(sizeof) K
+(\(complex\)];) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<maxLocalN*maxBarSz; i++\) {) p n
+(    _globalIn[i]  = \(complex*\) ) S
+(new) K
+( complex[maxGlobalN*) p
+(sizeof) K
+(\(complex\)];) p n
+(    _globalOut[i] = \(complex*\) ) S
+(new) K
+( complex[maxGlobalN*) p
+(sizeof) K
+(\(complex\)];) p n
+(  }) N
+(  ) N
+(  _localIn  = \(complex***\) ) S
+(new) K
+( complex[maxLocalN*) p
+(sizeof) K
+(\(complex\)];) p n
+(  _localOut = \(complex***\) ) S
+(new) K
+( complex[maxLocalN*) p
+(sizeof) K
+(\(complex\)];) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<maxLocalN; i++\) {) p n
+(    _localIn[i]  = \(complex**\) ) S
+(new) K
+( complex[maxLocalN*maxLocalN];) p n
+(    _localOut[i] = \(complex**\) ) S
+(new) K
+( complex[maxLocalN*maxLocalN];) p n
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( j=0; j<maxLocalN*maxLocalN; j++\) {) p n
+(      _localIn[i][j]  = \(complex*\) ) S
+(new) K
+( complex[maxLocalN];) p n
+(      _localOut[i][j] = \(complex*\) ) S
+(new) K
+( complex[maxLocalN];) p n
+(    }) N
+(  }) N
+(  ) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(int) k
+(  FFT3D<FFT_T, COMM_T>::_ZPacketActorFx\() p
+(void) k
+(* pkt\) {) p n
+(  actorPacket *ap = \(actorPacket*\) pkt;) N
+(  FFT3D<FFT_T, COMM_T> *This = \(*ap\).mHdr.This;) N
+(  ) S
+(int) k
+( a = \(*ap\).mHdr.aIndex;) p n
+(  ) S
+(int) k
+( b = \(*ap\).mHdr.bIndex;) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) S
+(int) k
+( globalNz = \(*This\)._localNz*\(*This\)._pZ;) p n
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) N
+() N
+(  ) S
+(// cout <<"before2 " <<\(*This\)._zCompletePacket[a] <<endl;) c n
+(  \(*This\)._zCompletePacket[a] ++;) p n
+(  ) S
+(//cout <<"after2  " <<\(*This\)._zCompletePacket[a] <<endl;) c n
+(  ) p
+(int) k
+( zPointsPerPacket = \(*This\)._zPointsPerPacket;) p n
+(  ) S
+(if) K
+(\(\(\(*This\)._zCompletePacket[a] == \(*This\)._zPacketsPerFFT/\(*This\)._pZ\)) p n
+(     &&\(\(*This\)._localNz >  ELEMENTS_PER_PACKET\)\)) N
+(    zPointsPerPacket = \(*This\)._localNz %) N
+(      \(\(*This\)._zPointsPerPacket/\(*This\)._pZ\);) N
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( k=0; k<zPointsPerPacket; k++\) {) p n
+(     ) S
+(if) K
+(\(\(b+k\) >=globalNz\) {) p n
+(       cout<< ") S
+(====Error inside _ZPacketActorFx ) str
+("<<b+k<<") p
+( ) str
+("<< globalNz<<endl;) p n
+(       ) S
+(break) K
+(;) p n
+(fft3D.cpp) (Page 2/8) (Mar 02, 03 17:59) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3D.cpp) (1/4) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (3-4) 2
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(     }) p n
+() N
+(     \(*This\)._globalIn[a][b+k].re = \(*ap\).mData[k].re;) N
+(     \(*This\)._globalIn[a][b+k].im = \(*ap\).mData[k].im;) N
+(   }) N
+() N
+() N
+(   ) S
+(int) k
+( cmpl = \(\(*This\)._zCompletePacket[a]\);) p n
+(   ) S
+(// ImportFence\(\);) c n
+(   ) p
+(if) K
+(\(cmpl ==\(*This\)._zPacketsPerFFT \){) p n
+(     \(\(*This\)._fftz\)->fftInternal\(&\(\(*This\)._globalIn[a][0]\),) N
+(                                  &\(\(*This\)._globalOut[a][0]\)\);) N
+(     ) S
+(// cout <<"before " << \(*This\)._zCompleteFFTsInBarCount) c n
+(     ) p
+(//  << " " << \(*This\)._barSzZ <<endl;) c n
+(     \(\(*This\)._zCompleteFFTsInBarCount\) +=1;) p n
+(     ) S
+(//cout <<"after "<<\(*This\)._zCompleteFFTsInBarCount << " " ) c n
+(     ) p
+(//) c 8 T (  <<\(*This\)._barSzZ <<endl;) N
+(   }) p n
+() N
+(   ) S
+(return) K
+( 0;) p n
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::gatherZ\(complex *** in, ) p
+(int) k
+( dim\) {) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) S
+(// cout << "INSIDE the _gatherZ... "<<endl;) c n
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) p n
+(  actorPacket zap;) N
+(  ) S
+(if) K
+(\(myPx >= _pX ||myPy>=_pY || myPz >=_pZ\) {) p n
+(    cout<<") S
+(ERROR::void FFT3D<FFT_T, COMM_T>:gatherZ\(complex *** in, int dim\)) str
+(") p n
+() S 8 T (<< ") S
+(\() str
+("<< myPx << ") p
+( , ) str
+("<< myPy << ") p
+( , ) str
+(" << myPz << ") p
+( \)) str
+("<< endl;) p n
+(  }) N
+() N
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<_localNx; i++\) {) p n
+(    ) S
+(int) k
+( trgPz = i /_barSzZ;) p n
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( j=0; j<_localNy; j++\) {) p n
+(      ) S
+(int) k
+( loadCountZ = 0;) p n
+(      ) S
+(int) k
+( zPointsPerPacket = _zPointsPerPacket;) p n
+(      ) S
+(// cout << "INSIDE the _gatherZ... "<<endl;) c n
+(      ) p
+(for) K
+(\() p
+(int) k
+( k =0; k<_localNz; k++\) {) p n
+(        zap.mData[loadCountZ].re = in[i][j][k].re;) N
+(        zap.mData[loadCountZ].im = in[i][j][k].im;) N
+(        loadCountZ++;) N
+() N
+(        ) S
+(if) K
+(\(k==_localNz-1 && loadCountZ < _zPointsPerPacket\){) p n
+(          zPointsPerPacket = _localNz%\(_zPointsPerPacket\);) N
+(        }) N
+() N
+(        ) S
+(if) K
+(\(loadCountZ == zPointsPerPacket\) {) p n
+() S 8 T (  ) S
+(//cout << "INSIDE the _gatherZ... "<<endl;) c n
+(          zap.mHdr.This = ) p
+(this) K
+(;) p n
+(          zap.mHdr.aIndex = \(i%_barSzZ\)*_localNy+j;) N
+(          zap.mHdr.bIndex = k+1 -loadCountZ + myPz*_localNz;) N
+(          ) S
+(if) K
+(\(trgPz>=_pZ|| trgPz<0\)) p n
+(            cout <<") S
+( gatherZ::myCoords = [) str
+(") p n
+() S 8 T () S 16 T ( <<myPx <<") S
+(][) str
+("<< myPy<<") p
+(][) str
+("<<myPz<<") p
+(] targetPz = ) str
+(" ) p n
+() S 8 T () S 16 T ( <<trgPz <<endl;) N
+() S 8 T (  ) N
+() N
+(          BGLTorusSimpleActivePacketSend\(_ZPacketActorFx,) N
+(                                         myPx,) N
+(                                         myPy,) N
+(                                         trgPz,) N
+(                                         ) S
+(sizeof) K
+(\( zap \),) p n
+(                                         \() S
+(void) k
+( *\) &zap \);) p n
+() N
+(          loadCountZ = 0;) N
+(        }) N
+(fft3D.cpp) (Page 3/8) (Mar 02, 03 17:59) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      }) p n
+(      ) N
+(    }) N
+(  }) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(int) k
+(  FFT3D<FFT_T, COMM_T>::_XPacketActorFx\() p
+(void) k
+(* pkt\) {) p n
+(  actorPacket *ap = \(actorPacket*\) pkt;) N
+(  FFT3D<FFT_T, COMM_T> *This = \(*ap\).mHdr.This;) N
+(  ) S
+(int) k
+( a = \(*ap\).mHdr.aIndex;) p n
+(  ) S
+(int) k
+( b = \(*ap\).mHdr.bIndex;) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  ) S
+(//assert\(!This\);) c n
+(  ) p n
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) N
+( ImportFence\(\);) N
+(  \(*This\)._xCompletePacket[a] ++;) S
+(// \(*This\)._xPointsPerPacket;) c n
+(  ) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0;  i<\(*This\)._xPointsPerPacket; i++\) {) p n
+(    ) S
+(if) K
+(\(b + i == \(*This\)._localNx\) ) p
+(break) K
+(;) p n
+(    ) N
+(    \(*This\)._globalIn[a][b+i] = \(*ap\).mData[i];) N
+(  }) N
+(  ) N
+(  ) S
+(int) k
+( cmpl = \(\(*This\)._xCompletePacket[a]\);) p n
+(   ImportFence\(\);) N
+(  ) S
+(if) K
+(\(cmpl ==\(*This\)._xPacketsPerFFT \){ ) p n
+(    ) S 8 T () S 16 T () S 24 T () S 32 T () N
+(     \(\(*This\)._fftx\)->fftInternal\(\(*This\)._globalIn[a], ) N
+() S 8 T () S 16 T () S 24 T () S 32 T (  \(*This\)._globalOut[a]\);) N
+(     \(*This\)._xCompleteFFTsInBarCount+=1;) N
+(    ) N
+(   }) N
+(    ) N
+(    ) S
+(return) K
+( 0;) p n
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::gatherX\(complex ** in, ) p
+(int) k
+( dim\) { ) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) N
+(  actorPacket xap;) N
+(  ) N
+(  ) S
+(int) k
+( loadCountX[PZ_MAX][PX_MAX];) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( a=0; a<\(_barSzZ*_localNy\); a++\) {) p n
+(    ) S
+(int) k
+( trgPx = \(a%_localNy\)/_barSzX;) p n
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( k=0; k<_pZ; k++\)) p n
+(      loadCountX[k][trgPx] = 0;) N
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( b=0; b<_localNz*_pZ; b++\){) p n
+(      ) S
+(int) k
+( ap    = \(\(a%_localNy\)%_barSzX\)*_localNz + \(b%_localNz\);) p n
+(      ) S
+(int) k
+( bp    = \(a/_localNy\) + myPz*_barSzZ + myPx*_localNx;) p n
+(      ) S
+(int) k
+( trgPz =  b /_localNz;) p n
+(    ) N
+(      xap.mData[loadCountX[trgPz][trgPx]].re = _globalOut[a][b].re;) N
+(      xap.mData[loadCountX[trgPz][trgPx]].im = _globalOut[a][b].im;) N
+(      loadCountX[trgPz][trgPx]++;) N
+(      ) N
+(      ) S
+(if) K
+(\(loadCountX[trgPz][trgPx] == _xPointsPerPacket\) {) p n
+() S 8 T (xap.mHdr.This = ) S
+(this) K
+(;) p n
+() S 8 T (xap.mHdr.aIndex = \(\(a%_localNy\)%_barSzX\)*_localNz + \(b%_localNz\);) N
+() S 8 T (xap.mHdr.bIndex = \(a/_localNy\) + myPz*_barSzZ + myPx*_localNx;) N
+() S 8 T (xap.mHdr.cIndex = 0;) N
+() S 8 T (BGLTorusSimpleActivePacketSend\(_XPacketActorFx,) N
+(fft3D.cpp) (Page 4/8) (Mar 02, 03 17:59) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3D.cpp) (2/4) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (5-6) 3
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+() p 8 T () S 16 T () S 24 T () S 32 T (       trgPx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myPy,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       trgPz,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(sizeof) K
+(\( xap \),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       \() S
+(void) k
+( *\) &xap \);) p n
+() S 8 T (loadCountX[trgPz][trgPx] = 0; ) N
+(      }) N
+(    }) N
+(  }) N
+(}) N
+() N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(int) k
+(  FFT3D<FFT_T, COMM_T>::_YPacketActorFx\() p
+(void) k
+(* pkt\) {) p n
+(  actorPacket *ap = \(actorPacket*\) pkt;) N
+(  FFT3D<FFT_T, COMM_T> *This = \(*ap\).mHdr.This;) N
+(  ) S
+(int) k
+( a = \(*ap\).mHdr.aIndex;) p n
+(  ) S
+(int) k
+( b = \(*ap\).mHdr.bIndex;) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  BGLPartitionGetCoords\(&myPx, &myPy, &myPz\);) N
+(  \(*This\)._yCompletePacket[a] ++; ) S
+(// \(*This\)._xPointsPerPacket;) c n
+(  ) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( i=0;  i<\(*This\)._yPointsPerPacket; i++\) {) p n
+(    ) S
+(if) K
+(\(b + i == \(*This\)._localNy\) ) p
+(break) K
+(;) p n
+(    \(*This\)._globalIn[a][b+i] = \(*ap\).mData[i];) N
+(  }) N
+(  ) N
+(  ) S
+(int) k
+( cmpl = \(\(*This\)._yCompletePacket[a]\);) p n
+(  ImportFence\(\);) N
+(  ) S
+(if) K
+(\(cmpl ==\(*This\)._yPacketsPerFFT \){ ) p n
+(    ) S
+(if) K
+(\(myPz==6\)) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( l=0; l<\(*This\)._localNy*\(*This\)._pY; l++\) ) p n
+() S 8 T (cout<<") S
+(Input ) str
+("<< \(*This\)._globalIn[a][l]<<endl;) p n
+(    ) N
+(    \(\(*This\)._ffty\)->fftInternal\(\(*This\)._globalIn[a], ) N
+() S 8 T () S 16 T () S 24 T () S 32 T ( \(*This\)._globalOut[a]\);) N
+(     \(*This\)._yCompleteFFTsInBarCount++;) N
+(    ) S
+(if) K
+(\(myPz==6\)) p n
+(      ) S
+(for) K
+(\() p
+(int) k
+( i = 0; i<\(*This\)._localNy*\(*This\)._pY; i++\) {) p n
+() S 8 T (cout << ") S
+( OutY ) str
+(" << \(*This\)._globalOut[a][i]<<endl; ) p n
+(      }  ) N
+(  }) N
+(  ) N
+(  ) S
+(return) K
+( 0;) p n
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::gatherY\(complex ** in, ) p
+(int) k
+( dim\) { ) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  BGLPartitionGetCoords\(&myPx, &myPy, &myPz\);) N
+(  actorPacket yap;) N
+(  ) S
+(int) k
+( loadCountY[PY_MAX][PX_MAX];) p n
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( a=0; a<\(_barSzX*_localNz\); a++\) {) p n
+(    ) S
+(int) k
+( trgPy = \(a%_localNz\)/_barSzY;) p n
+(    ) S
+(for) K
+(\() p
+(int) k
+( i=0; i<_pX; i++\)) p n
+(      loadCountY[trgPy][i] = 0;) N
+(    ) N
+(    ) S
+(int) k
+( bp = \(a/_localNz\) +myPx*_barSzX + myPy*_localNy;) p n
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( b=0; b<_localNx*_pX; b++\){) p n
+(      ) S
+(int) k
+( ap = \(\(a%_localNz\)%_barSzY\)*_localNx) p n
+() S 8 T (+ \(b%_localNx\);) N
+(      ) N
+(      ) S
+(int) k
+( trgPx = b/_localNx;) p n
+(      ) N
+(      yap.mData[loadCountY[trgPy][trgPx]].re = _globalOut[a][b].re;) N
+(fft3D.cpp) (Page 5/8) (Mar 02, 03 17:59) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      yap.mData[loadCountY[trgPy][trgPx]].im = _globalOut[a][b].im;) p n
+(      loadCountY[trgPy][trgPx]++;) N
+(      ) N
+(      ) S
+(if) K
+(\(loadCountY[trgPy][trgPx] == _yPointsPerPacket\) {) p n
+() S 8 T (yap.mHdr.This = ) S
+(this) K
+(;) p n
+() S 8 T (yap.mHdr.aIndex = \(\(a%_localNz\)%_barSzY\) * _localNx + \(b%_localNx\);) N
+() S 8 T (yap.mHdr.bIndex = \(a/_localNz\) + myPx*_barSzX + myPy*_localNy;) N
+() S 8 T () N
+() S 8 T (BGLTorusSimpleActivePacketSend\(_YPacketActorFx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       trgPx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       trgPy,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myPz,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(sizeof) K
+(\( yap \),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       \() S
+(void) k
+( *\) &yap \);) p n
+() S 8 T (loadCountY[trgPy][trgPx] = 0; ) N
+(      }   ) N
+(    }) N
+(  }) N
+(}) N
+() N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(int) k
+(  FFT3D<FFT_T, COMM_T>::_BPacketActorFx\() p
+(void) k
+(* pkt\) {) p n
+(  actorPacket *ap = \(actorPacket*\) pkt;) N
+(  FFT3D<FFT_T, COMM_T> *This = \(*ap\).mHdr.This;) N
+(  ) S
+(int) k
+( i = \(*ap\).mHdr.aIndex;) p n
+(  ) S
+(int) k
+( j = \(*ap\).mHdr.bIndex;) p n
+(  ) S
+(int) k
+( k = \(*ap\).mHdr.cIndex;) p n
+(  ) S
+(//cout << "INSIDE the _BPacketA... "<<endl;) c n
+(  ) p
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  ) S
+(//assert\(!This\);) c n
+(  ) p n
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) N
+(  \(*This\)._bCompletePacket[j] ++;) S
+(// \(*This\)._xPointsPerPacket;) c n
+(  ) p n
+(  ) S
+(for) K
+(\() p
+(int) k
+( jp=0;  jp<\(*This\)._bPointsPerPacket; jp++\) {) p n
+(       \(*This\)._localOut[i][j+jp][k] = \(*ap\).mData[jp];) N
+(       ) S
+(//  cout << "_OutB[" << i <<" ][" ) c n
+(       ) p
+(//       << j +jp    << "][" << k << "] =" ) c n
+(       ) p
+(//       <<\(*This\)._localOut[i][jp][k]<<endl;) c n
+(       ) p
+(//  cout << \(*This\)._localOut[i+ip][j][k] <<endl;) c n
+() p 8 T ( ) N
+(  }) N
+() N
+(  ) S
+(int) k
+( cmpl = \(\(*This\)._bCompletePacket\);) p n
+(  ImportFence\(\);) N
+(  ) S
+(if) K
+(\(cmpl ==\(*This\)._bPacketsPerFFT \){ ) p n
+(    \(*This\)._bCompleteFFTsInBarCount++;) N
+(  }) N
+(   ) S
+(return) K
+( 0;) p n
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::gatherB\(complex ***out, ) p
+(int) k
+( dim\) { ) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+(  ) N
+(  BGLPartitionGetCoords\(&myPx, &myPy, &myPz\);) N
+(  actorPacket bap;) N
+(  ) N
+(  ) S
+(for) K
+(\() p
+(int) k
+( a=0; a<\(_localNz/_pY\)*_localNx; a++\){) p n
+(    ) S
+(int) k
+( loadCount = 0;) p n
+(    ) S
+(int) k
+( i = a%_localNx;) p n
+(    ) S
+(int) k
+( k = a/_localNx + myPy * _barSzY;) p n
+(    ) N
+(    ) S
+(for) K
+(\() p
+(int) k
+( b=0; b<_localNy*_pY; b++\) {) p n
+(      ) S
+(int) k
+( j = b%_localNy;) p n
+(      ) S
+(int) k
+( trgPy = b/_localNy;) p n
+(      ) N
+(fft3D.cpp) (Page 6/8) (Mar 02, 03 17:59) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3D.cpp) (3/4) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+%%Page: (7-8) 4
+%%BeginPageSetup
+/pagesave save def
+sh 0 translate
+90 rotate
+%%EndPageSetup
+iso1dict begin
+gsave
+llx lly 12 add translate
+/v 0 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+(      bap.mData[loadCount].re = _globalOut[a][b].re;) p n
+(      bap.mData[loadCount].im = _globalOut[a][b].im;) N
+(      loadCount++;) N
+(      ) N
+(      ) S
+(if) K
+(\(loadCount == _bPointsPerPacket\) {) p n
+() S 8 T (bap.mHdr.This = ) S
+(this) K
+(;) p n
+() S 8 T (bap.mHdr.aIndex = a%_localNx;) N
+() S 8 T (bap.mHdr.bIndex = b%_localNy -loadCount+1;) N
+() S 8 T (bap.mHdr.cIndex = a/_localNx + myPy * _barSzY;) N
+(// ) c 8 T (cout << "GatherB::a = " << i << " b = " << j-loadCount+1 ) N
+(// ) S 8 T (     << " c = "         << k << endl; ) N
+() p n
+() S 8 T (BGLTorusSimpleActivePacketSend\(_BPacketActorFx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myPx,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       trgPy,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       myPz,) N
+() S 8 T () S 16 T () S 24 T () S 32 T (       ) S
+(sizeof) K
+(\( bap \),) p n
+() S 8 T () S 16 T () S 24 T () S 32 T (       \() S
+(void) k
+( *\) &bap \);) p n
+() S 8 T (loadCount = 0; ) N
+(      }   ) N
+(    }) N
+(  }) N
+(}) N
+() N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::_activeMsgBarrier\() p
+(int) k
+(  completeFFTsInBarCount,) p n
+() S 8 T () S 16 T () S 24 T () S 32 T () S 40 T (     ) S
+(int) k
+( barSz\)  {) p n
+(  ) S
+(int) k
+( barMon = -1;) p n
+(  ) S
+(//cout << " inside  "<<completeFFTsInBarCount << " " << barSz <<endl;) c n
+(  ) p n
+(  ) S
+(while) K
+(\(completeFFTsInBarCount != barSz \) {) p n
+(    ) S
+(// cout << " FFT3D<FFT_T, COMM_T>::_activeMsgBarrier " <<endl;) c n
+(    ) p
+(//cout << completeFFTsInBarCount << " " << barSz <<endl;) c n
+(    ) p
+(if) K
+(\( barMon != completeFFTsInBarCount\) {) p n
+( ) N
+(      barMon = completeFFTsInBarCount;) N
+(    }) N
+(    ) N
+(  }  ) N
+(  ) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::fft\(complex*** in, complex*** out\)  {) p n
+(  ) S
+(int) k
+( myPx, myPy, myPz;) p n
+() N
+(  BGLPartitionGetCoords\( &myPx, &myPy, &myPz\);) N
+() N
+(  gatherZ\(in, 0\);) N
+(  cout << ") S
+(before Z  barrier ) str
+("<<endl;) p n
+(  MPI_Barrier\(MPI_COMM_WORLD\);) N
+(cout << ") S
+( z count ) str
+("<<_zCompleteFFTsInBarCount << ") p
+( ) str
+(" << _localNy) p n
+(     <<endl;) N
+(  _activeMsgBarrier\( _zCompleteFFTsInBarCount, _localNy\);) N
+() N
+(   _zCompleteFFTsInBarCount=0;) N
+(  gatherX\(_globalIn, 0\);) N
+(  cout << ") S
+(before X  barrier ) str
+("<<endl;) p n
+(  ) S
+(//  cout << "before Z barrier "<<endl;) c n
+( cout << ") p
+( x count ) str
+("<<_xCompleteFFTsInBarCount << ") p
+( ) str
+(" << _localNz) p n
+(     <<endl;) N
+(  _activeMsgBarrier\( _xCompleteFFTsInBarCount, _localNz\);) N
+(  _xCompleteFFTsInBarCount=0;) N
+() N
+() N
+(  gatherY\(_globalIn, 0\);) N
+( cout << ") S
+(before Y  barrier ) str
+("<<endl;) p n
+() N
+(fft3D.cpp) (Page 7/8) (Mar 02, 03 17:59) title
+border
+/v 1 store
+/x0 x v get 3.147420 add sx cw mul add store
+/y0 y v get bfs th add sub store
+x0 y0 moveto
+( cout << ") p
+( y count ) str
+("<<_yCompleteFFTsInBarCount << ") p
+( ) str
+(" << _localNx <<endl;) p n
+(  _activeMsgBarrier\( _yCompleteFFTsInBarCount, _localNx\);) N
+( _yCompleteFFTsInBarCount=0;) N
+() N
+( ) S
+(//MPI_Barrier\(MPI_COMM_WORLD\); exit\(0\);) c n
+( cout << ") p
+(before B  barrier ) str
+("<<endl;) p n
+(  gatherB\(out, 0\);) N
+(cout << ") S
+( y count ) str
+("<<_yCompleteFFTsInBarCount << ") p
+( ) str
+(" << _localNy <<endl;) p n
+(  _activeMsgBarrier\( _bCompleteFFTsInBarCount, _localNy\);) N
+( _bCompleteFFTsInBarCount=0;) N
+() N
+(  MPI_Barrier\(MPI_COMM_WORLD\);) N
+(  cout << ") S
+(barrier finished ..) str
+("<<endl;) p n
+(  MPI_Finalize\(\);exit\(0\);) N
+(}) N
+() N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(FFT3D<FFT_T, COMM_T>::~FFT3D\(\) {) N
+() N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getLocalNx\() p
+(int) k
+( &localNx\) {) p n
+(  localNx = _localNx;) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getLocalNy\() p
+(int) k
+( &localNy\) {) p n
+(  localNy = _localNy;) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getLocalNz\() p
+(int) k
+( &localNz\) {) p n
+(  localNz = _localNz;) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getPx\() p
+(int) k
+( &px\) {) p n
+(  px = _pX;) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getPy\() p
+(int) k
+( &py\) {) p n
+(  py = _pY;) N
+(}) N
+() N
+(template) K
+(<) p
+(class) K
+( FFT_T, ) p
+(class) K
+( COMM_T>) p n
+(void) k
+( FFT3D<FFT_T, COMM_T>::getPz\() p
+(int) k
+( &pz\) {) p n
+(  pz = _pZ;) N
+(}) N
+() N
+() N
+(fft3D.cpp) (Page 8/8) (Mar 02, 03 17:59) title
+border
+% End of virtual page
+grestore
+(Printed by Maria Eleftheriou) rhead
+(fft3D.cpp) (4/4) (Sunday March 02, 2003) footer
+end % of iso1dict
+pagesave restore
+showpage
+
+%%Trailer
+end
+%%EOF

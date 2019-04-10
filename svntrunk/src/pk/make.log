@@ -1,0 +1,239 @@
+Making all in atomic_op
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/atomic_op'
+Making all in bgl
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/bgl'
+Making all in barrier
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/barrier'
+Making all in blimpi
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/blimpi'
+make[1]: *** No rule to make target `all'.
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/blimpi'
+Making all in collective
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/collective'
+Making all in debug
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/debug'
+Making all in exception
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/exception'
+Making all in fxlogger
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/fxlogger'
+Making all in globject
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/globject'
+Making all in heap
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/heap'
+Making all in ltopology
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ltopology'
+Making all in math
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/math'
+Making all in multicast
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/multicast'
+Making all in platform
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/platform'
+Making all in pthread
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/pthread'
+Making all in ptopology
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/ptopology'
+Making all in queues
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/queues'
+Making all in reactor
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/reactor'
+Making all in rnew
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rnew'
+Making all in rpc
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/rpc'
+Making all in statistic
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/statistic'
+Making all in trace
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/trace'
+Making all in util_comm
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_comm'
+Making all in util_cpp
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp'
+Making all in include
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp/include'
+make[2]: Nothing to be done for `all'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp/include'
+make[2]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp'
+make[2]: Nothing to be done for `all-am'.
+make[2]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp'
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk/util_cpp'
+make[1]: Entering directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk'
+make[1]: Nothing to be done for `all-am'.
+make[1]: Leaving directory `/bgwhome1/tjcw/sandboxes/svndev/src/pk'
+make: *** [all-recursive] Error 1
+make: Target `all' not remade because of errors.

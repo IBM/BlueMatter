@@ -1,0 +1,14 @@
+#
+# ODE makefile
+#
+#
+
+INCLUDES = stringify_math_hpp.pl
+
+EXPINCDIR = /usr/include/BlueMatter/probspectrans/
+
+
+.include <$(RULES_MK)>
+
+
+

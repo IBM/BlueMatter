@@ -1,0 +1,13 @@
+#!/bin/ksh -x
+# Use 'xmlprobspec' and the specification of CHARMM22 force field to produce
+# XML representation of the molecular system
+#
+if [[ -z "${BLUEMATTERROOT}" ]]
+then
+  BLUEMATTERROOT="/usr/opt/bluegene"
+fi
+xmlprobspec \
+  ${BLUEMATTERROOT}/forcefield/charmm/charmm22/top_all22_prot.inp \
+  ${BLUEMATTERROOT}/forcefield/charmm/charmm22/par_all22_prot.inp \
+  $1.psf \
+  XML >"$(basename $1).xml"

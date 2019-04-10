@@ -1,0 +1,5 @@
+INCLUDES = PrivateFFTTemplate.hpp
+
+EXPINCDIR = /usr/include/
+
+.include <$(RULES_MK)>

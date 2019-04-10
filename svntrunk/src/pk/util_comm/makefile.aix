@@ -1,0 +1,14 @@
+# Makefile for GFE base directory
+#
+
+CMSCMPDIRVALUE=foxfm/pk/
+
+include $(BASE)/makedef.aix
+
+all: hdrs objs
+
+hdrs:
+	+cd include; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@
+
+objs:
+	+cd src; $(MAKE) $(MAKEFLAGS) -f $(MAKEF) $@

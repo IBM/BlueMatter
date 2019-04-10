@@ -1,0 +1,20 @@
+# Data taken from Maria Eleftheriou's posting of April 6, 2005
+# These data used the mpi implementation (using mpi all2allv)
+# column 1: Px
+# column 2: Py
+# column 3: Pz
+# column 4: FFT execution time (seconds)
+# 64^3 FFT, Index = 0
+8 	8 	16 	5.4e-4
+16 	8 	16 	4.8e-4
+8 	32 	16 	5.23e-4
+
+
+# 128^3 FFT, Index = 1
+#8 	32 	16 	1.701e-3
+8 	8 	8 	3.106e-3
+8 	8 	16 	2.048e-3
+16 	8 	16 	1.5e-3
+16 	16 	16 	1.43e-3
+16 	16 	32 	1.35e-3
+16 	32 	32 	1.03e-3

@@ -1,0 +1,17 @@
+OBJECTS = \
+    SinCosTest$(OBJ_SUFF) \
+    VectorSinCos$(OBJ_SUFF) \
+
+
+
+PROGRAMS = \
+     SinCosTest$(PROG_SUFF) \
+
+
+CFLAGS += -qdebug=plst3:cycles:newsched1:newsched2:plstmod:dbgmod:inldiff
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./bgfe/pk/math/test/
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

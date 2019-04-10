@@ -1,0 +1,110 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void NSQEwaldRealSpace (
+        MDVM &aMDVM,
+        double ChargeAxB
+        )
+{
+  // NOTE: This method assumes that distance based cutoffs are handled outside.
+
+  // double q1 = A.Charge;
+  // double q2 = B.Charge;
+
+  // double ChargeAxB = q1 * q2;
+  // double ChargeAxB = A.ChargeAxB;
+  double alpha = aMDVM.GetEwaldAlpha();
+
+  double dVecABMag2 = aMDVM.GetDistanceSquared( MDVM::SiteA, MDVM::SiteB ) ;
+//  double dVecABMagR = 1.0 / sqrt(dVecABMag2);
+  double dVecABMagR = aMDVM.GetReciprocalDistance( MDVM::SiteA, MDVM::SiteB ) ;
+  double dVecABMag = dVecABMag2 * dVecABMagR;
+
+//  double erfc = Math::erfc( alpha * dVecABMag );
+//  double derfc = Math::derfc( alpha * dVecABMag );
+  double erfc;
+  double derfc;
+  Math::erfccd( alpha * dVecABMag, erfc, derfc );
+  double qaqb_r = ChargeAxB * dVecABMagR;
+
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  UDF_Binding::SwitchStd5_Params sp;
+///////////////  UDF_Binding::SwitchStd5_OutputParams op;
+///////////////  sp.r = dVecABMag;
+/////////////// UDF_Binding::Function_Param<UDF_Binding::SwitchStd5_Params, UDF_Binding::SwitchStd5_OutputParams> pin;
+///////////////  pin.A = &sp;
+///////////////  pin.B = &op;
+/////////////////  UDF_Binding::UDF_Execute(UDF_Binding::SwitchStd5_Code, aMDVM, (void *)(&pin));
+///////////////  UDF_Binding::UDF_SwitchStd5_Execute(aMDVM, sp, op);
+///////////////  double S = op.S ;
+///////////////  double dSdR = op.dSdR ;
+///////////////#else
+///////////////  double S ;
+///////////////  double pdSdR ;
+///////////////  SwitchFunctionRadii sfr;
+///////////////  aMDVM.GetSwitchFunctionRadii(sfr);
+///////////////  SwitchFunction sf(sfr) ;
+////  SwitchFunction sf(RTG.mSwitchFunctionRadii) ;
+///////////////#if defined(PERFORMANCE_EXPLOIT_FULLY_ON)
+///////////////  sf.Evaluate<aMDVM.kForceFullyOn>(dVecABMag,S,pdSdR) ;
+///////////////#else
+///////////////  sf.Evaluate(dVecABMag,S,pdSdR) ;
+///////////////#endif
+///////////////#endif
+
+  double energy = qaqb_r * erfc;
+  aMDVM.ReportEnergy( energy );
+
+  double dEdR   = qaqb_r * ( erfc*dVecABMagR - derfc * alpha);
+
+  aMDVM.ReportdEdr ( -dEdR ) ;
+///////////////#if !defined(PERFORMANCE_SWITCH)
+///////////////  XYZ fab = ( S * dEdR + dSdR * energy ) * unitVecAB;
+///////////////#else
+///////////////  XYZ fab = ( S * dEdR - pdSdR * energy ) * unitVecAB;
+///////////////#endif
+
+// See if we can steer clear of vector-ness
+  if ( 0 == aMDVM.kSuppressVectorReporting )
+  {
+    XYZ dVecAB = aMDVM.GetVector( MDVM::SiteA, MDVM::SiteB ) ;
+    XYZ unitVecAB = dVecAB * dVecABMagR;
+   XYZ fab = unitVecAB * dEdR;
+    aMDVM.ReportForce( MDVM::SiteA ,   fab ) ;
+    aMDVM.ReportForce( MDVM::SiteB , - fab ) ;
+    // the (partial) virial here is 3Q( d/d alpha (energy) * d alpha/dQ ), d alpha/dQ = -alpha/3Q
+    XYZ virial;
+    virial.mX = virial.mY = virial.mZ = ChargeAxB * derfc * alpha * Math::OneThird;
+
+    aMDVM.ReportVirial( virial );
+    aMDVM.ReportVVirial( PairwiseProduct(fab,dVecAB) ) ;
+   }
+   else
+   {
+       // Report the Ewald virial as a scalar. Code elsewhere will 
+	// partition it between dimensions if we are doing vector virials
+	aMDVM.ReportAdditionalScalarVirial(
+            ChargeAxB * derfc * alpha 
+	) ;
+   }
+
+}
+
+
+

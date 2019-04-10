@@ -1,0 +1,93 @@
+# the object files (as targets)
+
+
+CFLAGS += -D NO_PK_PLATFORM
+
+ILIST   =  \
+  bgutils.py \
+  optionInfo.py \
+  installbase.py \
+  BuildUtils.py \
+  pwd.csh \
+  testpermutedtriple$(PROG_SUFF) \
+  MakeFFTTable$(PROG_SUFF) \
+  fccPositions$(PROG_SUFF) \
+  testrandom$(PROG_SUFF) \
+  testuniform$(PROG_SUFF) \
+#	orbdrive$(PROG_SUFF) \
+
+
+testpermutedtriple$(PROG_SUFF)_IDIR = \
+  $(BG_BIN)/utils/
+
+OBJECTS = \
+  MakeFFTTable$(OBJ_SUFF) \
+  fccPositions$(OBJ_SUFF) \
+  fccgen$(OBJ_SUFF) \
+  testpermutedtriple${OBJ_SUFF} \
+  testrandom$(OBJ_SUFF) \
+  testuniform$(OBJ_SUFF) \
+#	orbnode$(OBJ_SUFF) \
+#	orbdrive$(OBJ_SUFF) \
+
+PROGRAMS = \
+  MakeFFTTable$(PROG_SUFF) \
+  fccPositions$(PROG_SUFF) \
+  testpermutedtriple$(PROG_SUFF) \
+  testrandom$(PROG_SUFF) \
+  testuniform$(PROG_SUFF) \
+#	orbdrive$(PROG_SUFF) \
+
+#orbdrive$(PROG_SUFF)_OFILES = \
+#	orbdrive$(OBJ_SUFF) \
+#	orbnode$(OBJ_SUFF) \
+
+MakeFFTTable$(PROG_SUFF)_OFILES   = \
+  MakeFFTTable$(OBJ_SUFF) \
+
+
+fccPositions$(PROG_SUFF)_OFILES = \
+  fccPositions$(OBJ_SUFF) \
+  fccgen$(OBJ_SUFF) \
+
+testpermutedtriple$(PROG_SUFF)_OFILES = \
+  testpermutedtriple$(OBJ_SUFF) \
+
+testrandom$(PROG_SUFF)_OFILES = \
+  testrandom$(OBJ_SUFF) \
+
+testuniform$(PROG_SUFF)_OFILES = \
+  testuniform$(OBJ_SUFF) \
+
+bgutils.py_IDIR = \
+  $(BG_LIB)/python/
+
+optionInfo.py_IDIR = \
+  $(BG_BIN)/utils/
+
+BuildUtils.py_IDIR = \
+  $(BG_LIB)/python/
+
+installbase.py_IDIR = \
+  $(BG_BIN)/utils/
+
+pwd.csh_IDIR = \
+  $(BG_BIN)/utils/
+
+fccPositions$(PROG_SUFF)_IDIR = \
+  $(BG_BIN)/utils/
+
+MakeFFTTable$(PROG_SUFF)_IDIR = \
+  $(BG_BIN)/utils/
+
+#orbdrive$(PROG_SUFF)_IDIR = \
+#	$(BG_BIN)/utils/
+
+testrandom$(PROG_SUFF)_IDIR = \
+  $(BG_BIN)/utils/
+
+testuniform$(PROG_SUFF)_IDIR = \
+  $(BG_BIN)/utils/
+
+CMF_PARENT = bluegene.bluematter.rte
+.include <$(RULES_MK)>

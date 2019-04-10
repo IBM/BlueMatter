@@ -1,0 +1,28 @@
+# Here are the results for  the 3D FFT using Chris' 2 1D-FFTs and double hummer
+# CCC_FLAGS = -O3 -qarch=440d  -qlist -qsource 
+# column 1: FFT size (N of NxNxN)
+# column 2: px
+# column 3: py
+# column 4: pz
+# column 5: time/FFT (averaged over 10?)
+
+64 1 1 1 5.204757e-01
+64 1 1 2 2.348899e-01  
+64 1 2 2 9.397220e-02  
+64 2 2 2 5.713290e-02  
+64 2 2 4 2.842730e-02  
+64 2 4 4 1.442640e-02  
+64 4 4 4 8.770600e-03  
+64 4 4 8 4.455400e-03  
+64 4 8 8 2.729500e-03 
+64 8 8 8 2.262700e-03 
+
+
+128 1 2 21.130832e+00  
+128 2 2 2 5.934329e-01  
+128 2 2 4 2.521421e-01  
+128 2 4 4 1.207923e-01  
+128 4 4 4 7.127160e-02   
+128 4 4 8 3.301090e-02  
+128 4 8 8 1.752220e-02  
+128 8 8 8 1.078340e-02 

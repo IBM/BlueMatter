@@ -1,0 +1,8 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  AtomicOps.hpp \
+  Makefile.ode
+AtomicOps.hpp_IDIR = $(BG_SRC)/bgfe/pk/atomic_op/include/
+Makefile.ode_IDIR = $(BG_SRC)/bgfe/pk/atomic_op/include/source_ship/
+.include <$(RULES_MK)>

@@ -1,0 +1,41 @@
+# Sample MultiRun.rtp file
+# Three parameters:  TimeStep, SwitchLowerCutoff, and CoulombMethod
+# When all runs complete, testanalyze.py will run (AnalysisCommand), creating
+# an analysis directory containing web-viewable results
+
+# To spread these runs over several machines, place RTPMachines.txt in the local
+# multirun directory, containing a list of the following:
+# MachineName  NumProcs  Speed
+
+# for example:
+# octopus3   8  1.0
+# locutus    4  2.0
+
+# To use the same RTPMachines.txt file, define an env. variable RTPMACHINESFILE
+# set to a specific RTPMachines.txt file
+
+# Note that for distributed execution to work, all the remote machines must
+# see the same file system and be able to cd to the current working directory
+
+BoundingBox                               -1E5 -1E5 -1E5 1E5 1E5 1E5
+#python var OuterTimeStepInPicoSeconds    [0.0000625, 0.000125, 0.00025]
+#python const TotalTime                   0.25
+#python master OuterTimeStepInPicoSeconds NumberOfOuterTimeSteps map(int, array(TotalTime)/OuterTimeStepInPicoSeconds + 0.1)
+#python var SwitchLowerCutoff             [3.0, 1000.0]
+SwitchDelta                               0.5
+SnapshotPeriodInOTS                       5000
+
+#python var CoulombMethod                 ['Ewald', 'ChargeBasic']
+#python master CoulombMethod EwaldAlpha   [0.22, 'NULL']
+#python master CoulombMethod EwaldKmax    [10, 'NULL']
+
+#python master CoulombMethod argument MSD list
+enkp.ewald.charmm.aix.msd
+enkp.charmm.aix.msd
+#endlist
+
+#Specify the final analysis command
+#python internal AnalysisCommand "testanalyze.py ."
+
+#Launch the run using a logperiod of 20 for MDLogger
+#python internal RunCommand "../LaunchRun MSD enkp.nonzerovel.charmm.aix.dvs 20 "

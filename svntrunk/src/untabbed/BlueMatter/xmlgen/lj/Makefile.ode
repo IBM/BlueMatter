@@ -1,0 +1,7 @@
+IDIR    = $(BG_BIN)/setup/
+
+ILIST   = \
+  lj2xml.py \
+ 
+CMF_PARENT = bluegene.bluematter.rte
+.include <$(RULES_MK)>

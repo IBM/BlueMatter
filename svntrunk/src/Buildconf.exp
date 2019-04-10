@@ -1,0 +1,27 @@
+################################################################################
+#
+# Buildconf.exp
+#
+# This file is expanded at every level in the backing chain except the
+# backing build.  Buildconf is first expanded for the backing build level,
+# then this file is expanded for all the backing levels including the current
+# sandbox.  The sandbox_base variable reflects which sandbox is currently
+# being processed.
+#
+################################################################################
+
+replace tools_base ${sandbox_base}${DIRSEP}tools${DIRSEP}${CONTEXT}
+replace object_base ${sandbox_base}${DIRSEP}obj${DIRSEP}${CONTEXT}
+replace source_base ${sandbox_base}${DIRSEP}${ODESRCNAME}
+replace export_base ${sandbox_base}${DIRSEP}export${DIRSEP}${CONTEXT}
+
+replace setenv SANDBOXBASE ${sandbox_base}
+replace setenv SOURCEBASE ${source_base}
+replace setenv PACKAGEBASE ${sandbox_base}${DIRSEP}inst.images${DIRSEP}${CONTEXT}
+replace setenv MAKESYSPATH ${source_base}${DIRSEP}rules_mk${PATHSEP}${MAKESYSPATH}
+replace setenv SOURCEDIR ${BACKED_SOURCEDIR}
+replace setenv SANDBOXDIR ${BACKED_SANDBOXDIR}
+replace setenv BACKED_SOURCEDIR ${source_base}${PATHSEP}${SOURCEDIR}
+replace setenv BACKED_SANDBOXDIR ${sandbox_base}${PATHSEP}${SANDBOXDIR}
+replace setenv CLASSPATH ${SOURCEBASE}${PATHSEP}${SANDBOXBASE}${DIRSEP}export${DIRSEP}classes${PATHSEP}${CLASSPATH}
+

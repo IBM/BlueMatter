@@ -1,0 +1,18 @@
+# estimates of wall clock time/time step (seconds) for molecular dynamics
+column 1: processor count
+column 2: px
+column 3: py
+column 4: pz
+column 5: time(position globalization)
+column 6: time(global force reduction)
+           8    2    2    2    1.368e+00    9.873e-01
+          32    2    4    4    3.717e-01    2.775e-01
+          64    4    4    4    1.869e-01    1.398e-01
+         128    8    4    4    1.038e-01    8.066e-02
+         256    8    8    4    5.529e-02    4.406e-02
+         512    8    8    8    2.867e-02    2.328e-02
+        1024    8    8   16    1.770e-02    1.531e-02
+        2048    8   16   16    1.398e-02    1.307e-02
+        4096   16   16   16    1.153e-02    1.133e-02
+        8192   16   16   32    2.435e-02    2.452e-02
+       16384   16   32   32    3.076e-02    3.112e-02

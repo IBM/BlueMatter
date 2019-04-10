@@ -1,0 +1,13 @@
+#!/bin/ksh
+#
+# Clean out the target parts of a sandbox ready for a build-from-scratch
+#
+if [[ -n "${SANDBOXBASE}" ]]
+then
+  mkdir -p "${SANDBOXBASE}/junk"
+  mv -f "${SANDBOXBASE}/export" "${SANDBOXBASE}/obj" "${SANDBOXBASE}/inst.images" "${SANDBOXBASE}/junk"
+  rm -fr "${SANDBOXBASE}/junk" &
+else 
+  echo "$0 : wash out an ODE sandbox ready for 'build build_all install_all'"
+  echo "  You must be in a 'workon' shell with SANDBOXBASE set"
+fi

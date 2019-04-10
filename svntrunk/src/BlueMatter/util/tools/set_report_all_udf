@@ -1,0 +1,8 @@
+#!/bin/ksh
+#
+# Run the translation lexer to change 'SetEnergy' to 'ReportEnergy', 'SetForce' to 'ReportForce'
+# in all the udfs
+for file in *.udf
+do
+  mv $file $file.set && set_report <$file.set >$file
+done

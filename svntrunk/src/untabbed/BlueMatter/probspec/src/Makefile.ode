@@ -1,0 +1,80 @@
+BG_AUXILIARY = 1
+
+BG_OPT_LEVEL = 0
+
+GFLAGS = -g
+
+XERCESROOT ?= /u/germain/projects/cbc/alphaworks/xml4c_debug
+
+PROGRAMS = xmlprobspec$(PROG_SUFF)
+
+INCFLAGS += -I $(XERCESROOT)/include
+
+OFILES =                                  \
+  xmlprobspec$(OBJ_SUFF)            \
+  parsexmlspec$(OBJ_SUFF)           \
+  headerhandler$(OBJ_SUFF)          \
+  molsys$(OBJ_SUFF)                 \
+  SAXFFParamHandlers$(OBJ_SUFF)     \
+  syscell$(OBJ_SUFF)                \
+  fragspec$(OBJ_SUFF)               \
+  ffhandler$(OBJ_SUFF)              \
+  terms$(OBJ_SUFF)                  \
+  list$(OBJ_SUFF)                   \
+  termspec$(OBJ_SUFF)               \
+  ffheaderhandler$(OBJ_SUFF)        \
+  ffsitehandler$(OBJ_SUFF)          \
+  bondlisthandler$(OBJ_SUFF)        \
+  anglelisthandler$(OBJ_SUFF)       \
+  torsionlisthandler$(OBJ_SUFF)     \
+  improperlisthandler$(OBJ_SUFF)    \
+  atom$(OBJ_SUFF)                   \
+  bond$(OBJ_SUFF)                   \
+  expair$(OBJ_SUFF)                 \
+  pair14$(OBJ_SUFF)                 \
+  angle$(OBJ_SUFF)                  \
+  torsion$(OBJ_SUFF)                \
+  improper$(OBJ_SUFF)               \
+  sitespeclisthandler$(OBJ_SUFF)    \
+
+# xmlprobspec$(OBJ_SUFF)          \
+# parsexmlspec$(OBJ_SUFF)         \
+# headerhandler$(OBJ_SUFF)        \
+# SAXFFParamHandlers$(OBJ_SUFF)   \
+# ffhandler$(OBJ_SUFF)            \
+# ffheaderhandler$(OBJ_SUFF)      \
+# ffsitehandler$(OBJ_SUFF)        \
+# bondlisthandler$(OBJ_SUFF)      \
+# anglelisthandler$(OBJ_SUFF)     \
+# torsionlisthandler$(OBJ_SUFF)   \
+# improperlisthandler$(OBJ_SUFF)  \
+# sitespeclisthandler$(OBJ_SUFF)  \
+# molsys$(OBJ_SUFF)               \
+
+#LDFLAGS += -L$(XERCESROOT)/lib
+#LDFLAGS += -lxerces-c1_3
+
+LIBS = $(LIB_PREF)xmlff$(LIB_SUFF) $(LIB_PREF)xml4c$(LIB_SUFF) $(LIB_PREF)icu$(LIB_SUFF)
+
+LDFLAGS += -lpthreads
+
+
+OBJECTS = $(OFILES)
+
+PROGRAMS       = \
+  xmlprobspec$(PROG_SUFF)
+
+IDIR                = $(BG_BIN)/
+
+ILIST   =       $(PROGRAMS) \
+  psf2xml \
+  psf2hpp \
+  xml2hpp \
+  hpp2msd \
+
+.if defined(RESHIP_SOURCE)
+ILIST += Makefile.ode
+Makefile.ode_IDIR = $(BG_SRC)/./BlueMatter/probspec/src/
+INSTALL_STANDARD_SUBDIRS = $(SUBDIRS) $(STANDARD_SUBDIRS) source_ship
+.endif # RESHIP_SOURCE
+.include <$(RULES_MK)>

@@ -1,0 +1,38 @@
+
+
+This README describes the two ways to generate problem descriptions from a CHARMM psf file. 
+To build the requisite files, execute the 'build' script in the same directory as this README.
+Warranty is void if the build script is not in the same directory as this README file.
+
+PSF --> HPP
+	------
+	To gerenate a probspec header file from a CHARMM psf file use the following command:
+
+		spec   <psf filename>   >   <hpp filename>
+
+	This will give the default fragmentation scheme of one fragment per residue, using the
+	CHARMM22 parameter set.
+
+
+PSF --> XML
+	------
+	To generate the xml form of the problem specification:
+
+		psf2xml	  <psf filename>    >    <xml filename>
+
+	This writes the xml form of the system described in the psf file with the CHARMM22 
+	parameter set.
+
+EXAMPLES:
+
+	---------------     generate the hpp for enkp
+	cd $BLUEMATTERROOT/probspec
+	build
+	bin/spec data/enkp.psf | more
+
+
+	---------------     generate the xml for enkp
+	cd $BLUEMATTERROOT/probspec
+	build
+	bin/psf2xml data/enkp.psf | more
+

@@ -1,0 +1,34 @@
+# Source reship list
+VPATH = ..
+ILIST = \
+  bmbuild \
+  buildwat.f \
+  cleandb2.pl \
+  crd2pdb.pl \
+  crd2xyz.pl \
+  crddim.pl \
+  hpp2msd.py \
+  pdb2dvs.pl \
+  set_debug.tcsh \
+  setenv_ode.tcsh \
+  txt2crd.pl \
+  txt2pdb.pl \
+  xbuildwat \
+  xpdb2crd \
+  Makefile.ode
+bmbuild_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+buildwat.f_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+cleandb2.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+crd2pdb.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+crd2xyz.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+crddim.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+hpp2msd.py_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+pdb2dvs.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+set_debug.tcsh_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+setenv_ode.tcsh_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+txt2crd.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+txt2pdb.pl_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+xbuildwat_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+xpdb2crd_IDIR = $(BG_SRC)/BlueMatter/util/tools/
+Makefile.ode_IDIR = $(BG_SRC)/BlueMatter/util/tools/source_ship/
+.include <$(RULES_MK)>

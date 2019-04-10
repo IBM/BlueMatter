@@ -1,0 +1,117 @@
+#!/bin/sh
+
+#Display some help text if the operator has asked for it.
+if [ $# -gt 0 ] && [ $1 = '--help' ]
+ then
+ echo "    Supported input parameteres:"
+ echo "    --driver-path        The build driver prefix.  Default is /bgl/BlueLight/floor"
+ echo "    --VirutalNodeMode    Boot the machine using Virtual Node Mode.  Default is co-processor mode"
+ echo " "
+ echo "    Example1: mmcs_script --driver-path /bgl/BlueLight/driver --VirtualNodeMode vnm"
+ echo "    Example2: mmcs_script --driver-path /bgl/userid/BlueLight-install/driver"
+ echo " "
+ exit 1
+fi
+
+#What type of system are we executing on (ppc, ppc64, or i686)
+SYSTYPE=$(uname -m)
+#echo "System type is " $SYSTYPE
+
+if [ $# -gt 0 ] && [ $1 = '--driver-path' ]
+ then
+  DRVPATH=$2
+elif [ $# -gt 2 ] && [ $3 = '--driver-path' ]
+ then
+  DRVPATH=$4
+elif [ $SYSTYPE = 'ppc64' ] || [ $SYSTYPE = 'ppc' ]
+ then
+  DRVPATH=/BlueLight/ppcfloor
+else DRVPATH=/bgl/BlueLight/floor
+fi
+
+VNM=' '
+CIORUN_VNM=' '
+if [ $# -gt 0 ] && [ $1 = '--VirtualNodeMode' ] && [ $2 = 'vnm' ]
+ then
+  VNM=virtual_node_mode
+  CIORUN_VNM='--virtualNodeMode'
+elif [ $# -gt 2 ] && [ $3 = '--VirtualNodeMode' ] && [ $4 = 'vnm' ]
+ then
+  VNM=virtual_node_mode
+  CIORUN_VNM='--virtualNodeMode'
+fi
+
+# ---------------------------------------
+# Overwrites DRVPATH definition for now
+# ---------------------------------------
+
+export LD_LIBRARY_PATH=/opt/IBM/db2/V8.1/lib
+
+
+#DRVPATH=/BlueLight/floor
+#DRVPATH=/bgl/BlueLight/driver
+
+RESET=$DRVPATH/bglsys/bin/mm_bll_reset_all
+MMCS=$DRVPATH/bglsys/bin/mmcs_hw
+MLOADER=$DRVPATH/bglsys/bin/mmcs-mloader.rts
+RTS=$DRVPATH/bglsys/bin/rts_hw.rts
+LINUX=$DRVPATH/bglsys/bin/zImage.elf
+RAMDISK=$DRVPATH/bglsys/bin/ramdisk.elf
+
+# -------------------------------------------
+# Hard coded path to bglmachines/midplane directory
+# -------------------------------------------
+
+MIDPLANE_DIR=/BlueLight/bglmachines.new
+
+MACHINE=$MIDPLANE_DIR/bglmachine_$4.xml
+BLOCK=$MIDPLANE_DIR/bglblock_$4.xml
+
+#MACHINE=$MIDPLANE_DIR/bglmachine_R01-M0.xml
+#BLOCK=$MIDPLANE_DIR/bglblock_R01-M0-NCDEF_1.xml
+#BLOCK=$MIDPLANE_DIR/bglblock_R01-M0-N4_1.xml
+#MACHINE=$MIDPLANE_DIR/bglmachine_midplane_torus.xml
+#BLOCK=$MIDPLANE_DIR/bglblock_M001_P512_4_torus.xml
+
+#  reset everything as per rochester
+#$RESET $MACHINE
+
+# --configuration=torus1  8x8x8
+MM_CONNECT2="$DRVPATH/bglsys/bin/mm_connect2 --configuration=torus1 $MACHINE $BLOCK"
+#MM_CONNECT2="/bgl/BlueLight/DRV340_2004-040817/x86/bglsys/bin/mm_connect2 --configuration=torus1"
+
+
+DRIVER=`eval ls -al $DRVPATH | awk '/DRV/ {print $11}'`
+echo "export MACHINE=$MACHINE" > /bgl/$USER/current_machine.sh
+echo "export BLOCK=$BLOCK"  >> /bgl/$USER/current_machine.sh
+echo "export NUMCPU=512"  >> /bgl/$USER/current_machine.sh
+echo "export DRIVER=$DRIVER"  >> /bgl/$USER/current_machine.sh
+echo "export BGTH_VIRTUAL=$CIORUN_VNM"  >> /bgl/$USER/current_machine.sh
+chmod +x /bgl/$USER/current_machine.sh
+
+
+(
+     echo     create_block $BLOCK pgood with_comm_world $VNM
+     echo     status
+     echo     boot $MLOADER
+     echo     ! $MM_CONNECT2 $MACHINE
+     echo {i} load $RAMDISK
+     echo {i} load $LINUX
+     echo {c} load $RTS
+     echo start
+
+) | $MMCS $MACHINE
+
+#One chooses the appropriate machine and block file via the $MACHINE and $BLOCK variables. The above is set to 
+#
+#MACHINE=$MIDPLANE_DIR/bglmachine_$4.xml
+#BLOCK=$MIDPLANE_DIR/bglblock_$4.xml
+#
+#Here are my args to the BOOT_MIDPLANE.sh: 
+#
+#./BOOT_MIDPLANE.sh --driver-path /bgl/BlueLight/ppcfloor/ 1000000 R01-M1 
+#
+#For running on a 32 way, choose BLOCK=$MIDPLANE_DIR/bglblock_R01-M0-N4_1.xml as the block file or any other 32 way that might be open.
+#
+#Refer to the web page http://bglsp2.watson.ibm.com:36489/ for node availability and  /BlueLight/bglmachines.new for available block files. Note that not all 32 ways have a block file.
+

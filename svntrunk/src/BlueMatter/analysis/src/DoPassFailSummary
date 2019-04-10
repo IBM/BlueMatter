@@ -1,0 +1,37 @@
+#!/usr/bin/ksh
+
+DirList=`ls -d Run_* | sort -t_ +1 -n`
+for dir in $DirList
+do
+  exe=`echo $dir/*.exe`
+  rts=`echo $dir/*.rts`
+  if [[ -s $exe ]]; then
+    exestr="$exe"
+  elif [[ -s $rts ]]; then
+    exestr="$rts"
+  else
+    exestr="$dir/NoEXE"
+  fi 
+  if [[ -s $dir/Run.vars ]]; then
+    varstr=`cat $dir/Run.vars`
+  else
+    varstr=""
+  fi
+  if [[ -s $dir/Run.pass ]]; then
+    passstr=`cat $dir/Run.pass`
+  else
+    passstr="x"
+  fi
+  if [[ $passstr != '0' ]]; then
+    echo "$passstr $varstr $exestr"
+    if [[ -s $dir/Run.drdg ]]; then
+      cat $dir/Run.drdg
+    fi
+  else
+    echo "$passstr $varstr $exestr"
+  fi
+    
+      
+done
+
+

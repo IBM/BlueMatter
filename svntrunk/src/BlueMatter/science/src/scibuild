@@ -1,0 +1,23 @@
+#!/usr/bin/tcsh -f
+
+set sourcefile = $1:r
+
+set FSDIR = science
+set FSDEST = utils
+echo "storing directory"
+pushd .
+cd ../include
+echo "building include dir"
+build build_all
+cd $SANDBOXBASE/obj/rios_aix_5/BlueMatter/$FSDIR/src
+echo "building $sourcefile.o"
+xlC_r -M -c -O2 -qarch=pwr3 -DARCH_HAS_FSEL -I/usr/opt/db2_08_01/include -I/gsa/yktgsa/projects/b/bluematter/bgl/include -L/usr/opt/db2_08_01/lib -ldb2 -qnotempinc -DPK_XLC -DPK_AIX -DPK_SMP -qmaxmem=-1 -qstaticinline -qalign=natural -DNDEBUG -D NO_PK_PLATFORM -bmaxdata=0x040000000 -I$SANDBOXBASE/export/rios_aix_5/usr/include $SANDBOXBASE/src/BlueMatter/$FSDIR/src/$sourcefile.cpp
+
+echo "building $sourcefile"
+xlC_r -O2 -qarch=pwr3 -DARCH_HAS_FSEL -I/usr/opt/db2_08_01/include -I/gsa/yktgsa/projects/b/bluematter/bgl/include -L/usr/opt/db2_08_01/lib -ldb2 -qnotempinc -DPK_XLC -DPK_AIX -DPK_SMP -qmaxmem=-1 -qstaticinline -qalign=natural -DNDEBUG -L/usr/lib -lrts -bmaxdata:0x040000000 -L$SANDBOXBASE/export/rios_aix_5/usr/lib -o $sourcefile.X $sourcefile.o -lanalysis -ldb2chem -ldb2cli
+
+mv -f $sourcefile.X $sourcefile
+echo "installing $sourcefile in $FSDEST"
+cp $sourcefile $SANDBOXBASE/inst.images/rios_aix_5/shipdata/usr/opt/bluegene/bin/$FSDEST
+popd
+echo "done"

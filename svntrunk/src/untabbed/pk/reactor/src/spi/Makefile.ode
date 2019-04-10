@@ -1,0 +1,19 @@
+VPATH = ..
+
+OFILES  = \
+  spi_reactor$(OBJ_SUFF) \
+
+OBJECTS = $(OFILES)
+
+LIBRARIES = $(LIB_PREF)pkspi_reactor$(LIB_SUFF)
+
+EXPLIBS = $(LIBRARIES)
+EXPLIBDIR = /usr/lib/
+
+ILIST = $(LIBRARIES) \
+
+IDIR = $(BG_LIB)/
+
+CFLAGS += $(SMPCFLAGS)
+
+.include <$(RULES_MK)>

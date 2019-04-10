@@ -1,0 +1,17 @@
+# #! /bin/tcsh
+
+#foreach i ( 0 1 2 3 4 )	
+ fft.exe -procs 1  -fftsize 120 120 120 -procmesh 1 1 1 >>FFT.120x120x120.1x1x1
+ fft.exe -procs 8  -fftsize 120 120 120 -procmesh 2 2 2 >>FFT.120x120x120.2x2x2
+ fft.exe -procs 27 -fftsize 120 120 120 -procmesh 3 3 3 >>FFT.120x120x120.3x3x3
+ fft.exe -procs 64 -fftsize 120 120 120 -procmesh 4 4 4 >>FFT.120x120x120.4x4x4
+ fft.exe -procs 125 -fftsize 120 120 120 -procmesh 5 5 5 >>FFT.120x120x120.5x5x5
+#end
+
+#foreach i ( 0 1 2 3 4 )
+# fft.exe -procs 1  -fftsize 240 240 240 -procmesh 1 1 1 >>FFT.240x240x240.1x1x1
+# fft.exe -procs 8  -fftsize 240 240 240 -procmesh 2 2 2 >>FFT.240x240x240.2x2x2
+# fft.exe -procs 27 -fftsize 240 240 240 -procmesh 3 3 3 >>FFT.240x240x240.3x3x3
+# fft.exe -procs 64 -fftsize 240 240 240 -procmesh 4 4 4 >>FFT.240x240x240.4x4x4
+# fft.exe -procs 125 -fftsize 240 240 240 -procmesh 5 5 5 >>FFT.240x240x240.5x5x5
+#end

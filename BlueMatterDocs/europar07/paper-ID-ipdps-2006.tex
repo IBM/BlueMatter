@@ -1,0 +1,241 @@
+%
+%  $Description: Author guidelines and sample document in LaTeX 2.09$
+%
+%  $Author: mariae $
+%  $Date: 2006/01/21 01:33:03 $
+%  $Revision: 1.1 $
+%
+%  Revised by Shoukat Ali on Dec 10, 2005
+
+
+\documentclass[10pt,twocolumn]{article}
+\usepackage{ipdps}
+
+\usepackage{vmargin}%
+\setpapersize{USletter} %
+\setmargnohf{0.8125in}{1in}{6.875in}{8.875in}
+
+
+%-------------------------------------------------------------------------
+% take the % away on next line to produce the final camera-ready version
+\pagestyle{empty}
+
+%-------------------------------------------------------------------------
+
+% the twoaffiliations environment is used to make a table of two affiliations. You will use N twoaffiliations
+% commands if you have 2N affiliations. If you have an odd # of affiliations, then the last one has to be printed
+% using the oddaffiliation environment
+
+\newenvironment{twoaffiliations}{\begin{tabular}{cc}}{\end{tabular}}
+\newenvironment{oddaffiliation}{\begin{center}}{\\~\\\end{center}}
+
+
+
+
+\title{\LaTeX\ Author Guidelines for IEEE IPDPS Proceedings Manuscripts}
+
+
+\author{Shoukat Ali$^1$, Chen Kim$^2$, Howard
+Andrews$^3$, Anthony Matthew$^3$, \\Yang Hu$^4$, and Viktor Grey$^4$
+ ~ \\
+ ~ \\
+\begin{twoaffiliations}
+$^1$Purdue University            & $^2$Colorado State University \\
+Dept. of Computer Engineering  & Dept. of Electrical Engineering \\
+West Lafayette, IN  47907-1285  USA & Fort Collins,  CO 80523-1373 USA \\
+alis@ecn.purdue.edu     & chen.kim@colostate.edu \\
+%
+%
+\\~\\ % put the next two affiliations next
+$^3$Dillexie University                           &               $^4$Eldorado University \\
+Electrical Engineering  Department                &               Dept. of Civil Engineering \\
+Bragginon, TN  32107-1765 USA                     & Callaway, MD,
+10523-1234 USA\\
+\{ha, antmat\}@dillexie.edu     & \{yahu, vikg\}@eldorado.edu \\
+\end{twoaffiliations}
+%%
+}
+
+\begin{document}
+
+
+\maketitle
+\thispagestyle{empty}
+
+\begin{abstract}
+   The ABSTRACT is to be in fully-justified italicized text, at the top
+   of the left-hand column, below the author and affiliation
+   information. Use the word ``Abstract'' as the title, in 12-point
+   Times, boldface type, centered relative to the column, initially
+   capitalized. The abstract is to be in 10-point, single-spaced type.
+   The abstract may be up to 3 inches (7.62 cm) long. Leave two blank
+   lines after the Abstract, then begin the main text.
+\end{abstract}
+
+\renewcommand{\thefootnote}{}
+\footnotetext{\hspace{-2em}The original version of this document was
+written by Paolo Ienne.}
+
+
+%-------------------------------------------------------------------------
+\Section{Introduction}
+
+Please follow the steps outlined below when submitting your
+manuscript to the IEEE International Parallel and Distributed
+Processing Symposium. Note there have been some changes to the
+measurements from previous instructions. Your goal is to simulate
+the usual appearance of papers in an IEEE conference proceedings.
+For items not addressed in these instructions, please contact the
+Proceedings Chair at ipdps@umr.edu.
+
+
+%-------------------------------------------------------------------------
+
+\Section{Margins and page numbering}
+
+Prepare your paper in full-size format, on US letter paper (8.5 by
+11 inches).
+
+\emph{Margins}: top = 1 inch, bottom = 1.125 inch, side = 0.8125
+inches.
+
+\emph{Page numbering}: Do \textbf{not} number your pages. The page
+numbering will be done by the publisher.
+
+
+%-------------------------------------------------------------------------
+\Section{Fonts}
+
+Times New Roman is the preferred font. Times or Times Roman may also
+be used. All manuscripts must be in English.
+
+
+%------------------------------------------------------------------------
+\Section{Formatting your paper}
+
+The total allowable width of the text area is 6.875 inches (17.5 cm)
+wide by 8.875 inches (22.54 cm) high. The ABSTRACT and MAIN TEXT are
+to be in a two-column format.  Columns are to be 3.25 inches (8.25
+cm) wide, with a 0.3125 inch (0.8 cm) space between them.
+
+%8.5 - 6.875 = 1.625
+%
+%1.625/2 = 0.8125
+
+%-------------------------------------------------------------------------
+\Section{Main Title}
+
+Center the title 1.375 inches (3.49 cm) from the top edge of the
+first page. The title should be in Times 14-point, boldface type.
+Capitalize the first letter of nouns, pronouns, verbs, adjectives,
+and adverbs; do not capitalize articles, coordinate conjunctions, or
+prepositions (unless the title begins with such a word). Leave two
+blank lines after the title.
+
+\Section{Author names and Affiliations} Author names and
+affiliations are to be centered beneath the title and printed in
+Times 12-point, non-boldface type. Please see the affiliations given
+under the title of this paper as an example. Include e-mail
+addresses if possible. Follow the author information by two blank
+lines before main text.
+
+\Section{Second and Following Pages}
+
+The second and following pages should begin 1.0 inch (2.54 cm) from
+the top edge. On all pages, the bottom margin should be 1.125 inches
+(2.86 cm) from the bottom edge of the page for $8.5 \times 11$-inch
+paper.
+
+
+\Section{Main Text}
+
+Type main text in 10-point Times, single-spaced. Do NOT use
+double-spacing. All paragraphs should be indented 1 pica (approx.
+1/6 inch or 0.422 cm). Make sure your text is fully justified---that
+is, flush left and flush right. Please do not place any additional
+blank lines between paragraphs. Figure and table captions should be
+10-point Helvetica boldface type as in
+\begin{figure}[h]
+   \caption{Example of caption.}
+\end{figure}
+
+\noindent Long captions should be set as in
+\begin{figure}[h]
+   \caption{Example of long caption requiring more than one line. It is
+     not typed centered but aligned on both sides and indented with an
+     additional margin on both sides of 1~pica.}
+\end{figure}
+
+\noindent Callouts should be 9-point Helvetica, non-boldface type.
+Initially capitalize only the first word of section titles and first-,
+second-, and third-order headings.
+
+\Section{First-Order Headings} \label{foh}
+
+First-order headings (for example, Section \ref{foh} heading in this
+document) should be Times 12-point boldface, initially capitalized,
+flush left, with one blank line before, and one blank line after.
+
+\SubSection{Second-Order Headings} \label{soh}
+
+Second-order headings (for example, Subsection \ref{soh} heading)
+should be Times 11-point boldface, initially capitalized, flush
+left, with one blank line before, and one after.\\~\\
+\textbf{Third-Order Headings.} If you require a third-order heading
+(we discourage it), use 10-point Times, boldface, initially
+capitalized, flush left, preceded by one blank line, followed by a
+period and your text on the same line.
+
+%-------------------------------------------------------------------------
+\SubSection{Footnotes}
+
+Please use footnotes sparingly%
+\footnote
+   {%
+     Or, better still, try to avoid footnotes altogether.  To help your
+     readers, avoid using footnotes altogether and include necessary
+     peripheral observations in the text (within parentheses, if you
+     prefer, as in this sentence).
+   }
+and place them at the bottom of the column on the page on which they are
+referenced. Use Times 8-point type, single-spaced.
+
+
+%-------------------------------------------------------------------------
+\SubSection{References}
+
+List and number all bibliographical references in 9-point Times,
+single-spaced, at the end of your paper. When referenced in the
+text, enclose the citation number in square brackets, for
+example~\cite{KwA98,NoS91,TkB99}. Where appropriate, include the
+name(s) of editors of referenced books.
+
+%-------------------------------------------------------------------------
+\SubSection{Figures and Tables}
+
+Position figures and tables at the tops and bottoms of columns.
+Avoid placing them in the middle of columns. Large figures and
+tables may span across both columns. Avoid placing figures and
+tables before their first mention in the text.
+
+%-------------------------------------------------------------------------
+\SubSection{Copyright forms}
+
+You must include your fully-completed, signed IEEE copyright release
+form when you submit your paper. We must have this form before your
+paper can be published in the proceedings. The copyright form is
+available from the IPDPS web site as a fillable PDF form.
+
+%-------------------------------------------------------------------------
+\SubSection{Conclusions}
+
+Please direct any questions to the Proceedings Chair at
+ipdps@umr.edu or phone (573) 341-4511.
+
+%-------------------------------------------------------------------------
+\bibliographystyle{ipdps}
+\bibliography{ipdps}
+
+
+
+\end{document}

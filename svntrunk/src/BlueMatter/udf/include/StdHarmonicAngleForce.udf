@@ -1,0 +1,225 @@
+/* Copyright 2001, 2019 IBM Corporation
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the 
+ * following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the 
+ * following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ void StdHarmonicAngleForce(
+        MDVM aMDVM,
+        double th0,
+        double k
+        )
+      {
+#if !defined(OMIT_BOND_VECTOR_TABLE)
+      XYZ VectorBA = aMDVM.GetVectorN( 0 );
+      XYZ VectorBC = aMDVM.GetVectorN( 1 );
+      
+      XYZ RP = VectorBC.crossProduct(VectorBA);
+      double RPL2 = RP.LengthSquared() ;
+      
+      double recipBA =aMDVM.GetRecipLengthN(0) ; 
+      double recipBC =aMDVM.GetRecipLengthN(1) ; 
+      
+      // Caution: if the vectors were collinear, RPL2 will be zero and RPL will be computed as NaN which will propagate
+      double RPL = 1.0/sqrt(RPL2) ;
+      // These lines get the distances from the MDVM.
+      // double DistanceBA = aMDVM.GetDistance( MDVM::SiteB, MDVM::SiteA );
+      // double DistanceBC = aMDVM.GetDistance( MDVM::SiteB, MDVM::SiteC );
+
+      double COSTHE = ( VectorBA.DotProduct( VectorBC ) ) * (recipBA * recipBC);
+      // double COSTHE = ( VectorBA.DotProduct( VectorBC ) ) / (DistanceBA * DistanceBC);
+
+      // Caution: for colliner vectors, SINTHE will be computed as NaN
+      double SINTHE = RPL2 * RPL * ( recipBA * recipBC) ;
+
+      /////   DETERMINE THETA.  IT IS IN THE RANGE OF 0 TO PI RADIANS.
+
+      // double THETA = acos(COSTHE);
+      double THETA = Math::atrig(SINTHE, COSTHE);
+
+      // Caution: for collinear vectors, AngleEnergy will be computed as NaN
+      double AngleEnergy = k * Math::sqr(THETA - th0) ;
+
+
+      double DEDTH = 2.0 * k * (THETA - th0);
+
+      // COMPUTE AND NORMALIZE R(PERP) TO FACILITATE FORCE EVALUATION
+      // R(PERP) = R32 CROSS R12
+
+
+      // RPERP WILL NOT NORMALIZE IF 1-2-3 COLLINEAR; I.E., THETA=0 OR 180
+      // FORCE CAN BE LEGITIMATELY SET TO ZERO IN THIS CASE.
+
+      // suits 7/01 Using heuristic function here may have regression side-effect
+      // double RPL = RP.Length();
+      //     if (Heuristics::IsVectorLengthZero(RPL))
+      //           RPL = 0.0;
+      // else
+      //           RPL = 1.0 / RPL;
+
+      // if( RPL > 0.0000000001 )
+      //  RPL = 1.0 / RPL;
+      // else
+      //  RPL=0.0;
+
+      //    COMPUTE GRADIENTS OF ENERGY WITH RESPECT TO COMPONENTS OF VectorAB,RO2
+
+      double    R12R = -1.0 *  (recipBA * recipBA);
+      double    R32R =  1.0 *  (recipBC * recipBC);
+      double    DTD12X = R12R*(RPL*DEDTH) * (VectorBA.mY*RP.mZ - VectorBA.mZ*RP.mY);
+      double    DTD12Y = R12R*(RPL*DEDTH) * (VectorBA.mZ*RP.mX - VectorBA.mX*RP.mZ);
+      double    DTD12Z = R12R*(RPL*DEDTH) * (VectorBA.mX*RP.mY - VectorBA.mY*RP.mX);
+      double    DTD32X = R32R*(RPL*DEDTH) * (VectorBC.mY*RP.mZ - VectorBC.mZ*RP.mY);
+      double    DTD32Y = R32R*(RPL*DEDTH) * (VectorBC.mZ*RP.mX - VectorBC.mX*RP.mZ);
+      double    DTD32Z = R32R*(RPL*DEDTH) * (VectorBC.mX*RP.mY - VectorBC.mY*RP.mX);
+
+      // COMPUTE FORCES DUE TO ANGLE ENERGY ON O, H1 AND H2
+
+      XYZ ForceOnB;
+      XYZ ForceOnA;
+      XYZ ForceOnC;
+
+      // If the 'angle' is 180 degrees, set the force to zero,but give an energy
+      ForceOnA.mX = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0, DTD12X        );
+      ForceOnA.mY = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0, DTD12Y        );
+      ForceOnA.mZ = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0, DTD12Z        );
+      ForceOnB.mX = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,-DTD12X-DTD32X );
+      ForceOnB.mY = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,-DTD12Y-DTD32Y );
+      ForceOnB.mZ = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,-DTD12Z-DTD32Z );
+      ForceOnC.mX = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,        DTD32X );
+      ForceOnC.mY = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,        DTD32Y );
+      ForceOnC.mZ = fsel(Heuristics::EpsilonVectorSquareLength-RPL2, 0.0,        DTD32Z );
+      
+      double FixedUpAngleEnergy = fsel(
+         Heuristics::EpsilonVectorSquareLength-RPL2
+        , k * Math::sqr(M_PI - th0 )
+        , AngleEnergy
+      ) ; 
+      
+        
+      aMDVM.ReportForce( 0, ForceOnA );
+      aMDVM.ReportForce( 1, ForceOnB );
+      aMDVM.ReportForce( 2, ForceOnC );
+      aMDVM.ReportEnergy( FixedUpAngleEnergy );
+#else
+      /////DETERMINE COS(THETA) = R12 DOT R32 / SQRT((R12**2)*(R32**2))
+
+      XYZ VectorBA = aMDVM.GetVector( MDVM::SiteB, MDVM::SiteA );
+      XYZ VectorBC = aMDVM.GetVector( MDVM::SiteB, MDVM::SiteC );
+
+      // XYZ RP;
+      // RP.mX = VectorAC.mY * VectorAB.mZ - VectorAC.mZ * VectorAB.mY;
+      // RP.mY = VectorAC.mZ * VectorAB.mX - VectorAC.mX * VectorAB.mZ;
+      // RP.mZ = VectorAC.mX * VectorAB.mY - VectorAC.mY * VectorAB.mX;
+
+      XYZ RP = VectorBC.crossProduct(VectorBA);
+
+      double RPL2 = RP.LengthSquared() ;
+
+      double r2BA = VectorBA.LengthSquared() ;
+      double r2BC = VectorBC.LengthSquared() ;
+
+      double recipBA = 1.0/sqrt(r2BA) ;
+      double recipBC = 1.0/sqrt(r2BC) ;
+      // Caution: if the vectors were collinear, RPL2 will be zero and RPL will be computed as NaN which will propagate
+      double RPL = 1.0/sqrt(RPL2) ;
+      // These lines get the distances from the MDVM.
+      // double DistanceBA = aMDVM.GetDistance( MDVM::SiteB, MDVM::SiteA );
+      // double DistanceBC = aMDVM.GetDistance( MDVM::SiteB, MDVM::SiteC );
+
+      double COSTHE = ( VectorBA.DotProduct( VectorBC ) ) * (recipBA * recipBC);
+      // double COSTHE = ( VectorBA.DotProduct( VectorBC ) ) / (DistanceBA * DistanceBC);
+
+      // Caution: for colliner vectors, SINTHE will be computed as NaN
+      double SINTHE = RPL2 * RPL * ( recipBA * recipBC) ;
+
+      /////   DETERMINE THETA.  IT IS IN THE RANGE OF 0 TO PI RADIANS.
+
+      // double THETA = acos(COSTHE);
+      double THETA = Math::atrig(SINTHE, COSTHE);
+
+      // Caution: for collinear vectors, AngleEnergy will be computed as NaN
+      double AngleEnergy = k * Math::sqr(THETA - th0) ;
+
+
+      double DEDTH = 2.0 * k * (THETA - th0);
+
+      // COMPUTE AND NORMALIZE R(PERP) TO FACILITATE FORCE EVALUATION
+      // R(PERP) = R32 CROSS R12
+
+
+      // RPERP WILL NOT NORMALIZE IF 1-2-3 COLLINEAR; I.E., THETA=0 OR 180
+      // FORCE CAN BE LEGITIMATELY SET TO ZERO IN THIS CASE.
+
+      // suits 7/01 Using heuristic function here may have regression side-effect
+      // double RPL = RP.Length();
+      //     if (Heuristics::IsVectorLengthZero(RPL))
+      //           RPL = 0.0;
+      // else
+      //           RPL = 1.0 / RPL;
+
+      // if( RPL > 0.0000000001 )
+      //  RPL = 1.0 / RPL;
+      // else
+      //  RPL=0.0;
+
+      //    COMPUTE GRADIENTS OF ENERGY WITH RESPECT TO COMPONENTS OF VectorAB,RO2
+
+      double    R12R = -1.0 *  (recipBA * recipBA);
+      double    R32R =  1.0 *  (recipBC * recipBC);
+      double    DTD12X = R12R*(RPL*DEDTH) * (VectorBA.mY*RP.mZ - VectorBA.mZ*RP.mY);
+      double    DTD12Y = R12R*(RPL*DEDTH) * (VectorBA.mZ*RP.mX - VectorBA.mX*RP.mZ);
+      double    DTD12Z = R12R*(RPL*DEDTH) * (VectorBA.mX*RP.mY - VectorBA.mY*RP.mX);
+      double    DTD32X = R32R*(RPL*DEDTH) * (VectorBC.mY*RP.mZ - VectorBC.mZ*RP.mY);
+      double    DTD32Y = R32R*(RPL*DEDTH) * (VectorBC.mZ*RP.mX - VectorBC.mX*RP.mZ);
+      double    DTD32Z = R32R*(RPL*DEDTH) * (VectorBC.mX*RP.mY - VectorBC.mY*RP.mX);
+
+      // COMPUTE FORCES DUE TO ANGLE ENERGY ON O, H1 AND H2
+
+      XYZ ForceOnB;
+      XYZ ForceOnA;
+      XYZ ForceOnC;
+
+
+      ForceOnA.mX =  DTD12X        ;
+      ForceOnA.mY =  DTD12Y        ;
+      ForceOnA.mZ =  DTD12Z        ;
+      ForceOnB.mX = -DTD12X-DTD32X ;
+      ForceOnB.mY = -DTD12Y-DTD32Y ;
+      ForceOnB.mZ = -DTD12Z-DTD32Z ;
+      ForceOnC.mX =         DTD32X ;
+      ForceOnC.mY =         DTD32Y ;
+      ForceOnC.mZ =         DTD32Z ;
+
+    if ( !  Heuristics::IsVectorSquareLengthZero(RPL2) )
+      {
+        // In the general case, the vectors are not collinear, and the AngleEnergy and forces are well-defined
+        aMDVM.ReportEnergy( AngleEnergy );
+        aMDVM.ReportForce( MDVM::SiteA, ForceOnA );
+        aMDVM.ReportForce( MDVM::SiteB, ForceOnB );
+        aMDVM.ReportForce( MDVM::SiteC, ForceOnC );
+      }
+      else
+      {
+        // In the special case, we computed AngleEnergy as NaN; perform the correct computation
+        // (Assume the angle is 180 degrees, since 0 degrees is not physical)
+        double CollinearAngleEnergy = k * Math::sqr(M_PI - th0 ) ;
+        aMDVM.ReportEnergy( CollinearAngleEnergy );
+      }
+
+      return;
+#endif      
+      }
