@@ -1,12 +1,13 @@
 #!/usr/local/bin/python
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
 
 if len(sys.argv) < 3:
-    print sys.argv[0], " targetDir dbName <schemaName> <schemaName> .... <schemaName>\n"
+    print(sys.argv[0], " targetDir dbName <schemaName> <schemaName> .... <schemaName>\n")
     sys.exit(-1)
 
 action = len(sys.argv)
@@ -39,8 +40,8 @@ for schemaName in schema:
         tableName = str(foo[0])
         exportCmd = "export to " + exportDir + "/" + str(schemaName) + "." + str(tableName) + ".ixf of ixf lobs to " + lobsDir + "/ lobfile " + str(schemaName) + "." + str(tableName) + " modified by lobsinfile select * from " + str(schemaName) + "." + str(tableName)
         exportCmd = exportCmd + ";\n"
-        print exportCmd
-        print "commit;\n"
+        print(exportCmd)
+        print("commit;\n")
         exportProc.write(exportCmd)
         exportProc.write("commit;\n")
 
@@ -51,7 +52,7 @@ sysList = cursor3.fetchall()
 conn.commit()
 for sysLine in sysList:
     sysId = str(sysLine[0])
-    print "SYS_ID = ", sysId
+    print("SYS_ID = ", sysId)
     exportDir = targetDir + "/" + sysId
     if not os.path.exists(exportDir):
         os.mkdir(exportDir)
@@ -68,8 +69,8 @@ for sysLine in sysList:
             exportCmd = "export to " + exportDir + "/" + str(schemaName) + "." + str(tableName) + ".ixf of ixf lobs to " + lobsDir + "/ lobfile " + str(schemaName) + "." + str(tableName) + " modified by lobsinfile select * from " + str(schemaName) + "." + str(tableName)
             exportCmd = exportCmd + " where sys_id = " + sysId
             exportCmd = exportCmd + ";\n"
-            print exportCmd
-            print "commit;\n"
+            print(exportCmd)
+            print("commit;\n")
             exportProc.write(exportCmd)
             exportProc.write("commit;\n")
 exportProc.write("connect reset;\n")

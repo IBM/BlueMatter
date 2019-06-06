@@ -5,12 +5,13 @@
 # command line args: dbName trace_group_id minTimeStep <bracketName =TimeStep__0>
 
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
 
 if len(sys.argv) < 3:
-    print sys.argv[0], "dbName trace_group_id"
+    print(sys.argv[0], "dbName trace_group_id")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]
@@ -33,26 +34,26 @@ cmd = "select " +\
       "order by p.trace_label, ts.node_count for read only with cs;\n"
 cursor.execute(cmd)
 foo = cursor.fetchone()
-print '# Statistics for grouped trace points from trace_group_id ' +\
-      str(groupId)
-print "# column 1: node count"
-print "# column 2: average"
-print "# column 3: std. dev."
-print "# column 4: min()"
-print "# column 5: max()"
-print "# column 6: count()"
+print('# Statistics for grouped trace points from trace_group_id ' +\
+      str(groupId))
+print("# column 1: node count")
+print("# column 2: average")
+print("# column 3: std. dev.")
+print("# column 4: min()")
+print("# column 5: max()")
+print("# column 6: count()")
 
 while (foo):
     if str(foo[2]) != oldTraceLbl:
-        print "\n"
+        print("\n")
         oldTraceLbl = str(foo[2])
-        print "# results for " + str(oldTraceLbl)
-    print str(foo[1]) + "\t" +\
+        print("# results for " + str(oldTraceLbl))
+    print(str(foo[1]) + "\t" +\
           str(foo[3]) + "\t" +\
           str(foo[4]) + "\t" +\
           str(foo[5]) + "\t" +\
           str(foo[6]) + "\t" +\
-          str(foo[7])
+          str(foo[7]))
     foo = cursor.fetchone()
 
 

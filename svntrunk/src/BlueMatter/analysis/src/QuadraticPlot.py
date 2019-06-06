@@ -1,9 +1,10 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 
 if len(sys.args) < 7:
-  print "QuadraticPlot.py RunSetName NTimes dir1 dir2 ... dirN t1 t2 ... tN (short to long)"
+  print("QuadraticPlot.py RunSetName NTimes dir1 dir2 ... dirN t1 t2 ... tN (short to long)")
   sys.exit(-1)
 
 RunSetName = sys.args[1]

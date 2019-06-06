@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from Tkinter import *
 import os
 import sys
@@ -20,12 +21,12 @@ def GetMachines():
   except:
     RTPMachinesFileName = os.getenv('RTPMACHINESFILE')
     if RTPMachinesFileName == None:
-      print "Can't find file RTPMachines.txt locally, and RTPMACHINESFILE is not set" 
+      print("Can't find file RTPMachines.txt locally, and RTPMACHINESFILE is not set") 
       sys.exit(-1)
     try:
       MachineFile = open(RTPMachinesFileName)
     except:
-      print "Can't find RTPMachines file %s" % RTPMachinesFileName
+      print("Can't find RTPMachines file %s" % RTPMachinesFileName)
       sys.exit(-1)
 
   for l in MachineFile.readlines():

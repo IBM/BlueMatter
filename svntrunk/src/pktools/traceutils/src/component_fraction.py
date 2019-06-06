@@ -6,11 +6,12 @@
 # group_id
 # tracePtFile (list of trace points)
 # optional bracketId = "TimeStep"
+from __future__ import print_function
 import sys
 import DB2
 bracketName = "TimeStep"
 if len(sys.argv) < 4:
-    print sys.argv[0], "dbName group_id tracePtFile <bracketId =", bracketName, ">"
+    print(sys.argv[0], "dbName group_id tracePtFile <bracketId =", bracketName, ">")
     sys.exit(-1)
 if len(sys.argv) > 4:
     bracketName=sys.argv[4]
@@ -49,21 +50,21 @@ cmd = "with d (set_id, node_count, trace_label, avg) as " +\
 cursor.execute(cmd)
 foo=cursor.fetchone()
 oldnc=0
-print "# group_id =", str(groupId)
-print "# all times in nanoseconds"
-print "# column 1: node count"
+print("# group_id =", str(groupId))
+print("# all times in nanoseconds")
+print("# column 1: node count")
 i = 2
 for t in trcPts:
-    print "# column ", str(i), ":", str(t)
+    print("# column ", str(i), ":", str(t))
     i=i+1
 while foo:
     if foo[0] != oldnc:
-        print '\n %6d \t' % (int(foo[0])),
+        print('\n %6d \t' % (int(foo[0])), end=' ')
         oldnc = foo[0]
     #    print str(foo[0]), str(foo[1]), str(foo[2])
     if foo[0] and foo[1] and foo[2]:
-        print '%10.3g \t' % (foo[2]),
+        print('%10.3g \t' % (foo[2]), end=' ')
     else:
-        print '%10d \t' % (-1),
+        print('%10d \t' % (-1), end=' ')
     foo=cursor.fetchone()
-print "\n",
+print("\n", end=' ')

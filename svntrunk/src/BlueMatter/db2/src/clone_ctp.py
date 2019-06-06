@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import DB2
 import sys
 import mx.DateTime
@@ -8,7 +9,7 @@ import os.path
 import pwd
 
 if len(sys.argv) < 3:
-    print >>sys.stderr, sys.argv[0], "dbName ctp_id (to be cloned)"
+    print(sys.argv[0], "dbName ctp_id (to be cloned)", file=sys.stderr)
     sys.exit(-1)
 dbName = sys.argv[1]
 old_ctp = sys.argv[2]
@@ -25,7 +26,7 @@ cmd = "select ctp_id from experiment.ctp_table where ctp_id = integer(IDENTITY_V
 cur.execute(cmd)
 foo = cur.fetchone()
 new_ctp = foo[0]
-print "New ctp_id: ", str(new_ctp)
+print("New ctp_id: ", str(new_ctp))
 cmd = "insert into experiment.ct_params (ctp_id, type, name, value) select value(" +\
       str(new_ctp) +\
       "," + str(new_ctp) + "), type, name, value from experiment.ct_params where ctp_id = " +\

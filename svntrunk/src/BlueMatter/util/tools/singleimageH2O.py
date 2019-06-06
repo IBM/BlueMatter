@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 
 
 if len(sys.argv) < 9:
-    print
-    print 'Usage: singleimageH2O.py dvsfile minx miny minz maxx maxy maxz outputdvs'
-    print 'NOTE: this assumes file of water!!!'
+    print()
+    print('Usage: singleimageH2O.py dvsfile minx miny minz maxx maxy maxz outputdvs')
+    print('NOTE: this assumes file of water!!!')
     sys.exit(1)
 
 FName = sys.argv[1]

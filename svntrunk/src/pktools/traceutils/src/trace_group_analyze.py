@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -13,7 +14,7 @@ from PerfUtils import *
 # command line arguments: dbName description clockSpeedMhz fileList outFileBaseName minTime Step <skipLastNSteps = 0> <bracketName =  None>
 
 if len(sys.argv) < 7:
-    print sys.argv[0], "dbName description clockSpeedMhz fileList outFileBaseName  minTimeStep <skipLastNSteps = 0> <bracketName = None>"
+    print(sys.argv[0], "dbName description clockSpeedMhz fileList outFileBaseName  minTimeStep <skipLastNSteps = 0> <bracketName = None>")
     sys.exit(-1)
 
 bracketName = None
@@ -33,7 +34,7 @@ if len(sys.argv) > 7:
 traceSet = makeFileList(fileList)
 
 groupId=traceGroup(dbName, desc, timeFactor, traceSet)
-print "Group ID: ", str(groupId)
+print("Group ID: ", str(groupId))
 traceGroupMultiStatsDb2(dbName, groupId, outFileBase, minTimeStep, skipLastN, bracketName)
 
 conn=Connection(dbName)

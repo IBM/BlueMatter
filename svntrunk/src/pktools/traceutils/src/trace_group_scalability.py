@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import os
 import os.path
@@ -25,7 +26,7 @@ def makeLabelList(trcPtList):
     labelList = []
     tl = open(trcPtList, 'r')
     if not tl:
-        print "Unable to open file", trcPtList
+        print("Unable to open file", trcPtList)
         sys.exit(-1)
     ws = re.compile(r'\s+')
     for line in xreadlines(tl):
@@ -35,7 +36,7 @@ def makeLabelList(trcPtList):
 
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName groupId trcPtList outFileBase"
+    print(sys.argv[0], "dbName groupId trcPtList outFileBase")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]
@@ -43,5 +44,5 @@ trcPtList = sys.argv[3]
 outFileBase = sys.argv[4]
 
 labels = makeLabelList(trcPtList)
-print labels
+print(labels)
 PerfUtils.scalability(dbName, groupId, outFileBase, labels)

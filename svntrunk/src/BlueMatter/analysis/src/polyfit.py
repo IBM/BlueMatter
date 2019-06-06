@@ -1,3 +1,4 @@
+from __future__ import print_function
 # function to carry out polynomial fits using singular value decomposition
 
 from Numeric import *
@@ -24,17 +25,17 @@ def polyeval(coeff, x):
 # By default all terms up to polydeg are used
 # returns a tuple containing (solution, covarianceMatrix)
 def polyfit(xdata, ydata, sigma, polydeg, mask = 0, rcond=1e-10):
-    print "polyfit xdata:", xdata
-    print "polyfit ydata:", ydata
+    print("polyfit xdata:", xdata)
+    print("polyfit ydata:", ydata)
     sigmaProvided = 1
     if len(xdata) != len(ydata):
-        raise PolyFitException, "inconsistent sizes of data arrays"
+        raise PolyFitException("inconsistent sizes of data arrays")
     # construct the mask, if necessary
     if mask == 0:
         mask = ones(polydeg+1, Int)
     else:
         if len(mask) != polydeg+1:
-            raise PolyFitException, "inconsistent mask size"
+            raise PolyFitException("inconsistent mask size")
     # construct the design matrix A
     a = []
 
@@ -45,7 +46,7 @@ def polyfit(xdata, ydata, sigma, polydeg, mask = 0, rcond=1e-10):
         invsigma = zeros(len(xdata),Float) + 1.0/float(sigma)
     else:
         if len(sigma) != len(xdata):
-            raise PolyFitException, "inconsistent size of error array"
+            raise PolyFitException("inconsistent size of error array")
         invsigma = array(sigma,Float)
         invsigma = 1.0/invsigma
 
@@ -105,7 +106,7 @@ def polyfit(xdata, ydata, sigma, polydeg, mask = 0, rcond=1e-10):
         for j in range(n):
             param = param + innerproduct(utrans[j],b)*weight[j]*vtrans[j][i]
         solution.append(param)
-    print "solution =", solution
+    print("solution =", solution)
 
     cov = zeros([n,n], Float)
     for i in range(n):

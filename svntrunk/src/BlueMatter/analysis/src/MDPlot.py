@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from Tkinter import *
 from plot import *
 from xreadlines import *
@@ -10,9 +11,9 @@ import os
 SkipStart=0
 
 if len(sys.argv) < 2:
-    print
-    print 'Usage: MDPlot.py FileName.mdlog [-relative] [-skip N]'
-    print '   or: MDPlot.py -    to read from stdin'
+    print()
+    print('Usage: MDPlot.py FileName.mdlog [-relative] [-skip N]')
+    print('   or: MDPlot.py -    to read from stdin')
     sys.exit(1)
 
 Relative = 0

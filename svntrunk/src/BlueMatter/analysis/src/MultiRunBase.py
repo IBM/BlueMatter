@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Numeric import *
 import os
 import sys
@@ -95,7 +96,7 @@ def GetValueExpressions(lstr, valstartindex, rtpfile, vname, globdict, argument=
     valexprs.append(ValueExpression(vname, Str, argument, master, acompound=compound))
   else: 
     if vname != "list":
-      print 'error parsing %s' % lstr
+      print('error parsing %s' % lstr)
       os.exit(-1)
 
     l = rtpfile.readline()
@@ -316,12 +317,12 @@ class Machine:
           else:
             pid = os.spawnlp(os.P_NOWAIT, "rsh", "rsh", self.name, "-n", fname, arg[0], arg[1], arg[2], arg[3], arg[4], arg[5])
 	except:
-	  print 'error launching in %s' % Dir
+	  print('error launching in %s' % Dir)
 	if pid > 0:
 	  break
         time.sleep(1.0)
       if pid < 0:
-	print 'failed attempt to launch in %s' % Dir
+	print('failed attempt to launch in %s' % Dir)
 	return
 
       #self.jobsrunning += NProcs
@@ -375,7 +376,7 @@ class Machine:
       time.sleep(0.1)
       i += 1
     if (self.usagedone == 0):
-      print self.name + " vmstat still running"
+      print(self.name + " vmstat still running")
 
 
   def Usage(self):
@@ -422,13 +423,13 @@ def Enumerate(FileStem, SystemID, IndepVar, i, LocalVars, Vars, OrderedVars, All
       try:
         veval = eval(vv.exprstr, globdic)
       except:
-        print "cannot eval slave string %s" % vv.exprstr
+        print("cannot eval slave string %s" % vv.exprstr)
         veval = eval("'%s'" % vv.exprstr, globdic)
-        print "... forced it to ", veval
+        print("... forced it to ", veval)
       try:
         LocalVars[n] = veval
       except:
-        print "could not parse ", vv.exprstr
+        print("could not parse ", vv.exprstr)
       try:
         exec("%s = %s" % (n, vv.exprstr), globdic)
       except:
@@ -521,7 +522,7 @@ def GetNextAvailMachine(Running=[]):
     if m.jobsrunning < m.ncpus:
       return m
   if len(Running) < 1:
-    print "No cpus available and no jobs running.  Exiting."
+    print("No cpus available and no jobs running.  Exiting.")
     sys.exit(-1)
   r = anydone(Running)
   while r == '':
@@ -532,7 +533,7 @@ def GetNextAvailMachine(Running=[]):
   Running.remove(r)
   if r.Procs < 0:
     r.AssignedMachine.jobsrunning -= 1
-    print 'job complete on %s, now has %d running' % (r.AssignedMachine.name, r.AssignedMachine.jobsrunning)
+    print('job complete on %s, now has %d running' % (r.AssignedMachine.name, r.AssignedMachine.jobsrunning))
     return r.AssignedMachine
   else:
     for m in r.ParallelMachines:
@@ -554,12 +555,12 @@ def LoadMachines(mrdir='./'):
   except:
     RTPMachinesFileName = os.getenv('RTPMACHINESFILE')
     if RTPMachinesFileName == None:
-      print 'File RTPMachines.txt not found and RTPMACHINESFILE not set.  Running locally.'
+      print('File RTPMachines.txt not found and RTPMACHINESFILE not set.  Running locally.')
     else:
       try:
         f = open(RTPMachinesFileName, 'r')
       except:
-        print 'File %s not found.  Aborting runs.' % RTPMachinesFileName
+        print('File %s not found.  Aborting runs.' % RTPMachinesFileName)
         sys.exit(-1)
 
   MachineLines = []
@@ -587,7 +588,7 @@ def KillRuns():
   try:
     RunFile = open('RunListAll.txt', 'r')
   except:
-    print 'Error opening RunListAll.txt'
+    print('Error opening RunListAll.txt')
     sys.exit(-1)
   # skip over first line
   RunFile.readline()
@@ -624,7 +625,7 @@ def KillRuns():
       killstr = "rsh %s -n killpidtree.ksh -self " % name
       for p in pidlist:
         killstr += " %s" % p
-      print "kill str is " + killstr
+      print("kill str is " + killstr)
       os.system(killstr)
 
 
@@ -632,7 +633,7 @@ def ListRuns(Runs, AllVars):
   try:
     RunFile = open('RunList.txt', "w")
   except:
-    print 'Error creating RunList.txt'
+    print('Error creating RunList.txt')
     sys.exit(-1)
 
   RunFile.write("DirName RunSet MachineName")
@@ -665,7 +666,7 @@ def LaunchRuns(Runs, RunCommand,  BuildCommand, RTPMaster, AllVars, OrderedVars,
   try:
     RunFile = open('RunListAll.txt', "w")
   except:
-    print 'Error creating RunListAll.txt'
+    print('Error creating RunListAll.txt')
     sys.exit(-1)
 
   # on first line output master indep vars
@@ -724,7 +725,7 @@ def LaunchRuns(Runs, RunCommand,  BuildCommand, RTPMaster, AllVars, OrderedVars,
     try:
       RunFile = open('RunListAll.txt', "a")
     except:
-      print 'Error creating RunListAll.txt'
+      print('Error creating RunListAll.txt')
       sys.exit(-1)
 
     RunFile.write("%s RunSet_%s %s" % (dirname, r.SystemID, machine.name))
@@ -794,13 +795,13 @@ def SummarizeResults():
   try:
     f = open('RunListAll.txt', 'r')
   except:
-    print "Can't open RunListAll.txt"
+    print("Can't open RunListAll.txt")
     sys.exit(-1)
 
   try:
     fout = open('RunResults.txt', 'w')
   except:
-    print "Can't open RunResults.txt for writing'"
+    print("Can't open RunResults.txt for writing'")
     sys.exit(-1)
 
   MasterVarLine = f.readline().strip()
@@ -875,7 +876,7 @@ def SummarizeResults():
         l = p.readline()
       p.close()
     except:
-      print 'System and Source IDs not found in cpp file'
+      print('System and Source IDs not found in cpp file')
 	
     try:
       LogFile = open("%s/Run.final" % RunDir, 'r')

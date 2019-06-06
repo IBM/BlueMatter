@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 
@@ -24,15 +25,15 @@ def difftable(key1, key2, column, tableName, dbName):
     headers = 0
     if (foo):
         for i in range(len(column)):
-            print '%32s' % (column[i]),
-        print ' '
+            print('%32s' % (column[i]), end=' ')
+        print(' ')
         headers = 1
 
     while(foo):
-        print '%32s' % (key1),
+        print('%32s' % (key1), end=' ')
         for i in range(len(foo)):
-            print '%32s' % (foo[i]),
-        print ' '
+            print('%32s' % (foo[i]), end=' ')
+        print(' ')
         foo = cursor.fetchone()
     cmd = selCmd + str(key2)
     cmd = cmd + " except "
@@ -41,21 +42,21 @@ def difftable(key1, key2, column, tableName, dbName):
     foo = cursor.fetchone()
     if (foo and headers != 1):
         for i in range(len(column)):
-            print '%32s' % (column[i]),
-        print ' '
+            print('%32s' % (column[i]), end=' ')
+        print(' ')
         headers = 1
     while(foo):
-        print '%32s' % (key2),
+        print('%32s' % (key2), end=' ')
         for i in range(len(foo)):
-            print '%32s' % (foo[i]),
-        print ' '
+            print('%32s' % (foo[i]), end=' ')
+        print(' ')
         foo = cursor.fetchone()
     cursor.close()
     conn.close()
         
 
 if len(sys.argv) < 4:
-    print sys.argv[0], "dbName key1 key2"
+    print(sys.argv[0], "dbName key1 key2")
     sys.exit(-1)
 
 dbName = sys.argv[1]
@@ -64,56 +65,56 @@ key2 = sys.argv[3]
 
 bondColumn = ('sys_id', 'bond_id', 'bond_type', 'site_id1', 'site_id2')
 bondTable = 'mdsystem.bond'
-print "DIFFS FOR:", bondTable
+print("DIFFS FOR:", bondTable)
 difftable(key1, key2, bondColumn, bondTable, dbName)
 
 udfInvocationColumn = ('sys_id', 'udf_id', 'param_tuple_list_id', 'site_tuple_list_id')
 udfInvocationTable = 'mdsystem.udf_invocation_table'
-print "DIFFS FOR:", udfInvocationTable
+print("DIFFS FOR:", udfInvocationTable)
 difftable(key1, key2, udfInvocationColumn, udfInvocationTable, dbName)
 
 siteTupleListColumn = ('sys_id', 'site_tuple_list_id', 'site_tuple_desc')
 siteTupleListTable = 'mdsystem.sitetuplelist'
-print "DIFFS FOR:", siteTupleListTable
+print("DIFFS FOR:", siteTupleListTable)
 difftable(key1, key2, siteTupleListColumn, siteTupleListTable, dbName)
 
 siteTupleDataColumn = ('sys_id', 'site_id', 'site_ordinal', 'site_tuple_id', 'site_tuple_list_id')
 siteTupleDataTable = 'mdsystem.sitetupledata'
-print "DIFFS FOR:", siteTupleDataTable
+print("DIFFS FOR:", siteTupleDataTable)
 difftable(key1, key2, siteTupleDataColumn, siteTupleDataTable, dbName)
 
 siteTupleColumn = ('sys_id', 'site_tuple_id', 'site_tuple_list_id')
 siteTupleTable = 'mdsystem.sitetuple'
-print "DIFFS FOR:", siteTupleTable
+print("DIFFS FOR:", siteTupleTable)
 difftable(key1, key2, siteTupleColumn, siteTupleTable, dbName)
 
 paramTupleListColumn = ('sys_id', 'param_tuple_list_id', 'param_tuple_desc')
 paramTupleListTable = 'mdsystem.paramtuplelist'
-print "DIFFS FOR:", paramTupleListTable
+print("DIFFS FOR:", paramTupleListTable)
 difftable(key1, key2, paramTupleListColumn, paramTupleListTable, dbName)
 
 paramTupleDataColumn = ('sys_id', 'param_id', 'param_tuple_id', 'param_tuple_list_id', 'param_value')
 paramTupleDataTable = 'mdsystem.paramtupledata'
-print "DIFFS FOR:", paramTupleDataTable
+print("DIFFS FOR:", paramTupleDataTable)
 difftable(key1, key2, paramTupleDataColumn, paramTupleDataTable, dbName)
 
 paramTupleColumn = ('sys_id', 'param_tuple_id', 'param_tuple_list_id')
 paramTupleTable = 'mdsystem.paramtuple'
-print "DIFFS FOR:", paramTupleTable
+print("DIFFS FOR:", paramTupleTable)
 difftable(key1, key2, paramTupleColumn, paramTupleTable, dbName)
 
 pTupleSpecColumn = ('sys_id', 'param_id', 'param_name', 'param_tuple_list_id', 'param_type')
 pTupleSpecTable = 'mdsystem.paramtuplespec'
-print "DIFFS FOR:", pTupleSpecTable
+print("DIFFS FOR:", pTupleSpecTable)
 difftable(key1, key2, pTupleSpecColumn, pTupleSpecTable, dbName)
 
 globalParamColumn = ('sys_id', 'param_id', 'param_type', 'param_value', 'symbolic_constant')
 globalParamTable = 'mdsystem.global_parameter'
-print "DIFFS FOR:", globalParamTable
+print("DIFFS FOR:", globalParamTable)
 difftable(key1, key2, globalParamColumn, globalParamTable, dbName)
 
 siteColumn = ('sys_id', 'site_id', 'atom_tag', 'atomic_mass', 'charge', 'epsilon', 'epsilon14', 'rmin', 'rmin14')
 siteTable = 'mdsystem.site'
-print "DIFFS FOR:",siteTable
+print("DIFFS FOR:",siteTable)
 difftable(key1, key2, siteColumn, siteTable, dbName)
 

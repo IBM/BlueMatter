@@ -3,6 +3,7 @@
 # utility to generate .cpp and .exe from executable id
 # command line args: dbName exeId dest optionPkg
 
+from __future__ import print_function
 import string
 import os
 import sys
@@ -13,13 +14,13 @@ RunningLog = []
 
 def DumpAndExit(msg):
   global RunningLog
-  print ""
-  print msg + "  Details follow..."
-  print ""
+  print("")
+  print(msg + "  Details follow...")
+  print("")
   for l in RunningLog:
-    print l.strip()  
-  print ""
-  print ""
+    print(l.strip())  
+  print("")
+  print("")
   sys.exit(-1)
   return
 
@@ -35,10 +36,10 @@ BG_SETUP = BG + '/bin/setup'
 BG_UTIL = BG + '/bin/util'
 
 # Make the generated files readable by others and the web server
-os.umask(022)
+os.umask(0o22)
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName exeId dest optionPkg"
+    print(sys.argv[0], "dbName exeId dest optionPkg")
     sys.exit(-1)
 
 dbName = sys.argv[1]
@@ -60,7 +61,7 @@ pltId = foo[1]
 
 pdb2 =  'java com.ibm.bluematter.db2probspec.ProbspecgenDB2 '
 pdb2com = pdb2 + str(sysId) + " " + str(ctpId) + " " + str(implId) + " " + str(pltId) + " " + dest + " -v"
-print pdb2com
+print(pdb2com)
 
 wcf = os.popen(pdb2com)
 PSPLines = wcf.readlines()
@@ -78,7 +79,7 @@ if os.access(cppfile,os.R_OK) == 0:
 #########################################################
 msd =  'time java com.ibm.bluematter.utils.CompileMSD '
 msdcom = msd + dest + ".cpp "
-print msdcom
+print(msdcom)
 
 wcf = os.popen(msdcom)
 COMLines = wcf.readlines()
@@ -93,14 +94,14 @@ for i in range(nlines):
     for j in range(len(thisline)):
 	if(thisline[j].strip() == 'Executable'):
 	    exeId = int(thisline[j+2])
-	    print "Executable ID::" + str(exeId)
+	    print("Executable ID::" + str(exeId))
 
-print "newExeId: " + str(newExeId)
+print("newExeId: " + str(newExeId))
 if newExeId == -1:
     DumpAndExit("ERROR:: Compilation failed, sorry pal :(")
 
 ####  Check success of cpp compilation
-print 'EXE name : ' + exefile
-print "%s successfully created by xml2exe.py" % exefile
+print('EXE name : ' + exefile)
+print("%s successfully created by xml2exe.py" % exefile)
 
 sys.exit( 0 )

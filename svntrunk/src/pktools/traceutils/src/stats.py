@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -12,7 +13,7 @@ from PerfUtils import *
 
 bracketName = "TimeStep"
 if len(sys.argv) < 5:
-    print sys.argv[0], "traceFileName nodeCount timeFactor minTimeStep <bracketName = TimeStep>"
+    print(sys.argv[0], "traceFileName nodeCount timeFactor minTimeStep <bracketName = TimeStep>")
     sys.exit(-1)
 traceFileName=sys.argv[1]
 nodeCount = int(sys.argv[2])

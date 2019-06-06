@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -13,7 +14,7 @@ from PerfUtils import *
 # command line arguments: dbName description clockSpeedMhz fileList
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName description clockSpeedMhz fileList"
+    print(sys.argv[0], "dbName description clockSpeedMhz fileList")
     sys.exit(-1)
 
 dbName = sys.argv[1]
@@ -23,4 +24,4 @@ fileList = sys.argv[4]
 traceSet = makeFileList(fileList)
 
 groupId=traceGroup(dbName, desc, timeFactor, traceSet)
-print "Group ID: ", str(groupId)
+print("Group ID: ", str(groupId))

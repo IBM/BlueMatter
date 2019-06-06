@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -13,7 +14,7 @@ from PerfUtils import *
 # command line args: dbName trace_set_id nBins syncLabel
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName trace_set_id nBins syncLabel"
+    print(sys.argv[0], "dbName trace_set_id nBins syncLabel")
     sys.exit(-1)
 dbName = sys.argv[1]
 traceSetId = sys.argv[2]

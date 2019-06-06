@@ -1,3 +1,4 @@
+from __future__ import print_function
 # This module contains subroutines that are used to analyze trace data
 
 from DB2 import *
@@ -62,7 +63,7 @@ def groupDesc(conn, groupId):
 def parseIdFile(idFile):
     idf = open(idFile, 'r')
     if not idf:
-        print "Unable to open file", idFile
+        print("Unable to open file", idFile)
         sys.exit(-1)
     pat = re.compile(r'"?\s*,\s*"?')
     id = {}
@@ -90,11 +91,11 @@ def makeFileList(fileList):
     traceSet = []
     fl = open(fileList, 'r')
     if not fl:
-        print "Unable to open file", fileList
+        print("Unable to open file", fileList)
         sys.exit(-1)
     ws = re.compile(r'\s+')
     for line in fl:
-        print str(line)
+        print(str(line))
         rec = ws.split(str(line))
         tuple = (rec[0], rec[1])
         traceSet.append(tuple)
@@ -109,7 +110,7 @@ def makeNameValuePairs(nameValueFile):
     dataList = []
     tl = open(nameValueFile, 'r')
     if not tl:
-        print "Unable to open file", trcPtList
+        print("Unable to open file", trcPtList)
         sys.exit(-1)
     delim = re.compile(r':')
     for line in tl:
@@ -147,7 +148,7 @@ def makeLabelList(trcPtList):
     labelList = []
     tl = open(trcPtList, 'r')
     if not tl:
-        print "Unable to open file", trcPtList
+        print("Unable to open file", trcPtList)
         sys.exit(-1)
     ws = re.compile(r'\s+')
     for line in tl:
@@ -174,7 +175,7 @@ def singleTrace(timeFactor, nodeCount, traceFileName, minTimeStep, bracketId):
     cmd = "fxlog2bin " + str(timeFactor) + " " + idNameBase + " " + base + " < " + traceFileName + " > /dev/null"
     rc = os.system(cmd)
     if (rc != 0):
-        print "Error on return from: " + cmd
+        print("Error on return from: " + cmd)
         sys.exit(-1)
     trcpts = parseIdFile(idNameBase)
     ts = os.popen2("timestamp2groupedintervalstats " + binName + " " +\
@@ -184,7 +185,7 @@ def singleTrace(timeFactor, nodeCount, traceFileName, minTimeStep, bracketId):
     tsOut = ts[1]
     for trcpt in trcpts.keys():
         trcrec=trcpts[trcpt]
-        print str(trcrec[0]), str(trcrec[1]), str(trcpt)
+        print(str(trcrec[0]), str(trcrec[1]), str(trcpt))
         tsIn.write(str(trcrec[0]) + " " + str(trcrec[1]) + " " +\
                    str(trcpt) + "\n")
         tsIn.flush()
@@ -192,7 +193,7 @@ def singleTrace(timeFactor, nodeCount, traceFileName, minTimeStep, bracketId):
     result={}
     for line in tsOut:
         line.strip()
-        print line
+        print(line)
         # field[0] = nodeCount
         # field[1] = avg
         # field[2] = stddev
@@ -204,7 +205,7 @@ def singleTrace(timeFactor, nodeCount, traceFileName, minTimeStep, bracketId):
         # field[8] = trace label
         # print "Line: ", line
         field = line.split()
-        print "Fields: ", field
+        print("Fields: ", field)
         key = field[8]
         result[key] = field
     tsOut.close()
@@ -212,10 +213,10 @@ def singleTrace(timeFactor, nodeCount, traceFileName, minTimeStep, bracketId):
     fd = open(statsFile, 'w')
     fd.write("Statistics for node count = " + str(nodeCount) + "\n")
     fd.write("%30s %12s %12s %12s %12s %12s %12s %12s\n" % ("label", "average", "std_dev", "min", "max", "minDev", "maxDev", "count"))
-    print result.keys()
+    print(result.keys())
     for label in result.keys():
         rec=result[label]
-        print rec
+        print(rec)
         fd.write("%30s %12g %12g %12g %12g %12g %12g %12g\n" % (label, float(rec[1]), float(rec[2]), float(rec[3]), float(rec[4]), float(rec[5]), float(rec[6]), float(rec[7])))
     fd.close()
 
@@ -245,7 +246,7 @@ def traceGroupAppend(dbName, groupId, timeFactor, traceSet):
         cmd = "fxlog2bin " + timeFactor + " " + idNameBase + " " + base + " " + tset[1] + " < " + tset[1] + " > /dev/null"
         rc = os.system(cmd)
         if (rc != 0):
-            print "Error on return from: " + cmd
+            print("Error on return from: " + cmd)
             cursor.close()
             conn.close()
             sys.exit(-1)
@@ -262,7 +263,7 @@ def traceGroupAppend(dbName, groupId, timeFactor, traceSet):
             cmd = "insert into perf.trace_set_data (trace_set_id, name, value) values (" +\
                   str(traceSetId) + ", \'" + str(nvp[0]) + "\', \'" +\
                   str(nvp[1]) + "\')"
-            print cmd
+            print(cmd)
             cursor.execute(cmd)
         df = open(idNameBase)
         idName = idNameBase + ".withId"
@@ -361,7 +362,7 @@ def traceSetTimingDiagram(conn, traceSetId, label, nBins, syncId):
     binFile=foo[1]
     nodeCount=foo[0]
     if not foo:
-        print >>sys.stderr, "traceSetDistribution: error selecting trace_set record"
+        print("traceSetDistribution: error selecting trace_set record", file=sys.stderr)
         sys.exit(-1)
     sys.stdout.write("# Distribution Functions for trace set id: " + str(traceSetId) + ", Node count = " + str(nodeCount) + "\n#\n")
     ts = os.popen2("distributiontraces " + str(binFile) + " " +\
@@ -376,7 +377,7 @@ def traceSetTimingDiagram(conn, traceSetId, label, nBins, syncId):
         tsIn.flush()
     tsIn.close()
     for line in tsOut:
-        print line.strip()
+        print(line.strip())
     tsOut.close()
 
 
@@ -411,7 +412,7 @@ def traceSetDistribution(dbName, conn, traceSetId, timeStep, label, nBins, idx, 
     binFile=foo[1]
     nodeCount=foo[0]
     if not foo:
-        print >>sys.stderr, "traceSetDistribution: error selecting trace_set record"
+        print("traceSetDistribution: error selecting trace_set record", file=sys.stderr)
         sys.exit(-1)
     fd.write("# Distribution Functions for trace set id: " + str(traceSetId) + ", Node count = " + str(nodeCount) + "\n#\n")
     ts = os.popen2("tracepoint2distribution " + str(binFile) + " " +\
@@ -419,7 +420,7 @@ def traceSetDistribution(dbName, conn, traceSetId, timeStep, label, nBins, idx, 
     tsIn = ts[0]
     tsOut = ts[1]
     for l in label.keys():
-        print str(label[l][0]), str(label[l][1]), str(l)
+        print(str(label[l][0]), str(label[l][1]), str(l))
         tsIn.write(str(label[l][0]) + " " + str(label[l][1]) +\
                    " " + str(l) + "\n")
         tsIn.flush()
@@ -516,7 +517,7 @@ def traceSetMultiStats(dbName, conn, traceSetId, minTimeStep, skipLastN, label, 
     binFile=foo[1]
     nodeCount=foo[0]
     if not foo:
-        print >>sys.stderr, "traceSetMultiStats: error selecting trace_set record"
+        print("traceSetMultiStats: error selecting trace_set record", file=sys.stderr)
         sys.exit(-1)
     if bracketName:
         cmd = "select trace_id from perf.trace_id where trace_set_id = " +\
@@ -527,7 +528,7 @@ def traceSetMultiStats(dbName, conn, traceSetId, minTimeStep, skipLastN, label, 
         if bar:
             bracketId = bar[0]
         else:
-            print >>sys.stderr, "No bracketId found for", bracketName
+            print("No bracketId found for", bracketName, file=sys.stderr)
             sys.exit(-1)
         ts = os.popen2("timestamp2groupedintervalstats " + str(binFile) + " " +\
                        str(nodeCount) + " " + str(minTimeStep) + " " +\
@@ -540,7 +541,7 @@ def traceSetMultiStats(dbName, conn, traceSetId, minTimeStep, skipLastN, label, 
     tsIn = ts[0]
     tsOut = ts[1]
     for l in label.keys():
-        print str(label[l][0]), str(label[l][1]), str(l)
+        print(str(label[l][0]), str(label[l][1]), str(l))
         tsIn.write(str(label[l][0]) + " " + str(label[l][1]) +\
                    " " + str(l) + "\n")
         tsIn.flush()

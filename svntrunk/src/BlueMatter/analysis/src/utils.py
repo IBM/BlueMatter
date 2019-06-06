@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 
 def minCoordinate(clist):
@@ -45,6 +46,6 @@ if __name__ == '__main__':
     tlist = [ (5,5), (3,6), (3,3), (-2,5), (100,100),
               (100,-100), (100,101) ]
 
-    print minCoordinate(tlist)
-    print maxCoordinate(tlist)
-    print maxCoordinate([(3,3), (10,-1)])
+    print(minCoordinate(tlist))
+    print(maxCoordinate(tlist))
+    print(maxCoordinate([(3,3), (10,-1)]))

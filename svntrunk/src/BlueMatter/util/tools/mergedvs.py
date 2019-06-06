@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 
 
 if len(sys.argv) < 4:
-    print
-    print 'Usage: mergedvs.py dvsfile1 dvsfile2 mergeddvsfile'
+    print()
+    print('Usage: mergedvs.py dvsfile1 dvsfile2 mergeddvsfile')
     sys.exit(1)
 
 

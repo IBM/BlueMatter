@@ -1,3 +1,4 @@
+from __future__ import print_function
 # utilities to carry out simple operations on graphs which are
 # represented by dictionaries as adjacency lists
 # {node_idA : [other_id1, other_id2, ..., other_idN], node_idB : ....
@@ -23,22 +24,22 @@ class DepthFirst:
             if self.__visitStatus[i] == DepthFirst.UNSEEN:
                 self.__visitStatus[i] = DepthFirst.TOUCHED
                 touched.append(i)
-                print "--push-touched:", i, self.__visitStatus[i]
+                print("--push-touched:", i, self.__visitStatus[i])
             while len(touched) > 0:
                 current = touched.pop()
-                print "--pop-touched:", current, self.__visitStatus[current]
+                print("--pop-touched:", current, self.__visitStatus[current])
                 if self.__visitStatus[current] == DepthFirst.VISITED:
                     self.__visitList.append(current)
-                    print "--append-visitList:", current
+                    print("--append-visitList:", current)
                     continue
                 self.__visitStatus[current] = DepthFirst.VISITED
                 touched.append(current)
-                print "--push-touched (visited):", current, self.__visitStatus[current]
+                print("--push-touched (visited):", current, self.__visitStatus[current])
                 for n in self.__graph[current]: # loop over links to current
                     if self.__visitStatus[n] == DepthFirst.UNSEEN:
                         self.__visitStatus[n] = DepthFirst.TOUCHED
                         touched.append(n)
-                        print "--push-touched:", n, self.__visitStatus[n]
+                        print("--push-touched:", n, self.__visitStatus[n])
                 
                     
         

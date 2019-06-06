@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -12,7 +13,7 @@ from PerfUtils import *
 # command line args: dbName trace_group_id timeStep nBins outFileName
 
 if len(sys.argv) < 6:
-    print sys.argv[0], "dbName trace_group_id timeStep nBins outFileName"
+    print(sys.argv[0], "dbName trace_group_id timeStep nBins outFileName")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]

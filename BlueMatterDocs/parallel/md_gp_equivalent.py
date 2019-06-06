@@ -1,3 +1,4 @@
+from __future__ import print_function
 # find equivalent node count by crudest method possible (stepping up from 1 node)
 import fft_tree;
 # command line args:
@@ -11,7 +12,7 @@ import fft_tree;
 import sys
 
 if len(sys.argv) < 8:
-    print sys.argv[0],"clockspeed(Hz) compRate(FLOPS/cycle) compEff BW(bits/cycle) latency(cycles/packet) meshSize targetRunTime"
+    print(sys.argv[0],"clockspeed(Hz) compRate(FLOPS/cycle) compEff BW(bits/cycle) latency(cycles/packet) meshSize targetRunTime")
     sys.exit(1)
 clock=float(sys.argv[1])
 compRate=float(sys.argv[2])
@@ -27,9 +28,9 @@ fft=fft_tree.FFTestimate(clock, compRate, eff, bw, latency)
 
 while fft.commTime(p, meshSize)+fft.compTime(p, meshSize) > target:
     if p > maxProcs:
-        print "No equivalent node count found for p <=",maxProcs
+        print("No equivalent node count found for p <=",maxProcs)
         break;
     p=p+1
-print "node count=",p
-print "target time=",target
-print "estimated time for ",p,"nodes = ", fft.commTime(p,meshSize)+fft.compTime(p,meshSize)
+print("node count=",p)
+print("target time=",target)
+print("estimated time for ",p,"nodes = ", fft.commTime(p,meshSize)+fft.compTime(p,meshSize))

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 import glob
@@ -44,7 +45,7 @@ for l in f.readlines():
   dir = l.split()[0]
   po = os.popen("MDGraf.py %s" % dir)
   outlines = po.readlines()
-  print outlines
+  print(outlines)
   po.close()
   shutil.copyfile("%s/Run.png" % dir, "web/%s.png" % dir)
   h.write('<TR><TD ALIGN=left><A HREF="%s.png">%s</TD>\n' % (dir, dir))

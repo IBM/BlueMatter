@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 from atlib import *
 
 if len(sys.argv) < 6:
-    print
-    print 'Usage: AnisoScaleDvs.py dvsfile sx sy sz outputdvs'
+    print()
+    print('Usage: AnisoScaleDvs.py dvsfile sx sy sz outputdvs')
     sys.exit(1)
 
 

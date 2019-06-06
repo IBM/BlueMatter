@@ -21,6 +21,7 @@
 #
 # #################################################################
 
+from __future__ import print_function
 from optik import OptionParser
 import sys
 import BuildUtils
@@ -83,10 +84,10 @@ def main():
     if len(args) == 4:
         buildOpts=args[3]
     if options.verbose:
-        print "sys_class:", options.sys_class
-        print "source:", options.source
-        print "rtp file:", rtpName
-        print "force field:", options.forceField
+        print("sys_class:", options.sys_class)
+        print("source:", options.source)
+        print("rtp file:", rtpName)
+        print("force field:", options.forceField)
     # set xml creation object based on force field setting
     creator = None
     if options.forceField=='charmm':
@@ -99,16 +100,16 @@ def main():
     ctpId = -1
     if options.source == dataSource["ff"]:
         if options.verbose:
-            print "calling creator.fromSource()"
+            print("calling creator.fromSource()")
         creator.fromSource(sysName, None, options.verbose)
     if options.source == dataSource["xml"] or \
            options.source == dataSource["ff"]:
         if options.verbose:
-            print "calling BuildUtils.xml2db2(), BuildUtils.rtp2db2()"
+            print("calling BuildUtils.xml2db2(), BuildUtils.rtp2db2()")
         sysId=BuildUtils.xml2db2(sysName + '.' + options.forceField, \
                                  options.verbose)
         if options.verbose:
-            print "sysId =", str(sysId)
+            print("sysId =", str(sysId))
     if rtpName.isdigit():
         ctpId=rtpName
     else:
@@ -117,7 +118,7 @@ def main():
            options.source == dataSource["ff"] or \
            options.source == dataSource["db2"]:
         if options.verbose:
-            print "calling BuildUtils.db2cpp(), BuildUtils.cpp2exe()"
+            print("calling BuildUtils.db2cpp(), BuildUtils.cpp2exe()")
         BuildUtils.db2cpp(str(sysName) + '.' + str(options.forceField), sysId, ctpId, options.verbose)
         BuildUtils.cpp2exe(str(sysName) + '.' + str(options.forceField), buildMode, buildOpts, options.verbose)
   
