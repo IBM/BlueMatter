@@ -3,6 +3,7 @@
 """
   See MultiRunBase.py for description
 """
+from __future__ import print_function
 
 from Numeric import *
 import os
@@ -47,7 +48,7 @@ InternalVars["BG_INSTALL_BASE"] = BG_INSTALL_BASE
 InternalVars["BG_MDTEST_DIR"]   = BG_MDTEST_DIR
 
 # Make the generated files readable by others and the web server
-os.umask(022)
+os.umask(0o22)
 
 ListOnly = 0
 argnum = 1
@@ -92,8 +93,8 @@ while argnum < nargs:
   elif sys.argv[argnum] == '-runonly':
     UserArgs += " " + sys.argv[argnum]
   else:
-    print "Command option %s not recognized" % sys.argv[argnum]
-    print "Usage:  MultiRun.py [-listonly] [-summarize] [-dir DIR] [-do cmd] [-analyzeonly] [-buildonly] [-killall]"
+    print("Command option %s not recognized" % sys.argv[argnum])
+    print("Usage:  MultiRun.py [-listonly] [-summarize] [-dir DIR] [-do cmd] [-analyzeonly] [-buildonly] [-killall]")
     sys.exit(-1)
   argnum += 1
   if DoDir:
@@ -125,7 +126,7 @@ if IsPosix():
 try:
   f = open(MultiRunDirectory + '/MultiRun.rtp')
 except:
-  print "Can't find file %s/MultiRun.rtp" % MultiRunDirectory
+  print("Can't find file %s/MultiRun.rtp" % MultiRunDirectory)
   sys.exit(-1)
 
 # read and build the corresponding RTPVars
@@ -148,7 +149,7 @@ while line != '':
 	  ival = eval(v)
 	  InternalVars[s[2]] = ival
 	except:
-	  print "Trouble parsing %s" % l
+	  print("Trouble parsing %s" % l)
 	  os.exit(-1)
       if s[1] == 'default':
         try:    # is it already defined from command line?
@@ -193,10 +194,10 @@ while line != '':
 	  ival = eval(expr)
 	  InternalVars[s[2]] = ival
 	except:
-	  print "Trouble parsing %s" % l
+	  print("Trouble parsing %s" % l)
 	  os.exit(-1)
     except:
-      print "Trouble parsing: %s\n" % l
+      print("Trouble parsing: %s\n" % l)
       sys.exit(-1)
 
     # now you have all the variables for a given #python line so create RTPVariables for them
@@ -212,7 +213,7 @@ while line != '':
           else:
             RTPVar(l.name, [0], Vars, AllVars, OrderedVars, l.exprstr, l.isstring, l.argument, l.master, l.compound)
       except:
-	print "Trouble parsing: %s\n" % exstr
+	print("Trouble parsing: %s\n" % exstr)
 	sys.exit(-1)
 	  
   else:
@@ -242,9 +243,9 @@ if ListOnly:
 # Launch analysis
 if InitCommand != '':
   InitCommand = SubstituteStrings(InitCommand, SubstitutionVars)
-  print 'Initializing'
+  print('Initializing')
   os.system(InitCommand)
-  print 'Initialization Complete'
+  print('Initialization Complete')
 
 if TestOnly:
   Runs = Runs[:1]
@@ -258,9 +259,9 @@ if not ListOnly and IsPosix():
     time.sleep(0.5)
 
 
-print
-print "Runs Complete"
-print
+print()
+print("Runs Complete")
+print()
 
 
 # Now pull the results together
@@ -273,8 +274,8 @@ if not ListOnly:
 # Launch analysis
 if AnalysisCommand != '':
   AnalysisCommand = SubstituteStrings(AnalysisCommand, SubstitutionVars)
-  print 'Launching Analysis'
+  print('Launching Analysis')
   os.system(AnalysisCommand)
-  print 'Analysis Complete'
+  print('Analysis Complete')
 
-print "MultiRun Complete"
+print("MultiRun Complete")

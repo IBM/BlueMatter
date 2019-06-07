@@ -1,3 +1,4 @@
+from __future__ import print_function
 # takes a data file suitable for a plotting program like gnuplot
 # in which the columns are whitespace delimited and puts out lines
 # suitable for use in a LaTeX tabular environment (fields separated by
@@ -10,7 +11,7 @@ import re
 import sys
 
 if len(sys.argv) < 2:
-    print sys.argv[0], "fileName <col1> <col2> ... <colN>"
+    print(sys.argv[0], "fileName <col1> <col2> ... <colN>")
     sys.exit(-1)
 
 fname = sys.argv[1]
@@ -39,12 +40,12 @@ for i in inFile.xreadlines():
 
     for j in range(len(colList)):
         if j > 0:
-            print "\t&",
-        print '$',
+            print("\t&", end=' ')
+        print('$', end=' ')
         x = curCols[colList[j]];
         y = re.sub(floatPat, r'\1\\times 10^{\3\4}', x)
-        print y,
-        print '$',
+        print(y, end=' ')
+        print('$', end=' ')
         # print curCols[colList[j]],
-    print " \\\\"
+    print(" \\\\")
     

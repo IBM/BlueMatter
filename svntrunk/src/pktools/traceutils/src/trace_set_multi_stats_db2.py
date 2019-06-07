@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 import DB2
 import sys
 import os
@@ -14,7 +15,7 @@ bracketName = "TimeStep__0"
 skipLastN = 0
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName trace_set_id outFileBaseName minTimeStep <skipLastNSteps = 0> <bracketName = TimeStep__0>"
+    print(sys.argv[0], "dbName trace_set_id outFileBaseName minTimeStep <skipLastNSteps = 0> <bracketName = TimeStep__0>")
     sys.exit(-1)
 dbName = sys.argv[1]
 traceSetId = sys.argv[2]

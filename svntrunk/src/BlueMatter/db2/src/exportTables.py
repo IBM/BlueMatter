@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
 
 if len(sys.argv) < 3:
-    print sys.argv[0], " targetDir dbName <schemaName> <schemaName> .... <schemaName>\n"
+    print(sys.argv[0], " targetDir dbName <schemaName> <schemaName> .... <schemaName>\n")
     sys.exit(-1)
 
 action = len(sys.argv)
@@ -32,7 +33,7 @@ for schemaName in schema:
         if bar[0] != 0:
             exportCmd = exportCmd + " where sys_id in (select sys_id from mdsystem.system where sys_class <> 'scratch')"
         exportCmd = exportCmd + ";\n"
-        print exportCmd
+        print(exportCmd)
         exportProc.write(exportCmd)
         foo = cursor.fetchone()
 exportProc.write("connect reset;\n")

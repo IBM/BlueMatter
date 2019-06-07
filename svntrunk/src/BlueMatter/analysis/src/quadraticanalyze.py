@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from QuadraticAnalysis import *
 from runresults import *
 
@@ -18,7 +19,7 @@ qc = QuadraticConservation()
 # now we can spool through each entry in this new dictionary to analyze
 # each RunSet
 for elt in runResults.keys():
-    print "run set =", elt
+    print("run set =", elt)
     qc.runSet(runResults[elt])
 
 qc.finalize()

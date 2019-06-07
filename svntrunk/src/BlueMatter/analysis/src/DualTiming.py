@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from string import *
 from runresults import *
 import sys
@@ -43,30 +44,30 @@ def ParseRun(run):
   return {'NSteps':ns, 'RunSet':runset, 'MachineName':mn, 'RealTime':rt, 'UserTime':ut, 'SystemTime':st, 'Desc':desc, 'Dir':dir}
 
 
-print "\n%9s %15s %8s %9s %9s %9s %15s %8s %9s %9s %9s %9s %s" % ("s/ts", "Machine1", "NSteps1", "RealTime1",
-       "UserTime1", "SysTime1", "Machine2", "NSteps2", "RealTime2", "UserTime2", "SysTime2", "Dir1", " Description")
+print("\n%9s %15s %8s %9s %9s %9s %15s %8s %9s %9s %9s %9s %s" % ("s/ts", "Machine1", "NSteps1", "RealTime1",
+       "UserTime1", "SysTime1", "Machine2", "NSteps2", "RealTime2", "UserTime2", "SysTime2", "Dir1", " Description"))
 
 for r in RunSets:
   runs = r[1]
   if len(runs) != 2:
-    print "Runset has %d items - Must have 2 per runset\n" % len(r.items())
-    print "Make sure there are two runs per runset, each with different number of steps.\n"
-    print "Also, set NumberOfOuterTimeSteps as a the IndependentVariable in the MultiRun.rtp file.\n"
+    print("Runset has %d items - Must have 2 per runset\n" % len(r.items()))
+    print("Make sure there are two runs per runset, each with different number of steps.\n")
+    print("Also, set NumberOfOuterTimeSteps as a the IndependentVariable in the MultiRun.rtp file.\n")
     sys.exit(-1)
 
   r0 = ParseRun(runs[0])
   r1 = ParseRun(runs[1])
 
   if r0['Desc'] != r1['Desc']:
-    print "Descriptions don't match:\n%s\n%s\n" % (r0['Desc'], r1['Desc'])
+    print("Descriptions don't match:\n%s\n%s\n" % (r0['Desc'], r1['Desc']))
     sys.exit(-1)
   
   dt = r1['UserTime'] - r0['UserTime']
   ns = r1['NSteps'] - r0['NSteps']
   tps = dt/ns
-  print "%9.3f %15s %8d %9.2f %9.2f %9.2f %15s %8d %9.2f %9.2f %9.2f %9s %s" % (tps,
+  print("%9.3f %15s %8d %9.2f %9.2f %9.2f %15s %8d %9.2f %9.2f %9.2f %9s %s" % (tps,
          r0['MachineName'], r0['NSteps'], r0['RealTime'], r0['UserTime'], r0['SystemTime'],
-         r1['MachineName'], r1['NSteps'], r1['RealTime'], r1['UserTime'], r1['SystemTime'], r0['Dir'], r0['Desc'])
+         r1['MachineName'], r1['NSteps'], r1['RealTime'], r1['UserTime'], r1['SystemTime'], r0['Dir'], r0['Desc']))
 
 
 

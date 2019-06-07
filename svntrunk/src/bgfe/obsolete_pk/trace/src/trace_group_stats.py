@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -10,7 +11,7 @@ import pwd
 # command line args: dbName, trace_group_id outFileName
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep"
+    print(sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]
@@ -115,6 +116,6 @@ for i in range(len(label)):
     else:
         fg.write(",\\\n")
 fg.close()
-print "label: ", label
-print "node count: ", nodeCount
-print "result:", result
+print("label: ", label)
+print("node count: ", nodeCount)
+print("result:", result)

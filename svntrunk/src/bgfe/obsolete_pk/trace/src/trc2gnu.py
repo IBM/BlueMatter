@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import os
 import os.path
@@ -28,8 +29,8 @@ from xreadlines import *
 #
 
 if len(sys.argv) < 8:
-    print sys.argv[0], "dbName description timeConv fileList "+\
-          "trcPtList minTimeStep outFileBase"
+    print(sys.argv[0], "dbName description timeConv fileList "+\
+          "trcPtList minTimeStep outFileBase")
     sys.exit(-1)
 dbName = sys.argv[1]
 desc = sys.argv[2]

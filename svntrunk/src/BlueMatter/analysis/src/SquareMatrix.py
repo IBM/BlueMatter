@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Numeric import *
 import sys
 
@@ -31,7 +32,7 @@ class SquareMatrix:
         toks = l.split()
       f.close()
     except:
-      print 'Error opening or reading file ', fname
+      print('Error opening or reading file ', fname)
       sys.exit(-1)
 
   def normalizeColumns(self):
@@ -67,7 +68,7 @@ class SquareMatrix:
 
   def setState(self, v):
     if len(v) != self.dimension:
-      print 'State vector dimension does not match matrix'
+      print('State vector dimension does not match matrix')
       sys.exit(-1)
     self.state = v
 
@@ -76,20 +77,20 @@ class SquareMatrix:
 
   def printState(self):
     for i in range(self.dimension):
-      print self.state[i], " ",
-    print
+      print(self.state[i], " ", end=' ')
+    print()
 
   def printStateDeltaVector(self):
     for i in range(self.dimension):
       # self.normalizeState()
-      print self.state[i]-abs(self.unitEigenvector[i]), " ",
-    print
+      print(self.state[i]-abs(self.unitEigenvector[i]), " ", end=' ')
+    print()
 
   def printStateDeltaScalar(self):
     sum = 0.0
     for i in range(self.dimension):
       sum += (self.state[i]-abs(self.unitEigenvector[i]))**2
-    print sqrt(sum)
+    print(sqrt(sum))
 
   def normalizeState(self):
     sum = 0.0
@@ -105,19 +106,19 @@ class SquareMatrix:
       sum = 0.0
       for i in range(self.dimension):
         sum += self.matrix[i,j]
-      print sum
+      print(sum)
 
   def markovMatrix(self, fname):
     self.load(fname)
     self.normalizeColumns()
     self.findUnitEigenvector()
     if abs(abs(self.unitEigenvalue)-1) > 1.0E-3:
-      print 'unit eigenvalue looks off - value is ', self.unitEigenvalue
+      print('unit eigenvalue looks off - value is ', self.unitEigenvalue)
       sys.exit(-1)
 
   def printUnitEigenvector(self):
     for i in range(self.dimension):
-      print abs(self.unitEigenvector[i])
+      print(abs(self.unitEigenvector[i]))
 
     
 
@@ -127,17 +128,17 @@ def test():
   m.load('mtest.txt')
   m.dumpColumnSum()
   m.normalizeColumns()
-  print m.matrix
-  print
+  print(m.matrix)
+  print()
   m.dumpColumnSum()
-  print
+  print()
   #print m.matrix
   # print
   m.findUnitEigenvector()
-  print m.unitEigenvalue
-  print
+  print(m.unitEigenvalue)
+  print()
   for i in range(m.dimension):
-    print abs(m.unitEigenvector[i])
+    print(abs(m.unitEigenvector[i]))
 
 if __name__ == '__main__':
   test()

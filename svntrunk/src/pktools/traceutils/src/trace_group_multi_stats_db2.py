@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -14,7 +15,7 @@ bracketName = None
 skipLastN = 0
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep <skipLastNSteps = 0> <bracketName = None>"
+    print(sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep <skipLastNSteps = 0> <bracketName = None>")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]

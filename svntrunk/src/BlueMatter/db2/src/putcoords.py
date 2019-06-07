@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import DB2
 import sys
 import os
@@ -6,7 +7,7 @@ import mx.DateTime
 import time
 
 if len(sys.argv) < 6:
-    print sys.argv[0], "sysID waterModel dvsFileName \"annotation\" dbName"
+    print(sys.argv[0], "sysID waterModel dvsFileName \"annotation\" dbName")
     sys.exit(1)
 sysID=sys.argv[1]
 waterModel=sys.argv[2]
@@ -42,10 +43,10 @@ querystr = "select coord_id from experiment.coords_table where sys_id=" \
            + "created=\'" + str(created) + "\'"
 	 
 curs.execute(querystr)	 
-print 'Coord Ids for SysId = ' + str(sysID)
+print('Coord Ids for SysId = ' + str(sysID))
 foo = curs.fetchone()
 while (foo):
-     print '%20d' % foo[0]
+     print('%20d' % foo[0])
      foo = curs.fetchone()
 
 

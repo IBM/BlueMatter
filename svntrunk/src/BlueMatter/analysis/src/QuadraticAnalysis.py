@@ -1,3 +1,4 @@
+from __future__ import print_function
 from Numeric import *
 import sys
 import os
@@ -59,7 +60,7 @@ class AnalyzeRunSet:
         sdRelDepartArray = []
         RatioDiffDepartArray = []
         epsilon = 1E-10
-        print rVector
+        print(rVector)
         QCString = "MDQuadraticCons "
 
         rVector.sort(lambda a,b: cmp(float(a['OuterTimeStepInPicoSeconds']), float(b['OuterTimeStepInPicoSeconds'])))
@@ -75,7 +76,7 @@ class AnalyzeRunSet:
         f = os.popen(QCString)
         QCLines = f.readlines()
         f.close()
-        print QCLines
+        print(QCLines)
         for l in QCLines[1:]:
           s = l.strip().split()
           QCTimeStepArray.append(float(s[0]))
@@ -86,7 +87,7 @@ class AnalyzeRunSet:
 
         self.__ts = array(tsArray, Float)
         minStep = min(tsArray)
-        print "minStep:", minStep
+        print("minStep:", minStep)
         self.__tsCount = array(tsCountArray, Float)
 
         self.__htmlFile = open(self.__rVector[0]['RunSet'] + '.html', 'w')
@@ -180,9 +181,9 @@ class QuadraticConservation:
         self.__ratioArray = []
 
         # create directory to hold all of the analysis stuff
-        print "mkdir", resultsDir
+        print("mkdir", resultsDir)
         os.mkdir(resultsDir)
-        print "chdir", resultsDir
+        print("chdir", resultsDir)
         os.chdir(resultsDir)
         self.__mainFile = open("index.html", 'w')
         self.mainHtmlSetup()

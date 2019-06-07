@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import sys
 import os
 import os.path
@@ -11,7 +12,7 @@ from PerfUtils import *
 # dbName trace_group_id trcPtListFile outFileNameBase
 
 if len(sys.argv) < 4:
-    print sys.argv[0], "dbName trace_group_id outFileNameBase <trcPtListFile=all>\n"
+    print(sys.argv[0], "dbName trace_group_id outFileNameBase <trcPtListFile=all>\n")
     sys.exit(-1)
 
 dbName = sys.argv[1]

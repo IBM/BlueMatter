@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -19,12 +20,12 @@ class MDDatabase:
       self.conn = Connection(self.dbName);
       self.cursor = self.conn.cursor();
     except:
-      print 'Failed to connect to database ', self.dbName
+      print('Failed to connect to database ', self.dbName)
       sys.exit(-1)
     try:
       self.USERID = pwd.getpwuid(os.getuid())[0].upper()
     except:
-      print 'Warning - Failed to get USERID'
+      print('Warning - Failed to get USERID')
       self.USERID = 'Unknown'
 
   def Close(self):
@@ -48,43 +49,43 @@ class MDDatabase:
 
     foo = self.cursor.fetchone()
     if not foo:
-      print "row with sys_id = ", SysID, " does not exist"
+      print("row with sys_id = ", SysID, " does not exist")
       return
 
     if foo[2].upper() == NewClass.upper():
-      print "System %s already has class %s - Class left unchanged" % (SysID, NewClass)
+      print("System %s already has class %s - Class left unchanged" % (SysID, NewClass))
       return
 
     if foo[2].upper() == 'PRODUCTION' and NewClass.upper() == 'TESTING':
-      print "System %s has class PRODUCTION - Conversion to TESTING not allowed here.  Class left unchanged." % SysID
+      print("System %s has class PRODUCTION - Conversion to TESTING not allowed here.  Class left unchanged." % SysID)
       return
 
 
-    print "Before update:"
-    print '%8s %16s %10s %16s %16s' % ('sys_id','sys_desc','sys_class','creator','created')
-    print '%8s %16s %10s %16s %16s' % foo
+    print("Before update:")
+    print('%8s %16s %10s %16s %16s' % ('sys_id','sys_desc','sys_class','creator','created'))
+    print('%8s %16s %10s %16s %16s' % foo)
 
     if (self.USERID != foo[3].upper()):
-      print "System created by", foo[3].upper(), "not you"
+      print("System created by", foo[3].upper(), "not you")
       return
 
     update = "update mdsystem.system set sys_class = \'" + NewClass + "\' where sys_id = " + SysID
     try:
       self.cursor.execute(update)
     except:
-      print "Failed sysclass update using:"
-      print update
+      print("Failed sysclass update using:")
+      print(update)
       return
 
-    print "After update:"
+    print("After update:")
 
     self.cursor.execute(cmd)
     foo = self.cursor.fetchone()
     if not foo:
-      print "Error in select after update"
+      print("Error in select after update")
     else:
-      print '%8s %16s %10s %16s %16s' % ('sys_id','sys_desc','sys_class','creator','created')
-      print '%8s %16s %10s %16s %16s' % foo
+      print('%8s %16s %10s %16s %16s' % ('sys_id','sys_desc','sys_class','creator','created'))
+      print('%8s %16s %10s %16s %16s' % foo)
 
   def InsertCommonName(self, CompoundName, SysID, NewClass='testing'):
     "Insert common name into table and change class of the referenced system.  Allows changing an existing name."
@@ -99,7 +100,7 @@ class MDDatabase:
     verb = 'Inserted'
     if foo:
       if int(foo[1]) == int(SysID):
-	print "Common name %s is already assigned to system %s - No action taken" % (CommonName, SysID)
+	print("Common name %s is already assigned to system %s - No action taken" % (CommonName, SysID))
 	return
       cmd = "update %s.common_name set sys_id=%s, created='%s' where name='%s'" % (TableUser, SysID, TimeStamp, CommonName)
       verb = 'Updated'
@@ -110,10 +111,10 @@ class MDDatabase:
   
     try:
       self.cursor.execute(cmd)
-      print "%s %s %s %s" % (verb, CommonName, SysID, TimeStamp)
+      print("%s %s %s %s" % (verb, CommonName, SysID, TimeStamp))
     except:
-      print "Failure: %s using:" % verb
-      print cmd 
+      print("Failure: %s using:" % verb)
+      print(cmd) 
 
   def SysIDFromName(self, CompoundName):
     "Get the sys_id of a system referenced by the name in the common_name table"
@@ -122,7 +123,7 @@ class MDDatabase:
     try:
       self.cursor.execute(check)
     except:
-      print "Failure to select name from db using query: ", check
+      print("Failure to select name from db using query: ", check)
       return -1
     foo = self.cursor.fetchone()
     if foo:
@@ -132,9 +133,9 @@ class MDDatabase:
 
 
 def PrintHelp():
-  print sys.argv[0], "-file names.txt"
-  print sys.argv[0], "-idfromname commonname"
-  print sys.argv[0], "suits:common_name sysId new_sys_class=(scratch|testing|production)"
+  print(sys.argv[0], "-file names.txt")
+  print(sys.argv[0], "-idfromname commonname")
+  print(sys.argv[0], "suits:common_name sysId new_sys_class=(scratch|testing|production)")
   sys.exit(-1)
 
 if __name__ == '__main__':
@@ -158,12 +159,12 @@ if __name__ == '__main__':
   time.sleep(1)
 
   if idfromname:
-    print "System %s has SysID %d" % (CommonName, db.SysIDFromName(CommonName))
+    print("System %s has SysID %d" % (CommonName, db.SysIDFromName(CommonName)))
   elif loadfromfile:
     try:
       f = open(NameFile)
     except:
-      print "Cannot open file ", NameFile
+      print("Cannot open file ", NameFile)
       db.Close()
       sys.exit(-1)
     for l in f.readlines():

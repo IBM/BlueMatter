@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from xreadlines import *
 import sys
 import os
@@ -47,7 +48,7 @@ omega1 =  -omega2H + omegaC
 omega3 = omegaC
 omega6 = omega2H + omegaC
 
-print "reading file %s " % fname
+print("reading file %s " % fname)
 
 #allx = ()
 #ally = ()
@@ -88,8 +89,8 @@ for i in range(npts):
 
 rT1 = n * 4.0 * 3.14159 / 10.0 * Tconst * Tconst * ( J1 + J3 + J6)
 T1 = 1.0 / rT1
-print " J(H - C) = %g   3J(C) = %g    6J(H + C) = %g " % (J1,J3,J6)
-print " T1 = %f " % T1
+print(" J(H - C) = %g   3J(C) = %g    6J(H + C) = %g " % (J1,J3,J6))
+print(" T1 = %f " % T1)
 
 
 

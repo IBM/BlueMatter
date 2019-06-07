@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from SquareMatrix import *
 from math import *
@@ -17,8 +18,8 @@ nsteps = 200
 t1 = 30.0
 t2 = 10.0
 
-print "Specified lifetimes:"
-print t1, t2
+print("Specified lifetimes:")
+print(t1, t2)
 
 p1 = 1-1/t1*exp(1.0/t1)
 p2 = 1-1/t2*exp(1.0/t2)
@@ -31,19 +32,19 @@ m.matrix[1,0] = p12
 m.matrix[1,1] = p2
 m.matrix[0,1] = p21
 
-print
-print "Exact transition matrix"
-print m.matrix
+print()
+print("Exact transition matrix")
+print(m.matrix)
 
 m.findUnitEigenvector()
 
-print
-print "Steady state distribution (directly calculated unit-eigenvalued eigenvector):"
+print()
+print("Steady state distribution (directly calculated unit-eigenvalued eigenvector):")
 m.printUnitEigenvector()
 
 pstart1 = m.unitEigenvector[0]
 
-print
+print()
 
 track = zeros((2,2))
 lifecount = [0,0]
@@ -66,8 +67,8 @@ for i in range(nruns):
         lifecount[prev] += 1
       inbin = 1
     prev = current
-  print clist
-  print
+  print(clist)
+  print()
 
 #print track
 #print
@@ -76,9 +77,9 @@ for i in range(nruns):
 t1est = float(track[0,0])/lifecount[0]
 t2est = float(track[1,1])/lifecount[1]
 
-print
-print "Estimated lifetimes based on the %d runs of length %d:" % (nruns, nsteps)
-print t1est, t2est
+print()
+print("Estimated lifetimes based on the %d runs of length %d:" % (nruns, nsteps))
+print(t1est, t2est)
 
 #mest = zeros((2,2), Float)
 mest = SquareMatrix()
@@ -90,11 +91,11 @@ mest.matrix[0,1] = 1.0 - mest.matrix[1,1]
 
 mest.findUnitEigenvector()
 
-print
-print "Estimated transition matrix:"
-print mest.matrix
-print
-print "Estimated steady state distribution:"
+print()
+print("Estimated transition matrix:")
+print(mest.matrix)
+print()
+print("Estimated steady state distribution:")
 mest.printUnitEigenvector()
 
 

@@ -2,13 +2,14 @@
 
 # script to run runstats on all tables within the specified set of schemas
 
+from __future__ import print_function
 from DB2 import *
 import os
 import sys
 
 
 if len(sys.argv) < 2:
-    print sys.argv[0], "dbName <schemaName> <schemaName> .... <schemaName>\n"
+    print(sys.argv[0], "dbName <schemaName> <schemaName> .... <schemaName>\n")
     sys.exit(-1)
 
 action = len(sys.argv)
@@ -27,7 +28,7 @@ for schemaName in schema:
     while (foo):
         tableName = str(foo[0])
         runstatsCmd = "runstats on table " + str(schemaName) + "." + str(tableName) + " with distribution and detailed indexes all;\n"
-        print runstatsCmd
+        print(runstatsCmd)
         db2Proc.write(runstatsCmd.upper())
         foo = cursor.fetchone()
 db2Proc.close()

@@ -4,6 +4,7 @@
 #
 # ####################################################################
 
+from __future__ import print_function
 import DB2
 import sys
 import os
@@ -129,7 +130,7 @@ def overlapping(target):
 
 
 if len(sys.argv) < 2:
-    print sys.argv[0], "blockID <userid>"
+    print(sys.argv[0], "blockID <userid>")
     sys.exit(-1)
 cmd_out=os.popen("/usr/bin/whoami")
 userid=cmd_out.readline().strip()
@@ -139,7 +140,7 @@ target=sys.argv[1]
 blocks=overlapping(target)
 mmcs=MMCS()
 for blockid, owner, status, jobid, username, job_status in blocks:
-    print blockid.strip(), owner, status, jobid, username, job_status
+    print(blockid.strip(), owner, status, jobid, username, job_status)
     if mmcs.free_block(blockid.strip(), owner.strip(), status, jobid, username.strip(), job_status):
         sys.stderr.write("FAILED TO FREE BLOCK: " + blockid.strip() + "\n")
         sys.exit(-1)
@@ -151,5 +152,5 @@ if mmcs.allocate_block(target, userid.strip()):
     sys.stderr.write("FAILED TO ALLOCATE " + target + "!\n")
     sys.exit(-1)
 
-print "Allocated", target
+print("Allocated", target)
 mmcs.close()

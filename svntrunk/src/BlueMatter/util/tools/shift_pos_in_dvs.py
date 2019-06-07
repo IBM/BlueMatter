@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 
 
 if len(sys.argv) < 2:
-    print
-    print 'Usage: shift_pos_in_dvs.py dvsfile idlist dx dy dz dvx dvy dvz outname'
+    print()
+    print('Usage: shift_pos_in_dvs.py dvsfile idlist dx dy dz dvx dvy dvz outname')
     sys.exit(1)
 
 

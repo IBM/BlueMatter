@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 
 
 if len(sys.argv) < 6:
-    print
-    print 'Usage: transformdvs.py dvsfile x y z outputdvs'
+    print()
+    print('Usage: transformdvs.py dvsfile x y z outputdvs')
     sys.exit(1)
 
 

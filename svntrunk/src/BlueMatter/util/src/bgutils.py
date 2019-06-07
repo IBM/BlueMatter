@@ -1,3 +1,4 @@
+from __future__ import print_function
 # utilities to define paths and such for the bluegene application environment
 
 import os
@@ -48,19 +49,19 @@ class PlatformInfo:
     def implParams(self, implId):
         cmd = "select name, value, literal from experiment.impl_params where impl_id = " + str(implId) + " order by impl_id"
         self.__cursor.execute(cmd)
-        print "%30s %30s %15s" % ("NAME", "VALUE", "LITERAL")
+        print("%30s %30s %15s" % ("NAME", "VALUE", "LITERAL"))
         foo = self.__cursor.fetchone()
         while(foo):
-            print "%30s %30s %15s" % (foo[0], foo[1], foo[2])
+            print("%30s %30s %15s" % (foo[0], foo[1], foo[2]))
             foo = self.__cursor.fetchone()
         return
 
     def platformParams(self, platId):
         cmd = "select name, value, type from experiment.platform_params where platform_id = " + str(platId) + " order by platform_id"
         self.__cursor.execute(cmd)
-        print "%30s %30s %15s" % ("NAME", "VALUE", "TYPE")
+        print("%30s %30s %15s" % ("NAME", "VALUE", "TYPE"))
         foo = self.__cursor.fetchone()
         while(foo):
-            print "%30s %30s %15s" % (foo[0], foo[1], foo[2])
+            print("%30s %30s %15s" % (foo[0], foo[1], foo[2]))
             foo = self.__cursor.fetchone()
         return

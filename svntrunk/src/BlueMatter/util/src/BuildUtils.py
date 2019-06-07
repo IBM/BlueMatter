@@ -1,3 +1,4 @@
+from __future__ import print_function
 # #################################################################
 #
 # File: BuildUtils.py
@@ -19,7 +20,7 @@ class createXml:
     def __init__(self):
         self.installRoot = bgutils.installbase() + 'usr/opt/bluegene'
     def fromSource(self, sysName, dataDir=None, verbose=0): # derived classes must overload this
-        raise RuntimeError, 'createXML.from() called from base class'
+        raise RuntimeError('createXML.from() called from base class')
 
 # derived class implementing from() method for CHARMM
 class createXmlForCharmm(createXml):
@@ -35,14 +36,14 @@ class createXmlForCharmm(createXml):
                                       '/' + sysName +'.psf.bz2 > ./'
                                       + sysName + '.psf')
         if rc[0] != 0:
-            raise RuntimeError, 'createXML.fromCharmm: ' + str(rc[0]) + '\n' + rc[1]
+            raise RuntimeError('createXML.fromCharmm: ' + str(rc[0]) + '\n' + rc[1])
         
         
         rc = commands.getstatusoutput('psf2xml.pl ' + toppardir + '/' +
                                       topfile + ' ' + toppardir + '/' +
                                       parfile + ' ./' + sysName + '.psf')
         if rc[0] != 0:
-            raise RuntimeError, 'createXML.fromCharmm: ' + str(rc[0]) + '\n' + rc[1]
+            raise RuntimeError('createXML.fromCharmm: ' + str(rc[0]) + '\n' + rc[1])
 
 #derived class implementing from() method for OPLSAA
 class createXmlForOplsaa(createXml):
@@ -55,18 +56,18 @@ class createXmlForOplsaa(createXml):
                                       + sysName + '.out.bz2 > ./'
                                       + sysName + '.out')
         if rc[0] != 0:
-            raise RuntimeError, 'createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1]
+            raise RuntimeError('createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1])
 
         rc = commands.getstatusoutput('bunzip2 -kc ' + datadir + '/'
                                       + sysName + '.pdb.bz2 > ./'
                                       + sysName + '.pdb')
         if rc[0] != 0:
-            raise RuntimeError, 'createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1]
+            raise RuntimeError('createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1])
         
         rc = commands.getstatusoutput('opls2xml.pl ./' + sysName + '.out'
                                       + ' ./' + sysName + '.pdb')
         if rc[0] != 0:
-            raise RuntimeError, 'createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1]
+            raise RuntimeError('createXML.fromOplsas: ' + str(rc[0]) + '\n' + rc[1])
 
 
         
@@ -80,7 +81,7 @@ def xml2db2(xmlBase, verbose=0):
     xmlLines = rc[1].split('\n')
     for xmlLine in xmlLines:
         if verbose:
-            print "xml2db2:",xmlLine
+            print("xml2db2:",xmlLine)
         ma = re.match(syspat, xmlLine)
         mb = re.match(successpat, xmlLine)
         mc = re.match(errorpat, xmlLine)
@@ -88,18 +89,18 @@ def xml2db2(xmlBase, verbose=0):
             sysId = ma.expand(r'\1')
         elif mb != None:
             if verbose:
-                print xmlLine
+                print(xmlLine)
         elif mc != None:
-            raise RuntimeError, 'xml2db2: Error loading xml into db2. Please check the XML.\n' + xmlLine
+            raise RuntimeError('xml2db2: Error loading xml into db2. Please check the XML.\n' + xmlLine)
                 
     if rc[0] != 0:
-        raise RuntimeError, 'xml2db2 error'
+        raise RuntimeError('xml2db2 error')
     return sysId
 
 def rtp2db2(rtpName, verbose=0):
     rtpCmd =  'java com.ibm.bluematter.utils.Rtp2db2 ' + rtpName
     if verbose:
-        print rtpCmd
+        print(rtpCmd)
     ctpId = '-1'
     ctppat = re.compile(r'^CTP_ID:\s+(\d+)')
     rc = commands.getstatusoutput(rtpCmd)
@@ -109,9 +110,9 @@ def rtp2db2(rtpName, verbose=0):
         if ma != None:
             ctpId = ma.expand(r'\1')
     if ctpId == -1:
-        raise RuntimeError, 'rtp2db2 did not return a ctp_id'
+        raise RuntimeError('rtp2db2 did not return a ctp_id')
     if rc[0] != 0:
-        raise RuntimeError, 'rtp2db2 non-zero return code'
+        raise RuntimeError('rtp2db2 non-zero return code')
     return ctpId
     
 def db2cpp(dest, sysId, ctpId, verbose=0):
@@ -119,14 +120,14 @@ def db2cpp(dest, sysId, ctpId, verbose=0):
     cmd = 'java com.ibm.bluematter.db2probspec.ProbspecgenDB2 ' \
           + str(sysId) + ' ' + str(ctpId) + ' ' + dest + ' -v'
     if verbose:
-        print cmd
+        print(cmd)
     rc = commands.getstatusoutput(cmd)
     if verbose:
-        print "db2cpp:\n", rc[1]
+        print("db2cpp:\n", rc[1])
     if rc[0] != 0:
-        raise RuntimeError, 'db2cpp non-zero return code'
+        raise RuntimeError('db2cpp non-zero return code')
     if os.access(dest + '.cpp', os.R_OK) == 0:
-        raise RuntimeError, 'db2cpp did not generate the cpp'
+        raise RuntimeError('db2cpp did not generate the cpp')
 
 def cpp2exe(dest, buildmode, buildopts, verbose=0):
     exeFile = dest + '.smp.aix.exe'
@@ -136,8 +137,8 @@ def cpp2exe(dest, buildmode, buildopts, verbose=0):
     cmd = 'time ' + script + dest + ' ' + buildmode + ' ' + buildopts
     rc = commands.getstatusoutput(cmd)
     if rc[0] != 0:
-        raise RuntimeError, 'cpp2exe non-zero return code'
+        raise RuntimeError('cpp2exe non-zero return code')
     if os.access(exeFile, os.R_OK) == 0:
-        raise RuntimeError, 'cpp2exe did not generate the exe'
+        raise RuntimeError('cpp2exe did not generate the exe')
     if verbose:
-        print exeFile, "successfully created by cpp2exe"
+        print(exeFile, "successfully created by cpp2exe")

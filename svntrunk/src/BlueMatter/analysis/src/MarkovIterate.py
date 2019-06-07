@@ -1,9 +1,10 @@
+from __future__ import print_function
 import sys
 from SquareMatrix import *
 
 if len(sys.argv) < 2:
-  print sys.argv[0]+' matrix.txt niterations=100'
-  print 'Iterates square matrix and outputs running state vector'
+  print(sys.argv[0]+' matrix.txt niterations=100')
+  print('Iterates square matrix and outputs running state vector')
   sys.exit(-1)
 
 m = SquareMatrix()

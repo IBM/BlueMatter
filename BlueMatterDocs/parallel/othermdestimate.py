@@ -1,3 +1,4 @@
+from __future__ import print_function
 # command line args:
 # clock speed in Hz
 # computational rate in FLOPS/cycle/node
@@ -12,7 +13,7 @@ import sys
 
 
 if len(sys.argv) < 9:
-    print sys.argv[0],"clockspeed(Hz) compRate(FLOPS/cycle) compEff BW(bits/cycle) latency(cycles/packet) meshSize atomCount processorCount"
+    print(sys.argv[0],"clockspeed(Hz) compRate(FLOPS/cycle) compEff BW(bits/cycle) latency(cycles/packet) meshSize atomCount processorCount")
     sys.exit(1)
 clock=float(sys.argv[1])
 compRate=float(sys.argv[2])
@@ -26,4 +27,4 @@ procs = float(sys.argv[8])
 cutoff=10
 
 platform=OtherPlatform(clock, compRate, eff, bw, latency)
-print '%12.0e %12.3e' % (procs, tsEstimate_gp(procs, platform, meshSize, atomCount, cutoff)[5])
+print('%12.0e %12.3e' % (procs, tsEstimate_gp(procs, platform, meshSize, atomCount, cutoff)[5]))

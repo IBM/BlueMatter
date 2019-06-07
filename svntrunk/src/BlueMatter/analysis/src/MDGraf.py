@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 import glob
@@ -79,7 +80,7 @@ if exeindex > 0:
 titlestr = "%s ..%s" % (exestr, os.getcwd()[-50:])
 f.write('set title "%s"\n' % titlestr)
 
-print "Graphing %s" % titlestr
+print("Graphing %s" % titlestr)
   
 h = 0.05
 if multiplot:

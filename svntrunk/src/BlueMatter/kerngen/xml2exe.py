@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import string
 import os
 import sys
@@ -9,13 +10,13 @@ RunningLog = []
 
 def DumpAndExit(msg):
   global RunningLog
-  print ""
-  print msg + "  Details follow..."
-  print ""
+  print("")
+  print(msg + "  Details follow...")
+  print("")
   for l in RunningLog:
-    print l.strip()  
-  print ""
-  print ""
+    print(l.strip())  
+  print("")
+  print("")
   sys.exit(-1)
   return
 
@@ -28,9 +29,9 @@ def AddLog(title, log):
 
 
 if len(sys.argv) < 4:
-    print
-    print 'Usage: xml2exe.py xmlname rtpname outputtag <BuildMode> <BuildOpts>'
-    print '   Program will produce <outputtag>.msd and <outputtag>.smp.aix.exe'
+    print()
+    print('Usage: xml2exe.py xmlname rtpname outputtag <BuildMode> <BuildOpts>')
+    print('   Program will produce <outputtag>.msd and <outputtag>.smp.aix.exe')
     sys.exit(-1)
 
 xmlname = sys.argv[1]
@@ -46,10 +47,10 @@ if len(sys.argv) > 5:
   buildopts = sys.argv[5]
 
 if os.access(xmlname,os.R_OK) == 0:
-   print 'cannot read ' + xmlname
+   print('cannot read ' + xmlname)
    sys.exit(-1)
 if os.access(rtpname,os.R_OK) == 0:
-   print 'cannot read ' + rtpname
+   print('cannot read ' + rtpname)
    sys.exit(-1)
 
 #SB = os.environ['SANDBOXBASE']
@@ -59,14 +60,14 @@ BG_SETUP = BG + '/bin/setup'
 BG_UTIL = BG + '/bin/util'
 
 # Make the generated files readable by others and the web server
-os.umask(022)
+os.umask(0o22)
 
 
 #########################################################
 #                     xml2db2
 #########################################################
 xmlcom = "perl " + BG_SETUP + "/xml2db2.pl " + xmlname 
-print xmlcom
+print(xmlcom)
 
 wcf = os.popen(xmlcom)
 XMLLines = wcf.readlines()
@@ -80,11 +81,11 @@ for i in range(nlines):
     for j in range(len(thisline)):        
         if(thisline[j] == 'SystemId:'):
             SysId = thisline[j+1]
-	    print "System ID: " + SysId
+	    print("System ID: " + SysId)
         if(thisline[j] == 'ERROR:'):
 	    DumpAndExit("ERROR:  xml2db2 returned an error.  Please check the XML.")
         if(thisline[j] == 'SUCCESS:'):
-            print XMLLines[i]
+            print(XMLLines[i])
             
 #########################################################
 msdfile = dest + '.msd'
@@ -101,7 +102,7 @@ os.system(rmexe)
 #########################################################
 rtp2 =  'java com.ibm.bluematter.utils.Rtp2db2 '
 rtp2com = rtp2 + rtpname
-print rtp2com
+print(rtp2com)
 
 wcf = os.popen(rtp2com)
 RTPLines = wcf.readlines()
@@ -116,7 +117,7 @@ for i in range(nlines):
     for j in range(len(thisline)):
 	if(thisline[j] == 'CTP_ID:'):
 	    CtpId = thisline[j+1]
-	    print "CTP ID: " + CtpId
+	    print("CTP ID: " + CtpId)
 
 if CtpId == -1:
     DumpAndExit("ERROR:  rtp2db2 did not return a CtpId")
@@ -136,7 +137,7 @@ pltId = thisline[1]
 
 pdb2 =  'java com.ibm.bluematter.db2probspec.ProbspecgenDB2 '
 pdb2com = pdb2 + SysId + " " + CtpId + " " + implId + " " + pltId + " " + dest + " -v"
-print pdb2com
+print(pdb2com)
 
 wcf = os.popen(pdb2com)
 PSPLines = wcf.readlines()
@@ -153,7 +154,7 @@ if os.access(msdfile,os.R_OK) == 0:
 #########################################################
 msd =  'time java com.ibm.bluematter.utils.CompileMSD '
 msdcom = msd + dest + ".msd "
-print msdcom
+print(msdcom)
 
 wcf = os.popen(msdcom)
 COMLines = wcf.readlines()
@@ -168,15 +169,15 @@ for i in range(nlines):
     for j in range(len(thisline)):
 	if(thisline[j].strip() == 'Executable'):
 	    exeId = int(thisline[j+2])
-	    print "Executable ID::" + str(exeId)
+	    print("Executable ID::" + str(exeId))
 
-print "exeId: " + str(exeId)
+print("exeId: " + str(exeId))
 if exeId == -1:
     DumpAndExit("ERROR:: Compilation failed, sorry pal :(")
 
 ####  Check success of msd compilation
-print 'EXE name : ' + exefile
-print "%s successfully created by xml2exe.py" % exefile
+print('EXE name : ' + exefile)
+print("%s successfully created by xml2exe.py" % exefile)
 
 sys.exit( 0 )
 

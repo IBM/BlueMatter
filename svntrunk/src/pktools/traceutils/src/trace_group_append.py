@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -13,7 +14,7 @@ from PerfUtils import *
 # command line arguments: dbName groupID timeFactor fileList
 
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName groupID timeFactor fileList"
+    print(sys.argv[0], "dbName groupID timeFactor fileList")
     sys.exit(-1)
 
 dbName = sys.argv[1]

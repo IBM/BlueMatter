@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 from DB2 import *
 import sys
 import os
@@ -11,7 +12,7 @@ import pwd
 
 bracketName = "TimeStep__0"
 if len(sys.argv) < 5:
-    print sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep <bracketName = TimeStep__0>"
+    print(sys.argv[0], "dbName trace_group_id outFileBaseName minTimeStep <bracketName = TimeStep__0>")
     sys.exit(-1)
 dbName = sys.argv[1]
 groupId = sys.argv[2]
@@ -39,7 +40,7 @@ while (foo):
     if bar:
         bracketId = bar[0]
     else:
-        print "No bracketId found for", bracketName
+        print("No bracketId found for", bracketName)
         sys.exit(-1)
     if (nodeCount.count(foo[1]) == 0):
         nodeCount.append(foo[1])
@@ -120,6 +121,6 @@ for i in range(len(label)):
     else:
         fg.write(",\\\n")
 fg.close()
-print "label: ", label
-print "node count: ", nodeCount
-print "result:", result
+print("label: ", label)
+print("node count: ", nodeCount)
+print("result:", result)

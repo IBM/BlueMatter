@@ -1,3 +1,4 @@
+from __future__ import print_function
 # routine to extract and fit variances from RunResults.txt
 from Numeric import *
 from LinearAlgebra import *
@@ -27,8 +28,8 @@ def energytest(runDir, corrTime):
     eavgArray = varTuple[1]
     ermsdArray = varTuple[2]
     ermsdrmsdArray = varTuple[3]
-    print "ermsdArray = ", ermsdArray
-    print "ermsdrmsdArray = ", ermsdrmsdArray
+    print("ermsdArray = ", ermsdArray)
+    print("ermsdrmsdArray = ", ermsdrmsdArray)
 
     # we can use the RunList class to contain RunResults as well
     runResults = RunList('RunResults.txt')
@@ -65,15 +66,15 @@ def energytest(runDir, corrTime):
         res2.append(res*res)
 
     chi2 = reduce(sum, res2)
-    print "Chi Squared:\n", chi2
+    print("Chi Squared:\n", chi2)
     htmlFile.write("Chi Squared: " + str(chi2) + "\n")
     htmlFile.write("<br><br>\n")
-    print "parameters and estimated uncertainties:"
+    print("parameters and estimated uncertainties:")
     htmlFile.write("parameters and estimated uncertainties:\n<br><br>\n")
     index = 0
     for i in range(len(coeff)):
         if mask[i]:
-            print "a[",i,"] =",rc[0][index], "+-",sqrt(rc[1][index][index])
+            print("a[",i,"] =",rc[0][index], "+-",sqrt(rc[1][index][index]))
             htmlFile.write("a["+str(i)+"] = "+str(rc[0][index])+" +- ")
             htmlFile.write(str(sqrt(rc[1][index][index])))
             htmlFile.write("\n<br>\n")
@@ -84,7 +85,7 @@ def energytest(runDir, corrTime):
     vres = array(res2, Float)
     sum = add.reduce(vres)
     sum = sqrt(sum/float(len(ts) - len(rc[0])))
-    print "average rmsd of fit = ", sum
+    print("average rmsd of fit = ", sum)
     htmlFile.write("average rmsd of fit = " + str(sum) + "\n<br>\n")
     eFile = open('ermsd.dat', 'w')
     for i in range(len(ts)):

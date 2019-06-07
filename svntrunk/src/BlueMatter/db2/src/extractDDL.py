@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import sys
 import os
 
 if len(sys.argv) < 2:
-    print sys.argv[0], " dbName <schemaName> <schemaName> .... <schemaName>\n"
+    print(sys.argv[0], " dbName <schemaName> <schemaName> .... <schemaName>\n")
     sys.exit(-1)
 
 action = len(sys.argv)

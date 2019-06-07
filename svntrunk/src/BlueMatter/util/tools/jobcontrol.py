@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 from xreadlines import *
 import sys
 import os
@@ -18,7 +19,7 @@ dir = sys.argv[1]
 seqnum = 1
 found = 0
 
-print "dir %s" % dir
+print("dir %s" % dir)
 ##############  
 #  Determine sequence number
 #
@@ -30,7 +31,7 @@ while (not found):
       else:
 	 found = 1
 
-print "sequence number = %d" % seqnum
+print("sequence number = %d" % seqnum)
 running = 0
 jobname = "nojob"
 ##############
@@ -45,7 +46,7 @@ if os.access(idname,os.F_OK):
    job = fields[3]
    jobidstr = job.split('.')[4]
    jobid = int(jobidstr.split('"')[0])
-   print job ,jobid
+   print(job ,jobid)
 
 ###  Get running job id list
    cmd = "rsh sp1login /usr/lpp/LoadL/full/bin/llq | grep pitman"
@@ -78,7 +79,7 @@ if (os.access(datagramname, os.F_OK)):
    datagramexists = 1
 
 if (running):
-   print "Process %s is currently running" % jobname
+   print("Process %s is currently running" % jobname)
    ####################
    #  Check if process is being logged
    #
@@ -92,7 +93,7 @@ if (running):
       day = int(lin[6])
       hour = int (lin[7].split(':')[0])
       min = int (lin[7].split(':')[1])
-      print "Last rdg at %s %s %s : %s" % (month,day,hour,min)
+      print("Last rdg at %s %s %s : %s" % (month,day,hour,min))
 
       if (logexists):
 	 cmd = "ls -l " + logname
@@ -104,10 +105,10 @@ if (running):
 	 lday = int(lin[6])
 	 lhour = int (lin[7].split(':')[0])
 	 lmin = int (lin[7].split(':')[1])
-	 print "Last log at %s %d %d : %d" % (lmonth,lday,lhour,lmin)
+	 print("Last log at %s %d %d : %d" % (lmonth,lday,lhour,lmin))
 	 mindif = abs(hour*60 + min - (lhour*60 + lmin))
 	 if (month == lmonth) and (day == lday) and (mindif <= 1):
-		print "logging in synch"
+		print("logging in synch")
 		currentlog = 1
 			
 
@@ -118,64 +119,64 @@ if (logexists):
    lines = fstr.readlines()
    fstr.close()  
    if ( len(lines) > 0):
-      print lines
+      print(lines)
 #      print "#########    NAN Inside   #######"
       naninside = 1
 
-print "##############################################"
-print "########   Job status for %s %s  " %(dir , jobname)
+print("##############################################")
+print("########   Job status for %s %s  " %(dir , jobname))
 if (not running): 
    restart = 1
-   print "job is not running - plan on restarting"
+   print("job is not running - plan on restarting")
 
 if (running and not datagramexists): 
    killjob = 1
-   print "job is running but no datagram - plan on killing"
+   print("job is running but no datagram - plan on killing")
 
 if (running and naninside): 
    killjob = 1
-   print "job is running but log has nans - plan on killing"
+   print("job is running but log has nans - plan on killing")
 
 if (running and (logexists and not currentlog)): 
    killjob = 1
-   print "job is running but log is not current - plan on killing"
+   print("job is running but log is not current - plan on killing")
 
 if (running and not logexists and not killjob):
 	startlogging = 1
-	print "job is running without logging - plan on logging"
+	print("job is running without logging - plan on logging")
 
 if (killjob): 
    restart = 1
-   print "will restart after killing job"
+   print("will restart after killing job")
 
 if(running and currentlog and not killjob):
-   print "Status OK - job is running and log is current"
+   print("Status OK - job is running and log is current")
 
 
-print "###########    Status summary:"
-print "Running = %d" % running
-print "Logexists = %d" % logexists 
-print "Datagramexists = %d" % datagramexists
-print "Currentlog = %d" % currentlog
-print "Naninside = %d" % naninside
-print "Killjob = %d" % killjob
-print "Restart = %d" % restart
-print "Startlogging = %d" % startlogging
+print("###########    Status summary:")
+print("Running = %d" % running)
+print("Logexists = %d" % logexists) 
+print("Datagramexists = %d" % datagramexists)
+print("Currentlog = %d" % currentlog)
+print("Naninside = %d" % naninside)
+print("Killjob = %d" % killjob)
+print("Restart = %d" % restart)
+print("Startlogging = %d" % startlogging)
 
 
 
 if (killjob):
-   print "killing job %s" % jobname
+   print("killing job %s" % jobname)
    cmd = "rsh sp1login /usr/lpp/LoadL/full/bin/llcancel " + jobname
-   print cmd
-   print "kill result : %s" % os.system(cmd)
+   print(cmd)
+   print("kill result : %s" % os.system(cmd))
 
 
 if(restart):
    if (datagramexists):
       cmd = "mv " + datagramname + "  " + dir + "/datagrams/rdg." + str(seqnum)
-      print cmd
-      print "rdg rename result: %s" % os.system(cmd)
+      print(cmd)
+      print("rdg rename result: %s" % os.system(cmd))
 
 
    if(logexists):
@@ -196,18 +197,18 @@ if(restart):
 	    cmd = "mv " + dir + "/" + fillist[i] + " " + dir + \
 		      "/data/" + fillist[i] + "." + str(seqnum)
 	    cmdls = "ls -l " + dir + "/" + fillist[i] + " " 
-	    print cmd
-	    print "mv result : %s " % os.system(cmd)
+	    print(cmd)
+	    print("mv result : %s " % os.system(cmd))
 
 
 	cmd = "mv " + logname + " " +  dir + "/data/"
-	print cmd
-	print "mv result : %s " % os.system(cmd)
+	print(cmd)
+	print("mv result : %s " % os.system(cmd))
 
 		     
 	cmd = "cp " + dir + "/LipSnapshot.dvs " +  dir + "/Snapshot.dvs"
-	print cmd
-	print "cp result : %s " % os.system(cmd)
+	print(cmd)
+	print("cp result : %s " % os.system(cmd))
 
 
 

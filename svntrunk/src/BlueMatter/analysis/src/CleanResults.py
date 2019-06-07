@@ -3,6 +3,7 @@
 """
   See MultiRunBase.py for description
 """
+from __future__ import print_function
 
 from Numeric import *
 import os
@@ -37,8 +38,8 @@ while argnum < nargs:
     KillRuns()
     sys.exit(1)
   else:
-    print "Command option %s not recognized" % sys.argv[argnum]
-    print "Usage:  MultiRun.py [-listonly] [-roundrobin]"
+    print("Command option %s not recognized" % sys.argv[argnum])
+    print("Usage:  MultiRun.py [-listonly] [-roundrobin]")
     sys.exit(-1)
   argnum += 1
 
@@ -61,5 +62,5 @@ f.close()
 Res.sort(lambda x,y: cmp(x[1], y[1]))
 
 for v in Res:
-  print "%s\n%s" % v
+  print("%s\n%s" % v)
 

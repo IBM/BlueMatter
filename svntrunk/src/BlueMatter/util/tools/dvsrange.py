@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 
 
+from __future__ import print_function
 import sys
 import os
 from dvsutils import *
 
 if len(sys.argv) < 2:
-    print
-    print 'Usage: dvsrange.py dvsfile'
+    print()
+    print('Usage: dvsrange.py dvsfile')
     sys.exit(1)
 
 
@@ -18,7 +19,7 @@ vels = []
 flines = GetDVS(FName)
 NLines = ReadPosVels( flines , coords, vels)
 
-print "NLines = " + str(NLines)
+print("NLines = " + str(NLines))
 
 min = Vec([coords[0][0],coords[0][1],coords[0][2]])
 max = Vec([coords[0][0],coords[0][1],coords[0][2]])

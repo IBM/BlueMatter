@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from __future__ import print_function
 import time
 import math
 import sys
@@ -20,7 +21,7 @@ except ImportError:
 
 def wait(str=None, prompt='Press return to close window...\n'):
     if str is not None:
-        print str
+        print(str)
     raw_input(prompt)
 
 class Ensemble:
@@ -74,8 +75,8 @@ def GetMaxStep(lf):
       except:
 	time.sleep(5)
 	continue
-    return -1 
-     
+    return -1
+
 def ParseColumns(lf, ens, labs, udfs, startvals, range):
     nonudfs = ['Step', 'TotalE', 'IntraE', 'InterE', 'KE', 'Temp', 'ConsQuant', 'CQRMSDEst', 'IntPressure', 'Virial', 'Volume', 'VolVeloc']
     f = open(lf)
@@ -106,7 +107,7 @@ def main():
 
     nargs = len(sys.argv)
     if nargs < 2:
-      print "MDPlot2.py mdlogfile -udfs -poll -polltime 60 -ts 0.001"
+      print("MDPlot2.py mdlogfile -udfs -poll -polltime 60 -ts 0.001")
       sys.exit()
 
     showudfs = 0
@@ -143,10 +144,10 @@ def main():
     startvals = {}
 
     if GetMaxStep(logfile) < 0:
-      print 'timeout waiting for 3 lines in ', logfile
+      print('timeout waiting for 3 lines in ', logfile)
       sys.exit(-1)
     range = [0, 0]
-    ParseColumns(logfile, ens, labs, udfs, startvals, range) 
+    ParseColumns(logfile, ens, labs, udfs, startvals, range)
     minstep = range[0]
     oldmaxstep = -1000000
     # skip first data value so it doesn't throw off scales
@@ -173,18 +174,18 @@ def main():
       g.set_range('origin', '0.0, %f' % (1.0-hfrac))
       g.set_boolean('xtics', 0)
       #g1= Gnuplot.Gnuplot(debug=1)
-  
+
       g.set_boolean('y2tics', 1)
       g.ylabel('TotalEnergy')
       g.set_string('y2label',  'ConsQuant')
       g.set_range('ytics',  'nomirror')
-  
+
       g.set_range('xrange', '[%f:%f]'%(xmin, xmax))
 
       g.plot(Gnuplot.File(logfile, using='(%f*$1):%d'%(ts, labs['TotalE']), with='lines', title='TotalEnergy'),
              Gnuplot.File(logfile, using='(%f*$1):%d'%(ts, labs['ConsQuant']), axes='x1y2', with='lines', title='ConsQuant'))
 
-    
+
       g.set_range('size', '1.0,%f'%(hfrac))
       g.set_range('origin', '0.0, %f' % (1.0-2*hfrac))
       g.set_range('xrange', '[%f:%f]'%(xmin, xmax))
@@ -201,7 +202,7 @@ def main():
 	g.set_string('y2label', '')
 	g.set_boolean('y2tics', 0)
         g.plot(Gnuplot.File(logfile, using='(%f*$1):%d'%(ts,labs['Temp']), with='lines', title='Temperature'))
-	
+
       if showudfs:
         g.set_range('size', '1.0,%f'%(hfrac))
         g.set_range('origin', '0.0, 0.0')
@@ -221,7 +222,7 @@ def main():
 	  i += 1
         g.plotcmd = 'plot'
         g.refresh()
-      
+
       g.set_boolean('multiplot', 0)
       doplot = 0
       if poll:

@@ -11,6 +11,7 @@
 #
 # ###################################################################
 
+from __future__ import print_function
 from DB2 import *
 import mx.DateTime
 import time
@@ -21,7 +22,7 @@ import os.path
 import pwd
 
 if len(sys.argv) < 3:
-    print sys.argv[0], "sourceFile buildOpts <profileBuild = 0> <targetPlatform = 0 (rs/6000 aix)> <install_image_path=$PACKAGEBASE/shipdata/usr/opt/bluegene>  <compiler=xlC_r> <executable_extension=smp.aix.exe>"
+    print(sys.argv[0], "sourceFile buildOpts <profileBuild = 0> <targetPlatform = 0 (rs/6000 aix)> <install_image_path=$PACKAGEBASE/shipdata/usr/opt/bluegene>  <compiler=xlC_r> <executable_extension=smp.aix.exe>")
     sys.exit(-1)
 
 sourceFile = sys.argv[1]
@@ -34,7 +35,7 @@ compilerFamily = "xlC_r"
 exeExtension = "smp.aix.exe"
 objExtension = "o"
 
-print "buildOpts:\n", buildOpts
+print("buildOpts:\n", buildOpts)
 
 if (len(sys.argv) > 3):
     profileBuild = int(sys.argv[3])
@@ -50,11 +51,11 @@ if (len(sys.argv) > 7):
 rootfilepat = re.compile(r'(.+)\.cpp$')
 fmatch = re.match(rootfilepat, sourceFile)
 if fmatch == None:
-    print "Error: Invalid file name", sourceFile
+    print("Error: Invalid file name", sourceFile)
     sys.exit(-1)
 
 rootFileName = fmatch.expand(r'\1')
-print "rootFileName =", rootFileName
+print("rootFileName =", rootFileName)
 
 # database name
 dbpat = re.compile(r'^//%database_name:\s*(\w+)')
@@ -81,31 +82,31 @@ for line in inFile.xreadlines():
     if  ma != None:
         matchCount=matchCount+1
         dbName = ma.expand(r'\1')
-        print "database name =", ma.expand(r'\1')
+        print("database name =", ma.expand(r'\1'))
     elif mb != None:
         matchCount=matchCount+1
         sourceId = mb.expand(r'\1')
-        print "source_id =", mb.expand(r'\1')
+        print("source_id =", mb.expand(r'\1'))
     elif mc != None:
         matchCount=matchCount+1
         sysId = mc.expand(r'\1')
-        print "sys_id =", mc.expand(r'\1')
+        print("sys_id =", mc.expand(r'\1'))
     elif md != None:
         matchCount=matchCount+1
         ctpId = md.expand(r'\1')
-        print "ctp_id =", md.expand(r'\1')
+        print("ctp_id =", md.expand(r'\1'))
     elif me != None:
         matchCount=matchCount+1
         probspecVersion = me.expand(r'\1')
-        print "probspec_version =", me.expand(r'\1')
+        print("probspec_version =", me.expand(r'\1'))
     elif mf != None:
         matchCount=matchCount+1
         probspecTag = mf.expand(r'\1')
-        print "probspec_tag =", mf.expand(r'\1')
+        print("probspec_tag =", mf.expand(r'\1'))
     elif mg != None:
         matchCount=matchCount+1
         magicNumber = mg.expand(r'\1')
-        print "magic number =", mg.expand(r'\1')
+        print("magic number =", mg.expand(r'\1'))
     if (matchCount >= matchTotal):
         break
 inFile.close()
@@ -121,16 +122,16 @@ foo = cursor.fetchone()
 if foo:
     probspecVersion = foo[0]
 else:
-    print "ERROR: Unable to find probspec version corresponding to tag", probspecTag
+    print("ERROR: Unable to find probspec version corresponding to tag", probspecTag)
     sys.exit(-2)
 
 
 # fetch and print platform information based on target platform id
 cmd = "select platform_id, hardware, os_family, os_version from experiment.platform where platform_id = " + str(targetPlatform)
-print cmd
+print(cmd)
 cursor.execute(cmd)
 res = cursor.fetchone()
-print "Platform:", res[0], res[1], res[2], res[3]
+print("Platform:", res[0], res[1], res[2], res[3])
 
 # we're going to check the version files under both BlueMatter and bgfe and
 # verify that they contain the same version (if any).
@@ -142,7 +143,7 @@ for line in inFile.xreadlines():
     mVer = re.match(versionpat, line)
     if mVer != None:
         blueMatterVersion = mVer.expand(r'\1')
-        print "blueMatterVersion =", blueMatterVersion
+        print("blueMatterVersion =", blueMatterVersion)
         break;
 inFile.close()
 
@@ -151,7 +152,7 @@ for line in inFile.xreadlines():
     mVer = re.match(versionpat, line)
     if mVer != None:
         bgfeVersion = mVer.expand(r'\1')
-        print "bgfeVersion =", bgfeVersion
+        print("bgfeVersion =", bgfeVersion)
         break;
 inFile.close()
 
@@ -160,9 +161,9 @@ if bgfeVersion == None or blueMatterVersion == None or bgfeVersion != blueMatter
     tagVersion = None
 
 if tagVersion == None:
-    print "tagVersion: NONE"
+    print("tagVersion: NONE")
 else:
-    print "tagVersion:", tagVersion
+    print("tagVersion:", tagVersion)
 
 # now get the relevant information about compiler levels and such.
 # The following is AIX-specific:
@@ -172,41 +173,41 @@ compilerInfo = os.popen('lslpp -L -c vacpp.cmp.C vacpp.cmp.batch vacpp.cmp.core 
 compilerVersion = ''
 for line in compilerInfo.xreadlines():
     compilerVersion = compilerVersion + line
-print compilerVersion,
+print(compilerVersion, end=' ')
 
 cmd = "select count(*) from experiment.compiler where family = " + "\'" + str(compilerFamily) + "\' and version = \'" + str(compilerVersion) + "\'"
-print cmd
+print(cmd)
 cursor.execute(cmd)
 
 foo = cursor.fetchone();
-print foo[0],"rows returned"
+print(foo[0],"rows returned")
 
 if foo[0] > 1:
-    print "WARNING: multiple entries in compiler table for " + compilerFamily
-    print "version\n" + compilerVersion
+    print("WARNING: multiple entries in compiler table for " + compilerFamily)
+    print("version\n" + compilerVersion)
 elif int(foo[0]) == 0:
     cmd = "insert into experiment.compiler (compiler_id, family, version) values (DEFAULT, " \
     + "\'" + str(compilerFamily) + "\', " \
     + "\'" + str(compilerVersion) + "\')"
-    print cmd
+    print(cmd)
     cursor.execute(cmd)
 cmd = "select compiler_id from experiment.compiler where family = " \
 + "\'" + str(compilerFamily) + "\' and version = \'" + str(compilerVersion) + "\'"
-print cmd
+print(cmd)
 cursor.execute(cmd)
 foo = cursor.fetchone()
 if foo:
     compilerId = foo[0]
-    print "compilerId:", compilerId
+    print("compilerId:", compilerId)
 else:
-    print "ERROR: Could not fetch compiler_id from db2"
+    print("ERROR: Could not fetch compiler_id from db2")
     sys.exit(-2)
 
 
 # machine identifier
 compileHost = os.uname()[4];
 
-print compileHost
+print(compileHost)
 
 # Because we are having db2 generate the executable_id which we must retrieve
 # prior to the build, we need to have a way to uniquely identify the row that
@@ -237,7 +238,7 @@ cmd = "insert into experiment.executable (executable_id, build_begin, build_end,
 + str(probspecVersion) + ", " \
 + str(sourceId) + ")"
 
-print cmd
+print(cmd)
 cursor.execute(cmd)
 
 cmd = \
@@ -254,7 +255,7 @@ cmd = \
     "probspec_version = " + str(probspecVersion) + " and " +\
     "source_id = " + str(sourceId)
 
-print cmd
+print(cmd)
 cursor.execute(cmd)
 foo = cursor.fetchone()
 
@@ -263,10 +264,10 @@ executableId = -1
 if foo:
     executableId = foo[0]
 else:
-    print "ERROR: Could not retrieve executable id from table"
+    print("ERROR: Could not retrieve executable id from table")
     sys.exit(-2)
 
-print "executableId =", executableId
+print("executableId =", executableId)
 
 allOpts = buildOpts + " -DEXECUTABLEID=" + str(executableId)
 #buildCmd = str(compilerFamily) + " " + str(allOpts) + " " +\
@@ -290,7 +291,7 @@ else:
                " " + str(rootFileName) + "." + str(objExtension) +\
                " -o " + str(rootFileName) +\
                "." + str(exeExtension)
-print buildCmd
+print(buildCmd)
 buildBegin = mx.DateTime.TimestampFromTicks(time.time())
 ret = os.system(buildCmd)
 buildEnd = mx.DateTime.TimestampFromTicks(time.time())
@@ -300,10 +301,10 @@ if (ret == 0):
           str(buildBegin) + "\', \'" + str(buildEnd) +\
           "\') where executable_id=" + str(executableId)
 
-    print cmd
+    print(cmd)
     cursor.execute(cmd)
 else:
-    print "ERROR: Compile failed with return code =", str(ret)
+    print("ERROR: Compile failed with return code =", str(ret))
     sys.exit(-4)
 
 conn.close()
