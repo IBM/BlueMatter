@@ -77,7 +77,7 @@ public class MolSysServlet extends javax.servlet.http.HttpServlet
 			// Type 2 connection (requires shared library)
 			d_conn = DriverManager.getConnection("jdbc:db2:mdsetup");
 			// Type 4 connection ("pure java")
-			//			d_conn = DriverManager.getConnection("jdbc:db2://pepsi.watson.ibm.com:60017/mdsetup2:user=mdlook;password=br0wsedb;");
+			//			d_conn = DriverManager.getConnection("jdbc:db2://pepsi.watson.ibm.com:60017/mdsetup2:user=mdlook;");
 		    }
 	    }
 	catch (Exception e)
