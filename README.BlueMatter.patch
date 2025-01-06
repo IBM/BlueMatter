@@ -1,0 +1,6 @@
+
+The BlueMatter patch has code from Numerical Recipes which IBM does not have the right to distribute publically as source code, and code from FFTW which IBM could redistribute but which might require IBM to redistribute the whole under the GPL. It has been encrypted by 'zipcloak'. If you want the encryption key you can ask Chris Ward, tjcw@uk.ibm.com or tjcw01@gmail.com, for it. The encryption key should not be exposed to public view.
+
+For further details you should go to https://numerical.recipes/ and https://fftw.org/
+
+Without the encryption key, re-integrating FFTW is straightforward but to reintegrate the Numerical Recipes code takes a little more effort.
